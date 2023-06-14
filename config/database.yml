@@ -1,21 +1,18 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  host: <%= ENV['POSTGRES_HOST'] %>
-  username: <%= ENV['POSTGRES_USER'] %>
-  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  host: <%= ENV['DATABASE_HOST'] %>
+  username: <%= ENV['DATABASE_USER'] %>
+  password: <%= ENV['DATABASE_PASSWORD'] %>
+  database: <%= ENV['DATABASE_NAME'] %>
   pool: 5
 
 development:
   <<: *default
-  database: viva_development
 
 test:
   <<: *default
-  database: viva_test
+  database: <%= ENV['TEST_DB'] %>
 
 production:
   <<: *default
-  database: viva_production
-  username: viva
-  password: <%= ENV["VIVA_DATABASE_PASSWORD"] %>

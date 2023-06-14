@@ -12,7 +12,7 @@ development:
 
 test:
   <<: *default
-  database: <%= ENV['TEST_DB'] %>
+  database: <%= ENV['TEST_DB'] || 'viva_test' %>
 
 production:
   <<: *default

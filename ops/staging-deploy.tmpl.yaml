@@ -3,18 +3,6 @@
 # Declare variables to be passed into your templates.
 # Customize the following values as needed
 
-postgresql:
-  enabled: true
-  postgresqlDatabase: viva
-  postgresqlUsername: postgres
-  # Only used when internal PG is disabled
-  # postgresqlHost: postgres
-  postgresqlPassword: $DATABASE_PASSWORD
-  # postgresqlPort: 5432
-  persistence:
-    enabled: true
-    size: 1Gi
-
 replicaCount: 1
 
 image:
@@ -26,34 +14,7 @@ image:
 imagePullSecrets:
   - name: github
 
-# nameOverride: ""
 fullnameOverride: viva
-
-# serviceAccount:
-#   # Specifies whether a service account should be created
-#   create: true
-#   # Annotations to add to the service account
-#   annotations: {}
-#   # The name of the service account to use.
-#   # If not set and create is true, a name is generated using the fullname template
-#   name: ""
-
-# podAnnotations: {}
-
-# podSecurityContext: {}
-#   # fsGroup: 2000
-
-# securityContext: {}
-#   # capabilities:
-#   #   drop:
-#   #   - ALL
-#   # readOnlyRootFilesystem: true
-#   # runAsNonRoot: true
-#   # runAsUser: 1000
-
-# service:
-#   type: ClusterIP
-#   port: 80
 
 ingress:
   tlsSecretName: viva-tls
@@ -65,27 +26,14 @@ ingress:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   }
 
-# resources: {}
-#   # We usually recommend not to specify default resources and to leave this as a conscious
-#   # choice for the user. This also increases chances charts run on environments with little
-#   # resources, such as Minikube. If you do want to specify resources, uncomment the following
-#   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#   # limits:
-#   #   cpu: 100m
-#   #   memory: 128Mi
-#   # requests:
-#   #   cpu: 100m
-#   #   memory: 128Mi
+externalPostgresql:
+  host: pg-postgresql.staging-postgres.svc.cluster.local
+  username: postgres
+  password: $DATABASE_PASSWORD
 
-# autoscaling:
-#   enabled: false
-#   minReplicas: 1
-#   maxReplicas: 100
-#   targetCPUUtilizationPercentage: 80
-#   # targetMemoryUtilizationPercentage: 80
+postgresql:
+  enabled: false
 
-# nodeSelector: {}
-
-# tolerations: []
-
-# affinity: {}
+env:
+  configmap: {}
+  secret: {}

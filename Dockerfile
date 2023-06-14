@@ -1,4 +1,4 @@
-FROM ruby:3.1.2
+FROM ruby:3.1.2 as viva-base
 RUN apt-get update -qq && apt-get install -y postgresql-client
 WORKDIR /viva
 COPY Gemfile /viva/Gemfile

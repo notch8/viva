@@ -43,9 +43,6 @@ spec:
             - secretRef:
                 name: {{ include "chart.fullname" . }}-env-secret
           volumeMounts:
-            - mountPath: /viva/public/assets
-              name: shared
-              subPath: assets
             - mountPath: /viva/public/system
               name: shared
               subPath: system

@@ -15,8 +15,8 @@ helm upgrade \
     --install \
     --atomic \
     --timeout 15m0s \
-    --set node.image.repository="$DEPLOY_IMAGE" \
-    --set node.image.tag="$DEPLOY_TAG" \
+    --set image.repository="$DEPLOY_IMAGE" \
+    --set image.tag="$DEPLOY_TAG" \
     $HELM_EXTRA_ARGS \
     --namespace="$namespace" \
     --create-namespace \

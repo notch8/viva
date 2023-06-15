@@ -12,9 +12,6 @@ ADD Gemfile* $APP_HOME/
 RUN (bundle check || bundle install)
 
 COPY . $APP_HOME
-RUN bash -l -c " \
-    NODE_ENV=production DB_ADAPTER=nulldb bundle exec rake assets:precompile && \
-    mv public/assets public/assets-new"
 
 RUN chmod +x ./ops/entrypoint.sh
 

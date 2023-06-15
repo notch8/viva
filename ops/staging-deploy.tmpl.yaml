@@ -42,5 +42,4 @@ postgresql:
 env:
   configmap:
     - DATABASE_ADAPTER: "postgresql"
-  secret:
-    - DATABASE_PASSWORD: $DATABASE_PASSWORD
+  secret: {}

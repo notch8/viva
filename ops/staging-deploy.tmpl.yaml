@@ -42,4 +42,5 @@ postgresql:
 env:
   configmap:
     - DATABASE_ADAPTER: "postgresql"
+    - DATABASE_NAME: "viva_staging"
   secret: {}

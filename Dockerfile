@@ -12,12 +12,10 @@ ADD Gemfile* $APP_HOME/
 RUN (bundle check || bundle install)
 
 COPY . $APP_HOME
+RUN bash -l -c " \
+    NODE_ENV=production DB_ADAPTER=nulldb bundle exec rake assets:precompile && \
+    mv public/assets public/assets-new"
 
+RUN chmod +x ./ops/entrypoint.sh
 
-# Add a script to be executed every time the container starts.
-COPY entrypoint.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint.sh
-
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
-EXPOSE 3000
+ENTRYPOINT ["/bin/bash", "./ops/entrypoint.sh"]

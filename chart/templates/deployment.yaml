@@ -15,6 +15,8 @@ spec:
     metadata:
       {{- with .Values.podAnnotations }}
       annotations:
+        checksum/viva-env-cm: {{ include (print $.Template.BasePath "/viva-env-cm.yaml") . | sha256sum }}
+        checksum/viva-env-secret: {{ include (print $.Template.BasePath "/viva-env-secret.yaml") . | sha256sum }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
@@ -34,7 +36,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-            - mountPath: /home/app/webapp/public/system
+            - mountPath: /viva/public/assets
+              name: shared
+              subPath: assets
+            - mountPath: /viva/public/system
               name: shared
               subPath: system
           ports:
@@ -67,3 +72,10 @@ spec:
         - name: shared
           persistentVolumeClaim:
             claimName: viva-pvc-shared
+      command: ["/bin/bash", "./ops/entrypoint.sh"]
+      args: ["bundle", "exec", "puma", "-p", "3000"]
+      envFrom:
+        - configMapRef:
+            name: {{ include "chart.fullname" . }}-env-cm
+        - secretRef:
+            name: {{ include "chart.fullname" . }}-env-secret

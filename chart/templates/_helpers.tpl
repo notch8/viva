@@ -60,10 +60,3 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
-
-{{- define "app.postgres.name" -}}
-{{- if .Values.postgresql.enabled }}
-{{- .Release.Name }}-postgresql
-{{- else }}
-{{- .Values.externalPostgresql.host }}
-{{- end }}

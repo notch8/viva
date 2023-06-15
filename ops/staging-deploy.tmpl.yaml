@@ -5,6 +5,11 @@
 
 replicaCount: 1
 
+shared:
+  storage:
+    size: 1Gi
+    className: nfs
+
 image:
   repository: ghcr.io/scientist-softserv/viva
   pullPolicy: IfNotPresent
@@ -35,5 +40,7 @@ postgresql:
   enabled: false
 
 env:
-  configmap: {}
-  secret: {}
+  configmap:
+    - DATABASE_ADAPTER: "postgresql"
+  secret:
+    - DATABASE_PASSWORD: $DATABASE_PASSWORD

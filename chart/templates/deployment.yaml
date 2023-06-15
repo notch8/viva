@@ -35,6 +35,13 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/bash", "./ops/entrypoint.sh"]
+          args: ["bundle", "exec", "puma", "-p", "3000"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "chart.fullname" . }}-env-cm
+            - secretRef:
+                name: {{ include "chart.fullname" . }}-env-secret
           volumeMounts:
             - mountPath: /viva/public/assets
               name: shared
@@ -56,6 +63,10 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+                volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: viva-pvc-shared
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -68,14 +79,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      volumes:
-        - name: shared
-          persistentVolumeClaim:
-            claimName: viva-pvc-shared
-      command: ["/bin/bash", "./ops/entrypoint.sh"]
-      args: ["bundle", "exec", "puma", "-p", "3000"]
-      envFrom:
-        - configMapRef:
-            name: {{ include "chart.fullname" . }}-env-cm
-        - secretRef:
-            name: {{ include "chart.fullname" . }}-env-secret

@@ -8,7 +8,7 @@ apiVersion: {{ if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion 
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ template "chart.fullname" . }}-in
+  name: {{ include "chart.fullname" . }}-in
   labels:
     {{- include "chart.labels" . | nindent 4 }}
   annotations:
@@ -30,7 +30,7 @@ spec:
           - path: /
             pathType: ImplementationSpecific
             backend:
-              serviceName: {{ template "chart.fullname" . }}
+              serviceName: {{ include "chart.fullname" $ }}
               servicePort: {{ $.Values.service.port }}
     {{- end }}
 {{- end }}

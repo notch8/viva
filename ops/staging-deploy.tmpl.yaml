@@ -55,3 +55,5 @@ env:
     DATABASE_URL: postgresql://postgres:$DATABASE_PASSWORD@pg-postgresql.staging-postgres.svc.cluster.local/viva-staging?pool=5
     DATABASE_USER: postgres
     DATABASE_PASSWORD: $DATABASE_PASSWORD
+    RAILS_ENV: production
+    SECRET_KEY_BASE: $SECRET_KEY_BASE

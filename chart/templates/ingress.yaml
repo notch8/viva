@@ -8,7 +8,7 @@ apiVersion: {{ if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion 
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ include "chart.fullname" . }}
+  name: {{ include "chart.fullname" . }}-in
   labels:
     {{- include "chart.labels" . | nindent 4 }}
   annotations:

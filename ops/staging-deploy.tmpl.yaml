@@ -3,6 +3,8 @@
 # Declare variables to be passed into your templates.
 # Customize the following values as needed
 
+fullnameOverride: "viva-staging"
+
 postgresql:
   enabled: false
 
@@ -48,12 +50,11 @@ ingress:
 
 env:
   configmap:
-    NAME: viva-staging
     DATABASE_ADAPTER: postgresql
     DATABASE_HOST: pg-postgresql.staging-postgres.svc.cluster.local
     DATABASE_NAME: viva-staging
-    DATABASE_URL: postgresql://postgres:$DATABASE_PASSWORD@pg-postgresql.staging-postgres.svc.cluster.local/viva-staging?pool=5
-    DATABASE_USER: postgres
     DATABASE_PASSWORD: $DATABASE_PASSWORD
+    DATABASE_USER: postgres
+    NAME: viva-staging
     RAILS_ENV: production
     SECRET_KEY_BASE: $SECRET_KEY_BASE

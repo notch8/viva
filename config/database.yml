@@ -1,4 +1,4 @@
-default: &default
+login: &default
   adapter: postgresql
   encoding: unicode
   host: <%= ENV['DATABASE_HOST'] %>
@@ -13,6 +13,9 @@ development:
 test:
   <<: *default
   database: <%= ENV['TEST_DB'] || 'viva_test' %>
+
+staging:
+  <<: *default
 
 production:
   <<: *default

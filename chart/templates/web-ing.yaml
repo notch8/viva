@@ -17,8 +17,7 @@ spec:
       paths:
       - backend:
           serviceName: {{ printf "%s" $serviceName | trunc 63 | trimSuffix "-" }}-web
-          servicePort: http
-        path: /
+          servicePort: 3000
   {{- end }}
   {{- if .Values.ingress.tlsSecretName }}
   tls:

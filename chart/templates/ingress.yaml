@@ -53,6 +53,5 @@ spec:
               serviceName: {{ include "chart.fullname" . }}
               servicePort: {{ $svcPort }}
               {{- end }}
-          {{- end }}
     {{- end }}
 {{- end }}

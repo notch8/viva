@@ -36,7 +36,7 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/bin/bash", "./ops/entrypoint.sh"]
-          args: ["bundle", "exec", "puma", "-p", "3000"]
+          args: ["bundle", "exec", "rails", "-p", "3000"]
           envFrom:
             - configMapRef:
                 name: {{ include "chart.fullname" . }}-env-cm

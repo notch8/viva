@@ -60,7 +60,7 @@ spec:
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-                volumes:
+      volumes:
         - name: shared
           persistentVolumeClaim:
             claimName: viva-pvc-shared

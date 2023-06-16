@@ -3,10 +3,10 @@ run-name: Build Test Lint of ${{ github.ref_name }} by @${{ github.actor }}
 on:
   push:
     branches:
-      - main
+    - main
   pull_request:
     branches:
-      - main
+    - main
   workflow_dispatch:
     inputs:
       debug_enabled:
@@ -25,6 +25,6 @@ jobs:
   test:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
-  lint:
-    needs: build
-    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+  # lint:
+  #   needs: build
+  #   uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13

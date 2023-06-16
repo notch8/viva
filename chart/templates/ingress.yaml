@@ -14,9 +14,6 @@ metadata:
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
-  {{- if and .Values.ingress.className (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion) }}
-  ingressClassName: {{ .Values.ingress.className }}
-  {{- end }}
   {{- if .Values.ingress.tlsSecretName }}
   tls:
     - hosts:
@@ -33,14 +30,7 @@ spec:
           - path: /
             pathType: ImplementationSpecific
             backend:
-              {{- if semverCompare ">=1.19-0" .Capabilities.KubeVersion.GitVersion }}
-              service:
-                name: {{ include "chart.fullname" . }}
-                port:
-                  number: {{ .Values.service.port }}
-              {{- else }}
               serviceName: {{ include "chart.fullname" . }}
               servicePort: {{ .Values.service.port }}
-              {{- end }}
     {{- end }}
 {{- end }}

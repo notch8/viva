@@ -23,6 +23,7 @@ fullnameOverride: "viva-staging"
 
 ingress:
   enabled: true
+  ingressClassName: nginx
   tlsSecretName: viva-staging-tls
   annotations: {
     kubernetes.io/ingress.class: "nginx",

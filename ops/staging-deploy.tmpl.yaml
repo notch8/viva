@@ -30,7 +30,7 @@ ingress:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   }
   hosts:
-    - host: viva-staging.notch8.cloud
+    - viva-staging.notch8.cloud
 
 externalPostgresql:
   host: pg-postgresql.staging-postgres.svc.cluster.local

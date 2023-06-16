@@ -19,7 +19,7 @@ image:
 imagePullSecrets:
   - name: github
 
-fullnameOverride: viva-staging
+fullnameOverride: viva
 
 ingress:
   enabled: true

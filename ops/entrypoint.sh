@@ -2,7 +2,11 @@
 set -e
 
 # Remove a potentially pre-existing server.pid for Rails.
-rm -f tmp/pids/server.pid
+# Check if the server.pid file exists
+if [ -f tmp/pids/server.pid ]; then
+  # Remove the server.pid file
+  rm -f tmp/pids/server.pid
+fi
 
 bundle check || bundle install
 

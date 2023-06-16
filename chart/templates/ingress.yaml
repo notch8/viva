@@ -30,7 +30,7 @@ spec:
           - path: /
             pathType: ImplementationSpecific
             backend:
-              serviceName: {{ include "chart.fullname" . }}
-              servicePort: {{ .Values.service.port }}
+              serviceName: {{ template "chart.fullname" . }}
+              servicePort: {{ $.Values.service.port }}
     {{- end }}
 {{- end }}

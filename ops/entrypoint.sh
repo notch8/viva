@@ -1,5 +1,11 @@
-#!/bin/bash
+#!/bin/bash -l
 set -e
 
-rm -f tmp/pids/server.pid
-exec bundle exec rails s -p 3000 -b '0.0.0.0'
+# Remove a potentially pre-existing server.pid for Rails.
+rm -f /app/tmp/pids/server.pid
+
+bundle check || bundle install
+
+echo "Starting $@"
+# Then exec the container's main process (what's set as CMD in the Dockerfile).
+exec "$@"

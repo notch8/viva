@@ -19,13 +19,13 @@ image:
 imagePullSecrets:
   - name: github
 
-fullnameOverride: viva
+fullnameOverride: viva-staging
 
 ingress:
   enabled: true
-  tlsSecretName: viva-tls
+  tlsSecretName: viva-staging-tls
   hosts:
-    - viva.notch8.cloud
+    - viva-staging.notch8.cloud
   annotations: {
     kubernetes.io/ingress.class: "nginx",
     nginx.ingress.kubernetes.io/proxy-body-size: "0",

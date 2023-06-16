@@ -22,6 +22,7 @@ imagePullSecrets:
 fullnameOverride: viva
 
 ingress:
+  enabled: true
   tlsSecretName: viva-tls
   hosts:
     - viva.notch8.cloud

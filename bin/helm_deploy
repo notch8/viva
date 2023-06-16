@@ -18,7 +18,10 @@ helm upgrade \
     --set image.repository="$DEPLOY_IMAGE" \
     --set image.tag="$DEPLOY_TAG" \
     $HELM_EXTRA_ARGS \
+    --values 'ops/staging-deploy.tmpl.yaml' \
     --namespace="$namespace" \
     --create-namespace \
+    --dry-run \
+    --debug \
     "$release_name" \
     chart

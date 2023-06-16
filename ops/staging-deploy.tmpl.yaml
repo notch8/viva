@@ -3,48 +3,55 @@
 # Declare variables to be passed into your templates.
 # Customize the following values as needed
 
-replicaCount: 1
-
-shared:
-  storage:
-    size: 1Gi
-    className: nfs
-
-image:
-  repository: ghcr.io/scientist-softserv/viva
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: latest
-
-imagePullSecrets:
-  - name: github
-
-fullnameOverride: "viva-staging"
-
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  tlsSecretName: viva-staging-tls
-  annotations: {
-    kubernetes.io/ingress.class: "nginx",
-    nginx.ingress.kubernetes.io/proxy-body-size: "0",
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  }
-  hosts:
-    - viva-staging.notch8.cloud
+postgresql:
+  enabled: false
 
 externalPostgresql:
   host: pg-postgresql.staging-postgres.svc.cluster.local
   username: postgres
   password: $DATABASE_PASSWORD
 
-postgresql:
-  enabled: false
+web:
+  replicaCount: 1
+  resources:
+    limits:
+      memory: "3Gi"
+      cpu: "400m"
+    requests:
+      memory: "1.5Gi"
+      cpu: "200m"
+
+rails:
+  image:
+    repository: ghcr.io/scientist-softserv/viva
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: latest
+  imagepullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: github
+  shared:
+    storage:
+      size: 1Gi
+      className: nfs
+
+ingress:
+  enabled: true
+  hosts:
+    - viva-staging.notch8.cloud
+  ingressClassName: nginx
+  annotations: {
+    kubernetes.io/ingress.class: "nginx",
+    nginx.ingress.kubernetes.io/proxy-body-size: "0",
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  }
+  tlsSecretName: viva-staging-tls
 
 env:
   configmap:
+    NAME: viva-staging
     DATABASE_ADAPTER: postgresql
     DATABASE_HOST: pg-postgresql.staging-postgres.svc.cluster.local
     DATABASE_NAME: viva-staging
     DATABASE_URL: postgresql://postgres:$DATABASE_PASSWORD@pg-postgresql.staging-postgres.svc.cluster.local/viva-staging?pool=5
     DATABASE_USER: postgres
+    DATABASE_PASSWORD: $DATABASE_PASSWORD

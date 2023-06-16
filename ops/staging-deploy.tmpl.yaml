@@ -41,8 +41,8 @@ postgresql:
 
 env:
   configmap:
-    - DATABASE_ADAPTER: "postgresql"
-    - DATABASE_HOST: "pg-postgresql.staging-postgres.svc.cluster.local"
-    - DATABASE_NAME: "viva-staging"
-    - DATABASE_URL: postgresql://postgres:$DATABASE_PASSWORD@pg-postgresql.staging-postgres.svc.cluster.local
-    - DATABASE_USER: "postgres"
+    - DATABASE_ADAPTER: postgresql
+    - DATABASE_HOST: pg-postgresql.staging-postgres.svc.cluster.local
+    - DATABASE_NAME: viva-staging
+    - DATABASE_URL: postgresql://postgres:$DATABASE_PASSWORD@pg-postgresql.staging-postgres.svc.cluster.local/viva-staging?pool=5
+    - DATABASE_USER: postgres

@@ -20,8 +20,5 @@ helm upgrade \
     $HELM_EXTRA_ARGS \
     --namespace="$namespace" \
     --create-namespace \
-    --debug \
-    --dry-run \
-    --values "ops/staging-deploy.tmpl.yaml" \
     "$release_name" \
     chart

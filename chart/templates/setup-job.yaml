@@ -2,10 +2,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "app.setup.name" . }}
+  name: {{ include "app.setup.name" . }}
   labels:
-    app: {{ template "app.name" . }}
-    chart: {{ template "app.chart" . }}
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
   annotations:
@@ -19,7 +19,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ template "app.name" . }}
+        app: {{ include "app.name" . }}
         release: {{ .Release.Name }}
     spec:
       restartPolicy: Never
@@ -30,7 +30,7 @@ spec:
       volumes:
         - name: shared
           persistentVolumeClaim:
-            claimName: {{ template "app.rails-env.name" . }}-shared
+            claimName: {{ include "app.rails-env.name" . }}-shared
       containers:
         - name: setup
           image: {{ .Values.rails.image.repository }}:{{ .Values.rails.image.tag }}
@@ -38,7 +38,7 @@ spec:
             - mountPath: /app/public/assets
               name: shared
               subPath: assets
-            - mountPath: /app/public/system
+            - mountPath: /app/system
               name: shared
               subPath: system
           command: ["/bin/bash"]
@@ -52,6 +52,6 @@ spec:
                 echo SETUP COMPLETE
           envFrom:
             - configMapRef:
-                name: {{ template "app.rails-env.name" . }}
+                name: {{ include "app.rails-env.name" . }}
             - secretRef:
-                name: {{ template "app.rails-env.name" . }}
+                name: {{ include "app.rails-env.name" . }}

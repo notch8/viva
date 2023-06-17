@@ -10,7 +10,7 @@ metadata:
     heritage: {{ .Release.Service }}
     component: web
 spec:
-  replicas: {{ .Values.web.replicas }}
+  replicas: {{ .Values.web.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "app.name" . }}
@@ -51,7 +51,7 @@ spec:
             - mountPath: /app/public/assets
               name: shared
               subPath: assets
-            - mountPath: /app/public/system
+            - mountPath: /app/system
               name: shared
               subPath: system
           command: ["/bin/bash", "./ops/entrypoint.sh"]

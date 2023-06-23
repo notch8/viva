@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.web.name" . }}
+  labels:
+    app: {{ template "app.name" . }}
+    chart: {{ template "app.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    component: web
+spec:
+  replicas: {{ .Values.web.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "app.name" . }}
+      release: {{ .Release.Name }}
+      component: web
+  template:
+    metadata:
+      labels:
+        app: {{ template "app.name" . }}
+        release: {{ .Release.Name }}
+        component: web
+      annotations:
+        checksum/rails-env-cm: {{ include (print $.Template.BasePath "/rails-env-cm.yaml") . | sha256sum }}
+        checksum/rails-env-secret: {{ include (print $.Template.BasePath "/rails-env-secret.yaml") . | sha256sum }}
+    spec:
+      restartPolicy: Always
+      {{- if .Values.rails.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.rails.imagePullSecrets }}
+      {{- end }}
+      volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: {{ template "app.rails-env.name" . }}-shared
+      containers:
+        - name: web
+          image: {{ .Values.rails.image.repository }}:{{ .Values.rails.image.tag }}
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: {{ .Values.web.resources.requests.memory }}
+              cpu: {{ .Values.web.resources.requests.cpu }}
+            limits:
+              memory: {{ .Values.web.resources.limits.memory }}
+              cpu: {{ .Values.web.resources.limits.cpu }}
+          # Use sub-path for individual folders
+          volumeMounts:
+            - mountPath: /app/public/assets
+              name: shared
+              subPath: assets
+            - mountPath: /app/system
+              name: shared
+              subPath: system
+          command: ["/bin/bash", "./ops/entrypoint.sh"]
+          args: ["bundle", "exec", "puma", "-p", "3000"]
+          readinessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 120
+          envFrom:
+            - configMapRef:
+                name: {{ template "app.rails-env.name" . }}
+            - secretRef:
+                name: {{ template "app.rails-env.name" . }}

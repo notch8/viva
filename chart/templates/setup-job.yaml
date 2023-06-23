@@ -1,0 +1,57 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "app.setup.name" . }}
+  labels:
+    app: {{ include "app.name" . }}
+    chart: {{ include "app.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: {{ include "app.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      restartPolicy: Never
+      {{- if .Values.rails.imagePullSecrets }}
+      imagePullSecrets:
+        {{ toYaml .Values.rails.imagePullSecrets }}
+      {{- end }}
+      volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: {{ include "app.rails-env.name" . }}-shared
+      containers:
+        - name: setup
+          image: {{ .Values.rails.image.repository }}:{{ .Values.rails.image.tag }}
+          volumeMounts:
+            - mountPath: /app/public/assets
+              name: shared
+              subPath: assets
+            - mountPath: /app/system
+              name: shared
+              subPath: system
+          command: ["/bin/bash"]
+          # rm -f public/assets/.sprockets-manifest* && rsync -a public/assets-new/ public/assets/ &&
+          args:
+            - "-l"
+            - "-c"
+            - >
+                (bundle check || bundle install) &&
+                bundle exec rake db:migrate assets:precompile &&
+                echo SETUP COMPLETE
+          envFrom:
+            - configMapRef:
+                name: {{ include "app.rails-env.name" . }}
+            - secretRef:
+                name: {{ include "app.rails-env.name" . }}

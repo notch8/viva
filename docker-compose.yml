@@ -26,17 +26,28 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
 
+  vite:
+    <<: *app
+    entrypoint: /bin/bash ./ops/entrypoint-vite.sh
+    environment:
+      DEBUG: '*vite*'
+      RAILS_ENV: development
+      VITE_RUBY_HOST: 0.0.0.0
+    ports:
+      - "3036:3036"
+
   web:
     <<: *app
     command: bash -c "bundle exec puma -p 3000"
     ports:
       - 3000
-      - 3036:3036
     depends_on:
       - postgres
+      - vite
     environment:
       VIRTUAL_HOST: viva.test
       VIRTUAL_PORT: 3000
+      VITE_RUBY_HOST: vite
 
 volumes:
   postgres:

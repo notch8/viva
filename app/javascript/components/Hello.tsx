@@ -7,7 +7,7 @@ interface Props {
 
 const Hello: FC<Props> = ({name}) => {
   return (
-    <div>Hello again {name}!</div>
+    <div>Hello {name}!</div>
   )
 }
 

@@ -16,6 +16,10 @@ RUN gem install bundler:2.3.3
 ADD Gemfile* $APP_HOME/
 RUN (bundle check || bundle install)
 
+ADD package.json ./package.json
+ADD yarn.lock ./yarn.lock
+RUN yarn install
+
 COPY . $APP_HOME
 RUN bash -l -c " \
     NODE_ENV=production DB_ADAPTER=nulldb bundle exec rake assets:precompile && \

@@ -1,8 +1,7 @@
 {
   "all": {
     "sourceCodeDir": "app/javascript",
-    "watchAdditionalPaths": [],
-    "publicOutputDir": "vite-dev",
+    "watchAdditionalPaths": []
   },
   "development": {
     "autoBuild": true,

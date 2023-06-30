@@ -5,5 +5,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # get '/starter', to: 'starter#index', as: 'starter'
-  root "pages#index"
+  root "home#index"
+  # root "pages#index"
 end

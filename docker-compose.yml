@@ -31,6 +31,7 @@ services:
     command: bash -c "bundle exec puma -p 3000"
     ports:
       - 3000
+      - 3036:3036
     depends_on:
       - postgres
     environment:

@@ -38,6 +38,9 @@ spec:
             - mountPath: /app/public/assets
               name: shared
               subPath: assets
+            - mountPath: /app/public/vite
+              name: shared
+              subPath: vite
             - mountPath: /app/system
               name: shared
               subPath: system

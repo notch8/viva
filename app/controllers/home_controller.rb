@@ -5,7 +5,7 @@ require 'faker'
 # HomeController
 class HomeController < ApplicationController
   def index
-    render inertia: 'Hello', props: {
+    render inertia: 'App', props: {
       name: Faker::Name.name
     }
   end

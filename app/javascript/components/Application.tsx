@@ -5,12 +5,12 @@ import {
   InertiaAppOptionsForCSR,
 } from "@inertiajs/inertia-react";
 
-const pages = import.meta.glob("./*.tsx");
+const pages = import.meta.glob("./*.jsx");
 
 const app = () =>
   createInertiaApp<InertiaAppOptionsForCSR<unknown>>({
     resolve: async (name) => {
-      const module = await pages[`./${name}.tsx`]();
+      const module = await pages[`./${name}.jsx`]();
       const page = (
         module as never as { default: { layout: React.ReactFragment } }
       ).default;
@@ -26,4 +26,3 @@ const app = () =>
 document.addEventListener('DOMContentLoaded', () => {
   app();
 });
-  

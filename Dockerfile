@@ -1,5 +1,10 @@
-FROM ruby:3.1.2 as viva-base
-RUN apt-get update -qq && apt-get install -y postgresql-client
+FROM ruby:3.1.4 as viva-base
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
+  apt-get update -qq &&\
+  apt-get install -y \
+    nodejs \
+    postgresql-client && \
+  npm install -g yarn
 
 ENV APP_HOME /app
 
@@ -10,6 +15,10 @@ RUN gem install bundler:2.3.3
 
 ADD Gemfile* $APP_HOME/
 RUN (bundle check || bundle install)
+
+ADD package.json ./package.json
+ADD yarn.lock ./yarn.lock
+RUN yarn install
 
 COPY . $APP_HOME
 RUN bash -l -c " \

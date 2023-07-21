@@ -24,7 +24,5 @@ module Viva
       parsable_files = files.filter { |file| file.end_with?('.rb') }
       system("bundle exec rubocop -a --fail-level=E #{parsable_files.shelljoin}", exception: true)
     end
-
-    config.web_console.permissions = ['172.18.0.0/16', '172.27.0.0/16', '0.0.0.0/0']
   end
 end

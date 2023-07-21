@@ -86,3 +86,5 @@ group :test do
   gem 'webdrivers'
 end
 
+
+gem "factory_bot", "~> 6.2"

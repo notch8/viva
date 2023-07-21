@@ -20,6 +20,10 @@ Rails.application.configure do
   # Enable server timing
   config.server_timing = true
 
+  # enable default actionmailer url
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+
+
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
   if Rails.root.join('tmp/caching-dev.txt').exist?
@@ -64,6 +68,8 @@ Rails.application.configure do
 
   # Suppress logger output for asset requests.
   config.assets.quiet = true
+
+  config.web_console.permissions = ['172.18.0.0/16', '172.27.0.0/16', '0.0.0.0/0']
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true

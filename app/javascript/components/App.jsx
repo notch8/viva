@@ -1,8 +1,12 @@
 import React from 'react'
+import { Link } from "wouter"
 
-const App= ({name}) => {
+const App = ({ name }) => {
   return (
-    <div>App.js {name}!</div>
+    <div>
+      <p>App.js {name}!</p>
+      <Link href="/other">Go to another page</Link>
+    </div>
   )
 }
 

@@ -16,5 +16,5 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/other', to: 'pages#other', as: 'other'
+  get '/settings', to: 'settings#index', as: 'settings'
 end

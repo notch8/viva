@@ -1,13 +1,14 @@
 import React from 'react'
-import { Link } from 'wouter'
+import { Route, Router } from 'wouter'
+import Settings from './Settings'
 import Header from './ui/Header'
 
-const App = ({ name }) => {
+const App = () => {
   return (
-    <>
+    <Router>
       <Header />
-      <Link href='/other'>Go to another page</Link>
-    </>
+      <Route path='/settings'><Settings /></Route>
+    </Router>
   )
 }
 

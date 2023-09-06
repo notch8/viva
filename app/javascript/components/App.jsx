@@ -1,8 +1,11 @@
 import React from 'react'
+import Header from './ui/Header'
 
 const App= ({name}) => {
   return (
-    <div>App.js {name}!</div>
+    <>
+      <Header />
+    </>
   )
 }
 

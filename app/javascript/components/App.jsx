@@ -1,12 +1,13 @@
 import React from 'react'
-import { Link } from "wouter"
+import { Link } from 'wouter'
+import Header from './ui/Header'
 
 const App = ({ name }) => {
   return (
-    <div>
-      <p>App.js {name}!</p>
-      <Link href="/other">Go to another page</Link>
-    </div>
+    <>
+      <Header />
+      <Link href='/other'>Go to another page</Link>
+    </>
   )
 }
 

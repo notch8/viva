@@ -26,4 +26,8 @@ AllCops:
 
 Rails/HasAndBelongsToMany:
   Enabled: false
-    
+
+# Sure, it's nice in theory to have one expectation per spec, but that can
+# result in slower test suites as you perform significant setup for each spec.
+RSpec/MultipleExpectations:
+  Enabled: false

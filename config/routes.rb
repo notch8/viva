@@ -18,4 +18,6 @@ Rails.application.routes.draw do
   end
 
   get '/settings', to: 'settings#index', as: 'settings'
+
+  resources :questions, only: :index
 end

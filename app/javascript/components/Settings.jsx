@@ -1,10 +1,11 @@
 import React from 'react'
+import Layout from './App'
 
 const Settings = () => {
   return (
-    <div>
+    <Layout>
       Change me!
-    </div>
+    </Layout>
   )
 }
 

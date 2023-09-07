@@ -6,3 +6,23 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
+
+abort if Rails.env.production?
+
+# This is some very random data to quickly populate a non-production instance.
+[Keyword, Category, Question].each(&:destroy_all)
+
+keywords = (1..10).map do |i|
+  Keyword.create!(name: Faker::Lorem.unique.word)
+end
+
+categories = (1..10).map do |i|
+  Category.create!(name: Faker::Lorem.unique.word)
+end
+
+(1..10).each do |i|
+  question = Question.create!(text: Faker::Lorem.unique.sentence, type: "Question")
+  question.keywords = keywords.shuffle[0..rand(4)]
+  question.categories = categories.shuffle[0..rand(2)]
+  question.save!
+end

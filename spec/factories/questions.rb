@@ -2,8 +2,7 @@
 
 FactoryBot.define do
   factory :question do
-    text { 'MyText' }
-    type { '' }
+    text { Faker::Lorem.unique.sentence }
     nested { false }
   end
 end

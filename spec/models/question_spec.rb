@@ -11,4 +11,9 @@ RSpec.describe Question, type: :model do
     it { should have_and_belong_to_many(:categories) }
     it { should have_and_belong_to_many(:keywords) }
   end
+
+  describe 'factories' do
+    subject { FactoryBot.build(:question) }
+    it { should be_valid }
+  end
 end

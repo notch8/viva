@@ -2,6 +2,6 @@
 
 FactoryBot.define do
   factory :keyword do
-    name { 'MyString' }
+    name { Faker::Lorem.unique.word }
   end
 end

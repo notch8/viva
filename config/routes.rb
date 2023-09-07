@@ -12,7 +12,10 @@ Rails.application.routes.draw do
 
     unauthenticated do
       root 'devise/sessions#new', as: :unauthenticated_root
+      # uncomment the below instead to simulate being logged in
+      # root 'home#index', as: :unauthenticated_root
     end
   end
 
+  get '/settings', to: 'settings#index', as: 'settings'
 end

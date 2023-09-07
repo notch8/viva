@@ -7,6 +7,7 @@ gem 'bixby' # for community rubocop rules
 gem 'bootsnap', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'bootstrap', '~> 5.3.0.alpha3'
 gem 'capybara', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+gem 'database_cleaner-active_record', group: %i[development test]
 gem 'debug', platforms: %i[mri mingw x64_mingw], group: %i[development test]
 gem 'devise', '~> 4.9'
 gem 'factory_bot', '~> 6.2'

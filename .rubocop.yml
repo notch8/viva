@@ -20,3 +20,6 @@ AllCops:
     - 'vendor/**/*'
     - 'Gemfile'
     - 'Rakefile'
+
+Rails/HasAndBelongsToMany:
+  Enabled: false

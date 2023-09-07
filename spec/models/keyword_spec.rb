@@ -17,4 +17,6 @@ RSpec.describe Keyword, type: :model do
     subject { FactoryBot.build(:keyword) }
     it { should be_valid }
   end
+
+  it { should have_implicit_order_column(:name) }
 end

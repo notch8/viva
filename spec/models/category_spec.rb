@@ -17,4 +17,6 @@ RSpec.describe Category, type: :model do
     subject { FactoryBot.build(:category) }
     it { should be_valid }
   end
+  
+  it { should have_implicit_order_column(:name) }
 end

@@ -23,3 +23,7 @@ AllCops:
   Style/FrozenStringLiteralComment:
     Exclude:
       - 'db/migrate/**/*.rb'
+
+Rails/HasAndBelongsToMany:
+  Enabled: false
+    

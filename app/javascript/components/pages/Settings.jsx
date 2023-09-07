@@ -1,5 +1,5 @@
 import React from 'react'
-import Layout from './App'
+import Layout from '../App'
 
 const Settings = () => {
   return (

@@ -7,15 +7,16 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     authenticated :user do
-      root 'home#index', as: :authenticated_root
+      root 'search#index', as: :authenticated_root
+      get '/settings', to: 'settings#index', as: 'settings'
+      get '/uploads', to: 'uploads#index', as: 'uploads'
     end
 
     unauthenticated do
       root 'devise/sessions#new', as: :unauthenticated_root
       # uncomment the below instead to simulate being logged in
-      # root 'home#index', as: :unauthenticated_root
+      # root 'search#index', as: :unauthenticated_root
     end
   end
 
-  get '/settings', to: 'settings#index', as: 'settings'
 end

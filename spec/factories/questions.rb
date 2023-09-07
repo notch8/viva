@@ -4,5 +4,6 @@ FactoryBot.define do
   factory :question do
     text { Faker::Lorem.unique.sentence }
     nested { false }
+    type { 'Question' }
   end
 end

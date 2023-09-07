@@ -48,7 +48,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_07_150410) do
     t.boolean "nested", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["type"], name: "index_questions_on_type", unique: true
+    t.index ["type"], name: "index_questions_on_type"
   end
 
   create_table "users", force: :cascade do |t|

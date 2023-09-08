@@ -30,7 +30,7 @@ require 'inertia_rails/rspec'
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
-  Rails.logger.info("Preparing to maintain test schema...")
+  $stdout.puts("Preparing to maintain test schema...")
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
   # Instead of aborting on the exception (e.g. `abort e.to_s.strip`) I have chosen to log this as a
@@ -46,7 +46,7 @@ rescue ActiveRecord::PendingMigrationError => e
   # > `RAILS_ENV=test bundle exec rake db:create db:schema:load db:migrate`
   #
   # In other words this assertion is creating confusion.
-  Rails.logger.warn(e.to_s.strip)
+  $stderr.puts("Warning: #{e.to_s.strip}")
 end
 
 require 'database_cleaner/active_record'

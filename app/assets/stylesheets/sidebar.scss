@@ -1,0 +1,10 @@
+#sidebar {
+  .nav-link {
+    &.active {
+      background-color: darken($light, 20%);
+    }
+    &:hover {
+      background-color: darken($light, 15%)
+    }
+  }
+}

@@ -14,20 +14,22 @@ const App = ({ children }) => {
       <div className='d-flex'>
         <Collapse in={open} dimension='width'>
           <div id='sidebar'>
-            <Sidebar />
+            <Sidebar open={open} setOpen={setOpen}/>
           </div>
         </Collapse>
-        <div className='bg-light-2 vh-100 px-2'>
-          <Button
-            onClick={() => setOpen(!open)}
-            aria-controls='sidebar'
-            aria-expanded={open}
-            className='mx-auto mt-2 rounded-circle btn btn-secondary d-flex px-1 py-1'
-            variant='secondary'
-          >
-            {open ? <CaretLeft weight='bold' alt='Close Sidebar'/> : <CaretRight weight='bold' alt='Open Sidebar'/>}
-          </Button>
-        </div>
+        {!open &&
+          <div className='bg-light-1 vh-100'>
+            <Button
+              onClick={() => setOpen(!open)}
+              aria-controls='sidebar'
+              aria-expanded={open}
+              className='mx-2 mt-2 rounded-circle btn btn-secondary d-flex px-1 py-1'
+              variant='secondary'
+            >
+              <CaretRight weight='bold' alt='Open Sidebar'/>
+            </Button>
+          </div>
+        }
         <div id='page-content-wrapper' className='container-fluid px-0'>
           {children}
         </div>

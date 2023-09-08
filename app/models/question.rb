@@ -13,18 +13,22 @@ class Question < ApplicationRecord
   # @param keywords [Array<String>] when provided, a question must have all of the given keywords.
   # @param categories [Array<String>] when provided, a question must have all of the provided
   #        categories.
+  # @param selected_attributes [Array<Symbol>] the attributes to include in the filter.  By
+  #        narrowing the selection of attributes we reduce the computational cost of generating the
+  #        query result set (e.g. we don't have to serialize/send/deserialize un-used columns.
   #
-  # @return [ActiveRecord::Relation<Question>]
+  # @return [ActiveRecord::Relation<Question>] Each question will have only the selected attributes.
+  #
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def self.filter(keywords: [], categories: [])
+  def self.filter(keywords: [], categories: [], selected_attributes: [:id, :text])
     # By wrapping in an array we ensure that our keywords.size and categories.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
     keywords = Array.wrap(keywords)
     categories = Array.wrap(categories)
 
-    questions = Question.all
+    questions = Question.select(*selected_attributes).all
 
     if keywords.present?
       # NOTE: This assumes that we don't persist duplicate pairings of question/keyword; this is

@@ -2,6 +2,8 @@
 
 require 'faker'
 
+##
+# The controller to handle methods related to the search page.
 class SearchController < ApplicationController
   def index
     render inertia: 'Search', props: {

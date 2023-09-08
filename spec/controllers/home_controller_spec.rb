@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe HomeController do
   describe '#index', inertia: true do
-    it 'exposes the :keywords and :categories props'  do
+    it 'exposes the :keywords and :categories props' do
       user = FactoryBot.create(:user)
       sign_in user
       get :index

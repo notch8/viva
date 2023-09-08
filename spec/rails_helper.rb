@@ -31,7 +31,7 @@ require 'inertia_rails/rspec'
 db_config = ActiveRecord::Base.configurations.find_db_config('development')
 ActiveRecord::Tasks::DatabaseTasks.create(db_config)
 
-ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', 'migrate').to_s]
+ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', "migrate").to_s]
 ActiveRecord::Tasks::DatabaseTasks.migrate
 ActiveRecord::Base.descendants.each(&:reset_column_information)
 
@@ -47,7 +47,7 @@ require 'database_cleaner/active_record'
 
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  config.fixture_path = Rails.root.join('spec/fixtures')
+  config.fixture_path = Rails.root.join('spec', "fixtures")
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

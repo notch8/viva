@@ -20,7 +20,6 @@ RSpec.describe Question, type: :model do
 
   describe '.filter' do
     # rubocop:disable RSpec/ExampleLength
-    # rubocop:disable RSpec/MultipleExpectations
     it 'filters by keyword' do
       # Why this one large test instead of many smaller tests?  Because the setup cost for the state
       # of the data is noticable.  In other words, by running multiple tests with one setup

@@ -30,9 +30,23 @@ require 'inertia_rails/rspec'
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin
+  Rails.logger.info("Preparing to maintain test schema...")
   ActiveRecord::Migration.maintain_test_schema!
 rescue ActiveRecord::PendingMigrationError => e
-  abort e.to_s.strip
+  # Instead of aborting on the exception (e.g. `abort e.to_s.strip`) I have chosen to log this as a
+  # warning.  Why?  The language of the exception is as follows:
+  #
+  # > Migrations are pending. To resolve this issue, run:
+  # >
+  # >       bin/rails db:migrate RAILS_ENV=development
+  #
+  # In other words, there's confusion about the Rails environment; and a desire for the development
+  # schema to be up to date.  As part of the build for the test environment we run the following:
+  #
+  # > `RAILS_ENV=test bundle exec rake db:create db:schema:load db:migrate`
+  #
+  # In other words this assertion is creating confusion.
+  Rails.logger.warn(e.to_s.strip)
 end
 
 require 'database_cleaner/active_record'

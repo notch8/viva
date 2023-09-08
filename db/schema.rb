@@ -10,9 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_20_153533) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_07_150410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
+  create_table "categories_questions", id: false, force: :cascade do |t|
+    t.bigint "question_id", null: false
+    t.bigint "category_id", null: false
+    t.index ["category_id", "question_id"], name: "index_categories_questions_on_category_id_and_question_id"
+    t.index ["question_id", "category_id"], name: "index_categories_questions_on_question_id_and_category_id", unique: true
+  end
+
+  create_table "keywords", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_keywords_on_name", unique: true
+  end
+
+  create_table "keywords_questions", id: false, force: :cascade do |t|
+    t.bigint "question_id", null: false
+    t.bigint "keyword_id", null: false
+    t.index ["keyword_id", "question_id"], name: "index_keywords_questions_on_keyword_id_and_question_id"
+    t.index ["question_id", "keyword_id"], name: "index_keywords_questions_on_question_id_and_keyword_id", unique: true
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.text "text"
+    t.string "type", null: false
+    t.boolean "nested", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["type"], name: "index_questions_on_type"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false

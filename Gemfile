@@ -7,6 +7,7 @@ gem 'bixby' # for community rubocop rules
 gem 'bootsnap', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'bootstrap', '~> 5.3.0.alpha3'
 gem 'capybara', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+gem 'database_cleaner-active_record', group: %i[development test]
 gem 'debug', platforms: %i[mri mingw x64_mingw], group: %i[development test]
 gem 'devise', '~> 4.9'
 gem 'factory_bot', '~> 6.2'
@@ -19,11 +20,13 @@ gem 'jsbundling-rails' # Bundle and transpile JavaScript [https://github.com/rai
 gem 'pg', '~> 1.1' # Use postgresql as the database for Active Record
 gem 'puma', '~> 5.0' # Use the Puma web server [https://github.com/puma/puma]
 gem 'rails', '~> 7.0.5' # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
+gem 'rspec-its', group: %i[development test]
 gem 'rspec-rails', group: %i[development test]
 gem 'rubocop-rails', require: false, group: %i[development test]
 gem 'rubocop-rspec', require: false, group: %i[development test]
 gem 'sassc-rails' # Use Sass to process CSS
 gem 'selenium-webdriver', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
+gem 'shoulda-matchers', '~> 5.0', require: false, group: %i[development test]
 gem 'sprockets-rails' # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'stimulus-rails' # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem 'turbo-rails' # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]

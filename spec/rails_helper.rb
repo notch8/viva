@@ -27,16 +27,13 @@ require 'inertia_rails/rspec'
 #
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
-# Copied from Hyrax
-if ENV['IN_DOCKER']
-  # require File.expand_path("config/environment", '../')
-  db_config = ActiveRecord::Base.configurations[Rails.env]
-  ActiveRecord::Tasks::DatabaseTasks.create(db_config)
+# Copied from Hyrax, without the
+db_config = ActiveRecord::Base.configurations.find_db_config('development')
+ActiveRecord::Tasks::DatabaseTasks.create(db_config)
 
-  ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', 'migrate').to_s]
-  ActiveRecord::Tasks::DatabaseTasks.migrate
-  ActiveRecord::Base.descendants.each(&:reset_column_information)
-end
+ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', 'migrate').to_s]
+ActiveRecord::Tasks::DatabaseTasks.migrate
+ActiveRecord::Base.descendants.each(&:reset_column_information)
 
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.

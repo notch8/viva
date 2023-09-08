@@ -12,5 +12,5 @@
  *
  */
 
-@import "/\*";
-@import "bootstrap";
+@import 'custom-bootstrap'; // imports bootstrap and overrides several custom variables and theme maps.
+@import 'sidebar'

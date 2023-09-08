@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gem 'bixby' # for community rubocop rules
 gem 'bootsnap', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'bootstrap', '~> 5.3.0.alpha3'
 gem 'capybara', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]

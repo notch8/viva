@@ -18,11 +18,11 @@
   docker compose up
   ```
 
-- The first time you start your app, you may need to create a database and/or run migrations
+- The first time you start your app, you need to set up your database
 
   ```bash
   docker compose exec web sh
-  rails db:create db:migrate
+  rails db:create db:migrate db:seed
   ```
 
 - After running `dory up`, you can view the app in the browser at `http://viva.test`.

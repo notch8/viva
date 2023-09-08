@@ -5,12 +5,12 @@ import {
   InertiaAppOptionsForCSR,
 } from "@inertiajs/inertia-react";
 
-const pages = import.meta.glob("./*.jsx");
+const pages = import.meta.glob("./pages/*.jsx");
 
 const app = () =>
   createInertiaApp<InertiaAppOptionsForCSR<unknown>>({
     resolve: async (name) => {
-      const module = await pages[`./${name}.jsx`]();
+      const module = await pages[`./pages/${name}.jsx`]();
       const page = (
         module as never as { default: { layout: React.ReactFragment } }
       ).default;

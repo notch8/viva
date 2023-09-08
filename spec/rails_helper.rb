@@ -35,7 +35,7 @@ require 'rspec/rails'
 # development migrations.
 db_config = ActiveRecord::Base.configurations.find_db_config('development')
 ActiveRecord::Tasks::DatabaseTasks.create(db_config)
-ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db/migrate').to_s]
+ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', "migrate").to_s]
 ActiveRecord::Tasks::DatabaseTasks.migrate
 ActiveRecord::Base.descendants.each(&:reset_column_information)
 

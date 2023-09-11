@@ -4,6 +4,13 @@ FactoryBot.define do
   factory :question do
     text { Faker::Lorem.unique.sentence }
     nested { false }
-    type { 'Question' }
+
+    # NOTE: These factory names are based on the class's model_name's param_key which helps with
+    # the ./spec/shared_examples.rb
+    factory :question_drag_and_drop, class: Question::DragAndDrop, parent: :question
+    factory :question_traditional, class: Question::Traditional, parent: :question
+    factory :question_matching, class: Question::Matching, parent: :question
+    factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question
+    factory :question_select_all_that_apply, class: Question::SelectAllThatApply, parent: :question
   end
 end

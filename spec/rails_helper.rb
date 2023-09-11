@@ -104,3 +104,5 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
+
+require File.expand_path('../shared_examples', __FILE__)

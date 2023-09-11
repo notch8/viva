@@ -1,6 +1,16 @@
-# README
+# VIVA
 
-## Starting the application
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Testing](#testing)
+  - [RSpec](#rspec)
+  - [Cypress](#cypress)
+- [Linting](#linting)
+
+---
+
+## Getting Started
 
 - To run the application using Docker, will need to have Docker installed on your machine.
   [Get Docker](https://docs.docker.com/get-docker/)
@@ -27,14 +37,25 @@
 
 - After running `dory up`, you can view the app in the browser at `http://viva.test`.
 
-## Running the test suite
+## Testing
 
-You can run the test suite from inside the web container
+### RSpec
+RSpec is used to test the Rails code.
 
 ```bash
 docker compose exec web bash
 bundle exec rspec
 ```
+
+### Cypress
+Cypress is used to test the JavaScript code.
+_NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
+
+1. Open the Cypress Launchpad: `yarn run cypress open --component`
+    - If/when end-to-end tests are configured, use the `--e2e` flag to run those tests
+2. Choose a browser to run the tests in.
+    - This opens the test suite in the browser you chose
+3. Click on the name of the test you'd like to run
 
 ## Linting
 

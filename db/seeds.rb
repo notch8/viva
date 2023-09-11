@@ -28,9 +28,13 @@ categories = (1..10).map do |i|
   Category.create!(name: Faker::Lorem.unique.word)
 end
 
+types = ['Question::SelectAllThatApply', 'Question::StimulusCaseStudy', 'Question::Matching', 'Question::Traditional', 'Question::DragAndDrop']
+
 (1..10).each do |i|
-  question = Question.create!(text: Faker::Lorem.unique.sentence, type: "Question")
+  question = Question.create!(text: Faker::Lorem.unique.sentence, type: types.first)
   question.keywords = keywords.shuffle[0..rand(4)]
   question.categories = categories.shuffle[0..rand(2)]
   question.save!
+
+  types = types.rotate
 end

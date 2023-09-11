@@ -13,6 +13,8 @@ FactoryBot.define do
       data { (1..4).map { |i| ["Left #{i} #{Faker::Lorem.unique.word}", "Right #{i} #{Faker::Lorem.unique.word}"] } }
     end
     factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question
-    factory :question_select_all_that_apply, class: Question::SelectAllThatApply, parent: :question
+    factory :question_select_all_that_apply, class: Question::SelectAllThatApply, parent: :question do
+      data { "A::t|B::t|C::f" }
+    end
   end
 end

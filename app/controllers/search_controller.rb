@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require 'faker'
-
 ##
 # The controller to handle methods related to the search page.
 class SearchController < ApplicationController
   def index
     render inertia: 'Search', props: {
-      name: Faker::Name.name # this is not being used, just leaving it so we remember how to pass props
+      keywords: Keyword.all.pluck(:name),
+      categories: Category.all.pluck(:name),
+      filtered_questions: Question.filter(keywords: params[:keywords], categories: params[:categories])
     }
   end
 end

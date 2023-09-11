@@ -27,20 +27,6 @@ require 'inertia_rails/rspec'
 #
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
-# Copied from Hyrax; there's an assumption in the Rails 'test' environment that
-# we're running tests in a similar place/state as our development environment.
-# In other words, when we boot rails in test we check the migrations of both
-# test and development.
-#
-# In CI, we don't have a development environment we've worked against, so
-# typically the migrations have not run.  With the following code, we run the
-# development migrations.
-db_config = ActiveRecord::Base.configurations.find_db_config('development')
-ActiveRecord::Tasks::DatabaseTasks.create(db_config)
-ActiveRecord::Migrator.migrations_paths = [Rails.root.join('db', "migrate").to_s]
-ActiveRecord::Tasks::DatabaseTasks.migrate
-ActiveRecord::Base.descendants.each(&:reset_column_information)
-
 # Checks for pending migrations and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove these lines.
 begin

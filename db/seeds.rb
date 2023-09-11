@@ -20,21 +20,21 @@ end
 # This is some very random data to quickly populate a non-production instance.
 [Keyword, Category, Question].each(&:destroy_all)
 
+require File.expand_path('../../spec/support/factory_bot', __FILE__)
+
 keywords = (1..10).map do |i|
-  Keyword.create!(name: Faker::Lorem.unique.word)
+  FactoryBot.create(:keyword)
 end
 
 categories = (1..10).map do |i|
-  Category.create!(name: Faker::Lorem.unique.word)
+  FactoryBot.create(:category)
 end
 
-types = ['Question::SelectAllThatApply', 'Question::StimulusCaseStudy', 'Question::Matching', 'Question::Traditional', 'Question::DragAndDrop']
-
-(1..10).each do |i|
-  question = Question.create!(text: Faker::Lorem.unique.sentence, type: types.first)
-  question.keywords = keywords.shuffle[0..rand(4)]
-  question.categories = categories.shuffle[0..rand(2)]
-  question.save!
-
-  types = types.rotate
+Question.descendants.each do |qt|
+  (1..2).each do
+    question = FactoryBot.create(qt.model_name.param_key)
+    question.keywords = keywords.shuffle[0..rand(4)]
+    question.categories = categories.shuffle[0..rand(2)]
+    question.save!
+  end
 end

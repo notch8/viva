@@ -15,6 +15,8 @@ RSpec.describe Question::Matching do
       ["Hello:: |Wonder::Wall", [["Hello"], ["Wonder", "Wall"]], false],
       # When having an empty middle-part
       ["Hello| |Wonder::Wall", [["Hello"], [], ["Wonder", "Wall"]], false],
+      [nil, nil, false],
+      ["", [], false],
       # Given an array that is valid
       [[["Hello", "World"], ["Wonder", "Wall"]], [["Hello", "World"], ["Wonder", "Wall"]], true],
       # Given an array that has a blank value.

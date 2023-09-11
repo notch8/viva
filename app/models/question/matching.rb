@@ -14,19 +14,18 @@ class Question::Matching < Question
   # for the data to be used in the application, beyond export of data, is minimal.
   serialize :data, JSON
   validate :well_formed_serialized_data
+  validates :data, presence: true
 
   ##
   # @param input [String, Array<Array<String>>] process the data to normalize it for persistence.
   #        When given a string assume it is a CSV cell and coerce and parse.  Otherwise, use the
   #        given input directly.  See spec/models/question/matching.rb for more details.
   def data=(input)
-    if input.is_a?(String)
-      # Assuming a CSV.  As we expand this work, we may need to sniff if this is XML.
-      input = input.split(%r{\s*\|\s*}).map { |pair| pair.strip.split("::").map(&:strip) }
-      super(input)
-    else
-      super
-    end
+    return super unless input.is_a?(String)
+
+    # Assuming a CSV.  As we expand this work, we may need to sniff if this is XML.
+    input = input.split(%r{\s*\|\s*}).map { |pair| pair.strip.split("::").map(&:strip) }
+    super(input)
   end
 
   ##
@@ -38,7 +37,7 @@ class Question::Matching < Question
       return false
     end
 
-    unless data.all? { |datum| datum.is_a?(Array) && datum.size == 2 && datum.all? { |d| d.is_a?(String) && d.present? } }
+    unless data.all? { |pair| pair.is_a?(Array) && pair.size == 2 && pair.all? { |d| d.is_a?(String) && d.present? } }
       errors.add(:data, "expected to be an array of arrays, each sub-array having two elements, both of which are strings")
       return false
     end

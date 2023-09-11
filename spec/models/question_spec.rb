@@ -3,19 +3,41 @@
 require 'rails_helper'
 
 RSpec.describe Question, type: :model do
-  describe 'validations' do
-    it { is_expected.to validate_presence_of(:text) }
+  # The base Question instance should never be valid; we want to specify the correct type.
+  it_behaves_like "a Question", valid: false
+
+  describe '.descendants' do
+    subject { described_class.descendants }
+
+    # rubocop:disable RSpec/ExampleLength
+    it do
+      is_expected.to(
+        match_array([Question::DragAndDrop,
+                     Question::Matching,
+                     Question::SelectAllThatApply,
+                     Question::StimulusCaseStudy,
+                     Question::Traditional])
+      )
+    end
+    # rubocop:enable RSpec/ExampleLength
   end
 
-  describe 'associations' do
-    it { is_expected.to have_and_belong_to_many(:categories) }
-    it { is_expected.to have_and_belong_to_many(:keywords) }
-  end
+  describe '.types' do
+    subject { described_class.types }
 
-  describe 'factories' do
-    subject { FactoryBot.build(:question) }
-
-    it { is_expected.to be_valid }
+    # rubocop:disable RSpec/ExampleLength
+    it do
+      is_expected.to(
+        match_array([
+                      "Question::DragAndDrop",
+                      "Question::Matching",
+                      "Question::SelectAllThatApply",
+                      "Question::StimulusCaseStudy",
+                      "Question::Traditional"
+                    ])
+      )
+    end
+    # rubocop:enable RSpec/ExampleLength
   end
 
   describe '.filter' do
@@ -26,9 +48,9 @@ RSpec.describe Question, type: :model do
       # of the data is noticable.  In other words, by running multiple tests with one setup
       # (e.g. the below creation of questions, keywords, and categories) we don't have to pay a
       # setup cost for each individual test.
-      question1 = FactoryBot.create(:question)
-      question2 = FactoryBot.create(:question)
-      question3 = FactoryBot.create(:question)
+      question1 = FactoryBot.create(:question_matching)
+      question2 = FactoryBot.create(:question_drag_and_drop)
+      question3 = FactoryBot.create(:question_stimulus_case_study)
       keyword1 = FactoryBot.create(:keyword)
       keyword2 = FactoryBot.create(:keyword)
       keyword3 = FactoryBot.create(:keyword)
@@ -70,6 +92,12 @@ RSpec.describe Question, type: :model do
 
       # When nothing meets the criteria
       expect(described_class.filter(categories: [category1.name], keywords: [keyword2.name])).to eq([])
+
+      # When given a type it filters to only that type
+      expect(described_class.filter(type: question1.model_name.name)).to eq([question1])
+
+      # When given a type and categories that don't overlap
+      expect(described_class.filter(type: question1.model_name.name, keywords: [keyword2.name])).to eq([])
     end
     # rubocop:enable RSpec/ExampleLength
     # rubocop:enable RSpec/MultipleExpectations

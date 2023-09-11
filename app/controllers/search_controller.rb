@@ -7,7 +7,12 @@ class SearchController < ApplicationController
     render inertia: 'Search', props: {
       keywords: Keyword.all.pluck(:name),
       categories: Category.all.pluck(:name),
-      filtered_questions: Question.filter(keywords: params[:keywords], categories: params[:categories])
+      types: Question.types,
+      filtered_questions: Question.filter(
+               keywords: params[:keywords],
+               categories: params[:categories],
+               type: params[:type]
+             )
     }
   end
 end

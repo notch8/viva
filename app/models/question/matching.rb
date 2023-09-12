@@ -3,11 +3,6 @@
 ##
 # A matching {Question}'s data includes pairs (e.g. A goes to B, C goes to D).
 #
-# @example
-#   question = Question::Matching.new(text: "Hello world!", data: "A::B|C::D")
-#   question.data == [["A", "B"], ["C", "D]]
-#   => true
-#
 # @see #well_formed_serialized_data
 class Question::Matching < Question
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
@@ -15,18 +10,6 @@ class Question::Matching < Question
   serialize :data, JSON
   validate :well_formed_serialized_data
   validates :data, presence: true
-
-  ##
-  # @param input [String, Array<Array<String>>] process the data to normalize it for persistence.
-  #        When given a string assume it is a CSV cell and coerce and parse.  Otherwise, use the
-  #        given input directly.  See spec/models/question/matching.rb for more details.
-  def data=(input)
-    return super unless input.is_a?(String)
-
-    # Assuming a CSV.  As we expand this work, we may need to sniff if this is XML.
-    input = input.split(%r{\s*\|\s*}).map { |pair| pair.strip.split("::").map(&:strip) }
-    super(input)
-  end
 
   ##
   # Verify that the resulting data attribute is an array with each element being an array of two

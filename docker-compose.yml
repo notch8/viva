@@ -49,5 +49,19 @@ services:
       VIRTUAL_PORT: 3000
       VITE_RUBY_HOST: vite
 
+  cypress-components-on-chrome:
+    image: cypress/included:13.2.0
+    command: '--component --browser chrome'
+    working_dir: /cypress
+    volumes:
+      - ./:/cypress
+
+  cypress-components-on-firefox:
+    image: cypress/included:13.2.0
+    command: '--component --browser firefox'
+    working_dir: /cypress
+    volumes:
+      - ./:/cypress
+
 volumes:
   postgres:

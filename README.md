@@ -51,7 +51,7 @@ bundle exec rspec
 Cypress is used to test the JavaScript code.
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
 
-1. Open the Cypress Launchpad: `yarn run cypress open --component`
+1. Open the Cypress Launchpad: `yarn cypress:component`
     - If/when end-to-end tests are configured, use the `--e2e` flag to run those tests
 2. Choose a browser to run the tests in.
     - This opens the test suite in the browser you chose

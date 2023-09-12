@@ -13,3 +13,4 @@ jobs:
           build: yarn cypress info
           start: yarn start:ci
           component: true
+          browser: chrome

@@ -9,7 +9,6 @@ gem 'bootstrap', '~> 5.3.0.alpha3'
 gem 'capybara', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
 gem 'database_cleaner-active_record', group: %i[development test]
 gem 'debug', platforms: %i[mri mingw x64_mingw], group: %i[development test]
-gem 'rspec-its', group: %i[development test]
 gem 'devise', '~> 4.9'
 gem 'factory_bot', '~> 6.2'
 gem 'factory_bot_rails', group: %i[development test]

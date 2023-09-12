@@ -11,6 +11,6 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           build: yarn cypress info
-          start: yarn start:ci
+          start: yarn start
           component: true
           browser: chrome

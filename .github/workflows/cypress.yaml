@@ -13,6 +13,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: docker compose up -d web
+          # start: docker compose up -d web
           component: true
           browser: chrome

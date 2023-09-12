@@ -25,6 +25,9 @@ jobs:
   test:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
+  cypress:
+    needs: build
+    uses: ./cypress.yaml
   lint:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13

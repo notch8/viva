@@ -16,24 +16,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
       - name: Cypress run
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
         with:
-          # Starts web server for E2E tests - replace with your own server invocation
-          # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
-          # install: false
-          # auto-cancel-after-failures: 2
-          # wait-on: 'http://localhost:3000' # Waits for above
+          browser: chrome
+          component: true
           # Records to Cypress Cloud
-          # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
           key: $CYPRESS_RECORD_KEY
-          parallel: true # Runs test in parallel using settings above
-          component: true
-          browser: chrome
-          # config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
-          # config-file: cypress.config.js
+          # Note: Cypress test parallelization record: true & key to be
+          # set, since this feature requires a Cypress Cloud account.
+          parallel: true
+
       # - name: Artifact upload screenshots
       #   uses: actions/upload-artifact@v3
       #   # add the line below to store screenshots only on failures
@@ -49,8 +48,5 @@ jobs:
       #     path: cypress/videos
       #     if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
         env:
-          # For recording and parallelization to work you must set your CYPRESS_RECORD_KEY
-          # in GitHub repo → Settings → Secrets → Actions
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # Creating a token https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

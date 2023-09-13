@@ -49,11 +49,29 @@ bundle exec rspec
 
 ### Cypress
 Cypress is used to test the JavaScript code.
+
+#### CLI
+_NOTE: Cypress defaults to running e2e tests. To run component tests, add `--component` to any of the commands you run._
+
+- Use one of the `cypress:run` scripts in the [package.json](./package.json) file
+- If you don't see the command you'd like to run, use `yarn run [COMMAND]`
+  - Ref: https://docs.cypress.io/guides/guides/command-line#Commands
+
+``` bash
+# examples
+yarn cypress:run
+# yarn cypress:run --component # TODO: Figure out why component tests are broken now.
+  # Outside the containers it throws a "The package "@esbuild/darwin-x64" could not be found, and is needed by esbuild." error.
+  # Inside the web container it throws an "xvfb" error. (https://docs.cypress.io/guides/continuous-integration/introduction#Xvfb)
+yarn cypress:run --spec 'cypress/e2e/splash.cy.jsx'
+```
+
+#### LaunchPad
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
 
-1. Open the Cypress Launchpad: `yarn run cypress open --component`
-    - If/when end-to-end tests are configured, use the `--e2e` flag to run those tests
-2. Choose a browser to run the tests in.
+1. Open the Cypress Launchpad: `yarn cypress:open`
+2. Choose to run end-to-end or component tests.
+3. Select a browser to run the tests in.
     - This opens the test suite in the browser you chose
 3. Click on the name of the test you'd like to run
 

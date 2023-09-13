@@ -4,4 +4,131 @@ require 'rails_helper'
 
 RSpec.describe Question::DragAndDrop do
   it_behaves_like "a Question"
+
+  describe '#slot_numbers_from_text' do
+    subject { FactoryBot.build(:question_drag_and_drop, text:).slot_numbers_from_text }
+
+    [
+      ["You see a ___1___ and it is ___3___", [1, 3]],
+      ["You see a ___1___ and it is ______", [1]],
+      ["You see a ___ 1 ___", [1]],
+      ["", []],
+      [nil, []],
+      # The _1_ is not a valid "slot" because it misses the format.
+      ["You see a _1_ and it is __2__ with a ___3___.", [3]],
+      ["You see a ___0___.", [0]]
+    ].each do |given, expected|
+      context "when text is #{given.inspect}" do
+        let(:text) { given }
+
+        it { is_expected.to eq(expected) }
+      end
+    end
+  end
+
+  describe '#sub_type' do
+    subject { FactoryBot.build(:question_drag_and_drop, text: given_text).sub_type }
+
+    context 'when text includes slots' do
+      let(:given_text) { "___1___" }
+      it { is_expected.to eq(described_class::SUB_TYPE_SLOTTED) }
+    end
+
+    context 'when text does not include slots' do
+      let(:given_text) { "Aint no slots here" }
+      it { is_expected.to eq(described_class::SUB_TYPE_ATA) }
+    end
+  end
+
+  describe 'data serialization' do
+    subject { FactoryBot.build(:question_drag_and_drop, data: given_data, text: given_text) }
+    [
+      [
+        "___1___ is comprised of ___2___",
+        [["Green", 1], ["Blue", 2]], ["Red", false],
+        true
+      ],
+      [
+        "___2___ is comprised of ___2___",
+        [["Green", 1], ["Blue", 2]],
+        false # Because of the mismatch of text slots and answer slots
+      ],
+      [
+        "___3___ is comprised of ___2___",
+        [["Green", 1], ["Blue", 2]],
+        false # Because of the mismatch of text slots and answer slots
+      ],
+      [
+        "___1___ is comprised of ___2___",
+        [["Green", 1], ["Blue", 2], ["Red", true]],
+        false # Because of the mismatch of answer slots (e.g. true and integer should not mix)
+      ],
+      [
+        "Which is truthy?",
+        [["Yes", true], ["True", true], ["No", false]],
+        true # No slots needed because we have only true/false options
+      ],
+      [
+        "Which is truthy?",
+        [["Yes", true], ["False", nil]],
+        false # Without slots the answers must be either true or false
+      ],
+      [
+        "Which is truthy?",
+        [["Yes", true], ["False", "false"]],
+        false # Without slots the answers must be either true or false
+      ],
+      [
+        "Which is truthy?",
+        [["Yes", true], ["False"]],
+        false # Without slots the answers must be either true or false
+      ],
+      [
+        "Which is truthy?",
+        [],
+        false # Must have at least one answer
+      ],
+      [
+        "Which is truthy?",
+        nil,
+        false # Must have at least one answer
+      ],
+      [
+        "Which is truthy?",
+        ["Yes", true],
+        false # Must have an array of arrays for questions
+      ],
+      [
+        "___1___",
+        [["Yes", true]],
+        false # When text has slot, answer must have slot
+      ],
+      [
+        "___1___ and ___1___",
+        [["Yes", 1]],
+        false # We have duplicate slots in the text
+      ],
+      [
+        "The color ___1___ is comprised of ___2___ and ___2___.",
+        [["Green", 1], ["Blue", 2], ["Yellow", 2], ["Red", false]],
+        true # We have duplicate slots but equal number of duplicate answers.
+      ],
+      [
+        "___1___ and ___2___",
+        [["Yes", 1], ["Other", 3]],
+        false # When text has slots there must be answers that map to each slot,
+      ]
+    ].each do |text, data, valid|
+      context "when given text of #{text.inspect} and data of #{data.inspect}" do
+        let(:given_data) { data }
+        let(:given_text) { text }
+
+        if valid
+          it { is_expected.to be_valid }
+        else
+          it { is_expected.not_to be_valid }
+        end
+      end
+    end
+  end
 end

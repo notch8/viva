@@ -8,6 +8,12 @@
 class Question < ApplicationRecord
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :keywords
+
+  ##
+  # @see {Question::StimulusCaseStudy} for aggregation.
+  has_one :as_child_question_aggregations, class_name: 'QuestionAggregation', dependent: :destroy, as: :child_question
+  has_one :parent_question, through: :as_child_question_aggregations, class_name: "Question", source_type: "Question"
+
   validates :text, presence: true
   validates :type, presence: true
 
@@ -21,6 +27,7 @@ class Question < ApplicationRecord
 
     errors.add(:type, "was #{type} but must be one of the following: #{klass_names.inspect}")
   end
+  private :type_must_be_for_descendant
 
   ##
   # @return [Array<String>]
@@ -31,6 +38,9 @@ class Question < ApplicationRecord
   ##
   # Filter questions by keywords and/or categories.
   #
+  # We omit questions that are part of a {QuestionAggregation} (e.g. those that are children to a
+  # {Question::StimulusCaseStudy}.
+  #
   # @param keywords [Array<String>] when provided, a question must have all of the given keywords.
   # @param categories [Array<String>] when provided, a question must have all of the provided
   #        categories.
@@ -40,7 +50,9 @@ class Question < ApplicationRecord
   #        query result set (e.g. we don't have to serialize/send/deserialize un-used columns.
   #        *NOTE:* You must include the :type column if you want to leverage the inheritance.
   #
-  # @return [ActiveRecord::Relation<Question>] Each question will have only the selected attributes.
+  # @return [ActiveRecord::Relation<Question>] Each {Question} will have only the selected
+  #         attributes (e.g. by default they won't have the :created_at, :updated_at, etc
+  #         attributes).
   #
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -51,7 +63,7 @@ class Question < ApplicationRecord
     keywords = Array.wrap(keywords)
     categories = Array.wrap(categories)
 
-    questions = Question.select(*selected_attributes).all
+    questions = Question.select(*selected_attributes).where(child_of_aggregation: false)
 
     if keywords.present?
       # NOTE: This assumes that we don't persist duplicate pairings of question/keyword; this is

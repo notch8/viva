@@ -60,7 +60,7 @@ _NOTE: Cypress defaults to running e2e tests. To run component tests, add `--com
 ``` bash
 # examples
 yarn cypress:run
-# yarn cypress:run --component # This does not work at the moment.
+# yarn cypress:run --component # TODO: Figure out why component tests are broken now.
   # Outside the containers it throws a "The package "@esbuild/darwin-x64" could not be found, and is needed by esbuild." error.
   # Inside the web container it throws an "xvfb" error. (https://docs.cypress.io/guides/continuous-integration/introduction#Xvfb)
 yarn cypress:run --spec 'cypress/e2e/splash.cy.jsx'

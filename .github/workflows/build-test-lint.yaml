@@ -30,7 +30,7 @@ jobs:
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
   cypress-run:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
     # Also see warning here https://github.com/cypress-io/github-action#parallel

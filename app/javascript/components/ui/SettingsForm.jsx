@@ -5,8 +5,7 @@ import { useForm } from '@inertiajs/inertia-react'
 import { Row, Col, InputGroup, Form, Button, Alert } from 'react-bootstrap'
 
 const SettingsForm = ({ currentUser }) => {
-  const [show, setShow] = useState(false)
-  const { data, setData, patch, processing, isDirty, errors } = useForm({
+  const { data, setData, patch, processing, errors, clearErrors, recentlySuccessful } = useForm({
     first_name: currentUser.first_name || '',
     last_name: currentUser.last_name || '',
     title: currentUser.title || '',
@@ -14,12 +13,9 @@ const SettingsForm = ({ currentUser }) => {
   })
 
   const submit = (e) => {
-    setShow(false)
+    clearErrors()
     e.preventDefault()
     patch('/settings/update')
-    if (isDirty && (errors.toString.length === 0)) {
-      setShow(true)
-    }
   }
 
   return (
@@ -103,8 +99,8 @@ const SettingsForm = ({ currentUser }) => {
         </Row>
         <Button type="submit" disabled={processing}>Save</Button>
       </Form>
-      {show &&
-        <Alert className='mt-3' variant="success" onClose={() => setShow(false)} dismissible>
+      {recentlySuccessful &&
+        <Alert className='mt-3' variant="success">
           <p>Your information has been saved successfully.</p>
         </Alert>
       }

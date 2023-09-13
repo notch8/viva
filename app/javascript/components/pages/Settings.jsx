@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Container } from 'react-bootstrap'
 import Layout from '../App'
 import SettingsForm from '../ui/SettingsForm'

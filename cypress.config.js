@@ -5,6 +5,7 @@ module.exports = defineConfig({
     devServer: {
       framework: 'react',
       bundler: 'vite',
+      viteConfig: './vite.config.ts',
     },
   },
 

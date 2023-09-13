@@ -24,14 +24,14 @@ jobs:
           # https://docs.cypress.io/guides/continuous-integration/introduction#Boot-your-server
           install: false
           auto-cancel-after-failures: 2
-          wait-on: 'http://localhost:3000' # Waits for above
+          # wait-on: 'http://localhost:3000' # Waits for above
           # Records to Cypress Cloud
           # https://docs.cypress.io/guides/cloud/projects#Set-up-a-project-to-record
           record: true
           parallel: true # Runs test in parallel using settings above
           component: true
           browser: chrome
-          config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
+          # config: pageLoadTimeout=100000,baseUrl=http://localhost:3000
           # config-file: cypress.config.js
       - name: Artifact upload screenshots
         uses: actions/upload-artifact@v3

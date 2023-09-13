@@ -1,5 +1,15 @@
 name: Cypress Tests
-on: [push]
+run-name: Cypress Tests of ${{ github.ref_name }} by @${{ github.actor }}
+on:
+  push: []
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+
 jobs:
   cypress-run:
     runs-on: ubuntu-latest

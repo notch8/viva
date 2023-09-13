@@ -1,11 +1,11 @@
 
 
 import React from 'react'
-import { Row, Col, InputGroup, Form } from 'react-bootstrap'
+import { InputGroup, Form, Button } from 'react-bootstrap'
 
 const PasswordForm = () => {
   return (
-    <>
+    <Form>
       <InputGroup className="mb-3">
         <InputGroup.Text id='current-password'>
           Current Password
@@ -33,7 +33,8 @@ const PasswordForm = () => {
           aria-describedby="confirm-new-password"
         />
       </InputGroup>
-    </>
+      <Button type="submit">Save</Button>
+    </Form>
   )
 }
 

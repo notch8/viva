@@ -7,13 +7,12 @@ class SettingsController < ApplicationController
 
   def index
     render inertia: 'Settings', props: {
-      currentUser: current_user,
+      currentUser: current_user
     }
   end
 
   def update
     if current_user.update(user_params)
-      #raise 'hell'
       redirect_to settings_path, notice: 'Settings updated successfully'
     else
       render inertia: 'Settings', props: {

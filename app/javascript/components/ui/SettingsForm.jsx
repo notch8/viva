@@ -97,7 +97,7 @@ const SettingsForm = ({ currentUser }) => {
             </InputGroup>
           </Col>
         </Row>
-        <Button type="submit" disabled={processing}>Save</Button>
+        <Button className='btn btn-primary d-block ms-auto' type="submit" disabled={processing}>Save</Button>
       </Form>
       {recentlySuccessful &&
         <Alert className='mt-3' variant="success">

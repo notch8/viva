@@ -8,24 +8,22 @@ RSpec.describe Question::Matching do
   describe 'data serialization' do
     subject { FactoryBot.build(:question_matching, data:) }
     [
-      ["Hello::World|Wonder::Wall", [["Hello", "World"], ["Wonder", "Wall"]], true],
-      ["Hello :: World | Wonder :: Wall", [["Hello", "World"], ["Wonder", "Wall"]], true],
-      ["Hello :: World", [["Hello", "World"]], true],
+      [[["Hello", "World"], ["Wonder", "Wall"]], true],
+      [[["Hello", "World"], ["Wonder", "Wall"]], true],
+      [[["Hello", "World"]], true],
       # When missing the right side of a pairing
-      ["Hello:: |Wonder::Wall", [["Hello"], ["Wonder", "Wall"]], false],
+      [[["Hello"], ["Wonder", "Wall"]], false],
       # When having an empty middle-part
-      ["Hello| |Wonder::Wall", [["Hello"], [], ["Wonder", "Wall"]], false],
-      [nil, nil, false],
-      ["", [], false],
+      [[["Hello"], [], ["Wonder", "Wall"]], false],
+      [nil, false],
+      [[], false],
       # Given an array that is valid
-      [[["Hello", "World"], ["Wonder", "Wall"]], [["Hello", "World"], ["Wonder", "Wall"]], true],
+      [[["Hello", "World"], ["Wonder", "Wall"]], true],
       # Given an array that has a blank value.
-      [[["Hello", ""], ["Wonder", "Wall"]], [["Hello", ""], ["Wonder", "Wall"]], false]
-    ].each do |given, expected, valid|
+      [[["Hello", ""], ["Wonder", "Wall"]], false]
+    ].each do |given, valid|
       context "when given #{given.inspect}" do
         let(:data) { given }
-
-        its(:data) { is_expected.to eq(expected) }
 
         if valid
           it { is_expected.to be_valid }

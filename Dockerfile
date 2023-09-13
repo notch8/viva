@@ -19,6 +19,7 @@ RUN (bundle check || bundle install)
 ADD package.json ./package.json
 ADD yarn.lock ./yarn.lock
 RUN yarn install
+# RUN CYPRESS_CACHE_FOLDER=~/.cache/Cypress yarn install
 
 COPY . $APP_HOME
 RUN bash -l -c " \

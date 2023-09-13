@@ -49,5 +49,47 @@ services:
       VIRTUAL_PORT: 3000
       VITE_RUBY_HOST: vite
 
+  # TODO: why does this container start, then exit about 10 seconds later?
+  # My intent is to have this be a container that loads with cypress installed
+  # so we can run our cypress specs in a containerized environment like we do with rspec.
+  cypress:
+    # https://hub.docker.com/u/cypress
+    image: cypress/included:13.2.0
+    container_name: cypress
+    depends_on:
+      - web
+    # environment:
+    #   CYPRESS_CACHE_FOLDER: '~/.cache/Cypress'
+    # command: ''
+    working_dir: /cypress
+    volumes:
+      - ./:/cypress
+
+  # cypress-e2e:
+  #   image: cypress/included:13.2.0
+  #   build: ./e2e
+  #   container_name: cypress
+  #   depends_on:
+  #     - web
+  #   # note: inside e2e container, the network allows accessing
+  #   # "web" host under name "web"
+  #   # so "curl http://web" would return whatever the webserver
+  #   # in the "web" container is cooking
+  #   # see https://docs.docker.com/compose/networking/
+  #   environment:
+  #     - CYPRESS_baseUrl=http://web
+  #   command: yarn cypress:run
+  #   # mount the host directory e2e/cypress and the file e2e/cypress.config.js as
+  #   # volumes within the container
+  #   # this means that:
+  #   #  1. anything that Cypress writes to these folders (e.g., screenshots,
+  #   #     videos) appears also on the Docker host's filesystem
+  #   #  2. any change that the developer applies to Cypress files on the host
+  #   #     machine immediately takes effect within the e2e container (no docker
+  #   #     rebuild required).
+  #   volumes:
+  #     - ./e2e/cypress:/app/cypress
+  #     - ./e2e/cypress.config.js:/app/cypress.config.js
+
 volumes:
   postgres:

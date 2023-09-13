@@ -41,6 +41,11 @@ RSpec.describe Question, type: :model do
   end
 
   describe '.filter' do
+    it 'omits children of question aggregation' do
+      FactoryBot.create(:question_matching, child_of_aggregation: true)
+      expect(described_class.filter).to eq([])
+    end
+
     # rubocop:disable RSpec/ExampleLength
     # rubocop:disable RSpec/MultipleExpectations
     it 'filters by keyword' do

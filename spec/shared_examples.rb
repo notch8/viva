@@ -10,6 +10,8 @@ RSpec.shared_examples 'a Question' do |valid: true|
     subject { described_class.new }
     it { is_expected.to have_and_belong_to_many(:categories) }
     it { is_expected.to have_and_belong_to_many(:keywords) }
+    it { is_expected.to have_one(:as_child_question_aggregations) }
+    it { is_expected.to have_one(:parent_question) }
   end
 
   describe 'factories' do

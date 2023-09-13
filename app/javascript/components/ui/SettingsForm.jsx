@@ -4,16 +4,14 @@ import React, { useState } from 'react'
 import { useForm } from '@inertiajs/inertia-react'
 import { Row, Col, InputGroup, Form, Button, Alert } from 'react-bootstrap'
 
-const SettingsForm = ({ currentUser, notice }) => {
+const SettingsForm = ({ currentUser }) => {
+  const [show, setShow] = useState(false)
   const { data, setData, patch, processing, isDirty, errors } = useForm({
     first_name: currentUser.first_name || '',
     last_name: currentUser.last_name || '',
     title: currentUser.title || '',
     email: currentUser.email || '',
   })
-
-  const [show, setShow] = useState(false)
-  // const [validated, setValidated] = useState(false);
 
   const submit = (e) => {
     setShow(false)
@@ -23,8 +21,6 @@ const SettingsForm = ({ currentUser, notice }) => {
       setShow(true)
     }
   }
-
-  //console.log(errors)
 
   return (
     <>

@@ -5,65 +5,6 @@ import SettingsForm from '../ui/SettingsForm'
 import PasswordForm from '../ui/PasswordForm'
 
 const Settings = ({ currentUser }) => {
-  const [passwordFormValues, setPasswordFormValues] = useState({
-    currentPassword: '',
-    newPassword: '',
-    passwordConfirmation: ''
-  })
-
-  const handleChange = (e) => {
-    const key = e.target.id;
-    const value = e.target.value
-    setValues(values => ({
-        ...values,
-        [key]: value,
-    }))
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    router.post('/users', values)
-  }
-
-  // const updateSettingsForm = (value, property) => {
-  //   const [initialProperty, nestedProperty] = property.split('.')
-9   //       ? { [initialProperty]: { ...requestForm[initialProperty], [nestedProperty]: value } }
-  //       : { [initialProperty]: value }
-
-  //     return {
-  //       ...currentState,
-  //       ...updatedState,
-  //     }
-  //   })
-  // }
-
-  // const handleSubmit = async (event) => {
-  //   setButtonDisabled(true)
-  //   if (!event.formData) {
-  //     // these steps are needed for requests without a dynamic form
-  //     // but error on the event resulting from the react json form
-  //     event.preventDefault()
-  //     event.stopPropagation()
-  //     setValidated(true)
-  //   }
-  //   setFormSubmitting(true)
-
-  //   if (requestForm.billingSameAsShipping === true) Object.assign(requestForm.billing, requestForm.shipping)
-
-  //   const { data, error } = await createRequest({
-  //     dynamicFormData: { name: dynamicForm.name, formData, ...requestForm },
-  //     wareID,
-  //     accessToken,
-  //   })
-  //   // if we have data AND an error, the request was created, but the attachments failed
-  //   // in that case, we still need to send the request to the vendor
-  //   if (error && !data) {
-  //     setFormSubmitting(false)
-  //     setCreateRequestError(error)
-  //     return
-  //   } else if (error) {
-  //     setCreateRequestError(error)
-  //   }
 
   return (
     <Layout>

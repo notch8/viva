@@ -17,7 +17,14 @@
     "wouter": "^2.11.0"
   },
   "scripts": {
-    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets"
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "cypress:run:chrome": "cypress run --browser chrome",
+    "cypress:run:firefox": "cypress run --browser firefox",
+    "cypress:run:record": "cypress run --record",
+    "cypress:run:record:chrome": "cypress run --record --browser chrome",
+    "cypress:run:record:firefox": "cypress run --record --browser firefox"
   },
   "devDependencies": {
     "@types/react": "^18.0.21",

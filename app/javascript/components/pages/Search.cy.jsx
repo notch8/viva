@@ -1,5 +1,5 @@
 import React from 'react'
-import Search from '../../app/javascript/components/pages/Search'
+import Search from './Search'
 
 describe('<Search />', () => {
   it('renders', () => {
@@ -7,3 +7,4 @@ describe('<Search />', () => {
     cy.mount(<Search />)
   })
 })
+

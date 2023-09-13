@@ -8,8 +8,38 @@ jobs:
     container:
       image: cypress/browsers:node-20.6.1-chrome-116.0.5845.187-1-ff-117.0-edge-116.0.1938.76-1
     steps:
+      # - name: Print versions 🖨️
+      #   run: |
+      #     node -v
+      #     yarn -v
       - name: Checkout
         uses: actions/checkout@v3
+      # - name: Github Container Login
+      #   uses: docker/login-action@v2
+      #   with:
+      #     registry: ${{ env.REGISTRY }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+      #   if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      #   with:
+      #     limit-access-to-actor: true
+      # - name: Pull image to prevent build
+      #   run: >-
+      #     cd ${{ inputs.subdir }};
+      #     touch .env;
+      #     docker compose pull web
+      # - name: Pull worker image to prevent build
+      #   if: ${{ inputs.worker }}
+      #   run: >-
+      #     cd ${{ inputs.subdir }};
+      #     docker compose pull worker
+      # - name: Start containers
+      #   run: >-
+      #     cd ${{ inputs.subdir }};
+      #     [ -f "db/schema.rb" ] && chmod 777 db/schema.rb;
+      #     docker compose up -d web
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:

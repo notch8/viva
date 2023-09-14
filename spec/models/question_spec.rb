@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'csv'
 
 RSpec.describe Question, type: :model do
   # The base Question instance should never be valid; we want to specify the correct type.
@@ -21,6 +22,25 @@ RSpec.describe Question, type: :model do
       )
     end
     # rubocop:enable RSpec/ExampleLength
+  end
+
+  describe '.import_csv' do
+    let(:csv) do
+      CSV.new("TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2\n" \
+                        "Traditional,,Which one is true?,1,true,false", headers: true)
+    end
+
+    it "creates a Traditional question" do
+      expect do
+        described_class.import_csv(csv)
+      end.to change(Question::Traditional, :count).by(1)
+    end
+  end
+
+  describe '.import_csv_row' do
+    it 'should be implemented by subclasses' do
+      expect { described_class.import_csv_row }.to raise_error(NotImplementedError)
+    end
   end
 
   describe '.types' do

@@ -36,6 +36,26 @@ class Question < ApplicationRecord
   end
 
   ##
+  # Read through the given :csv and create the corresponding questions.
+  #
+  # @param csv [CSV]
+  #
+  # @todo Given that they are uploading a CSV and there's significant validation, we're almost
+  #       certainly going to want an object to handle the importer and tracking of what worked and
+  #       what failed.  But that's a not yet problem.
+  def self.import_csv(csv)
+    csv.each do |row|
+      type = row.fetch('TYPE')
+      klass = "Question::#{type}".constantize
+      klass.import_csv_row(row)
+    end
+  end
+
+  def self.import_csv_row(*args)
+    raise NotImplementedError, "#{self.class}.#{__method__}"
+  end
+
+  ##
   # Filter questions by keywords and/or categories.
   #
   # We omit questions that are part of a {QuestionAggregation} (e.g. those that are children to a

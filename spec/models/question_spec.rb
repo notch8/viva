@@ -12,7 +12,8 @@ RSpec.describe Question, type: :model do
     # rubocop:disable RSpec/ExampleLength
     it do
       is_expected.to(
-        match_array([Question::DragAndDrop,
+        match_array([Question::BowTie,
+                     Question::DragAndDrop,
                      Question::Matching,
                      Question::SelectAllThatApply,
                      Question::StimulusCaseStudy,
@@ -29,6 +30,7 @@ RSpec.describe Question, type: :model do
     it do
       is_expected.to(
         match_array([
+                      "Question::BowTie",
                       "Question::DragAndDrop",
                       "Question::Matching",
                       "Question::SelectAllThatApply",
@@ -55,7 +57,7 @@ RSpec.describe Question, type: :model do
       # setup cost for each individual test.
       question1 = FactoryBot.create(:question_matching)
       question2 = FactoryBot.create(:question_drag_and_drop)
-      question3 = FactoryBot.create(:question_stimulus_case_study)
+      question3 = FactoryBot.create(:question_select_all_that_apply)
       keyword1 = FactoryBot.create(:keyword)
       keyword2 = FactoryBot.create(:keyword)
       keyword3 = FactoryBot.create(:keyword)

@@ -33,5 +33,13 @@ FactoryBot.define do
     factory :question_select_all_that_apply, class: Question::SelectAllThatApply, parent: :question do
       data { [["A", true], ["B", true], ["C", false]] }
     end
+
+    factory :question_bow_tie, class: Question::BowTie, parent: :question do
+      data do
+        { center: { label: "Center Label", answers: [["To Select", true], ["To Skip", false]] },
+          left: { label: "Center Label", answers: [["LCorrect", true], ["LIncorrect", false]] },
+          right: { label: "Center Label", answers: [["RCorrect", true], ["LIncorrect", false]] } }
+      end
+    end
   end
 end

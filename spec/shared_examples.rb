@@ -4,6 +4,7 @@ RSpec.shared_examples 'a Question' do |valid: true|
   describe 'validations' do
     subject { described_class.new }
     it { is_expected.to validate_presence_of(:text) }
+    it { is_expected.to validate_presence_of(:type) }
   end
 
   describe 'associations' do

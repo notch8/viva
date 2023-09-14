@@ -1,6 +1,6 @@
 // override theme variables here- currently we are just using the default colors, but this is where any theme color overrides will go.
 
-// $primary: ;
+$primary: #155DBD;
 // $secondary: ;
 // $success: ;
 // $info: ;
@@ -60,6 +60,12 @@ $custom-colors: (
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
 $font-family-base: 'Noto Sans', sans-serif;
+$nav-pills-border-radius: 0;
+$btn-font-family: 'Strait', sans-serif;
+.btn {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
 // the full bootstrap import must be last in order to properly override bootstrap's theme maps
 @import '../../../node_modules/bootstrap/scss/bootstrap.scss';

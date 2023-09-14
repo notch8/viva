@@ -1,6 +1,17 @@
-.input-group {
-  font-family: Strait;
-  .input-group-text {
-    text-transform: uppercase;
+.settings {
+  .input-group, .nav-pills {
+    font-family: Strait;
+    .input-group-text, .nav-link {
+      text-transform: uppercase;
+    }
+  }
+
+  .nav-pills {
+    .nav-item:first-of-type .nav-link {
+      border-top-left-radius: var(--bs-border-radius);
+    }
+    .nav-item:last-of-type .nav-link {
+      border-top-right-radius: var(--bs-border-radius);
+    }
   }
 }

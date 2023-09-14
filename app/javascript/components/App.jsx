@@ -30,7 +30,7 @@ const App = ({ children }) => {
             </Button>
           </div>
         }
-        <div id='page-content-wrapper' className='container-fluid px-0'>
+        <div id='page-content-wrapper' className='container-fluid'>
           {children}
         </div>
       </div>

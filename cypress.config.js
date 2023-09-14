@@ -6,6 +6,14 @@ module.exports = defineConfig({
     devServer: {
       framework: 'react',
       bundler: 'vite',
+      viteConfig: './vite.config.ts',
+    },
+  },
+
+  e2e: {
+    baseUrl: 'http://viva.test',
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
     },
   },
 });

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     authenticated :user do
       root 'search#index', as: :authenticated_root
       get '/settings', to: 'settings#index', as: 'settings'
+      patch '/settings/update', to: 'settings#update'
       get '/uploads', to: 'uploads#index', as: 'uploads'
     end
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_11_163507) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_13_192753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -42,10 +42,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_163507) do
     t.index ["question_id", "keyword_id"], name: "index_keywords_questions_on_question_id_and_keyword_id", unique: true
   end
 
+  create_table "question_aggregations", force: :cascade do |t|
+    t.integer "parent_question_id", null: false
+    t.string "parent_question_type", null: false
+    t.integer "child_question_id", null: false
+    t.string "child_question_type", null: false
+    t.integer "presentation_order", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_question_id", "child_question_id", "presentation_order"], name: "question_aggregations_parent_child_idx", unique: true
+    t.index ["presentation_order"], name: "index_question_aggregations_on_presentation_order"
+  end
+
   create_table "questions", force: :cascade do |t|
     t.text "text"
     t.string "type", null: false
-    t.boolean "nested", default: false
+    t.boolean "child_of_aggregation", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "data"
@@ -65,6 +77,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_11_163507) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "first_name"
+    t.string "last_name"
+    t.string "title"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

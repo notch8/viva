@@ -20,6 +20,43 @@
 #                text: "The following are animals:"
 #                data: [["Aardvark", true], ["Blue", false], ["Yellow",false], ["Cat", true]])
 class Question::DragAndDrop < Question
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
+  def self.import_csv_row(row)
+    text = row['TEXT']
+
+    # We need to sniff out the subtype and handle accordingly.
+    record = new(text:)
+
+    if record.sub_type == SUB_TYPE_SLOTTED
+      slot_numbers = record.slot_numbers_from_text
+      data = row.headers.each_with_object([]) do |header, array|
+        next if header.blank?
+        next unless header.start_with?("ANSWER_")
+        slot_number = header.split(/_+/).last.to_i
+        array << [row[header], slot_numbers.include?(slot_number) ? slot_number : false]
+      end
+    else
+      answers = row['ANSWERS']&.split(",")&.map { |answer| answer.strip.to_i }
+      data = row.headers.each_with_object([]) do |header, array|
+        next if header.blank?
+        next unless header.start_with?("ANSWER_")
+
+        index = header.split(/_+/).last.to_i
+        array << [row[header], answers.include?(index)]
+      end
+    end
+
+    record.data = data
+    record.save!
+  end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
+
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.
   serialize :data, JSON

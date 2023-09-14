@@ -58,4 +58,45 @@ RSpec.describe SettingsController do
       expect(inertia.props[:errors]).not_to be_empty
     end
   end
+
+  describe '#update_password', inertia: true do
+    it 'allows a user to update their password' do
+      user = FactoryBot.create(:user)
+      sign_in user
+
+      password_attributes = {
+        current_password: 'password', # Replace with the actual current password
+        password: 'NewPassword123',   # Replace with the new password
+        password_confirmation: 'NewPassword123'
+      }
+
+      patch :update_password, params: password_attributes
+
+      user.reload
+
+      # Verify that the password has changed
+      expect(user.valid_password?('NewPassword123')).to be true
+    end
+
+    it 'renders the Settings component with errors if the password update fails' do
+      user = FactoryBot.create(:user)
+      sign_in user
+
+      invalid_password_attributes = {
+        current_password: 'incorrect_password', # Incorrect current password
+        password: 'NewPassword123',
+        password_confirmation: 'NewPassword123'
+      }
+
+      patch :update_password, params: invalid_password_attributes
+
+      user.reload
+
+      # Verify that the password has not changed
+      expect(user.valid_password?('NewPassword123')).to be false
+
+      expect_inertia.to render_component 'Settings'
+      expect(inertia.props[:errors]).not_to be_empty
+    end
+  end
 end

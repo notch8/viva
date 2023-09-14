@@ -20,25 +20,25 @@ const Sidebar = ({ open, setOpen }) => {
           </Button>
         </div>
       </Nav.Item>
-      <Nav.Item className='my-1 bg-light-2'>
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link href="/" className={`${url === '/' ? 'active' : ''} nav-link d-flex align-items-center link-dark`}>
           <MagnifyingGlass weight='bold' alt='Search All Questions' size={18} className='me-2'/>
           Search All Questions
         </Link>
       </Nav.Item>
-      <Nav.Item className='my-1 bg-light-2'>
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link href="/uploads" className={`${url === '/uploads' ? 'active' : ''} nav-link d-flex align-items-center link-dark`}>
           <Upload weight='bold' alt='Upload Questions' size={18} className='me-2'/>
           Upload Questions
         </Link>
       </Nav.Item>
-      <Nav.Item className='my-1 bg-light-2'>
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link href="/settings" className={`${url === '/settings' ? 'active' : ''} nav-link d-flex align-items-center link-dark`} preserveState>
           <Gear weight='bold' alt='Settings' size={18} className='me-2'/>
           Settings
         </Link>
       </Nav.Item>
-      <Nav.Item className='my-1 bg-light-2'>
+      <Nav.Item className='mt-1 bg-light-2'>
         <Nav.Link href="/logout" className={`${url === '/logout' ? 'active' : ''} nav-link d-flex align-items-center link-dark`}>
           <SignOut weight='bold' alt='Sign Out' size={18} className='me-2'/>
           Sign Out

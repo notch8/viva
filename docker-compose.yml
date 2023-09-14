@@ -49,16 +49,31 @@ services:
       VIRTUAL_PORT: 3000
       VITE_RUBY_HOST: vite
 
+  initialize_app:
+    <<: *app
+    entrypoint: ["sh", "-c"]
+    command:
+      - >
+        rails db:migrate && rails db:seed
+    depends_on:
+      - web
+      - vite
+
   cypress-components-on-chrome:
     image: cypress/included:13.2.0
-    command: '--component --browser chrome'
+    environment:
+      - CYPRESS_browser=chrome
+      - CYPRESS_baseUrl=http://web:3000
+      - pageLoadTimeout=100000
     working_dir: /cypress
     volumes:
       - ./:/cypress
 
   cypress-components-on-firefox:
     image: cypress/included:13.2.0
-    command: '--component --browser firefox'
+    environment:
+      - CYPRESS_browser=firefox
+      - CYPRESS_baseUrl=http://web:3000
     working_dir: /cypress
     volumes:
       - ./:/cypress

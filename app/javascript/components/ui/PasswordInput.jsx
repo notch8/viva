@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
 import { InputGroup, Form } from 'react-bootstrap'
-import { Eye, EyeClosed } from "@phosphor-icons/react";
+import { Eye, EyeClosed } from '@phosphor-icons/react'
 
 const PasswordInput = ({ id, errors, name, setData }) => {
-  const [isVisible, setVisible] = useState(false);
+  const [isVisible, setVisible] = useState(false)
 
   const toggle = () => {
-    setVisible(!isVisible);
-  };
+    setVisible(!isVisible)
+  }
 
   return (
-    <InputGroup className="mb-3">
+    <InputGroup className='mb-3'>
       <InputGroup.Text id={id}>
         {name}
       </InputGroup.Text>

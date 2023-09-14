@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       root 'search#index', as: :authenticated_root
       get '/settings', to: 'settings#index', as: 'settings'
       patch '/settings/update', to: 'settings#update'
+      patch '/settings/update-password', to: 'settings#update_password'
       get '/uploads', to: 'uploads#index', as: 'uploads'
     end
 

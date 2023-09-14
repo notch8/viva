@@ -17,9 +17,6 @@ jobs:
   cypress-run-chrome:
     runs-on: ubuntu-latest
     name: E2E on Chrome
-    container:
-      image: cypress/browsers:latest
-      options: --user 1001
     strategy:
       fail-fast: false # https://github.com/cypress-io/github-action/issues/48
       matrix:

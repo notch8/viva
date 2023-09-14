@@ -24,7 +24,7 @@ jobs:
         # Uses the official Cypress GitHub action https://github.com/cypress-io/github-action
         uses: cypress-io/github-action@v6
         with:
-          browser: [chrome,firefox]
+          browser: chrome
           # Records to Cypress Cloud
           record: true
           # Note: Cypress test parallelization record: true & key to be

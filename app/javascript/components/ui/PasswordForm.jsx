@@ -45,10 +45,10 @@ const PasswordForm = () => {
             setData={setData}
           />
         </Col>
-        <Button type="submit" disabled={processing} className='btn btn-primary d-block ms-auto' >Save</Button>
+        <Button type='submit' disabled={processing} className='btn btn-primary d-block ms-auto' >Save</Button>
       </Form>
       {recentlySuccessful &&
-        <Alert className='mt-3' variant="success">
+        <Alert className='mt-3' variant='success'>
           <p>Your new password has been saved successfully.</p>
         </Alert>
       }

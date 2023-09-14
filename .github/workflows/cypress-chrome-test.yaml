@@ -1,5 +1,13 @@
 name: Cypress tests
-on: push
+on:
+  push:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
 jobs:
   cypress-run-chrome:
     runs-on: ubuntu-latest

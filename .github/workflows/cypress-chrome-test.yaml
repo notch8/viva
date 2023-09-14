@@ -1,6 +1,5 @@
-name: Cypress tests
+name: Cypress chrome tests
 on:
-  push:
   workflow_dispatch:
     inputs:
       debug_enabled:

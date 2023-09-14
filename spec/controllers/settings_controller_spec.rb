@@ -65,8 +65,8 @@ RSpec.describe SettingsController do
       sign_in user
 
       password_attributes = {
-        current_password: 'password', # Replace with the actual current password
-        password: 'NewPassword123',   # Replace with the new password
+        current_password: 'password',
+        password: 'NewPassword123',
         password_confirmation: 'NewPassword123'
       }
 
@@ -74,7 +74,6 @@ RSpec.describe SettingsController do
 
       user.reload
 
-      # Verify that the password has changed
       expect(user.valid_password?('NewPassword123')).to be true
     end
 
@@ -83,7 +82,7 @@ RSpec.describe SettingsController do
       sign_in user
 
       invalid_password_attributes = {
-        current_password: 'incorrect_password', # Incorrect current password
+        current_password: 'incorrect_password',
         password: 'NewPassword123',
         password_confirmation: 'NewPassword123'
       }
@@ -92,7 +91,6 @@ RSpec.describe SettingsController do
 
       user.reload
 
-      # Verify that the password has not changed
       expect(user.valid_password?('NewPassword123')).to be false
 
       expect_inertia.to render_component 'Settings'

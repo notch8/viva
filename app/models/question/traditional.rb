@@ -5,8 +5,8 @@
 # One question, many candidate answers, but only one is correct.
 class Question::Traditional < Question
   def self.import_csv_row(row)
-    text = row.fetch("TEXT")
-    answers = Array(row.fetch("ANSWERS")).map(&:to_i)
+    text = row['TEXT']
+    answers = Array(row['ANSWERS']).map(&:to_i)
     answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
     data = answer_columns.map do |col|
       index = col.split(/_+/).last.to_i

@@ -52,7 +52,7 @@ class Question < ApplicationRecord
   end
 
   def self.import_csv_row(*args)
-    raise NotImplementedError, "#{self.class}.#{__method__}"
+    raise NotImplementedError, "#{self}.#{__method__}"
   end
 
   ##

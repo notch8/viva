@@ -5,6 +5,23 @@ require 'rails_helper'
 RSpec.describe Question::Traditional do
   it_behaves_like "a Question"
 
+  describe '.import_csv_row' do
+    let(:data) do
+      CsvRow.new("TYPE" => "Traditional",
+                 "TEXT" => "Which one is true?",
+                 "ANSWERS" => "1",
+                 "ANSWER_1" => "true",
+                 "ANSWER_2" => "false")
+    end
+
+    it "creates a Traditional question" do
+      allow(data).to receive(:headers).and_return(data.keys)
+      expect do
+        described_class.import_csv_row(data)
+      end.to change(Question::Traditional, :count).by(1)
+    end
+  end
+
   describe 'data serialization' do
     subject { FactoryBot.build(:question_traditional, data:) }
     [

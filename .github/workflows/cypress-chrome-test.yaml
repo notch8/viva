@@ -1,4 +1,4 @@
-name: Cypress chrome tests
+name: Cypress Chrome Tests
 on:
   push:
     branches:

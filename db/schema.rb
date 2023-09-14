@@ -25,7 +25,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_192753) do
     t.bigint "question_id", null: false
     t.bigint "category_id", null: false
     t.index ["category_id", "question_id"], name: "index_categories_questions_on_category_id_and_question_id"
-    t.index ["question_id", "category_id"], name: "index_categories_questions_on_question_id_and_category_id", unique: true
+    t.index ["question_id", "category_id"], name: "index_categories_questions_on_question_id_and_category_id"
   end
 
   create_table "keywords", force: :cascade do |t|
@@ -39,7 +39,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_192753) do
     t.bigint "question_id", null: false
     t.bigint "keyword_id", null: false
     t.index ["keyword_id", "question_id"], name: "index_keywords_questions_on_keyword_id_and_question_id"
-    t.index ["question_id", "keyword_id"], name: "index_keywords_questions_on_question_id_and_keyword_id", unique: true
+    t.index ["question_id", "keyword_id"], name: "index_keywords_questions_on_question_id_and_keyword_id"
   end
 
   create_table "question_aggregations", force: :cascade do |t|

@@ -19,6 +19,8 @@ RSpec.describe Question::Traditional do
       expect do
         described_class.import_csv_row(data)
       end.to change(Question::Traditional, :count).by(1)
+
+      expect(described_class.last.data).to eq([["true", true], ["false", false]])
     end
   end
 

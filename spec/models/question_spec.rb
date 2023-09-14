@@ -26,14 +26,18 @@ RSpec.describe Question, type: :model do
 
   describe '.import_csv' do
     let(:csv) do
-      CSV.new("TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2\n" \
-                        "Traditional,,Which one is true?,1,true,false", headers: true)
+      CSV.new("TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1\n" \
+              "Traditional,,Which one is true?,1,true,false\n" \
+              "Matching,,Pair Up,,,,Animal,Cat",
+              headers: true)
     end
 
-    it "creates a Traditional question" do
+    it "creates multiple questions" do
       expect do
-        described_class.import_csv(csv)
-      end.to change(Question::Traditional, :count).by(1)
+        expect do
+          described_class.import_csv(csv)
+        end.to change(Question::Traditional, :count).by(1)
+      end.to change(Question::Matching, :count).by(1)
     end
   end
 

@@ -19,6 +19,7 @@ RSpec.describe SearchController do
         eq([{ "id" => question.id,
               "text" => question.text,
               "type" => question.type,
+              "level" => question.level,
               "keyword_names" => question.keywords.map(&:name),
               "category_names" => question.categories.map(&:name) }])
       )

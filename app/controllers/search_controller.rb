@@ -13,6 +13,6 @@ class SearchController < ApplicationController
                categories: params[:categories],
                type: params[:type]
              )
-           }
+    }
   end
 end

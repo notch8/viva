@@ -3,6 +3,7 @@ import { Collapse, Button, Container, Row, Col } from 'react-bootstrap'
 import { Plus, Minus } from '@phosphor-icons/react'
 import Answers from './Answers'
 import Question from './Question'
+import QuestionMetadata from './QuestionMetadata'
 
 const QuestionWrapper = ({ question }) => {
   const [open, setOpen] = useState(false)
@@ -22,39 +23,16 @@ const QuestionWrapper = ({ question }) => {
           </Collapse>
         </Col>
         <Col md={4} className='px-0'>
-          <div className='bg-light-2 p-2 rounded'>
-            <span className='fw-bold d-block mx-1'>Keywords</span>
-            {question.keywords.map((keyword) => {
-              return (
-                <div
-                  className='m-1 btn bg-white text-lowercase'
-                  variant='secondary'
-                >
-                  {keyword}
-                </div>
-              )
-            })}
-            <div className='d-flex mx-1 text-center mt-5'>
-              <Col className='bg-white rounded-start p-2'>
-                <h6 className='fw-bold'>Level</h6>
-                <span className='strait small'>{question.level}</span>
-              </Col>
-              <Col className='bg-light-3 rounded-end p-2'>
-                <h6 className='fw-bold'>Type</h6>
-                <span className='strait small'>{question.type.substring(10)}</span>
-              </Col>
-            </div>
-          </div>
+          <QuestionMetadata question={question} />
         </Col>
-        <Col sm={1} className='d-flex align-items-center'>
+        <Col sm={1} className='d-flex align-items-center justify-content-center'>
           <Button
             onClick={() => setOpen(!open)}
             aria-controls='question-answers'
             aria-expanded={open}
-            className='mx-2 mt-2 rounded-circle btn btn-secondary d-flex px-1 py-1 border'
-            variant='secondary'
+            className='mx-2 mt-2 rounded-circle d-flex px-1 py-1 bg-light-4 border-0'
             >
-            { open ? <Minus /> : <Plus /> }
+            { open ? <Minus size={20} weight="bold"  /> : <Plus size={20} weight="bold" /> }
           </Button>
         </Col>
       </Row>

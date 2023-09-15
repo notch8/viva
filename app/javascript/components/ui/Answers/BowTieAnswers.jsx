@@ -3,7 +3,7 @@ import IncorrectAnswers from '../IncorrectAnswers'
 
 const BowTieAnswers = ({ answers }) => {
   return (
-    <div id='BowTieAnswers'>
+    <div class='BowTieAnswers'>
       {answers.map((answer, index) => {
         // TODO: display the correctly formatted answers
       })}

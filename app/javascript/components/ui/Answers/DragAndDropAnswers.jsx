@@ -3,7 +3,7 @@ import IncorrectAnswers from '../IncorrectAnswers'
 
 const DragAndDropAnswers = ({ answers }) => {
   return (
-    <div id='DragAndDropAnswers'>
+    <div class='DragAndDropAnswers'>
       {answers.map((answer, index) => {
         // TODO: display the correctly formatted answers
       })}

@@ -6,7 +6,7 @@ import MatchingAnswers from './MatchingAnswers'
 const Answers = ({ question_type, answers }) => {
   return (
     <>
-      <h3 className='h6 fw-bold'>Answers</h3>
+      <h3 className='h6 fw-bold default-answers'>Answers</h3>
       {question_type === 'Question::BowTie' && <BowTieAnswers answers={answers} />}
       {question_type === 'Question::Matching' && <MatchingAnswers answers={answers} />}
       {question_type === 'Question::DragAndDrop' && <DragAndDropAnswers answers={answers} />}

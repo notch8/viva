@@ -22,28 +22,29 @@ RSpec.describe Question::Traditional do
         described_class.import_csv_row(data)
       end.to change(Question::Traditional, :count).by(1)
 
-      expect(described_class.last.data).to eq([["true", true], ["false", false]])
+      expect(described_class.last.data).to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }])
     end
   end
 
   describe 'data serialization' do
     subject { FactoryBot.build(:question_traditional, data:) }
     [
-      [[["Green"], ["Blue", false]], false],
-      [[["A", true], ["B", false], ["C", false]], true],
+      [[{ answer: "Green" }, { answer: "Blue", corret: false }], false],
+      [[{ answer: "A", correct: true }, { answer: "B", correct: false }, { answer: "C", correct: false }], true],
       # The last element for each pair must be a boolean
-      [[["A", true], ["B", false], ["C", nil]], false],
+      [[{ answer: "A", correct: true }, { answer: "B", correct: false }, { answer: "C", correct: nil }], false],
       # Disallow more than one correct answer
-      [[["A", true], ["B", true], ["C", false]], false],
+      [[{ answer: "A", correct: true }, { answer: "B", correct: true }, { answer: "C", correct: false }], false],
       [nil, false],
-      ["", false],
       [[], false],
+      ["", false],
+      [{}, false],
       # We have a triple and a single.
-      [[["Green", true, "Yellow"], ["t"]], false],
+      [[{ answer: "Green", correct: true, else: "Yellow" }, { answer: "t" }], false],
       # We have two pairs, which should be valid.
-      [[["A", true], ["B", false]], true],
-      [[["Green", false], ["Blue", false]], false],
-      [[["Green", false], ["Blue", true]], true]
+      [[{ answer: "A", correct: true }, { answer: "B", correct: false }], true],
+      [[{ answer: "Green", correct: false }, { answer: "Blue", correct: false }], false],
+      [[{ answer: "Green", correct: false }, { answer: "Blue", correct: true }], true]
     ].each do |given, valid|
       context "when given #{given.inspect}" do
         let(:data) { given }

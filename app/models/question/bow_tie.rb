@@ -23,9 +23,9 @@
 #  question = Question::BowTie.new(
 #    text: "Big Question",
 #    data: {
-#      center: { label: "Center Label", answers: [["To Select", true], ["To Skip", false]] },
-#      left: { label: "Left Label", answers: [["LCorrect", true], ["LIncorrect", false]] },
-#      right: { label: "Right Label", answers: [["RCorrect", true], ["LIncorrect", false]] }
+#      center: { label: "Center Label", answers: [{ answer: "To Select", correct: true }, { answer: "To Skip", correct: false }] },
+#      left: { label: "Left Label", answers: [{ answer: "LCorrect", correct: true }, { answer: "LIncorrect", correct: false }] },
+#      right: { label: "Right Label", answers: [{ answer: "RCorrect", correct: true }, { answer: "LIncorrect", correct: false }] }
 #    })
 #
 #   question.valid?
@@ -62,13 +62,13 @@ class Question::BowTie < Question
     data.keys.each do |key|
       elements = (data[key.to_s] || data[key.to_sym]).with_indifferent_access
       break unless __validate_is_a_hash(key, elements)
-      break unless __validate_answers_structure(key, elements[:answers])
-      break unless __validate_label_structure(key, elements[:label])
+      break unless __validate_answers_structure(key, elements['answers'])
+      break unless __validate_label_structure(key, elements['label'])
 
       if key.to_s == "center"
-        break unless __validate_one_and_only_one_true_answer(key, elements[:answers])
+        break unless __validate_one_and_only_one_true_answer(key, elements['answers'])
       else
-        break unless __validate_at_least_one_true_answer(key, elements[:answers])
+        break unless __validate_at_least_one_true_answer(key, elements['answers'])
       end
     end
   end
@@ -95,24 +95,26 @@ class Question::BowTie < Question
       return false
     end
 
-    return true if answers.all? { |element| element.is_a?(Array) && element.size == 2 && element.first.is_a?(String) && (element.last.is_a?(TrueClass) || element.last.is_a?(FalseClass)) }
+    return true if answers.all? do |a|
+                     a.is_a?(Hash) && a.keys.sort == ['answer', 'correct'] && a['answer'].is_a?(String) && a['answer'].present? && (a['correct'].is_a?(TrueClass) || a['correct'].is_a?(FalseClass))
+                   end
     errors.add(:data, "expected #{key} answers to be an Array of Arrays; the sub-array having the first element being a String and the second being a Boolean.")
 
     false
   end
 
   def __validate_one_and_only_one_true_answer(key, answers)
-    count = answers.count { |answer| answer.last == true }
+    count = answers.count { |answer| answer['correct'] == true }
     return true if count == 1
 
-    errors.add(:data, "expected #{key}'s answers to have one and only one true value; got #{count}.")
+    errors.add(:data, "expected #{key}'s answers to have one and only one correct value; got #{count}.")
     false
   end
 
   def __validate_at_least_one_true_answer(key, answers)
-    return true unless answers.none? { |answer| answer.last == true }
+    return true unless answers.none? { |answer| answer['correct'] == true }
 
-    errors.add(:data, "expected #{key}'s answers to have at least one true value; got none.")
+    errors.add(:data, "expected #{key}'s answers to have at least one correct value; got none.")
     false
   end
 

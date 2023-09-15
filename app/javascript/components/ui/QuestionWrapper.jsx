@@ -18,7 +18,7 @@ const QuestionWrapper = ({ question }) => {
                 Otherwise, the collapse is expanded by default, and will not collapse either.
             */}
             <div id='question-answers'>
-              <Answers question_type={question.type} answers={question.answers} />
+              <Answers question_type={question.type} answers={question.data} />
             </div>
           </Collapse>
         </Col>

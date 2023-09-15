@@ -5,7 +5,7 @@ const QuestionMetadata = ({ question }) => {
   return (
     <div className='bg-light-2 p-2 rounded'>
       <h6 className='fw-bold'>Keywords</h6>
-      {question.keywords.map((keyword) => {
+      {question.keyword_names.map((keyword) => {
         return (
           <div
             className='m-1 btn bg-white text-lowercase'

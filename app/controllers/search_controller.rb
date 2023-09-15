@@ -84,7 +84,6 @@ class SearchController < ApplicationController
       #     level: '1',
       #   },
       # ]
-      }
     }
   end
 end

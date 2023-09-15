@@ -20,6 +20,7 @@ RSpec.describe SearchController do
               "level" => 1,
               "text" => question.text,
               "type" => question.type,
+              "level" => question.level,
               "keyword_names" => question.keywords.map(&:name),
               "category_names" => question.categories.map(&:name) }])
       )

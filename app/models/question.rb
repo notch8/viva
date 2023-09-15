@@ -9,6 +9,8 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :keywords
 
+  class_attribute :type_label, default: "Question"
+
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.
   has_one :as_child_question_aggregations, class_name: 'QuestionAggregation', dependent: :destroy, as: :child_question

@@ -78,7 +78,7 @@ class Question < ApplicationRecord
     raise NotImplementedError, "#{self}.#{__method__}"
   end
 
-  FILTER_DEFAULT_SELECT = [:id, :text, :type, :keyword_names, :category_names].freeze
+  FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze
   FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name].freeze
 
   ##

@@ -20,6 +20,7 @@ RSpec.describe SearchController do
         eq([{ "id" => question.id,
               "text" => question.text,
               "type_name" => question.type_name,
+              "data" => question.data,
               "type" => question.model_name.name, # Deprecated
               "type_label" => question.type_label,
               "level" => question.level,

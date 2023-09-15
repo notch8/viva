@@ -1,14 +1,13 @@
 import React from 'react'
-import { Container } from 'react-bootstrap'
 
 const IncorrectAnswers = ({ incorrect_answers }) => {
   return (
-    <Container fluid className=''>
+    <div id='incorrect-question-answers'>
       <h6>Incorrect Answers</h6>
       {incorrect_answers.map((answer, index) => {
-        // TODO: display the incorect answers
+        // TODO: display the incorrect answers
       })}
-    </Container>
+    </div>
   )
 }
 

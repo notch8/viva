@@ -5,6 +5,8 @@
 #
 # @see #well_formed_serialized_data
 class Question::Matching < Question
+  self.type_name = "Matching"
+
   def self.import_csv_row(row)
     text = row['TEXT']
 
@@ -18,7 +20,7 @@ class Question::Matching < Question
     data = indices.map do |index|
       # It is okay that these will possibly be nil; because our downstream validation will catch
       # them.
-      [row["LEFT_#{index}"], row["RIGHT_#{index}"]]
+      { answer: row["LEFT_#{index}"], correct: row["RIGHT_#{index}"] }
     end
 
     create!(text:, data:)
@@ -39,8 +41,10 @@ class Question::Matching < Question
       return false
     end
 
-    unless data.all? { |pair| pair.is_a?(Array) && pair.size == 2 && pair.all? { |d| d.is_a?(String) && d.present? } }
-      errors.add(:data, "expected to be an array of arrays, each sub-array having two elements, both of which are strings")
+    unless data.all? do |pair|
+             pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && pair['answer'].present? && pair['correct'].is_a?(String) && pair['correct'].present?
+           end
+      errors.add(:data, "expected to be an array of hashes, each hash having an answer and correct, both of which are strings")
       return false
     end
 

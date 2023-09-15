@@ -3,6 +3,9 @@
 ##
 # A {Question::StimulusCaseStudy} question is an aggregate of other {Question} records.
 class Question::StimulusCaseStudy < Question
+  self.type_label = "Case Study"
+  self.type_name = "Stimulus Case Study"
+
   has_many :as_parent_question_aggregations,
            class_name: "QuestionAggregation",
            inverse_of: :parent_question,

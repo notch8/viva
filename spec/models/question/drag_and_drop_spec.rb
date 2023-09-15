@@ -4,6 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Question::DragAndDrop do
   it_behaves_like "a Question"
+  its(:type_label) { is_expected.to eq("Question") }
+  its(:type_name) { is_expected.to eq("Drag and Drop") }
 
   describe '.import_csv_row' do
     context 'when given slotted data' do
@@ -20,7 +22,8 @@ RSpec.describe Question::DragAndDrop do
         expect do
           described_class.import_csv_row(data)
         end.to change(described_class, :count).by(1)
-        expect(described_class.last.data).to eq([["Cat", 1], ["Catnip", 2], ["Blue", false], ["Dog", false]])
+        expect(described_class.last.data).to eq([{ "answer" => "Cat", "correct" => 1 }, { 'answer' => "Catnip", "correct" => 2 }, { 'answer' => "Blue", 'correct' => false },
+                                                 { 'answer' => "Dog", 'correct' => false }])
       end
     end
 
@@ -39,7 +42,15 @@ RSpec.describe Question::DragAndDrop do
         expect do
           described_class.import_csv_row(data)
         end.to change(described_class, :count).by(1)
-        expect(described_class.last.data).to eq([["Cat", true], ["Catnip", false], ["Blue", false], ["Dog", true]])
+
+        expect(described_class.last.data).to(
+          eq([
+               { 'answer' => "Cat", 'correct' => true },
+               { 'answer' => "Catnip", 'correct' => false },
+               { 'answer' => "Blue", 'correct' => false },
+               { 'answer' => "Dog", 'correct' => true }
+             ])
+        )
       end
     end
   end
@@ -81,48 +92,48 @@ RSpec.describe Question::DragAndDrop do
 
   describe 'data serialization' do
     subject { FactoryBot.build(:question_drag_and_drop, data: given_data, text: given_text) }
+
     [
       [
         "___1___ is comprised of ___2___",
-        [["Green", 1], ["Blue", 2]], ["Red", false],
+        [{ 'answer' => "Green", 'correct' => 1 }, { 'answer' => "Blue", 'correct' => 2 }, { 'answer' => "Red", 'correct' => false }],
         true
       ],
       [
         "___2___ is comprised of ___2___",
-        [["Green", 1], ["Blue", 2]],
+        [{ 'answer' => "Green", 'correct' => 1 }, { 'answer' => "Blue", 'correct' => 2 }],
         false # Because of the mismatch of text slots and answer slots
       ],
       [
         "___3___ is comprised of ___2___",
-        [["Green", 1], ["Blue", 2]],
+        [{ 'answer' => "Green", 'correct' => 1 }, { 'answer' => "Blue", 'correct' => 2 }],
         false # Because of the mismatch of text slots and answer slots
       ],
       [
         "___1___ is comprised of ___2___",
-        [["Green", 1], ["Blue", 2], ["Red", true]],
+        [{ 'answer' => "Green", 'correct' => 1 }, { 'answer' => "Blue", 'correct' => 2 }, { 'answer' => "Red", 'correct' => true }],
         false # Because of the mismatch of answer slots (e.g. true and integer should not mix)
       ],
       [
         "Which is truthy?",
-        [["Yes", true], ["True", true], ["No", false]],
+        [{ 'answer' => "Yes", 'correct' => true }, { 'answer' => "True", 'correct' => true }, { 'answer' => "No", 'correct' => false }],
         true # No slots needed because we have only true/false options
       ],
       [
         "Which is truthy?",
-        [["Yes", true], ["False", nil]],
+        [{ 'answer' => "Yes", 'correct' => true }, { 'answer' => "False", 'correct' => nil }],
         false # Without slots the answers must be either true or false
       ],
       [
         "Which is truthy?",
-        [["Yes", true], ["False", "false"]],
+        [{ 'answer' => "Yes", 'correct' => true }, { 'answer' => "False", 'correct' => "false" }],
         false # Without slots the answers must be either true or false
       ],
       [
         "Which is truthy?",
-        [["Yes", true], ["False"]],
+        [{ 'answer' => "Yes", 'correct' => true }, { 'answer' => "False", 'correct' => 1 }],
         false # Without slots the answers must be either true or false
-      ],
-      [
+      ], [
         "Which is truthy?",
         [],
         false # Must have at least one answer
@@ -135,26 +146,26 @@ RSpec.describe Question::DragAndDrop do
       [
         "Which is truthy?",
         ["Yes", true],
-        false # Must have an array of arrays for questions
+        false # Must have an array of hashs for questions
       ],
       [
         "___1___",
-        [["Yes", true]],
+        [{ 'answer' => "Yes", 'correct' => true }],
         false # When text has slot, answer must have slot
       ],
       [
         "___1___ and ___1___",
-        [["Yes", 1]],
-        false # We have duplicate slots in the text
+        [{ 'answer' => "Yes", 'correct' => 1 }],
+        false # We have duplicate slots in the text but unequal candidates
       ],
       [
         "The color ___1___ is comprised of ___2___ and ___2___.",
-        [["Green", 1], ["Blue", 2], ["Yellow", 2], ["Red", false]],
+        [{ 'answer' => "Green", 'correct' => 1 }, { 'answer' => "Blue", 'correct' => 2 }, { 'answer' => "Yellow", 'correct' => 2 }, { 'answer' => "Red", 'correct' => false }],
         true # We have duplicate slots but equal number of duplicate answers.
       ],
       [
         "___1___ and ___2___",
-        [["Yes", 1], ["Other", 3]],
+        [{ 'answer' => "Yes", 'correct' => 1 }, { 'answer' => "Other", 'correct' => 3 }],
         false # When text has slots there must be answers that map to each slot,
       ]
     ].each do |text, data, valid|

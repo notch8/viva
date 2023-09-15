@@ -12,14 +12,16 @@
 #   # A slot based drag-n-drop
 #   question = Question::DragAndDrop.new(
 #                text: "The color ___1___ is comprised of ___2___ and ___2___."
-#                data: [["Green", 1], ["Blue", 2], ["Yellow",2], ["Red", false]])
+#                data: [{ answer: "Green", correct: 1 }, { answer: "Blue", correct: 2 }, { answer: "Yellow", correct:2 }, { answer: "Red", correct: false }])
 #
 # @example
 #   # An all that apply based drag-n-drop
 #   question = Question::DragAndDrop.new(
 #                text: "The following are animals:"
-#                data: [["Aardvark", true], ["Blue", false], ["Yellow",false], ["Cat", true]])
+#                data: [{ answer: "Aardvark", correct: true }, { answer: "Blue", correct: false }, { answer: "Yellow", correct:false }, { answer: "Cat", correct: true }])
 class Question::DragAndDrop < Question
+  self.type_name = "Drag and Drop"
+
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
@@ -36,7 +38,7 @@ class Question::DragAndDrop < Question
         next if header.blank?
         next unless header.start_with?("ANSWER_")
         slot_number = header.split(/_+/).last.to_i
-        array << [row[header], slot_numbers.include?(slot_number) ? slot_number : false]
+        array << { answer: row[header], correct: (slot_numbers.include?(slot_number) ? slot_number : false) }
       end
     else
       answers = row['ANSWERS']&.split(",")&.map { |answer| answer.strip.to_i }
@@ -45,7 +47,7 @@ class Question::DragAndDrop < Question
         next unless header.start_with?("ANSWER_")
 
         index = header.split(/_+/).last.to_i
-        array << [row[header], answers.include?(index)]
+        array << { answer: row[header], correct: answers.include?(index) }
       end
     end
 
@@ -99,12 +101,12 @@ class Question::DragAndDrop < Question
       return false
     end
 
-    unless data.all? { |pair| pair.is_a?(Array) && pair.size == 2 && pair.first.is_a?(String) && pair.first.present? }
-      errors.add(:data, "expected to be an array of arrays, each sub-array having two elements, the first elements being strings")
+    unless data.all? { |pair| pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && pair['answer'].present? }
+      errors.add(:data, "expected to be an array of hashs, each sub-array having an answer and correct element, the answers being strings")
       return false
     end
 
-    candidates = data.map(&:last)
+    candidates = data.map { |datum| datum['correct'] }
 
     if sub_type == SUB_TYPE_SLOTTED
       if candidates.all? { |candidate| candidate.is_a?(Integer) || candidate.is_a?(FalseClass) }

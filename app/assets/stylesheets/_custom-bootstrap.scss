@@ -66,6 +66,9 @@ $btn-font-family: 'Strait', sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
+.strait {
+  font-family: 'Strait', sans-serif;
+}
 
 // the full bootstrap import must be last in order to properly override bootstrap's theme maps
 @import '../../../node_modules/bootstrap/scss/bootstrap.scss';

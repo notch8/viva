@@ -29,12 +29,12 @@ jobs:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
     with:
-      rspec_cmd: yarn cypress:run:chrome
+      rspec_cmd: exit && docker-compose exec -T viva-cypress-components-on-chrome-1 sh -c "yarn cypress:run:chrome"
   cypress-firefox-tests:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
     with:
-      rspec_cmd: yarn cypress:run:firefox
+      rspec_cmd: exit && docker-compose exec -T viva-cypress-components-on-chrome-1 sh -c "yarn cypress:run:firefox"
   lint:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13

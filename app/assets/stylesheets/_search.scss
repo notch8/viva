@@ -12,7 +12,7 @@
     }
   }
 
-  .input-group button {
+  .input-group .dropdown-toggle {
     flex: 1;
     &:hover, &:active, &:focus, &.btn.show {
       background-color: var(--bs-tertiary-bg);

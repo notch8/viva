@@ -14,7 +14,7 @@ const Answers = ({ question_type, answers }) => {
       {question_type === 'Question::StimulusCaseStudy' && <StimulusCaseStudyAnswers answers={answers} />}
 
       {/* All other question types use the same format */}
-      {answers.map((answer, index) => {
+      {answers?.map((answer, index) => {
         // TODO: display the answers
         return <p>{answer}</p>
       })}

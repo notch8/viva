@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'csv'
 
 RSpec.describe Question, type: :model do
   # The base Question instance should never be valid; we want to specify the correct type.
@@ -12,7 +13,8 @@ RSpec.describe Question, type: :model do
     # rubocop:disable RSpec/ExampleLength
     it do
       is_expected.to(
-        match_array([Question::DragAndDrop,
+        match_array([Question::BowTie,
+                     Question::DragAndDrop,
                      Question::Matching,
                      Question::SelectAllThatApply,
                      Question::StimulusCaseStudy,
@@ -22,6 +24,38 @@ RSpec.describe Question, type: :model do
     # rubocop:enable RSpec/ExampleLength
   end
 
+  describe '.import_csv' do
+    let(:csv) do
+      CSV.new("TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1,ANSWER_3\n" \
+              "Traditional,,Which one is true?,1,true,false,,,Orc\n" \
+              "Matching,,Pair Up,,,,Animal,Cat\n" \
+              "SelectAllThatApply,,Which one is affirmative?,\"1,3\",true,false,,,yes\n" \
+              "DragAndDrop,,What are Anmials?,\"1,2\",Cat,Dog,,,Shoe\n" \
+              "DragAndDrop,,The ___1___ chases ___2___?,\"1,2\",Cat,Mouse,,,Umbrella\n",
+              headers: true)
+    end
+
+    # rubocop:disable RSpec/ExampleLength
+    it "creates multiple question types" do
+      expect do
+        expect do
+          expect do
+            expect do
+              described_class.import_csv(csv)
+            end.to change(Question::Traditional, :count).by(1)
+          end.to change(Question::Matching, :count).by(1)
+        end.to change(Question::DragAndDrop, :count).by(2)
+      end.to change(Question::SelectAllThatApply, :count).by(1)
+    end
+    # rubocop:enable RSpec/ExampleLength
+  end
+
+  describe '.import_csv_row' do
+    it 'should be implemented by subclasses' do
+      expect { described_class.import_csv_row }.to raise_error(NotImplementedError)
+    end
+  end
+
   describe '.types' do
     subject { described_class.types }
 
@@ -29,6 +63,7 @@ RSpec.describe Question, type: :model do
     it do
       is_expected.to(
         match_array([
+                      "Question::BowTie",
                       "Question::DragAndDrop",
                       "Question::Matching",
                       "Question::SelectAllThatApply",
@@ -38,6 +73,47 @@ RSpec.describe Question, type: :model do
       )
     end
     # rubocop:enable RSpec/ExampleLength
+  end
+
+  describe '.filter_as_json' do
+    # rubocop:disable RSpec/ExampleLength
+    it 'includes keyword_names and category_names' do
+      question1 = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
+
+      results = described_class.filter_as_json
+
+      expect(results).to(
+        eq([{ id: question1.id,
+              text: question1.text,
+              type: question1.type,
+              level: question1.level,
+              keyword_names: question1.keywords.map(&:name),
+              category_names: question1.categories.map(&:name) }.stringify_keys])
+      )
+    end
+    # rubocop:enable RSpec/ExampleLength
+
+    context 'when questions have no keywords' do
+      it 'has an empty array for keyword_names' do
+        question = FactoryBot.create(:question_matching)
+        expect(question.keywords).to be_empty
+
+        results = described_class.filter_as_json
+
+        expect(results.first.fetch("keyword_names")).to eq([])
+      end
+    end
+
+    context 'when questions have no categories' do
+      it 'has an empty array for category_names' do
+        question = FactoryBot.create(:question_matching)
+        expect(question.categories).to be_empty
+
+        results = described_class.filter_as_json
+
+        expect(results.first.fetch("category_names")).to eq([])
+      end
+    end
   end
 
   describe '.filter' do
@@ -55,7 +131,7 @@ RSpec.describe Question, type: :model do
       # setup cost for each individual test.
       question1 = FactoryBot.create(:question_matching)
       question2 = FactoryBot.create(:question_drag_and_drop)
-      question3 = FactoryBot.create(:question_stimulus_case_study)
+      question3 = FactoryBot.create(:question_select_all_that_apply)
       keyword1 = FactoryBot.create(:keyword)
       keyword2 = FactoryBot.create(:keyword)
       keyword3 = FactoryBot.create(:keyword)

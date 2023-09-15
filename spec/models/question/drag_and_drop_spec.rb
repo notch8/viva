@@ -5,6 +5,45 @@ require 'rails_helper'
 RSpec.describe Question::DragAndDrop do
   it_behaves_like "a Question"
 
+  describe '.import_csv_row' do
+    context 'when given slotted data' do
+      let(:data) do
+        CsvRow.new("TYPE" => "Matching",
+                   "TEXT" => "The ___1___ gets high on ___2___:",
+                   "ANSWER_1" => "Cat",
+                   "ANSWER_2" => "Catnip",
+                   "ANSWER_3" => "Blue",
+                   "ANSWER_4" => "Dog")
+      end
+
+      it "creates a drag and drop slotted question" do
+        expect do
+          described_class.import_csv_row(data)
+        end.to change(described_class, :count).by(1)
+        expect(described_class.last.data).to eq([["Cat", 1], ["Catnip", 2], ["Blue", false], ["Dog", false]])
+      end
+    end
+
+    context 'when given non-slotted data' do
+      let(:data) do
+        CsvRow.new("TYPE" => "Matching",
+                   "TEXT" => "Select all of the animals:",
+                   "ANSWERS" => "1,4",
+                   "ANSWER_1" => "Cat",
+                   "ANSWER_2" => "Catnip",
+                   "ANSWER_3" => "Blue",
+                   "ANSWER_4" => "Dog")
+      end
+
+      it "creates a drag and drop slotted question" do
+        expect do
+          described_class.import_csv_row(data)
+        end.to change(described_class, :count).by(1)
+        expect(described_class.last.data).to eq([["Cat", true], ["Catnip", false], ["Blue", false], ["Dog", true]])
+      end
+    end
+  end
+
   describe '#slot_numbers_from_text' do
     subject { FactoryBot.build(:question_drag_and_drop, text:).slot_numbers_from_text }
 

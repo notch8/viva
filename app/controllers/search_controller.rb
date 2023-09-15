@@ -8,11 +8,11 @@ class SearchController < ApplicationController
       keywords: Keyword.all.pluck(:name),
       categories: Category.all.pluck(:name),
       types: Question.types,
-      filtered_questions: Question.filter(
+      filtered_questions: Question.filter_as_json(
                keywords: params[:keywords],
                categories: params[:categories],
                type: params[:type]
              )
-    }
+           }
   end
 end

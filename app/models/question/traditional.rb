@@ -4,6 +4,18 @@
 ##
 # One question, many candidate answers, but only one is correct.
 class Question::Traditional < Question
+  def self.import_csv_row(row)
+    text = row['TEXT']
+    answers = row['ANSWERS']&.split(',')&.map(&:to_i)
+    answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+    data = answer_columns.map do |col|
+      index = col.split(/_+/).last.to_i
+      [row[col], answers.include?(index)]
+    end
+
+    create!(text:, data:)
+  end
+
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.
   serialize :data, JSON

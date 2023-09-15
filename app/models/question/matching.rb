@@ -5,6 +5,25 @@
 #
 # @see #well_formed_serialized_data
 class Question::Matching < Question
+  def self.import_csv_row(row)
+    text = row['TEXT']
+
+    # Ensure that we have all of the candidate indices (the left and right side)
+    indices = row.headers.each_with_object([]) do |header, array|
+      next if header.blank?
+      next unless header.start_with?("LEFT_", "RIGHT_")
+      array << header.split(/_+/).last.to_i
+    end.uniq.sort
+
+    data = indices.map do |index|
+      # It is okay that these will possibly be nil; because our downstream validation will catch
+      # them.
+      [row["LEFT_#{index}"], row["RIGHT_#{index}"]]
+    end
+
+    create!(text:, data:)
+  end
+
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.
   serialize :data, JSON

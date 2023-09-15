@@ -1,6 +1,4 @@
-
-
-import React, { useState } from 'react'
+import React from 'react'
 import { useForm } from '@inertiajs/inertia-react'
 import { Row, Col, InputGroup, Form, Button, Alert } from 'react-bootstrap'
 
@@ -21,6 +19,10 @@ const SettingsForm = ({ currentUser }) => {
   return (
     <>
       <Form onSubmit={submit}>
+        <h3 className='pt-3 fw-semibold'>Settings</h3>
+        <p>
+          On this page, you can easily update your account information, including your email, first name, and last name. Simply click on the respective section, make your changes, and save them. Keeping your information up to date is important for account security and personalization.
+        </p>
         <Row>
           <Col md={6}>
             <InputGroup className="mb-3">
@@ -97,7 +99,7 @@ const SettingsForm = ({ currentUser }) => {
             </InputGroup>
           </Col>
         </Row>
-        <Button type="submit" disabled={processing}>Save</Button>
+        <Button className='btn btn-primary d-block ms-auto' type="submit" disabled={processing}>Save</Button>
       </Form>
       {recentlySuccessful &&
         <Alert className='mt-3' variant="success">

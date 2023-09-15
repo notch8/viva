@@ -6,7 +6,7 @@ import { MagnifyingGlass, Gear, SignOut, Upload, CaretLeft } from "@phosphor-ico
 const Sidebar = ({ open, setOpen }) => {
   const { url } = usePage()
   return (
-    <Nav className="d-flex flex-column bg-light-1 vh-100 text-nowrap" activeKey="/">
+    <Nav className="d-flex flex-column text-nowrap" activeKey="/">
       <Nav.Item>
         <div className='bg-light-1'>
           <Button

@@ -13,7 +13,7 @@ const App = ({ children }) => {
       <Header />
       <div className='d-flex'>
         <Collapse in={open} dimension='width'>
-          <div id='sidebar'>
+          <div id='sidebar' className='bg-light-1'>
             <Sidebar open={open} setOpen={setOpen}/>
           </div>
         </Collapse>
@@ -30,7 +30,7 @@ const App = ({ children }) => {
             </Button>
           </div>
         }
-        <div id='page-content-wrapper' className='container-fluid'>
+        <div id='page-content-wrapper' className='container-fluid my-2'>
           {children}
         </div>
       </div>

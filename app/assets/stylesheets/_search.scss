@@ -1,0 +1,26 @@
+.search-bar {
+  .dropdown-menu.show {
+    padding: 0;
+    margin-top: -2px;
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    .form-check {
+      &:hover, &:active, &:focus {
+        background-color: var(--bs-tertiary-bg);
+      }
+    }
+  }
+
+  .input-group button {
+    flex: 1;
+    &:hover, &:active, &:focus, &.btn.show {
+      background-color: var(--bs-tertiary-bg);
+    }
+  }
+
+  .dropdown-toggle:after {
+    color: var(--bs-light-4);
+    font-size: 30px;
+  }
+}

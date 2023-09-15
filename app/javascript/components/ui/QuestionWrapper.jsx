@@ -6,15 +6,16 @@ import QuestionMetadata from './QuestionMetadata'
 const QuestionWrapper = (props) => {
   const [open, setOpen] = useState(false)
   const { question } = props
+
   return (
-    <Container className="bg-light-1 rounded container p-4 mt-4">
+    <Container className="bg-light-1 rounded container p-4 mt-3">
       <Row>
         <Col md={7} className='p-2'>
           <h6 className="fw-bold">Question</h6>
           <p>{question.text}</p>
           <Collapse in={open}>
             <div id='question-wrapper'>
-              <p class="fw-bold">Answers</p>
+              <p className="fw-bold">Answers</p>
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
               <p>Suspendisse vel libero sed nisi fermentum tempor.</p>
               <p>Curabitur dolor magna, rhoncus malesuada sapien ac, laoreet rhoncus dolor.</p>

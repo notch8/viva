@@ -7,6 +7,8 @@ RSpec.describe Question, type: :model do
   # The base Question instance should never be valid; we want to specify the correct type.
   it_behaves_like "a Question", valid: false
 
+  its(:type_label) { is_expected.to eq("Question") }
+
   describe '.descendants' do
     subject { described_class.descendants }
 

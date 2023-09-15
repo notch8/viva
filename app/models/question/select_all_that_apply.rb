@@ -3,6 +3,8 @@
 ##
 # The "Select All That Apply" question has one or more possible correct answers.
 class Question::SelectAllThatApply < Question
+  self.type_name = "Select All That Apply"
+
   def self.import_csv_row(row)
     text = row['TEXT']
     answers = row['ANSWERS']&.split(',')&.map(&:to_i)

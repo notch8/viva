@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe Question::BowTie do
   it_behaves_like "a Question"
   its(:type_label) { is_expected.to eq("Question") }
+  its(:type_name) { is_expected.to eq("Bow Tie") }
 
   describe 'data serialization' do
     subject { FactoryBot.build(:question_bow_tie, data: given_data) }

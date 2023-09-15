@@ -2,6 +2,7 @@ import React from 'react'
 import BowTieAnswers from './BowTieAnswers'
 import DragAndDropAnswers from './DragAndDropAnswers'
 import MatchingAnswers from './MatchingAnswers'
+import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
 
 const Answers = ({ question_type, answers }) => {
   return (
@@ -14,7 +15,6 @@ const Answers = ({ question_type, answers }) => {
 
       {/* All other question types use the same format */}
       {answers.map((answer, index) => {
-        console.log({ answer, index })
         // TODO: display the answers
         return <p>{answer}</p>
       })}

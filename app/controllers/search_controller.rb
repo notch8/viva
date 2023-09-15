@@ -13,6 +13,7 @@ class SearchController < ApplicationController
         categories: params[:categories],
         type: params[:type]
       )
+      # Use the following as a template for the filtered_questions prop in local dev
       # filtered_questions: [
       #   {
       #     id: 1,

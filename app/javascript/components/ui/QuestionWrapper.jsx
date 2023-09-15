@@ -8,8 +8,8 @@ const QuestionWrapper = (props) => {
   return (
     <Container className="bg-light-1 rounded container p-4 mt-4">
       <Row>
-        <Col sm={6}>
-          <p class="fw-bold">Question</p>
+        <Col md={7} className='p-2'>
+          <h6 className="fw-bold">Question</h6>
           <p>{question.text}</p>
           <Collapse in={open}>
             <div id='question-wrapper'>
@@ -21,10 +21,32 @@ const QuestionWrapper = (props) => {
             </div>
           </Collapse>
         </Col>
-        <Col sm={5}>
-          <div>Keywords</div>
+        <Col md={4} className='px-0'>
+          <div className='bg-light-2 p-2 rounded'>
+            <h6 className="fw-bold">Keywords</h6>
+            {question.keywords.map((keyword) => {
+              return (
+                <div
+                  className='m-1 btn bg-white text-lowercase'
+                  variant='secondary'
+                >
+                  {keyword}
+                </div>
+              )
+            })}
+            <div className='d-flex mx-1 text-center mt-5'>
+              <Col className='bg-white rounded-start p-2'>
+                <h6 className="fw-bold">Level</h6>
+                <span className='strait small'>{question.level}</span>
+              </Col>
+              <Col className='bg-light-3 rounded-end p-2'>
+                <h6 className="fw-bold">Type</h6>
+                <span className='strait small'>{question.type.substring(10)}</span>
+              </Col>
+            </div>
+          </div>
         </Col>
-        <Col sm={1}>
+        <Col sm={1} className='d-flex align-items-center'>
           <Button
             onClick={() => setOpen(!open)}
             aria-controls='question-wrapper'

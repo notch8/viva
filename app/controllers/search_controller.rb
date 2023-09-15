@@ -8,11 +8,40 @@ class SearchController < ApplicationController
       keywords: Keyword.all.pluck(:name),
       categories: Category.all.pluck(:name),
       types: Question.types,
-      filtered_questions: Question.filter(
-               keywords: params[:keywords],
-               categories: params[:categories],
-               type: params[:type]
-             )
+      # filtered_questions: Question.filter(
+      #          keywords: params[:keywords],
+      #          categories: params[:categories],
+      #          type: params[:type]
+      #        )
+      filtered_questions: [
+        {
+          id: 1,
+          question: 'What is the meaning of life?',
+          answers: ['This is an answer tothe meaning of life.', 'This is another answer to the meaning of life.', 'This is a third answer to the meaning of life.', 'This is a fourth answer to the meaning of life.'],
+          type: 'Question::Traditional',
+          keywords: ['meaning', 'life'],
+          categories: ['history'],
+          level: '1',
+        },
+        {
+          id: 2,
+          question: 'What is the meaning of life?',
+          answers: ['This is an answer tothe meaning of life.', 'This is another answer to the meaning of life.', 'This is a third answer to the meaning of life.', 'This is a fourth answer to the meaning of life.'],
+          type: 'Question::Traditional',
+          keywords: ['meaning', 'life'],
+          categories: ['history'],
+          level: '1',
+        },
+        {
+          id: 3,
+          question: 'What is the meaning of life?',
+          answers: ['This is an answer tothe meaning of life.', 'This is another answer to the meaning of life.', 'This is a third answer to the meaning of life.', 'This is a fourth answer to the meaning of life.'],
+          type: 'Question::Traditional',
+          keywords: ['meaning', 'life'],
+          categories: ['nursing'],
+          level: '1',
+        },
+      ]
     }
   end
 end

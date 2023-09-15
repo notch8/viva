@@ -3,13 +3,15 @@
 ##
 # The "Select All That Apply" question has one or more possible correct answers.
 class Question::SelectAllThatApply < Question
+  self.type_name = "Select All That Apply"
+
   def self.import_csv_row(row)
     text = row['TEXT']
     answers = row['ANSWERS']&.split(',')&.map(&:to_i)
     answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
     data = answer_columns.map do |col|
       index = col.split(/_+/).last.to_i
-      [row[col], answers.include?(index)]
+      { answer: row[col], correct: answers.include?(index) }
     end
 
     create!(text:, data:)
@@ -27,19 +29,27 @@ class Question::SelectAllThatApply < Question
   #
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Layout/LineLength
+  # rubocop:disable Metrics/MethodLength
   def well_formed_serialized_data
     unless data.is_a?(Array)
       errors.add(:data, "expected to be an array, got #{data.class.inspect}")
       return false
     end
 
-    unless data.all? { |pair| pair.is_a?(Array) && pair.size == 2 && pair.all? { |el| el.present? && pair.index(el).zero? ? el.is_a?(String) : (el.is_a?(TrueClass) || el.is_a?(FalseClass)) } }
+    unless data.all? do |pair|
+      pair.is_a?(Hash) &&
+      pair.keys.sort == ["answer", "correct"] &&
+      pair['answer'].present? && pair['answer'].is_a?(String) &&
+      pair['answer'].present? && (pair['correct'].is_a?(TrueClass) || pair['correct'].is_a?(FalseClass))
+    end
       errors.add(:data, "expected to be an array of arrays, each sub-array having two elements, both of which are strings")
       return false
     end
 
     # The shape of the data is correct now validate exact number of correct answers.
-    correct_answers = data.select { |pair| pair.last == true }
+    correct_answers = data.select { |pair| pair['correct'] == true }
 
     if correct_answers.count.zero?
       errors.add(:data, "expected one correct answer, but no correct answers were specified.")
@@ -48,6 +58,9 @@ class Question::SelectAllThatApply < Question
 
     true
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Layout/LineLength
+  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
 end

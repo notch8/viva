@@ -5,6 +5,7 @@ require 'rails_helper'
 RSpec.describe Question::StimulusCaseStudy do
   it_behaves_like "a Question"
   its(:type_label) { is_expected.to eq("Case Study") }
+  its(:type_name) { is_expected.to eq("Stimulus Case Study") }
 
   it { is_expected.to have_many(:as_parent_question_aggregations) }
   it { is_expected.to have_many(:child_questions) }

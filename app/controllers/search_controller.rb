@@ -7,11 +7,13 @@ class SearchController < ApplicationController
     render inertia: 'Search', props: {
       keywords: Keyword.all.pluck(:name),
       categories: Category.all.pluck(:name),
-      types: Question.types,
+      types: Question.type_names, # Deprecated Favor :type_names
+      type_names: Question.type_names,
       filtered_questions: Question.filter_as_json(
         keywords: params[:keywords],
         categories: params[:categories],
-        type: params[:type]
+        # Deprecating :type; I'd prefer us to use :type_name
+        type_name: params[:type_name] || params[:type]
       )
       # Use the following as a template for the filtered_questions prop in local dev
       # filtered_questions: [

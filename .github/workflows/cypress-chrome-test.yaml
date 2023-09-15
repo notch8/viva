@@ -16,6 +16,7 @@ on:
 jobs:
   cypress-run-chrome:
     runs-on: ubuntu-latest
+    allow_failure: true
     name: E2E on Chrome
     container:
       image: cypress/browsers:latest

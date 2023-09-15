@@ -75,6 +75,47 @@ RSpec.describe Question, type: :model do
     # rubocop:enable RSpec/ExampleLength
   end
 
+  describe '.filter_as_json' do
+    # rubocop:disable RSpec/ExampleLength
+    it 'includes keyword_names and category_names' do
+      question1 = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
+
+      results = described_class.filter_as_json
+
+      expect(results).to(
+        eq([{ id: question1.id,
+              text: question1.text,
+              type: question1.type,
+              level: question1.level,
+              keyword_names: question1.keywords.map(&:name),
+              category_names: question1.categories.map(&:name) }.stringify_keys])
+      )
+    end
+    # rubocop:enable RSpec/ExampleLength
+
+    context 'when questions have no keywords' do
+      it 'has an empty array for keyword_names' do
+        question = FactoryBot.create(:question_matching)
+        expect(question.keywords).to be_empty
+
+        results = described_class.filter_as_json
+
+        expect(results.first.fetch("keyword_names")).to eq([])
+      end
+    end
+
+    context 'when questions have no categories' do
+      it 'has an empty array for category_names' do
+        question = FactoryBot.create(:question_matching)
+        expect(question.categories).to be_empty
+
+        results = described_class.filter_as_json
+
+        expect(results.first.fetch("category_names")).to eq([])
+      end
+    end
+  end
+
   describe '.filter' do
     it 'omits children of question aggregation' do
       FactoryBot.create(:question_matching, child_of_aggregation: true)

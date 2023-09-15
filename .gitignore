@@ -46,3 +46,5 @@ node_modules
 # cypress
 cypress/screenshots
 cypress/videos
+
+docker-compose.override.yml

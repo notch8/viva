@@ -55,7 +55,7 @@ jobs:
       - name: Start containers
         run: >-
           [ -f "db/schema.rb" ] && chmod 777 db/schema.rb;
-          docker-compose up web -d
+          docker-compose up -d web
       - name: Run Cypress Chrome Specs
         id: run-specs
         env:

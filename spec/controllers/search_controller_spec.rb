@@ -17,6 +17,7 @@ RSpec.describe SearchController do
       expect(inertia.props[:types]).to be_a(Array)
       expect(inertia.props[:filtered_questions].as_json).to(
         eq([{ "id" => question.id,
+              "level" => 1,
               "text" => question.text,
               "type" => question.type,
               "keyword_names" => question.keywords.map(&:name),

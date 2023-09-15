@@ -4,10 +4,8 @@ import DragAndDropAnswers from './DragAndDropAnswers'
 import MatchingAnswers from './MatchingAnswers'
 
 const Answers = ({ question_type, answers }) => {
-  console.log({ question_type, answers })
-
   return (
-    <div id='question-answers'>
+    <>
       <h6>Answers</h6>
       {question_type === 'Question::BowTie' && <BowTieAnswers answers={answers} />}
       {question_type === 'Question::Matching' && <MatchingAnswers answers={answers} />}
@@ -19,7 +17,7 @@ const Answers = ({ question_type, answers }) => {
         // TODO: display the answers
         return <p>{answer}</p>
       })}
-    </div>
+    </>
   )
 }
 

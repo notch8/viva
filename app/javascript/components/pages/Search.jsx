@@ -2,9 +2,9 @@ import React from 'react'
 import Layout from '../App'
 import QuestionWrapper from '../ui/QuestionWrapper'
 
-const Search = (props) => {
-    console.log({...props})
-    const { filtered_questions } = props
+const Search = ({ filtered_questions }) => {
+  console.log({ filtered_questions })
+
   return (
     <Layout>
       {filtered_questions.map((question) => {

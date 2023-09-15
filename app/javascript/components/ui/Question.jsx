@@ -3,7 +3,7 @@ import React from 'react'
 const Question = ({ text }) => {
   return (
     <div id='question'>
-      <h6>Question</h6>
+      <h2 className='h6 fw-bold'>Question</h2>
       <p>{text}</p>
     </div>
   )

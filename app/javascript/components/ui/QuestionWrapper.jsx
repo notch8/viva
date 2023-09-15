@@ -20,7 +20,7 @@ const QuestionWrapper = ({ question }) => {
         </Col>
         <Col md={4} className='px-0'>
           <div className='bg-light-2 p-2 rounded'>
-            <h6 className='fw-bold'>Keywords</h6>
+            <span className='fw-bold d-block mx-1'>Keywords</span>
             {question.keywords.map((keyword) => {
               return (
                 <div

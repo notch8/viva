@@ -13,6 +13,9 @@ const QuestionWrapper = ({ question }) => {
         <Col md={7} className='p-2'>
           <Question text={question.text} />
           <Collapse in={open}>
+            {/* The div id that corresponds to the "aria-controls" value on the Button must be in this same file.
+                Otherwise, the collapse is expanded by default, and will not collapse either.
+            */}
             <div id='question-answers'>
               <Answers question_type={question.type} answers={question.answers} />
             </div>

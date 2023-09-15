@@ -1,9 +1,9 @@
 import React from 'react'
-import BowTieAnswers from '.'
+import MatchingAnswers from '.'
 
-describe('<BowTieAnswers />', () => {
+describe('<MatchingAnswers />', () => {
   it('renders', () => {
     // see: https://on.cypress.io/mounting-react
-    cy.mount(<BowTieAnswers />)
+    cy.mount(<MatchingAnswers />)
   })
 })

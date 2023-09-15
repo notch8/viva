@@ -15,10 +15,14 @@ RSpec.describe SearchController do
       expect(inertia.props[:keywords]).to be_a(Array)
       expect(inertia.props[:categories]).to be_a(Array)
       expect(inertia.props[:types]).to be_a(Array)
+      expect(inertia.props[:type_names]).to be_a(Array)
       expect(inertia.props[:filtered_questions].as_json).to(
         eq([{ "id" => question.id,
               "text" => question.text,
-              "type" => question.type,
+              "type_name" => question.type_name,
+              "data" => question.data,
+              "type" => question.model_name.name, # Deprecated
+              "type_label" => question.type_label,
               "level" => question.level,
               "keyword_names" => question.keywords.map(&:name),
               "category_names" => question.categories.map(&:name) }])

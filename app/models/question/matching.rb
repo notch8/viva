@@ -5,6 +5,8 @@
 #
 # @see #well_formed_serialized_data
 class Question::Matching < Question
+  self.type_name = "Matching"
+
   def self.import_csv_row(row)
     text = row['TEXT']
 

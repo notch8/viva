@@ -4,6 +4,8 @@
 ##
 # One question, many candidate answers, but only one is correct.
 class Question::Traditional < Question
+  self.type_name = "Traditional"
+
   def self.import_csv_row(row)
     text = row['TEXT']
     answers = row['ANSWERS']&.split(',')&.map(&:to_i)

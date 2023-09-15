@@ -20,6 +20,8 @@
 #                text: "The following are animals:"
 #                data: [["Aardvark", true], ["Blue", false], ["Yellow",false], ["Cat", true]])
 class Question::DragAndDrop < Question
+  self.type_name = "Drag and Drop"
+
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity

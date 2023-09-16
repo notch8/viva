@@ -59,31 +59,15 @@ services:
       - web
       - vite
 
-  cypress-chrome:
+  cypress-tests:
+    container_name: cypress-tests
     image: cypress/included:13.2.0
-    environment:
-      - CYPRESS_browser=chrome
-      - CYPRESS_baseUrl=http://web:3000
-      - pageLoadTimeout=100000
     working_dir: /cypress
     volumes:
       - ./:/cypress
     depends_on:
       initialize_app:
         condition: service_completed_successfully
-
-  # cypress-firefox:
-  #   image: cypress/included:13.2.0
-  #   environment:
-  #     - CYPRESS_browser=firefox
-  #     - CYPRESS_baseUrl=http://web:3000
-  #     - pageLoadTimeout=100000
-  #   working_dir: /cypress
-  #   volumes:
-  #     - ./:/cypress
-  #   depends_on:
-  #     initialize_app:
-  #       condition: service_completed_successfully
 
 
 volumes:

@@ -27,7 +27,7 @@ jobs:
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
   cypress-tests:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/test.yaml@v0013-add-cypress-testing-support
+    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0013-add-cypress-testing-support
     with:
       cypress-container-name: cypress-tests
   lint:

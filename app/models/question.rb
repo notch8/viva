@@ -9,7 +9,8 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :categories
   has_and_belongs_to_many :keywords
 
-  class_attribute :type_label, default: "Question"
+  class_attribute :type_label, default: "Question", instance_writer: false
+  class_attribute :type_name, default: "Question", instance_writer: false
 
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.
@@ -33,8 +34,28 @@ class Question < ApplicationRecord
 
   ##
   # @return [Array<String>]
+  #
+  # @deprecated Favor {.type_names}
   def self.types
     Question.descendants.map { |klass| klass.model_name.name }
+  end
+
+  ##
+  # {Question#type} is a partially reserved value; used for the Single Table Inheritance.  It is not
+  # human friendly.  The {.type_names} is an effort to be more friendly.
+  #
+  # @return [Array<String>]
+  def self.type_names
+    Question.descendants.map(&:type_name)
+  end
+
+  ##
+  # @param name [String]
+  #
+  # @return [Class<Question>]
+  # @return [NilClass] when the given name is not a valid {.type_name}
+  def self.type_name_to_class(name, fallback: Question)
+    Question.descendants.detect { |d| d.type_name == name || d == name } || fallback
   end
 
   ##
@@ -57,9 +78,13 @@ class Question < ApplicationRecord
     raise NotImplementedError, "#{self}.#{__method__}"
   end
 
+  FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze
+  FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name].freeze
+
   ##
-  # @param select [Array<Symbol>] values both passed forward to {.filter} and used to determine the
-  #        JSON properties.
+  # @param select [Array<Symbol>] attribute names both passed forward to {.filter} and exposed in
+  #        the resulting JSON object (in addition to those specified in :method).
+  # @param methods [Array<Symbol>] attribute names to include in the JSON document.
   # @param kwargs [Hash<Symbol,Object>] values passed forward to {.filter}
   #
   # @note Why {.filter} and {.filter_as_json}?  There are two reasons: 1) we are interested in the
@@ -74,8 +99,8 @@ class Question < ApplicationRecord
   #         :select parameter.
   #
   # @see .filter
-  def self.filter_as_json(select: [:id, :text, :type, :keyword_names, :category_names], **kwargs)
-    filter(select:, **kwargs).as_json(only: select, methods: [:level])
+  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, **kwargs)
+    filter(select:, **kwargs).as_json(only: select, methods:)
   end
 
   ##
@@ -117,7 +142,8 @@ class Question < ApplicationRecord
   # @param keywords [Array<String>] when provided, a question must have all of the given keywords.
   # @param categories [Array<String>] when provided, a question must have all of the provided
   #        categories.
-  # @param type [String,NilClass] when present, filter questions to only include the given type.
+  # @param type_name [String,NilClass] when present, filter questions to only include the given
+  #        type.
   # @param select [Array<Symbol>] the attributes to include in the filter.  By narrowing the
   #        selection of attributes we reduce the computational cost of generating the query result
   #        set (e.g. we don't have to serialize/send/deserialize un-used columns.  *NOTE:* You must
@@ -130,14 +156,20 @@ class Question < ApplicationRecord
   # @see .filter_as_json
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def self.filter(keywords: [], categories: [], type: nil, select: nil)
+  def self.filter(keywords: [], categories: [], type_name: nil, select: nil)
     # By wrapping in an array we ensure that our keywords.size and categories.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
     keywords = Array.wrap(keywords)
     categories = Array.wrap(categories)
 
-    questions = Question.where(child_of_aggregation: false)
+    # We want a human readable name for filtering and UI work.  However, we want to convert that
+    # into a class.  ActiveRecord is smart about Single Table Inheritance (STI).  When we coerce
+    # use a subclass of Question there's an implict `where` clause that narrows the query to only
+    # that subclass and its descendants.
+    questions = type_name_to_class(type_name, fallback: Question)
+
+    questions = questions.where(child_of_aggregation: false)
 
     if keywords.present?
       # NOTE: This assumes that we don't persist duplicate pairings of question/keyword; this is
@@ -149,12 +181,6 @@ class Question < ApplicationRecord
                                  .having('count(question_id) = ?', keywords.size)
       # We sanitize the subquery via Arel.  The above construction is adequate.
       questions = questions.where(Arel.sql("id IN (#{keywords_subquery.to_sql})"))
-    end
-
-    if type.present?
-      # TODO: Consider how we coerce the user input to the correct type.  The type stored will be
-      # of the form "Question::Matching".
-      questions = questions.where(type:)
     end
 
     if categories.present?
@@ -174,7 +200,9 @@ class Question < ApplicationRecord
     # The following for category_names and keyword_names is to reduce the number of queries we send
     # to the database.  By favoring this mechanism we create the virtual attributes of
     # :category_names and :keyword_names.
-    select_statement = select.clone
+    #
+    # We duplicate this as that results in an unfrozen array which we then proceed to modify
+    select_statement = select.dup
 
     if select.include?(:category_names)
       select_statement.delete(:category_names)

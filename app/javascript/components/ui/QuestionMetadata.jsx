@@ -18,11 +18,11 @@ const QuestionMetadata = ({ question }) => {
       })}
       <div className='d-flex mx-1 text-center mt-5'>
         <Col className='bg-white rounded-start p-2'>
-          <h6 className="fw-bold">Level</h6>
+          <h6 className='fw-bold'>Level</h6>
           <span className='strait small'>{question.level}</span>
         </Col>
         <Col className='bg-light-3 rounded-end p-2'>
-          <h6 className="fw-bold">Type</h6>
+          <h6 className='fw-bold'>Type</h6>
           <span className='strait small'>{question.type.substring(10)}</span>
         </Col>
       </div>

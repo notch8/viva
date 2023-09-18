@@ -24,7 +24,10 @@
     "cypress:run:firefox": "cypress run --browser firefox",
     "cypress:run:record": "cypress run --record",
     "cypress:run:record:chrome": "cypress run --record --browser chrome",
-    "cypress:run:record:firefox": "cypress run --record --browser firefox"
+    "cypress:run:record:firefox": "cypress run --record --browser firefox",
+    "lint": "eslint",
+    "lint:all": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@types/react": "^18.0.21",

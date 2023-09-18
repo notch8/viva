@@ -26,7 +26,7 @@ const SearchBar = (props) => {
   return (
     <Form>
       <Container className='p-0 mt-2 search-bar'>
-          <InputGroup className='mb-3'>
+          <InputGroup className='mb-3 flex-column flex-md-row'>
             {Object.keys(props).map((key, index) => (
               <DropdownButton
                 key={index}

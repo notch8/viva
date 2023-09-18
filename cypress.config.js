@@ -1,5 +1,7 @@
-const { defineConfig } = require('cypress');
+// eslint-disable-next-line no-undef
+const { defineConfig } = require('cypress')
 
+// eslint-disable-next-line no-undef
 module.exports = defineConfig({
   component: {
     devServer: {
@@ -16,8 +18,8 @@ module.exports = defineConfig({
   e2e: {
     baseUrl: 'http://web:3000',
     chromeWebSecurity: false,
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on, config) { // eslint-disable-line no-unused-vars
       // implement node event listeners here
     },
   },
-});
+})

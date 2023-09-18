@@ -3,7 +3,7 @@ import { Row, Col, Button, Badge } from 'react-bootstrap'
 
 const TraditionalAnswers = ({ answers }) => {
   return (
-    answers.map((answer, index) => {
+    answers && answers.map((answer, index) => {
       console.log({ answer, index })
       return (
         <Row className={`rounded m-1 p-1 d-flex align-items-center justify-content-center ${answer.correct ? "correct" : ""}`}>

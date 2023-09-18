@@ -3,7 +3,7 @@ import Question from '../Question'
 
 const StimulusCaseStudyAnswers = ({ answers }) => {
   return (
-    <div class='StimulusCaseStudyAnswers'>
+    <div className='StimulusCaseStudyAnswers'>
       // TODO: display the correctly formatted answers
     </div>
   )

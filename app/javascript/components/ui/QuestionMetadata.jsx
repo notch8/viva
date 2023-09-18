@@ -4,12 +4,13 @@ import { Col } from 'react-bootstrap'
 const QuestionMetadata = ({ question }) => {
   return (
     <div className='bg-light-2 p-2 rounded'>
-      <h6 className='fw-bold'>Keywords</h6>
-      {question.keyword_names.map((keyword) => {
+      <h6 className="fw-bold">Keywords</h6>
+      {question.keyword_names.map((keyword, index) => {
         return (
           <div
             className='m-1 btn bg-white text-lowercase'
             variant='secondary'
+            key={index}
           >
             {keyword}
           </div>

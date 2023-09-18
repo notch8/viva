@@ -2,6 +2,8 @@ import React from 'react'
 import BowTieAnswers from './BowTieAnswers'
 import DragAndDropAnswers from './DragAndDropAnswers'
 import MatchingAnswers from './MatchingAnswers'
+import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
+import TraditionalAnswers from './TraditionalAnswers'
 
 const Answers = ({ question_type, answers }) => {
   return (
@@ -11,13 +13,9 @@ const Answers = ({ question_type, answers }) => {
       {question_type === 'Question::DragAndDrop' && <DragAndDropAnswers answers={answers} />}
       {question_type === 'Question::Matching' && <MatchingAnswers answers={answers} />}
       {question_type === 'Question::StimulusCaseStudy' && <StimulusCaseStudyAnswers answers={answers} />}
-
-      {/* All other question types use the same format */}
-      {answers.map((answer, index) => {
-        console.log({ answer, index })
-        // TODO: display the answers
-        return <p>{answer}</p>
-      })}
+      {/* Traditional and SATA types use the same format */}
+      {question_type === 'Question::Traditional' && <TraditionalAnswers answers={answers} />}
+      {question_type === 'Question::SelectAllThatApply' && <TraditionalAnswers answers={answers} />}
     </>
   )
 }

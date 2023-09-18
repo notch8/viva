@@ -3,7 +3,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - &&\
   apt-get update -qq &&\
   apt-get install -y \
     nodejs \
-    postgresql-client && \
+    postgresql-client \
+    vim-tiny && \
   npm install -g yarn
 
 ENV APP_HOME /app

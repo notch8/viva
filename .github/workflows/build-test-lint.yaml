@@ -22,9 +22,14 @@ jobs:
     with:
       platforms: 'linux/amd64'
       target: viva-base
-  test:
+  rspec-tests:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
+  cypress-tests:
+    needs: build
+    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0.0.13
+    with:
+      cypress-container-name: cypress-tests
   lint:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13

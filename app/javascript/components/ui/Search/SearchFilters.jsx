@@ -19,7 +19,7 @@ const SearchFilters = (props) => {
 
   return (
     hasFilters &&
-      <Container className='bg-light-1 rounded p-0'>
+      <Container className='bg-light-1 rounded p-0 search-filters'>
         <Row>
           <Col sm={3} className='d-flex justify-content-center align-items-center text-center p-2 border-end'>
             <h2 className='h5 fw-bold'>Selected Filters</h2>
@@ -39,6 +39,7 @@ const SearchFilters = (props) => {
                           <CloseButton
                             aria-label={`Remove filter for ${item}`}
                             onClick={(event) => removeFilterAndSearch(event, item, filter)}
+                            className='ms-2'
                           />
                         </div>
                       ))}

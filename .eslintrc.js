@@ -1,7 +1,7 @@
 /**
  * Rules: https://eslint.org/docs/latest/rules/
  */
-module.exports = {
+module.exports = { // eslint-disable-line no-undef
   'env': {
     'browser': true,
     'es2021': true
@@ -10,7 +10,10 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended'
   ],
-  'ignorePatterns': ['public/*'],
+  'ignorePatterns': [
+    'public/*',
+    'app/assets/builds'
+  ],
   'overrides': [
   ],
   'parserOptions': {
@@ -39,15 +42,15 @@ module.exports = {
       'never'
     ],
     'object-curly-newline': ['error', {
-        'ImportDeclaration': {
-          'multiline': true,
-          'minProperties': 4
-        },
-        'ExportDeclaration': {
-          'multiline': true,
-          'minProperties': 4
-        }
+      'ImportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
+      },
+      'ExportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
       }
+    }
     ]
   },
   'settings': {

@@ -32,6 +32,6 @@ jobs:
       cypress-container-name: cypress-tests
   lint:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/lint.yaml@git push --set-upstream origin v0013-add-lint-command-option
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0013-add-lint-command-option
     with:
       lint_cmd: yarn lint:all

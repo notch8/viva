@@ -10,14 +10,18 @@ class SearchController < ApplicationController
       types: Question.type_names, # Deprecated Favor :type_names
       type_names: Question.type_names,
       levels: [1, 2, 3], # hard coding this for now - allows there to be levels in the UI dropdown
-      filtered_questions: Question.filter_as_json(
+      selectedKeywords: params[:selected_keywords],
+      selectedCategories: params[:selected_categories],
+      selectedTypes: params[:selected_types],
+      # TODO: Add :levels once it is set up in the back end
+      filteredQuestions: Question.filter_as_json(
                keywords: params[:selected_keywords],
                categories: params[:selected_categories],
                # Deprecating :type; I'd prefer us to use :type_name
                type_name: params[:selected_types]
                # TODO: Add :levels once it is set up in the back end
                # level: params[:selected_levels]
-             )
+             ),
     }
   end
 

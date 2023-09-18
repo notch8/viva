@@ -39,15 +39,15 @@ module.exports = {
       'never'
     ],
     'object-curly-newline': ['error', {
-        'ImportDeclaration': {
-          'multiline': true,
-          'minProperties': 4
-        },
-        'ExportDeclaration': {
-          'multiline': true,
-          'minProperties': 4
-        }
+      'ImportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
+      },
+      'ExportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
       }
+    }
     ]
   },
   'settings': {

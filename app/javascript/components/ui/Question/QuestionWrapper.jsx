@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Collapse, Button, Container, Row, Col } from 'react-bootstrap'
 import { Plus, Minus } from '@phosphor-icons/react'
-import Answers from './Answers'
-import Question from './Question'
+import Answers from '../Answers'
+import Question from '.'
 import QuestionMetadata from './QuestionMetadata'
 
 const QuestionWrapper = ({ question }) => {

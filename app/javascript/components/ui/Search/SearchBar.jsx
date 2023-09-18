@@ -3,6 +3,8 @@ import { InputGroup, DropdownButton, Dropdown, Button, Container, Form } from 'r
 import { MagnifyingGlass } from '@phosphor-icons/react'
 
 const SearchBar = (props) => {
+  const { categories, keywords, types, levels, submit, handleCheck, processing } = props
+  const filters = { categories, keywords, types, levels }
 
   // Function to set the width of the dropdown menu to match the button
   useEffect(() => {
@@ -24,10 +26,11 @@ const SearchBar = (props) => {
   }, [])
 
   return (
-    <Form>
+    <Form onSubmit={submit}>
       <Container className='p-0 mt-2 search-bar'>
           <InputGroup className='mb-3 flex-column flex-md-row'>
-            {Object.keys(props).map((key, index) => (
+            {/* props being passed to this component are each of the filters. the keys are the name of the filter, and the values are the list of items to filter by */}
+            {Object.keys(filters).map((key, index) => (
               <DropdownButton
                 key={index}
                 variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
@@ -36,18 +39,29 @@ const SearchBar = (props) => {
                 size='lg'
                 autoClose="outside"
               >
-                {props[key].map((item, itemIndex) => (
+              {filters[key].map((item, itemIndex) => (
                   <Form.Check type='checkbox' id={item} className='p-2' key={itemIndex}>
-                    <Form.Check.Input type='checkbox' id={item} className='mx-0'/>
-                    <Form.Check.Label className='ps-2'>{props[key] === 'types' ? item.substring(10) : item}</Form.Check.Label>
+                    <Form.Check.Input
+                      type='checkbox'
+                      id={item}
+                      className='mx-0'
+                      value={item}
+                      onChange={(event) => handleCheck(event, key)}
+                    />
+                    <Form.Check.Label className='ps-2'>
+                      {filters[key] === 'types' ? item.substring(10) : item}
+                    </Form.Check.Label>
                   </Form.Check>
-                ))}
+                )
+              )}
               </DropdownButton>
             ))}
             <Button
               className='d-flex align-items-center fs-6 justify-content-center'
               id='button-addon2'
               size='lg'
+              type='submit'
+              disabled={processing}
             >
               <span className='me-1'>Search</span>
               <MagnifyingGlass size={20} weight='bold'/>

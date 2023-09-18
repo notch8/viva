@@ -4,9 +4,9 @@ import { Row, Col, Button, Badge } from 'react-bootstrap'
 const TraditionalAnswers = ({ answers }) => {
   return (
     answers && answers.map((answer, index) => {
-      console.log({ answer, index })
+      //console.log({ answer, index })
       return (
-        <Row className={`rounded m-1 p-1 d-flex align-items-center justify-content-center ${answer.correct ? "correct" : ""}`}>
+        <Row className={`rounded m-1 p-1 d-flex align-items-center justify-content-center ${answer.correct ? "correct" : ""}`} key={index}>
           <Col sm={2}>
             <Button variant="primary" className="m-1">{index}</Button>
           </Col>

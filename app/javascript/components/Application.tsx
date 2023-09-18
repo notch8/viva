@@ -5,12 +5,13 @@ import {
   InertiaAppOptionsForCSR,
 } from "@inertiajs/inertia-react";
 
-const pages = import.meta.glob("./pages/*.jsx");
+const pages = import.meta.glob("./pages/*.jsx")
 
 const app = () =>
   createInertiaApp<InertiaAppOptionsForCSR<unknown>>({
     resolve: async (name) => {
-      const module = await pages[`./pages/${name}.jsx`]();
+      document.getElementById('app').classList.add('d-flex', 'flex-column', 'h-100')
+      const module = await pages[`./pages/${name}.jsx`]()
       const page = (
         module as never as { default: { layout: React.ReactFragment } }
       ).default;
@@ -21,8 +22,8 @@ const app = () =>
       const root = createRoot(container!);
       root.render(<App {...props} />);
     },
-  });
+  })
 
 document.addEventListener('DOMContentLoaded', () => {
   app();
-});
+})

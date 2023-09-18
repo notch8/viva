@@ -1,8 +1,8 @@
 import React from 'react'
 import { Container, Tab, Nav } from 'react-bootstrap'
 import Layout from '../App'
-import SettingsForm from '../ui/SettingsForm'
-import PasswordForm from '../ui/PasswordForm'
+import SettingsForm from '../ui/Settings/SettingsForm'
+import PasswordForm from '../ui/Settings/PasswordForm'
 
 const Settings = ({ currentUser }) => {
 

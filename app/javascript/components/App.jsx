@@ -11,14 +11,14 @@ const App = ({ children }) => {
   return (
     <>
       <Header />
-      <div className='d-flex'>
+      <div className='d-flex h-100 overflow-auto'>
         <Collapse in={open} dimension='width'>
           <div id='sidebar' className='bg-light-1'>
             <Sidebar open={open} setOpen={setOpen}/>
           </div>
         </Collapse>
         {!open &&
-          <div className='bg-light-1 vh-100'>
+          <div className='bg-light-1'>
             <Button
               onClick={() => setOpen(!open)}
               aria-controls='sidebar'
@@ -30,10 +30,11 @@ const App = ({ children }) => {
             </Button>
           </div>
         }
-        <div id='page-content-wrapper' className='container-fluid my-2'>
+        <div id='page-content-wrapper' className='container-fluid py-2  overflow-auto'>
           {children}
         </div>
       </div>
+      <footer className='mt-auto'>put a footer here</footer>
     </>
   )
 }

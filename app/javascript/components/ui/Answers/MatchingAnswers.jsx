@@ -1,12 +1,20 @@
 import React from 'react'
+import { Table } from 'react-bootstrap'
 
 const MatchingAnswers = ({ answers }) => {
   return (
-    <div className='MatchingAnswers'>
-      {/* {answers.map((answer, index) => { */}
-        // TODO: display the correctly formatted answers
-      {/* })} */}
-    </div>
+    <Table bordered className="bg-white">
+      <tbody>
+        { answers.map((answer, index) => {
+          return (
+            <tr>
+              <td className="px-3 text-primary fw-semibold">{answer.answer}</td>
+              <td className="px-3">{answer.correct}</td>
+            </tr>
+          )
+        })}
+      </tbody>
+    </Table>
   )
 }
 

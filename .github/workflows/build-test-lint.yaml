@@ -30,7 +30,7 @@ jobs:
     uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0.0.13
     with:
       cypress-container-name: cypress-tests
-  rubocop-lint:
+  rubocop:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
   eslint:

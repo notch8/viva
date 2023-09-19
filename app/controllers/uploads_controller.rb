@@ -8,7 +8,8 @@ class UploadsController < ApplicationController
   end
 
   def create
-    puts params[:csv]
+    # TODO: Build out this method to actually upload the csv
+    Rails.logger.info params[:csv]
     render inertia: 'Uploads'
   end
 end

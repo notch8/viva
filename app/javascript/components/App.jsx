@@ -30,7 +30,7 @@ const App = ({ children }) => {
             </Button>
           </div>
         }
-        <div id='page-content-wrapper' className='container-fluid py-2  overflow-auto'>
+        <div id='page-content-wrapper' className='container-fluid py-2 overflow-auto'>
           {children}
         </div>
       </div>

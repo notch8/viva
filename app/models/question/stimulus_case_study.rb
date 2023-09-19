@@ -15,4 +15,26 @@ class Question::StimulusCaseStudy < Question
            through: :as_parent_question_aggregations,
            class_name: "Question",
            source_type: "Question"
+
+  ##
+  # @note Due to the implementation of {Question.filter_as_json} and {Question.filter}, this is not
+  #       performant.  That is it will result in potentially many sub-queries.  One solution would
+  #       be to move the has_many relations to Question but that would expose those methods to other
+  #       question types.
+  #
+  # @return [Array<Hash<String, Object>>] each element will have "type_label", "type_name", and
+  #         "text".  When the child_question has no {#data} it will be omitted (as in a
+  #         {Question::Scenario}).  When the child_question's data is present, it will conform to
+  #         that question's {#data} structure (often an Array but could be a Hash).
+  def data
+    child_questions.map do |question|
+      hash = {
+        "type_label" => question.type_label,
+        "type_name" => question.type_name,
+        "text" => question.text
+      }
+      hash["data"] = question.data if question.data.present?
+      hash
+    end
+  end
 end

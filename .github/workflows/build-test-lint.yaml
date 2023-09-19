@@ -34,4 +34,4 @@ jobs:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0013-add-lint-command-option
     with:
-      lint_cmd: docker-compose run web -- bash -c 'yarn lint:all'
+      lint_cmd: docker-compose run web -- bash -c 'yarn && yarn lint:all'

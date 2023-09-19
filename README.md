@@ -68,7 +68,7 @@ yarn cy:comp --spec 'cypress/e2e/splash.cy.jsx'
 #### LaunchPad
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
 
-1. Open the Cypress Launchpad: `yarn cypress:open`
+1. Open the Cypress Launchpad: `yarn cy:open`
 2. Choose to run end-to-end or component tests.
 3. Select a browser to run the tests in.
     - This opens the test suite in the browser you chose

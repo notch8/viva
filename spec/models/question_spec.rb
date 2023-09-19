@@ -17,6 +17,7 @@ RSpec.describe Question, type: :model do
     it do
       is_expected.to(
         match_array([Question::BowTie,
+                     Question::Scenario,
                      Question::DragAndDrop,
                      Question::Matching,
                      Question::SelectAllThatApply,
@@ -57,25 +58,6 @@ RSpec.describe Question, type: :model do
     it 'should be implemented by subclasses' do
       expect { described_class.import_csv_row }.to raise_error(NotImplementedError)
     end
-  end
-
-  xdescribe '.types' do
-    subject { described_class.types }
-
-    # rubocop:disable RSpec/ExampleLength
-    it do
-      is_expected.to(
-        match_array([
-                      "Question::BowTie",
-                      "Question::DragAndDrop",
-                      "Question::Matching",
-                      "Question::SelectAllThatApply",
-                      "Question::StimulusCaseStudy",
-                      "Question::Traditional"
-                    ])
-      )
-    end
-    # rubocop:enable RSpec/ExampleLength
   end
 
   describe '.type_name' do

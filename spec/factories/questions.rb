@@ -44,11 +44,18 @@ FactoryBot.define do
       data { (1..4).map { |i| { answer: "Left #{i} #{Faker::Lorem.word}", correct: "Right #{i} #{Faker::Lorem.word}" } } }
     end
 
+    factory :question_scenario, class: Question::Scenario, parent: :question
+
     factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question do
       after(:build) do |question, _context|
         child_question_classes = Question.descendants - [question.class]
-        (0..rand(4)).map do |i|
-          child = FactoryBot.build(child_question_classes.sample.model_name.param_key, child_of_aggregation: true)
+        (0..5).map do |i|
+          # Injecting some scenarios into the questions.
+          child = if i == 0 || i == 3
+                    FactoryBot.build(:question_scenario)
+                  else
+                    FactoryBot.build(child_question_classes.sample.model_name.param_key, child_of_aggregation: true)
+                  end
           question.as_parent_question_aggregations.build(presentation_order: i, child_question: child)
         end
       end

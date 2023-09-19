@@ -17,7 +17,7 @@ const Uploads = () => {
       setTimeout(() => {
         clearErrors()
       }, 3000)
-    } else if (!data.csv.includes('.csv')) {
+    } else if (data.csv.slice(-3) !== 'csv') {
       setError('csv', 'Please select a file with a CSV extension.')
       setTimeout(() => {
         clearErrors()

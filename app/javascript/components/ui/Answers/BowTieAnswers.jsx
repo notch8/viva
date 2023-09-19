@@ -8,7 +8,7 @@ const BowTieAnswers = ({ answers }) => {
         // TODO: display the correctly formatted answers
       {/* })} */}
       {/* TODO: pass the correct prop below */}
-      <IncorrectAnswers incorrect_answers={[]} />
+      <IncorrectAnswers incorrectAnswers={[]} />
     </div>
   )
 }

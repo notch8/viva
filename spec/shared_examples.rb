@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: true|
+RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: true, include_in_filterable_type: true|
   it { is_expected.to respond_to(:keyword_names) }
   it { is_expected.to respond_to(:category_names) }
   its(:keyword_names) { is_expected.to be_a(Array) }
   its(:category_names) { is_expected.to be_a(Array) }
   its(:type_label) { is_expected.to be_a(String) }
   its(:type_name) { is_expected.to be_a(String) }
+  its(:include_in_filterable_type) { is_expected.to eq(include_in_filterable_type) }
 
   if test_type_name_to_class
     describe '.type_name_to_class' do

@@ -11,6 +11,7 @@ class Question < ApplicationRecord
 
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false
+  class_attribute :include_in_filterable_type, default: true, instance_writer: false
 
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.
@@ -25,7 +26,7 @@ class Question < ApplicationRecord
   def type_must_be_for_descendant
     # We're using `Question` instead of `self.class` because this method propogates to the subclasses
     # which will result in different set of descendants.
-    klass_names = Question.types
+    klass_names = Question.descendants.map { |descendant| descendant.model_name.name }
     return true if klass_names.include?(type.to_s)
 
     errors.add(:type, "was #{type} but must be one of the following: #{klass_names.inspect}")
@@ -33,20 +34,14 @@ class Question < ApplicationRecord
   private :type_must_be_for_descendant
 
   ##
-  # @return [Array<String>]
-  #
-  # @deprecated Favor {.type_names}
-  def self.types
-    Question.descendants.map { |klass| klass.model_name.name }
-  end
-
-  ##
   # {Question#type} is a partially reserved value; used for the Single Table Inheritance.  It is not
   # human friendly.  The {.type_names} is an effort to be more friendly.
   #
   # @return [Array<String>]
   def self.type_names
-    Question.descendants.map(&:type_name)
+    Question.descendants.each_with_object([]) do |descendant, array|
+      array << descendant.type_name if descendant.include_in_filterable_type
+    end
   end
 
   ##

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       patch '/settings/update', to: 'settings#update'
       patch '/settings/update-password', to: 'settings#update_password'
       get '/uploads', to: 'uploads#index', as: 'uploads'
+      post '/uploads/create', to: 'uploads#create'
     end
 
     unauthenticated do

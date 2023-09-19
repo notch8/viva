@@ -7,7 +7,7 @@ const MatchingAnswers = ({ answers }) => {
       <tbody>
         { answers.map((answer, index) => {
           return (
-            <tr>
+            <tr key={index}>
               <td className="px-3 text-primary fw-semibold">{answer.answer}</td>
               <td className="px-3">{answer.correct}</td>
             </tr>

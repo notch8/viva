@@ -3,6 +3,7 @@
 ##
 # The controller to handle methods related to the search page.
 class SearchController < ApplicationController
+  # rubocop:disable Metrics/MethodLength
   def index
     render inertia: 'Search', props: {
       keywords: Keyword.all.pluck(:name),
@@ -21,9 +22,10 @@ class SearchController < ApplicationController
                type_name: params[:selected_types]
                # TODO: Add :levels once it is set up in the back end
                # level: params[:selected_levels]
-             ),
+             )
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe SearchController do
   describe '#index', inertia: true do
-    it "returns a 'Search' component with properties of :keywords, :types, :categories, and :filtered_questions" do
+    it "returns a 'Search' component with properties of :keywords, :types, :categories, and :filteredQuestions" do
       question = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
 
       user = FactoryBot.create(:user)
@@ -16,7 +16,7 @@ RSpec.describe SearchController do
       expect(inertia.props[:categories]).to be_a(Array)
       expect(inertia.props[:types]).to be_a(Array)
       expect(inertia.props[:type_names]).to be_a(Array)
-      expect(inertia.props[:filtered_questions].as_json).to(
+      expect(inertia.props[:filteredQuestions].as_json).to(
         eq([{ "id" => question.id,
               "text" => question.text,
               "type_name" => question.type_name,

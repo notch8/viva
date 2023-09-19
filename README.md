@@ -76,10 +76,22 @@ _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launch
 3. Click on the name of the test you'd like to run
 
 ## Linting
-
-This app has rubocop installed. To run linting inside the web container:
+### Rubocop
+For Rails code.
 
 ```bash
-docker compose exec web bash
-bundle exec rubocop
+docker compose exec web sh
+rubocop -h # list all rubocop cli options
+rubocop # lint all available files
+```
+
+### ESLint
+For JavScript code. Refer to the `lint` scripts in package.json to understand the underlying command. Using `yarn` with a script is equivalent to using `yarn run <command>`.
+
+```bash
+docker compose exec web sh
+yarn lint -h # list all eslint cli options
+yarn lint # this will do nothing on its own. you must pass it additional options
+  # e.g.: `yarn lint app/javascript/components/App.jsx` which will lint that file
+yarn lint:all # lint all available files
 ```

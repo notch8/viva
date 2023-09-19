@@ -32,6 +32,9 @@ jobs:
       cypress-container-name: cypress-tests
   lint:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0013-add-lint-command-option
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+  eslint:
+    needs: build
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
     with:
       lint_cmd: docker-compose run web -- bash -c 'yarn && yarn lint:all'

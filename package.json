@@ -22,13 +22,10 @@
   },
   "scripts": {
     "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run",
-    "cypress:run:chrome": "cypress run --browser chrome",
-    "cypress:run:firefox": "cypress run --browser firefox",
-    "cypress:run:record": "cypress run --record",
-    "cypress:run:record:chrome": "cypress run --record --browser chrome",
-    "cypress:run:record:firefox": "cypress run --record --browser firefox",
+    "cy:comp": "cypress run --component",
+    "cy:e2e": "cypress run",
+    "cy:open": "cypress open",
+    "cy:rec": "cypress run --record",
     "lint": "eslint",
     "lint:all": "eslint .",
     "lint:fix": "eslint . --fix"

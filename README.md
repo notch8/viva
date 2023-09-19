@@ -48,22 +48,21 @@ bundle exec rspec
 ```
 
 ### Cypress
-Cypress is used to test the JavaScript code.
+Cypress is used to test the JavaScript code. Learn more about how to write these tests at https://docs.cypress.io/api/table-of-contents.
 
 #### CLI
-_NOTE: Cypress defaults to running e2e tests. To run component tests, add `--component` to any of the commands you run._
+_NOTE: Cypress defaults to running e2e tests. To run component tests, `--component` must be used._
 
-- Use one of the `cypress:run` scripts in the [package.json](./package.json) file
+- Use one of the `cy` scripts in the [package.json](./package.json) file
 - If you don't see the command you'd like to run, use `yarn run [COMMAND]`
   - Ref: https://docs.cypress.io/guides/guides/command-line#Commands
 
 ``` bash
 # examples
-yarn cypress:run
-# yarn cypress:run --component # TODO: Figure out why component tests are broken now.
-  # Outside the containers it throws a "The package "@esbuild/darwin-x64" could not be found, and is needed by esbuild." error.
+yarn cy:e2e
+# yarn cy:comp # TODO: Figure out why component tests are broken now.
   # Inside the web container it throws an "xvfb" error. (https://docs.cypress.io/guides/continuous-integration/introduction#Xvfb)
-yarn cypress:run --spec 'cypress/e2e/splash.cy.jsx'
+yarn cy:comp --spec 'cypress/e2e/splash.cy.jsx'
 ```
 
 #### LaunchPad

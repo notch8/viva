@@ -74,7 +74,7 @@ class Question < ApplicationRecord
   end
 
   FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze
-  FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name].freeze
+  FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name, :data].freeze
 
   ##
   # @param select [Array<Symbol>] attribute names both passed forward to {.filter} and exposed in
@@ -95,7 +95,14 @@ class Question < ApplicationRecord
   #
   # @see .filter
   def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, **kwargs)
-    filter(select:, **kwargs).as_json(only: select, methods:)
+    ##
+    # The :data method/field is an interesting creature; we want to "select" it in queries because
+    # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
+    # it uses the {Question::StimulusCaseStudy#child_questions} to build the data.
+    #
+    # Hence we want to :select that data for querying, but rely instead on the :method.
+    only = select - methods
+    filter(select:, **kwargs).as_json(only:, methods:)
   end
 
   ##

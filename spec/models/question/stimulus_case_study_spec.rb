@@ -22,4 +22,20 @@ RSpec.describe Question::StimulusCaseStudy do
       expect(Question.where(child_of_aggregation: true).count).to eq(QuestionAggregation.count)
     end
   end
+
+  describe '#data' do
+    subject { FactoryBot.create(:question_stimulus_case_study).data }
+    it "is comprised of the child_question's metadata" do
+      expect(subject).to be_a(Array)
+
+      # All elements are Hashes
+      expect(subject.all? { |d| d.is_a?(Hash) }).to eq(true)
+
+      # Making an assumption about the factory; namely that the first element is a scenario.
+      expect(subject[0].keys).to match_array(["type_label", "type_name", "text"])
+
+      # The second element is a non-scenario Question, and thus has data.
+      expect(subject[1].keys).to match_array(["type_label", "type_name", "text", "data"])
+    end
+  end
 end

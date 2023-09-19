@@ -1,0 +1,47 @@
+@import '../../../node_modules/bootstrap/scss/functions';
+@import '../../../node_modules/bootstrap/scss/variables';
+@import '../../../node_modules/bootstrap/scss/mixins';
+
+.search-bar {
+  .dropdown-menu.show {
+    padding: 0;
+    margin-top: -2px;
+    border-top: 0;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    .form-check {
+      &:hover, &:active, &:focus {
+        background-color: var(--bs-tertiary-bg);
+      }
+    }
+  }
+
+  .input-group .dropdown-toggle {
+    flex: 1;
+    &:hover, &:active, &:focus, &.btn.show {
+      background-color: var(--bs-tertiary-bg);
+    }
+  }
+
+  .dropdown-toggle:after {
+    color: var(--bs-light-4);
+    font-size: 30px;
+  }
+
+  @include media-breakpoint-down(md) {
+    #input-group-dropdown-0 {
+      border-radius: $border-radius $border-radius 0 0;
+      margin-left: -1px;
+    }
+
+    #input-group-dropdown-3,
+    #input-group-dropdown-2,
+    #input-group-dropdown-1 {
+      border-top: 0
+    }
+
+    #button-addon2 {
+      border-radius: 0 0 $border-radius $border-radius;
+    }
+  }
+}

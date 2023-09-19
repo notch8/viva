@@ -9,7 +9,7 @@ const QuestionWrapper = ({ question }) => {
   const [open, setOpen] = useState(false)
 
   return (
-    <Container className='bg-light-1 rounded container p-4 mt-4'>
+    <Container className="bg-light-1 rounded container p-4 mt-3">
       <Row>
         <Col md={7} className='p-2'>
           <Question text={question.text} />

@@ -17,7 +17,7 @@
 import './commands'
 import { mount } from 'cypress/react18'
 
-Cypress.Commands.add('mount', mount)
+Cypress.Commands.add('mount', mount) // eslint-disable-line no-undef
 
 // Example use:
 // cy.mount(<MyComponent />)

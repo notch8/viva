@@ -22,9 +22,19 @@ jobs:
     with:
       platforms: 'linux/amd64'
       target: viva-base
-  test:
+  rspec-tests:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
-  lint:
+  cypress-tests:
+    needs: build
+    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0.0.13
+    with:
+      cypress-container-name: cypress-tests
+  rubocop:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+  eslint:
+    needs: build
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+    with:
+      lint_cmd: docker-compose run web -- bash -c 'yarn && yarn lint:all'

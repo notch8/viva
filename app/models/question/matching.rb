@@ -61,6 +61,6 @@ class Question::Matching < Question
 
     true
   end
-  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
 end

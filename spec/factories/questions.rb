@@ -68,9 +68,78 @@ FactoryBot.define do
 
     factory :question_bow_tie, class: Question::BowTie, parent: :question do
       data do
-        { center: { label: "Center Label", answers: [{ answer: "To Select", correct: true }, { answer: "To Skip", correct: false }] },
-          left: { label: "Center Label", answers: [{ answer: "LCorrect", correct: true }, { answer: "LIncorrect", correct: false }] },
-          right: { label: "Center Label", answers: [{ answer: "RCorrect", correct: true }, { answer: "LIncorrect", correct: false }] } }
+        {
+          center: {
+            label: "Center Label",
+            answers: [
+              {
+                answer: "Center correct answer",
+                correct: true },
+              {
+                answer: "Center incorrect answer 1",
+                correct: false
+              },
+              {
+                answer: "Center incorrect answer 2",
+                correct: false
+              },
+              {
+                answer: "Center incorrect answer 3",
+                correct: false
+              }
+            ]
+          },
+          left: {
+            label: "Left Label",
+            answers:[
+              {
+                answer: "Left Correct Answer 1",
+                correct: true
+              },
+              {
+                answer: "Left Correct Answer 2 with longer text to test for responsiveness",
+                correct: true
+              },
+              {
+                answer: "Left Incorrect Answer 1",
+                correct: false
+              },
+              {
+                answer: "Left Incorrect Answer 2 with longer text to test for responsiveness",
+                correct: false
+              },
+              {
+                answer: "Left Incorrect Answer 3",
+                correct: false
+              }
+            ]
+          },
+          right: {
+            label: "Right Label",
+            answers:[
+              {
+                answer: "Right Correct Answer 1",
+                correct: true
+              },
+              {
+                answer: "Right Correct Answer 2",
+                correct: true
+              },
+              {
+                answer: "Right Incorrect Answer 1 with longer text to test for responsiveness",
+                correct: false
+              },
+              {
+                answer: "Right Incorrect Answer 2",
+                correct: false
+              },
+              {
+                answer: "Right Incorrect Answer 3",
+                correct: false
+              }
+            ]
+          }
+        }
       end
     end
   end

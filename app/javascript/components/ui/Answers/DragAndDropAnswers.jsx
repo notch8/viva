@@ -1,6 +1,6 @@
 import React from 'react'
 import { Row, Col, Container, Button } from 'react-bootstrap'
-import IncorrectAnswers from '../IncorrectAnswers'
+import IncorrectAnswers from '../IncorrectAnswers/TwoColumnLayout'
 
 const DragAndDropAnswers = ({ answers }) => {
   const correctAnswers = answers.filter(answer => answer.correct)

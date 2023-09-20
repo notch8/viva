@@ -20,7 +20,9 @@ class Question::Matching < Question
     data = indices.map do |index|
       # It is okay that these will possibly be nil; because our downstream validation will catch
       # them.
-      { answer: row["LEFT_#{index}"], correct: row["RIGHT_#{index}"] }
+      answer = row["LEFT_#{index}"]
+      correct = row["RIGHT_#{index}"]&.split(/\s*,\s*/)
+      { answer: answer, correct: correct }
     end
 
     create!(text:, data:)
@@ -42,8 +44,14 @@ class Question::Matching < Question
     end
 
     unless data.all? do |pair|
-             pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && pair['answer'].present? && pair['correct'].is_a?(String) && pair['correct'].present?
-           end
+      pair.is_a?(Hash) &&
+      pair.keys.sort == ['answer', 'correct'] &&
+      pair['answer'].is_a?(String) &&
+      pair['answer'].present? &&
+      pair['correct'].present? &&
+      pair['correct'].is_a?(Array) &&
+        pair['correct'].all?(&:present?)
+    end
       errors.add(:data, "expected to be an array of hashes, each hash having an answer and correct, both of which are strings")
       return false
     end

@@ -41,7 +41,14 @@ FactoryBot.define do
     end
 
     factory :question_matching, class: Question::Matching, parent: :question do
-      data { (1..4).map { |i| { answer: "Left #{i} #{Faker::Lorem.word}", correct: "Right #{i} #{Faker::Lorem.word}" } } }
+      data do
+        (1..4).map do |i|
+          {
+            answer: "Left #{i} #{Faker::Lorem.word}",
+            correct: (0..rand(4)).map { |j| "Right #{i}-#{j} #{Faker::Lorem.word}" }
+          }
+        end
+      end
     end
 
     factory :question_scenario, class: Question::Scenario, parent: :question

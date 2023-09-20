@@ -51,16 +51,21 @@ FactoryBot.define do
       end
     end
 
-    factory :question_scenario, class: Question::Scenario, parent: :question
+    factory :question_scenario, class: Question::Scenario, parent: :question do
+      parent_question factory: :question_stimulus_case_study_without_children
+    end
 
-    factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question do
+    factory :question_stimulus_case_study_without_children, class: Question::StimulusCaseStudy, parent: :question
+
+    factory :question_stimulus_case_study, parent: :question_stimulus_case_study_without_children do
       after(:build) do |question, _context|
         child_question_classes = Question.descendants.select(&:include_in_filterable_type?) - [question.class]
 
         (0..5).map do |i|
           # Injecting some scenarios into the questions.
           child = if i == 0 || i == 3
-                    FactoryBot.build(:question_scenario)
+                    # If we don't specify the scenario's parent, we'll build an all new one.
+                    FactoryBot.build(:question_scenario, parent_question: question)
                   else
                     FactoryBot.build(child_question_classes.sample.model_name.param_key, child_of_aggregation: true)
                   end

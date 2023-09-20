@@ -9,10 +9,12 @@ class Question::Scenario < Question
   self.type_name = "Scenario"
   self.include_in_filterable_type = false
 
-  before_save :always_be_a_child_of_aggregation
-  after_initialize :always_be_a_child_of_aggregation
+  before_save :coerce_attributes_to_expected_state
+  after_initialize :coerce_attributes_to_expected_state
 
-  def always_be_a_child_of_aggregation
+  def coerce_attributes_to_expected_state
+    self.data = nil
     self.child_of_aggregation = true
   end
+  private :coerce_attributes_to_expected_state
 end

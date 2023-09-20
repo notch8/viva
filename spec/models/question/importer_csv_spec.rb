@@ -14,6 +14,10 @@ RSpec.describe Question::ImporterCsv do
     it 'persists the given records' do
       expect { subject.save }.to change(Question::Traditional, :count).by(1)
       expect(subject.errors).to be_empty
+      json = subject.as_json
+      expect(json.keys.sort).to eq([:errors, :questions])
+      expect(json[:errors]).not_to be_present
+      expect(json[:questions]).to be_present
     end
   end
 
@@ -54,6 +58,10 @@ RSpec.describe Question::ImporterCsv do
 
       expect(subject.errors).to be_a(Array)
       expect(subject.errors.first.keys.sort).to match_array([:errors, :row])
+      json = subject.as_json
+      expect(json.keys.sort).to eq([:errors, :questions])
+      expect(json[:errors]).to be_present
+      expect(json[:questions]).to be_present
     end
   end
 

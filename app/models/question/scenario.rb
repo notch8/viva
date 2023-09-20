@@ -9,7 +9,7 @@ class Question::Scenario < Question
   self.type_name = "Scenario"
   self.include_in_filterable_type = false
 
-  def self.import_csv_row(row)
+  def self.build_row(row)
     # TODO: This is naive in that it assumes a full blown object.  It's also highlighting that we're
     # likely going to want a Csv Importer class; one that can handle the validation then reporting
     # errors or persisting objects.

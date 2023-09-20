@@ -7,8 +7,9 @@ RSpec.describe Question::Matching do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Matching") }
 
-  describe '.import_csv_row' do
-    let(:data) do
+  describe '.build_row' do
+    subject { described_class.build_row(row) }
+    let(:row) do
       CsvRow.new("TYPE" => "Matching",
                  "TEXT" => "Matching the proper pairings:",
                  "LEFT_1" => "Animal",
@@ -17,12 +18,9 @@ RSpec.describe Question::Matching do
                  "RIGHT_2" => "Catnip, Dogwood")
     end
 
-    it "creates a matching question" do
-      expect do
-        described_class.import_csv_row(data)
-      end.to change(described_class, :count).by(1)
-      expect(described_class.last.data).to eq([{ 'answer' => "Animal", 'correct' => ["Cat", "Dog"] }, { 'answer' => "Plant", 'correct' => ["Catnip", "Dogwood"] }])
-    end
+    it { is_expected.to be_valid }
+    it { is_expected.not_to be_persisted }
+    its(:data) { is_expected.to eq([{ 'answer' => "Animal", 'correct' => ["Cat", "Dog"] }, { 'answer' => "Plant", 'correct' => ["Catnip", "Dogwood"] }]) }
   end
 
   describe 'data serialization' do

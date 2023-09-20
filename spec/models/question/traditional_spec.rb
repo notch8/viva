@@ -7,7 +7,8 @@ RSpec.describe Question::Traditional do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Traditional") }
 
-  describe '.import_csv_row' do
+  describe '.build_row' do
+    subject { described_class.build_row(data) }
     let(:data) do
       CsvRow.new("TYPE" => "Traditional",
                  "TEXT" => "Which one is true?",
@@ -16,14 +17,9 @@ RSpec.describe Question::Traditional do
                  "ANSWER_2" => "false")
     end
 
-    it "creates a Traditional question" do
-      allow(data).to receive(:headers).and_return(data.keys)
-      expect do
-        described_class.import_csv_row(data)
-      end.to change(Question::Traditional, :count).by(1)
-
-      expect(described_class.last.data).to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }])
-    end
+    it { is_expected.to be_valid }
+    it { is_expected.not_to be_persisted }
+    its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
   end
 
   describe 'data serialization' do

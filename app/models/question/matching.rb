@@ -7,7 +7,7 @@
 class Question::Matching < Question
   self.type_name = "Matching"
 
-  def self.import_csv_row(row)
+  def self.build_row(row)
     text = row['TEXT']
 
     # Ensure that we have all of the candidate indices (the left and right side)
@@ -25,7 +25,7 @@ class Question::Matching < Question
       { answer:, correct: }
     end
 
-    create!(text:, data:)
+    new(text:, data:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

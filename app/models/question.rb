@@ -53,24 +53,19 @@ class Question < ApplicationRecord
     Question.descendants.detect { |d| d.type_name == name || d == name } || fallback
   end
 
-  ##
-  # Read through the given :csv and create the corresponding questions.
-  #
-  # @param csv [CSV]
-  #
-  # @todo Given that they are uploading a CSV and there's significant validation, we're almost
-  #       certainly going to want an object to handle the importer and tracking of what worked and
-  #       what failed.  But that's a not yet problem.
-  def self.import_csv(csv)
-    csv.each do |row|
-      type = row.fetch('TYPE')
-      klass = "Question::#{type}".constantize
-      klass.import_csv_row(row)
-    end
+  def self.build_row(*args)
+    raise NotImplementedError, "#{self}.#{__method__}"
   end
 
-  def self.import_csv_row(*args)
-    raise NotImplementedError, "#{self}.#{__method__}"
+  ##
+  # @see Question::ImporterCsv
+  #
+  # @param row [Enumerable] likely a row from {CSV.read}
+  # @return [Question] a subclass of {Question} derived from the row's TYPE property
+  def self.build_from_csv_row(row)
+    type = row.fetch('TYPE')
+    klass = "Question::#{type}".constantize
+    klass.build_row(row)
   end
 
   FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze

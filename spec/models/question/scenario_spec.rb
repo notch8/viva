@@ -12,8 +12,9 @@ RSpec.describe Question::Scenario do
   its(:child_of_aggregation) { is_expected.to eq(true) }
   its(:data) { is_expected.to be_nil }
 
-  describe '.import_csv_row' do
-    let(:data) do
+  describe '.build_row' do
+    subject { described_class.build_row(row) }
+    let(:row) do
       CsvRow.new("TYPE" => "Scenario",
                  "TEXT" => "Something Something Scenario",
                  "PART_OF" => case_study)
@@ -21,16 +22,15 @@ RSpec.describe Question::Scenario do
 
     context 'when provided an existing PART_OF' do
       let(:case_study) { FactoryBot.build(:question_stimulus_case_study_without_children) }
-      it "creates a scenario question" do
-        expect { described_class.import_csv_row(data) }.to change(described_class, :count).by(1)
-      end
+
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
     end
 
     context 'when not provided a PART_OF' do
       let(:case_study) { nil }
-      it "raises an exception" do
-        expect { described_class.import_csv_row(data) }.to raise_error(ActiveRecord::RecordInvalid)
-      end
+      it { is_expected.not_to be_valid }
+      it { is_expected.not_to be_persisted }
     end
   end
 end

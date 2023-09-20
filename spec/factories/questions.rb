@@ -57,7 +57,7 @@ FactoryBot.define do
 
     factory :question_stimulus_case_study_without_children, class: Question::StimulusCaseStudy, parent: :question
 
-    factory :question_stimulus_case_study, parent: :question_stimulus_case_study_without_children do
+    factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question_stimulus_case_study_without_children do
       after(:build) do |question, _context|
         child_question_classes = Question.descendants.select(&:include_in_filterable_type?) - [question.class]
 

@@ -28,6 +28,29 @@ RSpec.describe Question, type: :model do
     # rubocop:enable RSpec/ExampleLength
   end
 
+  describe '.build_from_csv_row' do
+    subject { described_class.build_from_csv_row(row) }
+
+    context 'when no row TYPE is provided' do
+      let(:row) { CsvRow.new('IMPORT_ID' => '1') }
+
+      it { is_expected.to be_a(Question::NoType) }
+      it { is_expected.not_to be_valid }
+    end
+    context 'when no row IMPORT_ID is provided' do
+      let(:row) { CsvRow.new('TYPE' => 'Traditional') }
+
+      it { is_expected.to be_a(Question::NoImportId) }
+      it { is_expected.not_to be_valid }
+    end
+    context "when row's TYPE is not one of the Question.descendants" do
+      let(:row) { CsvRow.new('IMPORT_ID' => '1', 'TYPE' => 'Extra Spicy') }
+
+      it { is_expected.to be_a(Question::InvalidType) }
+      it { is_expected.not_to be_valid }
+    end
+  end
+
   describe '.build_row' do
     it 'should be implemented by subclasses' do
       expect { described_class.build_row }.to raise_error(NotImplementedError)

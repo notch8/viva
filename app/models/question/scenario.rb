@@ -14,7 +14,8 @@ class Question::Scenario < Question
     # likely going to want a Csv Importer class; one that can handle the validation then reporting
     # errors or persisting objects.
     parent_question = row['PART_OF']
-    create!(text: row['TEXT'], parent_question:)
+
+    new(text: row['TEXT'], parent_question:)
   end
 
   validate :must_have_a_parent_question

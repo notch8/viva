@@ -60,11 +60,18 @@ class Question < ApplicationRecord
   ##
   # @see Question::ImporterCsv
   #
-  # @param row [Enumerable] likely a row from {CSV.read}
-  # @return [Question] a subclass of {Question} derived from the row's TYPE property
+  # @param row [Enumerable] likely a row from {CSV.read}.
+  # @return [Question] a subclass of {Question} derived from the row's TYPE property.
+  # @return [Question::InvalidQuestion] when we have a row that doesn't have adequate information to
+  #         build the proper {Question} subclass.
   def self.build_from_csv_row(row)
-    type = row.fetch('TYPE')
-    klass = "Question::#{type}".constantize
+    return Question::NoType.new(row) unless row['TYPE']
+    return Question::NoImportId.new(row) unless row['IMPORT_ID']
+
+    klass = Question.type_name_to_class(row['TYPE'], fallback: nil)
+
+    return Question::InvalidType.new(row) unless klass
+
     klass.build_row(row)
   end
 

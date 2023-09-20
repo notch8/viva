@@ -3,8 +3,6 @@
 ##
 # The controller to handle methods related to the settings page.
 class SettingsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   def index
     render inertia: 'Settings', props: {
       currentUser: current_user

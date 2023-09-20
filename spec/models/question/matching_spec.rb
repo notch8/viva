@@ -10,7 +10,7 @@ RSpec.describe Question::Matching do
   describe '.import_csv_row' do
     let(:data) do
       CsvRow.new("TYPE" => "Matching",
-                 "TEXT" => "Matching the proper pariings:",
+                 "TEXT" => "Matching the proper pairings:",
                  "LEFT_1" => "Animal",
                  "RIGHT_1" => "Cat, Dog",
                  "LEFT_2" => "Plant",

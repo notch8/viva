@@ -183,6 +183,7 @@ RSpec.describe Question, type: :model do
 
       # When given a type it filters to only that type
       expect(described_class.filter(type_name: question1.type_name)).to eq([question1])
+      expect(described_class.filter(type_name: [question1.type_name, question2.type_name])).to eq([question1, question2])
 
       # When given a type and categories that don't overlap
       expect(described_class.filter(type_name: question1.type_name, keywords: [keyword2.name])).to eq([])

@@ -5,9 +5,11 @@
 #
 # @note This is an abstract class that leverages single-table inheritance (STI).  There are
 #       subclasses found in the app/models/question directory.
+#
+# rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
-  has_and_belongs_to_many :categories
-  has_and_belongs_to_many :keywords
+  has_and_belongs_to_many :categories, -> { order(name: :asc) }
+  has_and_belongs_to_many :keywords, -> { order(name: :asc) }
 
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false
@@ -114,6 +116,22 @@ class Question < ApplicationRecord
   end
 
   ##
+  # @param row [CsvRow]
+  # @return [Array<String>]
+  def self.extract_category_names_from(row)
+    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "CATEGORIES" || header == "CATEGORY" || header.start_with?("CATEGORY_")) }.compact.sort
+  end
+  private_class_method :extract_category_names_from
+
+  ##
+  # @param row [CsvRow]
+  # @return [Array<String>]
+  def self.extract_keyword_names_from(row)
+    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "KEYWORDS" || header == "KEYWORD" || header.start_with?("KEYWORD_")) }.compact.sort
+  end
+  private_class_method :extract_keyword_names_from
+
+  ##
   # This method ensures that we will consistently have a Question#keyword_names regardless of
   # whether the underlying query to reify the Question had a select statement that included the
   # "keyword_names" query field.
@@ -121,9 +139,14 @@ class Question < ApplicationRecord
   # @return [Array<String>]
   #
   # @see .filter_as_json
+  # @see #find_or_create_categories_and_keywords
   def keyword_names
-    attributes.fetch(:keyword_names) { keywords.names } || []
+    @keyword_names.presence || attributes.fetch(:keyword_names) { keywords.map(&:name) } || []
   end
+
+  ##
+  # @see #find_or_create_categories_and_keywords
+  attr_writer :keyword_names
 
   ##
   # This method ensures that we will consistently have a Question#category_names regardless of
@@ -133,8 +156,30 @@ class Question < ApplicationRecord
   # @return [Array<String>]
   #
   # @see .filter_as_json
+  # @see #find_or_create_categories_and_keywords
   def category_names
-    attributes.fetch(:category_names) { categories.names } || []
+    @category_names.presence || attributes.fetch(:category_names) { categories.map(&:name) } || []
+  end
+  ##
+  # @see #find_or_create_categories_and_keywords
+  attr_writer :category_names
+
+  after_save :find_or_create_categories_and_keywords
+
+  ##
+  # As part of the {.build_from_csv_row}, the subclasses are assigning the `@category_names' and
+  # `@keyword_names'.  When we save a record being imported, we want to persist those values to the
+  # corresponding relationships (e.g. {#categories} and {#keywords}).
+  def find_or_create_categories_and_keywords
+    @category_names&.each do |name|
+      categories << Category.find_or_create_by(name:)
+    end
+    @category_names = nil
+
+    @keyword_names&.each do |name|
+      keywords << Keyword.find_or_create_by(name:)
+    end
+    @keyword_names = nil
   end
 
   ##
@@ -167,12 +212,18 @@ class Question < ApplicationRecord
     keywords = Array.wrap(keywords)
     categories = Array.wrap(categories)
 
+    # Specifying a very arbitrary order
+    questions = Question.order(:id)
+
     # We want a human readable name for filtering and UI work.  However, we want to convert that
-    # into a class.  ActiveRecord is smart about Single Table Inheritance (STI).  When we coerce
-    # use a subclass of Question there's an implict `where` clause that narrows the query to only
-    # that subclass and its descendants.
-    questions = Question.order(id: :asc)
-    types = Array.wrap(type_name).map { |name| type_name_to_class(name).to_s }
+    # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
+    # not doing something like `Question::Traditional.where`; but instead `Question.where(type:
+    # "Question::Traditional")`.  The below code will ensure that the named type and any child
+    # descendants are used in the where clause.
+    types = Array.wrap(type_name).flat_map do |name|
+      klass = type_name_to_class(name)
+      [klass.sti_name] + klass.descendants.map(&:sti_name)
+    end
     questions = questions.where(type: types) if types.present?
 
     questions = questions.where(child_of_aggregation: false)
@@ -233,3 +284,5 @@ class Question < ApplicationRecord
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 end
+
+# rubocop:enable Metrics/ClassLength

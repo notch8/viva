@@ -48,7 +48,7 @@ bundle exec rspec
 ```
 
 ### Cypress
-Cypress is used to test the JavaScript code.
+Cypress is used to test the JavaScript code. Component tests will live next to the component file in the named folder. End to end tests live in "cypress/e2e". For reference on when to write which, refer to the [Cypress testing types documentation](https://docs.cypress.io/guides/core-concepts/testing-types#What-is-E2E-Testing).
 
 #### CLI
 _NOTE: Cypress defaults to running e2e tests. To run component tests, add `--component` to any of the commands you run._

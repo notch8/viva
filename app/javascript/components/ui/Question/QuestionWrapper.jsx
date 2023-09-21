@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Collapse, Button, Container, Row, Col } from 'react-bootstrap'
+import {
+  Collapse, Button, Container, Row, Col
+} from 'react-bootstrap'
 import { Plus, Minus } from '@phosphor-icons/react'
 import Answers from '../Answers'
 import Question from '.'
@@ -9,7 +11,7 @@ const QuestionWrapper = ({ question }) => {
   const [open, setOpen] = useState(false)
 
   return (
-    <Container className="bg-light-1 rounded container p-4 mt-3">
+    <Container className='bg-light-1 rounded container p-4 mt-3'>
       <Row>
         <Col md={7} className='p-2'>
           <Question text={question.text} />
@@ -31,8 +33,8 @@ const QuestionWrapper = ({ question }) => {
             aria-controls='question-answers'
             aria-expanded={open}
             className='mx-2 mt-2 rounded-circle d-flex px-1 py-1 bg-light-4 border-0'
-            >
-            { open ? <Minus size={20} weight="bold"  /> : <Plus size={20} weight="bold" /> }
+          >
+            { open ? <Minus size={20} weight='bold'  /> : <Plus size={20} weight='bold' /> }
           </Button>
         </Col>
       </Row>

@@ -1,5 +1,7 @@
 import React from 'react'
-import { Table, Col, Row, Container } from 'react-bootstrap'
+import {
+  Table, Col, Row, Container
+} from 'react-bootstrap'
 import { Square } from '@phosphor-icons/react'
 
 const ThreeColumnTable = ({ incorrectAnswers }) => {
@@ -9,18 +11,18 @@ const ThreeColumnTable = ({ incorrectAnswers }) => {
       <Container className='pt-2'>
         <Row className='bg-white rounded'>
           {incorrectAnswers.map((incorrectAnswer, index) => (
-              <Col className='p-0' key={incorrectAnswer.label}>
-                <Table striped bordered hover className='mb-0' >
-                  <th className='p-1 text-center'>{incorrectAnswer.label}</th>
-                  <tbody>
-                    {incorrectAnswer.answers.map((answer, index) => (
-                      <tr key={index}><td>{answer.answer}</td></tr>
-                      ))
-                    }
-                  </tbody>
-                </Table>
-              </Col>
-            )
+            <Col className='p-0' key={incorrectAnswer.label}>
+              <Table striped bordered hover className='mb-0' >
+                <th className='p-1 text-center'>{incorrectAnswer.label}</th>
+                <tbody>
+                  {incorrectAnswer.answers.map((answer, index) => (
+                    <tr key={index}><td>{answer.answer}</td></tr>
+                  ))
+                  }
+                </tbody>
+              </Table>
+            </Col>
+          )
           )}
         </Row>
       </Container>

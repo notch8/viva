@@ -5,7 +5,6 @@ import SettingsForm from '../../ui/Settings/SettingsForm'
 import PasswordForm from '../../ui/Settings/PasswordForm'
 
 const Settings = ({ currentUser }) => {
-
   return (
     <Layout>
       <Container className='bg-light-1 rounded container p-0 mt-4 settings'>

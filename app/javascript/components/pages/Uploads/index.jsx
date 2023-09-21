@@ -1,5 +1,7 @@
 import React from 'react'
-import { Container, Form, InputGroup, Button } from 'react-bootstrap'
+import {
+  Container, Form, InputGroup, Button 
+} from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import { UploadSimple } from '@phosphor-icons/react'
 import Layout from '../../App'
@@ -35,14 +37,14 @@ const Uploads = () => {
         <p>Upload a CSV here in the following format:</p>
         <p>Please make sure that your CSV matches the headers above in order to make a successful import.</p>
         <Form onSubmit={submit} className='csv-upload-form text-uppercase'>
-          <InputGroup className="mb-3">
+          <InputGroup className='mb-3'>
             <InputGroup.Text className='strait py-3'>
               Select a CSV to Upload
             </InputGroup.Text>
-            <Form.Group controlId="upload-csv">
+            <Form.Group controlId='upload-csv'>
               <Form.Control
-                type="file"
-                aria-label="Upload a CSV here"
+                type='file'
+                aria-label='Upload a CSV here'
                 onChange={e => setData('csv', e.target.value)}
                 className='rounded-0 py-3'
               />

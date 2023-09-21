@@ -10,6 +10,7 @@
 # 2. Negotiating the parent/child relationship of {Question::StimulusCaseStudy} and it's
 #    {Question::Scenario} children as well as other children {Question} objects.
 class Question::ImporterCsv
+  require 'csv'
   ##
   # @todo Maybe we don't want to read the given CSV and pass the text into the object.  However,
   #       that is a later concern refactor that should be relatively easy given these various
@@ -27,7 +28,6 @@ class Question::ImporterCsv
   def save
     @questions = []
     @errors = []
-
     # The header_converters ensures that we don't have squirelly little BOM characters and that all
     # columns are titlecase which we later expect.
     CSV.parse(@text, headers: true, skip_blanks: true, header_converters: ->(h) { h.to_s.strip.upcase.delete("\xEF\xBB\xBF") }, encoding: 'utf-8') do |row|

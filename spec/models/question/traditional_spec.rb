@@ -10,7 +10,8 @@ RSpec.describe Question::Traditional do
   describe '.build_row' do
     subject { described_class.build_row(data) }
     let(:data) do
-      CsvRow.new("TYPE" => "Traditional",
+      CsvRow.new("IMPORT_ID" => "123456",
+                 "TYPE" => "Traditional",
                  "TEXT" => "Which one is true?",
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",

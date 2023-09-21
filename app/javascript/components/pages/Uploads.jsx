@@ -11,13 +11,15 @@ const Uploads = () => {
 
   const submit = (e) => {
     clearErrors()
+    let fileName = data.csv['0'].name
+    console.log(fileName, 'data.csv')
     e.preventDefault()
-    if (data.csv.length === 0) {
+    if (fileName.length === 0) {
       setError('csv', 'Please select a CSV to upload.')
       setTimeout(() => {
         clearErrors()
       }, 3000)
-    } else if (data.csv.slice(-3) !== 'csv') {
+    } else if (fileName.slice(-3) !== 'csv') {
       setError('csv', 'Please select a file with a CSV extension.')
       setTimeout(() => {
         clearErrors()
@@ -26,7 +28,7 @@ const Uploads = () => {
       post('/uploads/create')
     }
   }
-  console.log(errors)
+  console.log({errors})
 
   return (
     <Layout>
@@ -43,7 +45,7 @@ const Uploads = () => {
               <Form.Control
                 type="file"
                 aria-label="Upload a CSV here"
-                onChange={e => setData('csv', e.target.value)}
+                onChange={e => setData('csv', e.target.files)}
                 className='rounded-0 py-3'
               />
             </Form.Group>

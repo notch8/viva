@@ -27,8 +27,8 @@ const BowTieAnswers = ({ answers }) => {
         strokeColor='black'
         strokeWidth='1'
         arrowLength='0px'
-        lineStyle= 'angle'
-        endMarker= {false}
+        lineStyle='angle'
+        endMarker={false}
       >
         <div className='bowtie-answers row text-center'>
           <Col className='d-flex flex-column justify-content-between'>

@@ -14,12 +14,29 @@ RSpec.describe Question::Traditional do
                  "TEXT" => "Which one is true?",
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
-                 "ANSWER_2" => "false")
+                 "ANSWER_2" => "false",
+                 "CATEGORIES" => "True/False, Amazing",
+                 "CATEGORY_1" => "Fun Question",
+                 "CATEGORY" => "Hard Question",
+                 "KEYWORDS" => "Red",
+                 "KEYWORD_1" => "Green",
+                 "KEYWORD_2" => "Orange",
+                 "KEYWORD" => "Yellow")
     end
 
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
     its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
+
+    describe 'once saved' do
+      before do
+        subject.save
+        subject.reload
+      end
+
+      its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
+      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+    end
   end
 
   describe 'data serialization' do

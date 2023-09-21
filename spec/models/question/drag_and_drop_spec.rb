@@ -16,7 +16,9 @@ RSpec.describe Question::DragAndDrop do
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
-                   "ANSWER_4" => "Dog")
+                   "ANSWER_4" => "Dog",
+                   "KEYWORD" => "One, Two",
+                   "CATEGORY" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -25,6 +27,13 @@ RSpec.describe Question::DragAndDrop do
       its(:data) do
         is_expected.to eq([{ "answer" => "Cat", "correct" => 1 }, { 'answer' => "Catnip", "correct" => 2 }, { 'answer' => "Blue", 'correct' => false },
                            { 'answer' => "Dog", 'correct' => false }])
+      end
+
+      context 'when saved' do
+        before { subject.save }
+
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
 
@@ -36,7 +45,9 @@ RSpec.describe Question::DragAndDrop do
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
-                   "ANSWER_4" => "Dog")
+                   "ANSWER_4" => "Dog",
+                   "KEYWORD" => "One, Two",
+                   "CATEGORY" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -51,6 +62,13 @@ RSpec.describe Question::DragAndDrop do
                { 'answer' => "Dog", 'correct' => true }
              ])
         )
+      end
+
+      context 'when saved' do
+        before { subject.save }
+
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
   end

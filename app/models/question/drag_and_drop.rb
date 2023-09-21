@@ -28,9 +28,11 @@ class Question::DragAndDrop < Question
   # rubocop:disable Metrics/PerceivedComplexity
   def self.build_row(row)
     text = row['TEXT']
+    category_names = extract_category_names_from(row)
+    keyword_names = extract_keyword_names_from(row)
 
     # We need to sniff out the subtype and handle accordingly.
-    record = new(text:)
+    record = new(text:, keyword_names:, category_names:)
 
     if record.sub_type == SUB_TYPE_SLOTTED
       slot_numbers = record.slot_numbers_from_text

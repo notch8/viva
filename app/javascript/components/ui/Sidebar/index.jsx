@@ -7,6 +7,7 @@ import {
 
 const Sidebar = ({ open, setOpen }) => {
   const { url } = usePage()
+
   return (
     <Nav className='d-flex flex-column text-nowrap' activeKey='/'>
       <Nav.Item>

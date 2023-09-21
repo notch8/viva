@@ -29,8 +29,8 @@ RSpec.describe SearchController do
                "type" => question.model_name.name, # Deprecated
                "type_label" => question.type_label,
                "level" => question.level,
-               "keyword_names" => question.keywords.map(&:name),
-               "category_names" => question.categories.map(&:name)
+               "keyword_names" => question.keywords.names,
+               "category_names" => question.categories.names
              }
            ])
       )
@@ -53,8 +53,8 @@ RSpec.describe SearchController do
                "type" => question1.model_name.name, # Deprecated
                "type_label" => question1.type_label,
                "level" => question1.level,
-               "keyword_names" => question1.keywords.map(&:name),
-               "category_names" => question1.categories.map(&:name)
+               "keyword_names" => question1.keywords.names,
+               "category_names" => question1.categories.names
              },
              {
                "id" => question2.id,
@@ -64,15 +64,15 @@ RSpec.describe SearchController do
                "type" => question2.model_name.name, # Deprecated
                "type_label" => question2.type_label,
                "level" => question2.level,
-               "keyword_names" => question2.keywords.map(&:name),
-               "category_names" => question2.categories.map(&:name)
+               "keyword_names" => question2.keywords.names,
+               "category_names" => question2.categories.names
              }
            ])
       )
 
       # set the selected keywords, categories, and types to the keywords, categories, and types of question 1
-      selected_keywords = question1.keywords.map(&:name)
-      selected_categories = question1.categories.map(&:name)
+      selected_keywords = question1.keywords.names
+      selected_categories = question1.categories.names
       # selected_types = ['type1', 'type2']
 
       get :index, params: {
@@ -97,8 +97,8 @@ RSpec.describe SearchController do
                "type" => question1.model_name.name, # Deprecated
                "type_label" => question1.type_label,
                "level" => question1.level,
-               "keyword_names" => question1.keywords.map(&:name),
-               "category_names" => question1.categories.map(&:name)
+               "keyword_names" => question1.keywords.names,
+               "category_names" => question1.categories.names
              }
            ])
       )

@@ -2,7 +2,7 @@ import React from 'react'
 import { Container, Form, InputGroup, Button } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import { UploadSimple } from '@phosphor-icons/react'
-import Layout from '../App'
+import Layout from '../../App'
 
 const Uploads = () => {
   const { setData, post, processing, errors, clearErrors, recentlySuccessful, data, setError } = useForm({

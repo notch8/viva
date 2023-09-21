@@ -2,11 +2,12 @@ import React from 'react'
 import { Nav, Button } from 'react-bootstrap'
 import { Link, usePage } from '@inertiajs/inertia-react'
 import {
-  MagnifyingGlass, Gear, SignOut, Upload, CaretLeft 
+  MagnifyingGlass, Gear, SignOut, Upload, CaretLeft
 } from '@phosphor-icons/react'
 
 const Sidebar = ({ open, setOpen }) => {
   const { url } = usePage()
+
   return (
     <Nav className='d-flex flex-column text-nowrap' activeKey='/'>
       <Nav.Item>

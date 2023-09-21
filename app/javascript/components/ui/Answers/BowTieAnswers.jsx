@@ -34,6 +34,7 @@ const BowTieAnswers = ({ answers }) => {
           <Col className='d-flex flex-column justify-content-between'>
             {leftCorrectAnswers && leftCorrectAnswers.map((leftAnswer, index) => (
               <ArcherElement
+                key={`left-answer-${index}`}
                 id={`left-answer-${index}`}
                 relations={[{
                   targetId: 'center-answer',
@@ -50,7 +51,7 @@ const BowTieAnswers = ({ answers }) => {
           </Col>
           <Col className='d-flex align-items-center'>
             {centerCorrectAnswers && centerCorrectAnswers.map((centerAnswer, index) => (
-              <ArcherElement id='center-answer'>
+              <ArcherElement id='center-answer' key={`center-answer-${index}`}>
                 <div className='center-answer p-2 m-2 rounded bg-primary text-white' key={index}>
                   {centerAnswer.answer}
                 </div>
@@ -60,6 +61,7 @@ const BowTieAnswers = ({ answers }) => {
           <Col className='d-flex flex-column justify-content-between'>
             {rightCorrectAnswers && rightCorrectAnswers.map((rightAnswer, index) => (
               <ArcherElement
+                key={`right-answer-${index}`}
                 id={`right-answer-${index}`}
                 relations={[{
                   targetId: 'center-answer',

@@ -1,7 +1,9 @@
 
 
 import React from 'react'
-import { Form, Button, Alert, Col } from 'react-bootstrap'
+import {
+  Form, Button, Alert, Col
+} from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import PasswordInput from './PasswordInput'
 

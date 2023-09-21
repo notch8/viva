@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Container, Form, InputGroup, Button 
+  Container, Form, InputGroup, Button
 } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import { UploadSimple } from '@phosphor-icons/react'

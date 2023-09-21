@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Collapse, Button } from 'react-bootstrap'
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { CaretRight } from '@phosphor-icons/react'
 import Footer from './ui/Footer'
 import Header from './ui/Header'
 import Sidebar from './ui/Sidebar'

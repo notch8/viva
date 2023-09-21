@@ -87,6 +87,7 @@ rubocop # lint all available files
 
 ### ESLint
 For JavScript code. Refer to the `lint` scripts in package.json to understand the underlying command. Using `yarn` with a script is equivalent to using `yarn run <command>`.
+_NOTE: if you run lint on more than a single file without one of the scripts, add `--ext .jsx,.js`_
 
 ```bash
 docker compose exec web sh
@@ -94,4 +95,5 @@ yarn lint -h # list all eslint cli options
 yarn lint # this will do nothing on its own. you must pass it additional options
   # e.g.: `yarn lint app/javascript/components/App.jsx` which will lint that file
 yarn lint:all # lint all available files
+yarn lint <relative-path-to-file> # lint one file
 ```

@@ -9,7 +9,7 @@ const TwoColumnLayout = ({ incorrectAnswers }) => {
         {incorrectAnswers.map((incorrectAnswer, index) => {
           return (
             <div className='col-md-6 py-2' key={index}>
-              <Square className="me-2" weight='fill' color='#155DBD' size={28}/>
+              <Square className='me-2' weight='fill' color='#155DBD' size={28}/>
               <span>{incorrectAnswer.answer}</span>
             </div>
           )

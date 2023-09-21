@@ -1,10 +1,12 @@
-import React from 'react'
-import Search from '.'
+// TODO: complete the work in https://github.com/scientist-softserv/viva/pull/125
+// commenting everything out so we don't get "unused variable" errors
 
-describe('<Search />', () => {
-  it('renders', () => {
-    // TODO: complete the work in https://github.com/scientist-softserv/viva/pull/125
-    // so this spec passes
-    // cy.mount(<Search />)
-  })
-})
+// so this spec passes
+// import React from 'react'
+// import Search from '.'
+
+// describe('<Search />', () => {
+//   it('renders', () => {
+// cy.mount(<Search />)
+//   })
+// })

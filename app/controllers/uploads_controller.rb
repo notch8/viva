@@ -13,6 +13,7 @@ class UploadsController < ApplicationController
     if @questions.save
       render inertia: 'Uploads', props: @questions.as_json, status: :created
     else
+      # note that the errors are automatically passed in the props as part of questions
       render inertia: 'Uploads', props: @questions.as_json, status: :unprocessable_entity
     end
   end

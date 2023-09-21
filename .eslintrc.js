@@ -15,6 +15,9 @@ module.exports = { // eslint-disable-line no-undef
     'app/assets/builds'
   ],
   'overrides': [
+    {
+      'files': ['*.jsx', '*.js']
+    }
   ],
   'parserOptions': {
     'ecmaVersion': 'latest',
@@ -37,7 +40,7 @@ module.exports = { // eslint-disable-line no-undef
       'single'
     ],
     'react/prop-types': 'off',
-    'semi': [
+  'semi': [
       'error',
       'never'
     ],

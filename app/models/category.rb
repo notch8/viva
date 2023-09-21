@@ -7,4 +7,10 @@ class Category < ApplicationRecord
   validates :name, presence: true, uniqueness: true
 
   self.implicit_order_column = :name
+
+  ##
+  # @return [Array<String>] an alphabetized list of category names.
+  def self.names
+    all.order(name: :asc).pluck(:name)
+  end
 end

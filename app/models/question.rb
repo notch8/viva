@@ -122,7 +122,7 @@ class Question < ApplicationRecord
   #
   # @see .filter_as_json
   def keyword_names
-    attributes.fetch(:keyword_names) { keywords.map(&:name) } || []
+    attributes.fetch(:keyword_names) { keywords.names } || []
   end
 
   ##
@@ -134,7 +134,7 @@ class Question < ApplicationRecord
   #
   # @see .filter_as_json
   def category_names
-    attributes.fetch(:category_names) { categories.map(&:name) } || []
+    attributes.fetch(:category_names) { categories.names } || []
   end
 
   ##
@@ -171,7 +171,7 @@ class Question < ApplicationRecord
     # into a class.  ActiveRecord is smart about Single Table Inheritance (STI).  When we coerce
     # use a subclass of Question there's an implict `where` clause that narrows the query to only
     # that subclass and its descendants.
-    questions = Question
+    questions = Question.order(id: :asc)
     types = Array.wrap(type_name).map { |name| type_name_to_class(name).to_s }
     questions = questions.where(type: types) if types.present?
 

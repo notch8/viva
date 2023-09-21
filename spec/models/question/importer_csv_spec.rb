@@ -56,11 +56,11 @@ RSpec.describe Question::ImporterCsv do
       expect { subject.save }.not_to change(Question::Traditional, :count)
       expect(subject.errors).not_to be_empty
 
-      expect(subject.errors).to be_a(Array)
-      expect(subject.errors.first.keys.sort).to match_array([:errors, :row])
+      expect(subject.errors[:rows]).to be_a(Array)
+
       json = subject.as_json
       expect(json.keys.sort).to eq([:errors, :questions])
-      expect(json[:errors]).to be_present
+      expect(json[:errors]['rows'].first.keys).to match_array(["data", "import_id"])
       expect(json[:questions]).to be_present
     end
   end
@@ -72,11 +72,14 @@ RSpec.describe Question::ImporterCsv do
     end
 
     it 'does not persist the given records' do
-      expect { subject.save }.not_to change(Question::Traditional, :count)
-      expect(subject.errors).not_to be_empty
+      expect { subject.save }.not_to change(Question, :count)
+      expect(subject.errors[:csv]).not_to be_empty
+      expect(subject.errors[:csv].keys).to match_array([:expected, :given, :missing])
 
-      expect(subject.errors).to be_a(Array)
-      expect(subject.errors.first.keys.sort).to match_array([:errors, :row])
+      json = subject.as_json
+      expect(json.keys.sort).to eq([:errors, :questions])
+      expect(json[:errors]['csv'].keys).to match_array(["expected", "given", "missing"])
+      expect(json[:questions]).to be_present
     end
   end
 end

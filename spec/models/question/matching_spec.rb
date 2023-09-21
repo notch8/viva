@@ -20,7 +20,7 @@ RSpec.describe Question::Matching do
 
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
-    its(:data) { is_expected.to eq([{ 'answer' => "Animal", 'correct' => ["Cat", "Dog"] }, { 'answer' => "Plant", 'correct' => ["Catnip", "Dogwood"] }]) }
+    its(:data) { is_expected.to eq([{ "answer" => "Animal", "correct" => ["Cat", "Dog"] }, { "answer" => "Plant", "correct" => ["Catnip", "Dogwood"] }]) }
   end
 
   describe 'data serialization' do

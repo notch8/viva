@@ -14,4 +14,41 @@ RSpec.describe UploadsController do
       expect_inertia.to render_component 'Uploads'
     end
   end
+
+  describe '#create', inertia: true do
+    before do
+      user = FactoryBot.create(:user)
+      sign_in user
+    end
+
+    context 'with valid data' do
+      let(:file) { fixture_file_upload("valid_questions.csv", "text/csv") }
+
+      it "will respond with a :success code (e.g. 200), there won't be any errors, and Question records will be created." do
+        expect do
+          post :create, params: { csv: file }
+        end.to change(Question, :count)
+
+        expect_inertia.to render_component 'Uploads'
+        expect(inertia.props[:errors]).to be_empty
+        expect(inertia.props[:questions]).not_to be_empty
+        expect(response).to have_http_status(201)
+      end
+    end
+
+    context 'with invalid data' do
+      let(:file) { fixture_file_upload("invalid_questions.csv", "text/csv") }
+
+      it "will respond with an :unprocessable_entity code (e.g. 422), errors will be present, and no Question records will be created." do
+        expect do
+          post :create, params: { csv: file }
+        end.not_to change(Question, :count)
+
+        expect_inertia.to render_component 'Uploads'
+        expect(inertia.props[:errors]).to be_present
+        expect(inertia.props[:questions]).not_to be_empty
+        expect(response).to have_http_status(422)
+      end
+    end
+  end
 end

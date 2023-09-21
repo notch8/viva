@@ -8,8 +8,15 @@ class UploadsController < ApplicationController
   end
 
   def create
-    # TODO: Build out this method to actually upload the csv
-    Rails.logger.info params[:csv]
-    render inertia: 'Uploads'
+    @questions = Question::ImporterCsv.from_file(create_params)
+    if @questions.save
+      render inertia: 'Uploads', props: @questions.as_json, status: :created
+    else
+      render inertia: 'Uploads', props: @questions.as_json, status: :unprocessable_entity
+    end
+  end
+
+  def create_params
+    params.require(:csv)
   end
 end

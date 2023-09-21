@@ -16,7 +16,10 @@ module.exports = { // eslint-disable-line no-undef
   ],
   'overrides': [
     {
-      'files': ['*.jsx', '*.js']
+      'files': ['*.cy.jsx'],
+      'rules': {
+        'no-undef': 'off'
+      }
     }
   ],
   'parserOptions': {
@@ -40,7 +43,7 @@ module.exports = { // eslint-disable-line no-undef
       'single'
     ],
     'react/prop-types': 'off',
-  'semi': [
+    'semi': [
       'error',
       'never'
     ],

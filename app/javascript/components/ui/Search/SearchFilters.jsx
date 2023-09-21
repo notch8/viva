@@ -36,7 +36,7 @@ const SearchFilters = (props) => {
                         {filter === selectedCategories ? 'Categories' : filter === selectedKeywords ? 'Keywords' : 'Types'}
                       </h3>
                       {filter.map((item, itemIndex) => (
-                        <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center' variant='secondary'>
+                        <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>
                           <label>{item}</label>
                           <CloseButton
                             aria-label={`Remove filter for ${item}`}

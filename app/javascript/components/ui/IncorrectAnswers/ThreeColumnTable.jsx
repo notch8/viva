@@ -2,7 +2,6 @@ import React from 'react'
 import {
   Table, Col, Row, Container
 } from 'react-bootstrap'
-import { Square } from '@phosphor-icons/react'
 
 const ThreeColumnTable = ({ incorrectAnswers }) => {
   return (
@@ -10,7 +9,7 @@ const ThreeColumnTable = ({ incorrectAnswers }) => {
       <h4 className='h6 fw-bold'>Incorrect Answers</h4>
       <Container className='pt-2'>
         <Row className='bg-white rounded'>
-          {incorrectAnswers.map((incorrectAnswer, index) => (
+          {incorrectAnswers.map((incorrectAnswer) => (
             <Col className='p-0' key={incorrectAnswer.label}>
               <Table striped bordered hover className='mb-0' >
                 <th className='p-1 text-center'>{incorrectAnswer.label}</th>

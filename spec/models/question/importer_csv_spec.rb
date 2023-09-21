@@ -5,6 +5,18 @@ require 'rails_helper'
 RSpec.describe Question::ImporterCsv do
   subject(:instance) { described_class.new(text) }
 
+  describe '.from_file' do
+    ["valid_bow_tie_question.csv"].each do |filename|
+      context "with #{filename} when saved" do
+        subject { described_class.from_file(file_fixture(filename)) }
+
+        it 'creates at least one question' do
+          expect { subject.save }.to change(Question, :count)
+        end
+      end
+    end
+  end
+
   context 'with valid data' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \

@@ -5,7 +5,7 @@
 class Question::SelectAllThatApply < Question
   self.type_name = "Select All That Apply"
 
-  def self.import_csv_row(row)
+  def self.build_row(row)
     text = row['TEXT']
     answers = row['ANSWERS']&.split(',')&.map(&:to_i)
     answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
@@ -14,7 +14,7 @@ class Question::SelectAllThatApply < Question
       { answer: row[col], correct: answers.include?(index) }
     end
 
-    create!(text:, data:)
+    new(text:, data:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

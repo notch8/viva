@@ -23,9 +23,9 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
     it { is_expected.to validate_presence_of(:type) }
   end
 
-  describe '.import_csv_row' do
+  describe '.build_row' do
     subject { described_class }
-    it { is_expected.to respond_to(:import_csv_row) }
+    it { is_expected.to respond_to(:build_row) }
   end
 
   describe 'associations' do

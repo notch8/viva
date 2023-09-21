@@ -40,6 +40,41 @@ class Question::BowTie < Question
   validates :data, presence: true
 
   EXPECTED_DATA_HASH_KEYS = %w[left center right].freeze
+  ANSWER_AND_POSITION_REGEXP = %r{\A(?<direction>#{EXPECTED_DATA_HASH_KEYS.map(&:upcase).join('|')})_(?<index>\d+)}
+
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def self.build_row(row)
+    text = row['TEXT']
+    keyword_names = extract_keyword_names_from(row)
+    category_names = extract_category_names_from(row)
+
+    correct_answer_colum_numbers = {}
+    data = {}
+    EXPECTED_DATA_HASH_KEYS.each do |key|
+      correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
+      data[key] = { "label" => row["#{key.upcase}_LABEL"], "answers" => [] }
+    end
+
+    row.each do |header, value|
+      next if header.blank?
+      match = ANSWER_AND_POSITION_REGEXP.match(header)
+      next unless match
+
+      direction = match[:direction].downcase
+      index = match[:index].to_i
+      correct = correct_answer_colum_numbers[direction].include?(index)
+      data[direction]['answers'] << { "answer" => value, "correct" => correct }
+    end
+
+    new(text:, data:, keyword_names:, category_names:)
+  end
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   ##
   # Verify that the resulting data attribute is an array with each element being an array of two

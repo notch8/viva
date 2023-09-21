@@ -7,6 +7,70 @@ RSpec.describe Question::BowTie do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Bow Tie") }
 
+  describe '.build_row' do
+    subject { described_class.build_row(data) }
+    let(:data) do
+      CsvRow.new("TYPE" => described_class.type_name,
+                 "TEXT" => "Lifecycle of chemicals.",
+                 "CENTER_LABEL" => "Center Label",
+                 "CENTER_1" => "...when boiled becomes...",
+                 "CENTER_2" => "...when eaten becomes...",
+                 "CENTER_3" => "...when worn becomes...",
+                 "CENTER_ANSWERS" => "1",
+                 "LEFT_LABEL" => "Left Label",
+                 "LEFT_1" => "Water",
+                 "LEFT_2" => "Cabbage",
+                 "LEFT_3" => "Shoe",
+                 "LEFT_ANSWERS" => "1",
+                 "RIGHT_LABEL" => "Right Label",
+                 "RIGHT_1" => "Steam",
+                 "RIGHT_2" => "Vapor",
+                 "RIGHT_3" => "Rabbits",
+                 "RIGHT_ANSWERS" => "1,2",
+                 "CATEGORIES" => "True/False, Amazing",
+                 "CATEGORY_1" => "Fun Question",
+                 "CATEGORY" => "Hard Question",
+                 "KEYWORDS" => "Red",
+                 "KEYWORD_1" => "Green",
+                 "KEYWORD_2" => "Orange",
+                 "KEYWORD" => "Yellow")
+    end
+
+    it { is_expected.to be_valid }
+    it { is_expected.not_to be_persisted }
+    its(:data) do
+      is_expected.to eq({ "center" => {
+                            "label" => "Center Label",
+                            "answers" => [{ "answer" => "...when boiled becomes...", "correct" => true },
+                                          { "answer" => "...when eaten becomes...", "correct" => false },
+                                          { "answer" => "...when worn becomes...", "correct" => false }]
+                          },
+                          "left" => {
+                            "label" => "Left Label",
+                            "answers" => [{ "answer" => "Water", "correct" => true },
+                                          { "answer" => "Cabbage", "correct" => false },
+                                          { "answer" => "Shoe", "correct" => false }]
+                          },
+                          "right" => {
+                            "label" => "Right Label",
+                            "answers" =>
+                            [{ "answer" => "Steam", "correct" => true },
+                             { "answer" => "Vapor", "correct" => true },
+                             { "answer" => "Rabbits", "correct" => false }]
+                          } })
+    end
+
+    describe 'once saved' do
+      before do
+        subject.save
+        subject.reload
+      end
+
+      its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
+      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+    end
+  end
+
   describe 'data serialization' do
     subject { FactoryBot.build(:question_bow_tie, data: given_data) }
 

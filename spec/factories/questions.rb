@@ -86,7 +86,8 @@ FactoryBot.define do
             answers: [
               {
                 answer: "Center correct answer",
-                correct: true },
+                correct: true
+              },
               {
                 answer: "Center incorrect answer 1",
                 correct: false
@@ -103,7 +104,7 @@ FactoryBot.define do
           },
           left: {
             label: "Left Label",
-            answers:[
+            answers: [
               {
                 answer: "Left Correct Answer 1",
                 correct: true
@@ -128,7 +129,7 @@ FactoryBot.define do
           },
           right: {
             label: "Right Label",
-            answers:[
+            answers: [
               {
                 answer: "Right Correct Answer 1",
                 correct: true

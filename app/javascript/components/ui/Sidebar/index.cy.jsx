@@ -1,13 +1,15 @@
-import React from 'react'
-import Sidebar from '.'
+// TODO: pass applicable props and fix this spec
+// commenting everything out so we don't get "unused variable" errors
 
-describe('<Sidebar />', () => {
-  beforeEach(() => {
-    // TODO: pass applicable props and fix this spec
-    // cy.mount(<Sidebar />)
-  })
+// import React from 'react'
+// import Sidebar from '.'
 
-  // it('contains 4 navigation links', () => {
-  //   cy.get('a.nav-link').should('have.length', 4)
-  // })
-})
+// describe('<Sidebar />', () => {
+//   beforeEach(() => {
+// cy.mount(<Sidebar />)
+// })
+
+// it('contains 4 navigation links', () => {
+//   cy.get('a.nav-link').should('have.length', 4)
+// })
+// })

@@ -1,9 +1,11 @@
-import React from 'react'
-import TwoColumnLayout from './TwoColumnLayout'
+// TODO: pass applicable props and fix this spec
+// commenting everything out so we don't get "unused variable" errors
 
-describe('<TwoColumnLayout />', () => {
-  it('renders', () => {
-    // TODO: pass applicable props and fix this spec
-    // cy.mount(<TwoColumnLayout />)
-  })
-})
+// import React from 'react'
+// import TwoColumnLayout from './TwoColumnLayout'
+
+// describe('<TwoColumnLayout />', () => {
+//   it('renders', () => {
+// cy.mount(<TwoColumnLayout />)
+//   })
+// })

@@ -1,9 +1,11 @@
-import React from 'react'
-import ThreeColumnTable from './ThreeColumnTable'
+// TODO: pass applicable props and fix this spec
+// commenting everything out so we don't get "unused variable" errors
 
-describe('<ThreeColumnTable />', () => {
-  it('renders', () => {
-    // TODO: pass applicable props and fix this spec
-    // cy.mount(<ThreeColumnTable />)
-  })
-})
+// import React from 'react'
+// import ThreeColumnTable from './ThreeColumnTable'
+
+// describe('<ThreeColumnTable />', () => {
+//   it('renders', () => {
+// cy.mount(<ThreeColumnTable />)
+//   })
+// })

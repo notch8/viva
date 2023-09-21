@@ -26,7 +26,7 @@ class Question::DragAndDrop < Question
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/PerceivedComplexity
-  def self.import_csv_row(row)
+  def self.build_row(row)
     text = row['TEXT']
 
     # We need to sniff out the subtype and handle accordingly.
@@ -52,7 +52,7 @@ class Question::DragAndDrop < Question
     end
 
     record.data = data
-    record.save!
+    record
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength

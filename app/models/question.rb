@@ -53,24 +53,26 @@ class Question < ApplicationRecord
     Question.descendants.detect { |d| d.type_name == name || d == name } || fallback
   end
 
-  ##
-  # Read through the given :csv and create the corresponding questions.
-  #
-  # @param csv [CSV]
-  #
-  # @todo Given that they are uploading a CSV and there's significant validation, we're almost
-  #       certainly going to want an object to handle the importer and tracking of what worked and
-  #       what failed.  But that's a not yet problem.
-  def self.import_csv(csv)
-    csv.each do |row|
-      type = row.fetch('TYPE')
-      klass = "Question::#{type}".constantize
-      klass.import_csv_row(row)
-    end
+  def self.build_row(*args)
+    raise NotImplementedError, "#{self}.#{__method__}"
   end
 
-  def self.import_csv_row(*args)
-    raise NotImplementedError, "#{self}.#{__method__}"
+  ##
+  # @see Question::ImporterCsv
+  #
+  # @param row [Enumerable] likely a row from {CSV.read}.
+  # @return [Question] a subclass of {Question} derived from the row's TYPE property.
+  # @return [Question::InvalidQuestion] when we have a row that doesn't have adequate information to
+  #         build the proper {Question} subclass.
+  def self.build_from_csv_row(row)
+    return Question::NoType.new(row) unless row['TYPE']
+    return Question::NoImportId.new(row) unless row['IMPORT_ID']
+
+    klass = Question.type_name_to_class(row['TYPE'], fallback: nil)
+
+    return Question::InvalidType.new(row) unless klass
+
+    klass.build_row(row)
   end
 
   FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze
@@ -169,7 +171,9 @@ class Question < ApplicationRecord
     # into a class.  ActiveRecord is smart about Single Table Inheritance (STI).  When we coerce
     # use a subclass of Question there's an implict `where` clause that narrows the query to only
     # that subclass and its descendants.
-    questions = type_name_to_class(type_name, fallback: Question)
+    questions = Question
+    types = Array.wrap(type_name).map { |name| type_name_to_class(name).to_s }
+    questions = questions.where(type: types) if types.present?
 
     questions = questions.where(child_of_aggregation: false)
 

@@ -43,6 +43,7 @@ const Uploads = (props) => {
             Your CSV has been uploaded successfully!
           </div>
         }
+        {/* TODO: Update how errors are displayed */}
         {(errors.csv || responseErrors?.length > 0) &&
           <div className='alert alert-danger'>
             {errors.csv ? (

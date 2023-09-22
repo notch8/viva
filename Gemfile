@@ -29,6 +29,7 @@ gem 'rubocop-rspec', require: false, group: %i[development test]
 gem 'sassc-rails' # Use Sass to process CSS
 gem 'selenium-webdriver', group: %i[test] # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
 gem 'shoulda-matchers', '~> 5.0', require: false, group: %i[development test]
+gem 'simplecov', group: %i[development test]
 gem 'sprockets-rails' # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'stimulus-rails' # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem 'turbo-rails' # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]

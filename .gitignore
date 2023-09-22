@@ -50,3 +50,4 @@ cypress/videos
 docker-compose.override.yml
 
 results-*.xml
+/coverage

@@ -15,6 +15,12 @@ module.exports = { // eslint-disable-line no-undef
     'app/assets/builds'
   ],
   'overrides': [
+    {
+      'files': ['*.cy.jsx'],
+      'rules': {
+        'no-undef': 'off'
+      }
+    }
   ],
   'parserOptions': {
     'ecmaVersion': 'latest',
@@ -28,10 +34,25 @@ module.exports = { // eslint-disable-line no-undef
       'error',
       2
     ],
+    'jsx-quotes': [
+      'error',
+      'prefer-single'
+    ],
     'linebreak-style': [
       'error',
       'unix'
     ],
+    'no-trailing-spaces': 'error',
+    'object-curly-newline': ['error', {
+      'ExportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
+      },
+      'ImportDeclaration': {
+        'multiline': true,
+        'minProperties': 4
+      }
+    }],
     'quotes': [
       'error',
       'single'
@@ -40,17 +61,6 @@ module.exports = { // eslint-disable-line no-undef
     'semi': [
       'error',
       'never'
-    ],
-    'object-curly-newline': ['error', {
-      'ImportDeclaration': {
-        'multiline': true,
-        'minProperties': 4
-      },
-      'ExportDeclaration': {
-        'multiline': true,
-        'minProperties': 4
-      }
-    }
     ]
   },
   'settings': {

@@ -15,12 +15,21 @@ RSpec.describe Question::SelectAllThatApply do
                  "ANSWERS" => "1, 3",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
-                 "ANSWER_3" => "yes")
+                 "ANSWER_3" => "yes",
+                 "KEYWORD" => "One, Two",
+                 "CATEGORY" => "Big, Little")
     end
 
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
     its(:data) { is_expected.to eq([{ 'answer' => "true", 'correct' => true }, { 'answer' => "false", 'correct' => false }, { 'answer' => "yes", 'correct' => true }]) }
+
+    context 'when saved' do
+      before { subject.save }
+
+      its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+    end
   end
 
   describe 'data serialization' do

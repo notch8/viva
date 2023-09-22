@@ -1,5 +1,7 @@
 import React from 'react'
-import { Container, Row, Col, Button, CloseButton } from 'react-bootstrap'
+import {
+  Container, Row, Col, Button, CloseButton
+} from 'react-bootstrap'
 
 const SearchFilters = (props) => {
   // TODO: set up levels
@@ -30,11 +32,11 @@ const SearchFilters = (props) => {
                 {filterArray.map((filter, index) => (
                   arrayHasItems(filter) && (
                     <Col key={index} sm={6}>
-                      <h3 className="fw-bold h6">
+                      <h3 className='fw-bold h6'>
                         {filter === selectedCategories ? 'Categories' : filter === selectedKeywords ? 'Keywords' : 'Types'}
                       </h3>
                       {filter.map((item, itemIndex) => (
-                        <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center' variant='secondary'>
+                        <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>
                           <label>{item}</label>
                           <CloseButton
                             aria-label={`Remove filter for ${item}`}
@@ -48,12 +50,12 @@ const SearchFilters = (props) => {
                 ))}
               </Row>
             </Container>
-          <Col className='d-flex justify-content-end align-items-end border-top bg-light-2 p-2'>
-            <Button>Export All Questions</Button>
+            <Col className='d-flex justify-content-end align-items-end border-top bg-light-2 p-2'>
+              <Button>Export All Questions</Button>
+            </Col>
           </Col>
-        </Col>
-      </Row>
-    </Container>
+        </Row>
+      </Container>
   )
 }
 

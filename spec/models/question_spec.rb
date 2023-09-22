@@ -91,8 +91,8 @@ RSpec.describe Question, type: :model do
               type_label: question1.type_label,
               level: question1.level,
               data: question1.data,
-              keyword_names: question1.keywords.map(&:name),
-              category_names: question1.categories.map(&:name) }.stringify_keys])
+              keyword_names: question1.keywords.names,
+              category_names: question1.categories.names }.stringify_keys])
       )
     end
     # rubocop:enable RSpec/ExampleLength

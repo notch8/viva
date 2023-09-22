@@ -51,7 +51,7 @@ const BowTieAnswers = ({ answers }) => {
           </Col>
           <Col className='d-flex align-items-center'>
             {centerCorrectAnswers && centerCorrectAnswers.map((centerAnswer, index) => (
-              <ArcherElement key='center-answer' id='center-answer'>
+              <ArcherElement id='center-answer' key={`center-answer-${index}`}>
                 <div className='center-answer p-2 m-2 rounded bg-primary text-white' key={index}>
                   {centerAnswer.answer}
                 </div>

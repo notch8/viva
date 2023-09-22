@@ -1,5 +1,5 @@
 import React from 'react'
-import { Row, Col, Container, Button } from 'react-bootstrap'
+import {Row, Col, Container} from 'react-bootstrap'
 import IncorrectAnswers from '../IncorrectAnswers/TwoColumnLayout'
 
 const DragAndDropAnswers = ({ answers }) => {

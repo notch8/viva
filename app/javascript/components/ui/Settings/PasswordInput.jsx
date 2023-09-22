@@ -20,9 +20,9 @@ const PasswordInput = ({ id, errors, name, setData }) => {
         aria-describedby={id}
         onChange={e => setData(id, e.target.value)}
       />
-        <InputGroup.Text onClick={toggle}>
-          {isVisible ? <Eye /> : <EyeClosed />}
-        </InputGroup.Text>
+      <InputGroup.Text onClick={toggle}>
+        {isVisible ? <Eye /> : <EyeClosed />}
+      </InputGroup.Text>
       {errors[id] &&
         <div className='text-danger small w-100 ms-2'>
           Error: {name} {errors[id]}.

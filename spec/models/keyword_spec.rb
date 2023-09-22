@@ -3,6 +3,11 @@
 require 'rails_helper'
 
 RSpec.describe Keyword, type: :model do
+  describe '.names' do
+    subject { described_class.names }
+    it { is_expected.to be_a(Array) }
+  end
+
   describe 'validations' do
     subject { FactoryBot.build(:keyword) }
 

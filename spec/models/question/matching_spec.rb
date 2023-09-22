@@ -15,12 +15,21 @@ RSpec.describe Question::Matching do
                  "LEFT_1" => "Animal",
                  "RIGHT_1" => "Cat, Dog",
                  "LEFT_2" => "Plant",
-                 "RIGHT_2" => "Catnip, Dogwood")
+                 "RIGHT_2" => "Catnip, Dogwood",
+                 "KEYWORD" => "One, Two",
+                 "CATEGORY" => "Big, Little")
     end
 
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
     its(:data) { is_expected.to eq([{ "answer" => "Animal", "correct" => ["Cat", "Dog"] }, { "answer" => "Plant", "correct" => ["Catnip", "Dogwood"] }]) }
+
+    context 'when saved' do
+      before { subject.save }
+
+      its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+    end
   end
 
   describe 'data serialization' do

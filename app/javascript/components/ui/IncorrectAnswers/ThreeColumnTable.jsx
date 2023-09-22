@@ -1,6 +1,7 @@
 import React from 'react'
-import { Table, Col, Row, Container } from 'react-bootstrap'
-import { Square } from '@phosphor-icons/react'
+import {
+  Table, Col, Row, Container
+} from 'react-bootstrap'
 
 const ThreeColumnTable = ({ incorrectAnswers }) => {
   return (

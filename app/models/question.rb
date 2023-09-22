@@ -15,6 +15,8 @@ class Question < ApplicationRecord
   class_attribute :type_name, default: "Question", instance_writer: false
   class_attribute :include_in_filterable_type, default: true, instance_writer: false
 
+  class_attribute :require_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
+
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.
   has_one :as_child_question_aggregations, class_name: 'QuestionAggregation', dependent: :destroy, as: :child_question

@@ -8,6 +8,7 @@ class Question::InvalidQuestion
 
   def initialize(row)
     @row = row
+    valid?
   end
 
   attr_reader :row

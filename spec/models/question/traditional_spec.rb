@@ -7,22 +7,35 @@ RSpec.describe Question::Traditional do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Traditional") }
 
-  describe '.import_csv_row' do
+  describe '.build_row' do
+    subject { described_class.build_row(data) }
     let(:data) do
       CsvRow.new("TYPE" => "Traditional",
                  "TEXT" => "Which one is true?",
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
-                 "ANSWER_2" => "false")
+                 "ANSWER_2" => "false",
+                 "CATEGORIES" => "True/False, Amazing",
+                 "CATEGORY_1" => "Fun Question",
+                 "CATEGORY" => "Hard Question",
+                 "KEYWORDS" => "Red",
+                 "KEYWORD_1" => "Green",
+                 "KEYWORD_2" => "Orange",
+                 "KEYWORD" => "Yellow")
     end
 
-    it "creates a Traditional question" do
-      allow(data).to receive(:headers).and_return(data.keys)
-      expect do
-        described_class.import_csv_row(data)
-      end.to change(Question::Traditional, :count).by(1)
+    it { is_expected.to be_valid }
+    it { is_expected.not_to be_persisted }
+    its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
 
-      expect(described_class.last.data).to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }])
+    describe 'once saved' do
+      before do
+        subject.save
+        subject.reload
+      end
+
+      its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
+      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
     end
   end
 

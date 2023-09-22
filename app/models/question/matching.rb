@@ -7,8 +7,10 @@
 class Question::Matching < Question
   self.type_name = "Matching"
 
-  def self.import_csv_row(row)
+  def self.build_row(row)
     text = row['TEXT']
+    category_names = extract_category_names_from(row)
+    keyword_names = extract_keyword_names_from(row)
 
     # Ensure that we have all of the candidate indices (the left and right side)
     indices = row.headers.each_with_object([]) do |header, array|
@@ -20,10 +22,12 @@ class Question::Matching < Question
     data = indices.map do |index|
       # It is okay that these will possibly be nil; because our downstream validation will catch
       # them.
-      { answer: row["LEFT_#{index}"], correct: row["RIGHT_#{index}"] }
+      answer = row["LEFT_#{index}"]
+      correct = row["RIGHT_#{index}"]&.split(/\s*,\s*/)
+      { answer:, correct: }
     end
 
-    create!(text:, data:)
+    new(text:, data:, category_names:, keyword_names:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
@@ -35,6 +39,9 @@ class Question::Matching < Question
   ##
   # Verify that the resulting data attribute is an array with each element being an array of two
   # strings.
+  #
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
   def well_formed_serialized_data
     unless data.is_a?(Array)
       errors.add(:data, "expected to be an array, got #{data.class.inspect}")
@@ -42,12 +49,20 @@ class Question::Matching < Question
     end
 
     unless data.all? do |pair|
-             pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && pair['answer'].present? && pair['correct'].is_a?(String) && pair['correct'].present?
-           end
+      pair.is_a?(Hash) &&
+      pair.keys.sort == ['answer', 'correct'] &&
+      pair['answer'].is_a?(String) &&
+      pair['answer'].present? &&
+      pair['correct'].present? &&
+      pair['correct'].is_a?(Array) &&
+      pair['correct'].all?(&:present?)
+    end
       errors.add(:data, "expected to be an array of hashes, each hash having an answer and correct, both of which are strings")
       return false
     end
 
     true
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength
 end

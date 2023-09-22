@@ -7,43 +7,54 @@ RSpec.describe Question::DragAndDrop do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Drag and Drop") }
 
-  describe '.import_csv_row' do
+  describe '.build_row' do
+    subject { described_class.build_row(row) }
     context 'when given slotted data' do
-      let(:data) do
+      let(:row) do
         CsvRow.new("TYPE" => "Matching",
                    "TEXT" => "The ___1___ gets high on ___2___:",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
-                   "ANSWER_4" => "Dog")
+                   "ANSWER_4" => "Dog",
+                   "KEYWORD" => "One, Two",
+                   "CATEGORY" => "Big, Little")
       end
 
-      it "creates a drag and drop slotted question" do
-        expect do
-          described_class.import_csv_row(data)
-        end.to change(described_class, :count).by(1)
-        expect(described_class.last.data).to eq([{ "answer" => "Cat", "correct" => 1 }, { 'answer' => "Catnip", "correct" => 2 }, { 'answer' => "Blue", 'correct' => false },
-                                                 { 'answer' => "Dog", 'correct' => false }])
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
+      its(:sub_type) { is_expected.to eq(described_class::SUB_TYPE_SLOTTED) }
+      its(:data) do
+        is_expected.to eq([{ "answer" => "Cat", "correct" => 1 }, { 'answer' => "Catnip", "correct" => 2 }, { 'answer' => "Blue", 'correct' => false },
+                           { 'answer' => "Dog", 'correct' => false }])
+      end
+
+      context 'when saved' do
+        before { subject.save }
+
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
 
     context 'when given non-slotted data' do
-      let(:data) do
+      let(:row) do
         CsvRow.new("TYPE" => "Matching",
                    "TEXT" => "Select all of the animals:",
                    "ANSWERS" => "1,4",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
-                   "ANSWER_4" => "Dog")
+                   "ANSWER_4" => "Dog",
+                   "KEYWORD" => "One, Two",
+                   "CATEGORY" => "Big, Little")
       end
 
-      it "creates a drag and drop slotted question" do
-        expect do
-          described_class.import_csv_row(data)
-        end.to change(described_class, :count).by(1)
-
-        expect(described_class.last.data).to(
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
+      its(:sub_type) { is_expected.to eq(described_class::SUB_TYPE_ATA) }
+      its(:data) do
+        is_expected.to(
           eq([
                { 'answer' => "Cat", 'correct' => true },
                { 'answer' => "Catnip", 'correct' => false },
@@ -51,6 +62,13 @@ RSpec.describe Question::DragAndDrop do
                { 'answer' => "Dog", 'correct' => true }
              ])
         )
+      end
+
+      context 'when saved' do
+        before { subject.save }
+
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
   end

@@ -41,19 +41,31 @@ FactoryBot.define do
     end
 
     factory :question_matching, class: Question::Matching, parent: :question do
-      data { (1..4).map { |i| { answer: "Left #{i} #{Faker::Lorem.word}", correct: "Right #{i} #{Faker::Lorem.word}" } } }
+      data do
+        (1..4).map do |i|
+          {
+            answer: "Left #{i} #{Faker::Lorem.word}",
+            correct: (0..rand(4)).map { |j| "Right #{i}-#{j} #{Faker::Lorem.word}" }
+          }
+        end
+      end
     end
 
-    factory :question_scenario, class: Question::Scenario, parent: :question
+    factory :question_scenario, class: Question::Scenario, parent: :question do
+      parent_question factory: :question_stimulus_case_study_without_children
+    end
 
-    factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question do
+    factory :question_stimulus_case_study_without_children, class: Question::StimulusCaseStudy, parent: :question
+
+    factory :question_stimulus_case_study, class: Question::StimulusCaseStudy, parent: :question_stimulus_case_study_without_children do
       after(:build) do |question, _context|
         child_question_classes = Question.descendants.select(&:include_in_filterable_type?) - [question.class]
 
         (0..5).map do |i|
           # Injecting some scenarios into the questions.
           child = if i == 0 || i == 3
-                    FactoryBot.build(:question_scenario)
+                    # If we don't specify the scenario's parent, we'll build an all new one.
+                    FactoryBot.build(:question_scenario, parent_question: question)
                   else
                     FactoryBot.build(child_question_classes.sample.model_name.param_key, child_of_aggregation: true)
                   end
@@ -68,9 +80,79 @@ FactoryBot.define do
 
     factory :question_bow_tie, class: Question::BowTie, parent: :question do
       data do
-        { center: { label: "Center Label", answers: [{ answer: "To Select", correct: true }, { answer: "To Skip", correct: false }] },
-          left: { label: "Center Label", answers: [{ answer: "LCorrect", correct: true }, { answer: "LIncorrect", correct: false }] },
-          right: { label: "Center Label", answers: [{ answer: "RCorrect", correct: true }, { answer: "LIncorrect", correct: false }] } }
+        {
+          center: {
+            label: "Center Label",
+            answers: [
+              {
+                answer: "Center correct answer",
+                correct: true
+              },
+              {
+                answer: "Center incorrect answer 1",
+                correct: false
+              },
+              {
+                answer: "Center incorrect answer 2",
+                correct: false
+              },
+              {
+                answer: "Center incorrect answer 3",
+                correct: false
+              }
+            ]
+          },
+          left: {
+            label: "Left Label",
+            answers: [
+              {
+                answer: "Left Correct Answer 1",
+                correct: true
+              },
+              {
+                answer: "Left Correct Answer 2 with longer text to test for responsiveness",
+                correct: true
+              },
+              {
+                answer: "Left Incorrect Answer 1",
+                correct: false
+              },
+              {
+                answer: "Left Incorrect Answer 2 with longer text to test for responsiveness",
+                correct: false
+              },
+              {
+                answer: "Left Incorrect Answer 3",
+                correct: false
+              }
+            ]
+          },
+          right: {
+            label: "Right Label",
+            answers: [
+              {
+                answer: "Right Correct Answer 1",
+                correct: true
+              },
+              {
+                answer: "Right Correct Answer 2",
+                correct: true
+              },
+              {
+                answer: "Right Incorrect Answer 1 with longer text to test for responsiveness",
+                correct: false
+              },
+              {
+                answer: "Right Incorrect Answer 2",
+                correct: false
+              },
+              {
+                answer: "Right Incorrect Answer 3",
+                correct: false
+              }
+            ]
+          }
+        }
       end
     end
   end

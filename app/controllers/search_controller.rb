@@ -6,11 +6,11 @@ class SearchController < ApplicationController
   # rubocop:disable Metrics/MethodLength
   def index
     render inertia: 'Search', props: {
-      keywords: Keyword.all.pluck(:name),
-      categories: Category.all.pluck(:name),
+      keywords: Keyword.names,
+      categories: Category.names,
       types: Question.type_names, # Deprecated Favor :type_names
       type_names: Question.type_names,
-      levels: [1, 2, 3], # hard coding this for now - allows there to be levels in the UI dropdown
+      levels: Level.names,
       selectedKeywords: params[:selected_keywords],
       selectedCategories: params[:selected_categories],
       selectedTypes: params[:selected_types],

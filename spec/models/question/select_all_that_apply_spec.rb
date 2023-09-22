@@ -7,25 +7,31 @@ RSpec.describe Question::SelectAllThatApply do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Select All That Apply") }
 
-  describe '.import_csv_row' do
-    let(:data) do
+  describe '.build_row' do
+    subject { described_class.build_row(row) }
+    let(:row) do
       CsvRow.new("TYPE" => "AllThatApply",
                  "TEXT" => "Which one is affirmative?",
                  "ANSWERS" => "1, 3",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
-                 "ANSWER_3" => "yes")
+                 "ANSWER_3" => "yes",
+                 "KEYWORD" => "One, Two",
+                 "CATEGORY" => "Big, Little")
     end
 
-    it "creates a Traditional question" do
-      allow(data).to receive(:headers).and_return(data.keys)
-      expect do
-        described_class.import_csv_row(data)
-      end.to change(described_class, :count).by(1)
+    it { is_expected.to be_valid }
+    it { is_expected.not_to be_persisted }
+    its(:data) { is_expected.to eq([{ 'answer' => "true", 'correct' => true }, { 'answer' => "false", 'correct' => false }, { 'answer' => "yes", 'correct' => true }]) }
 
-      expect(described_class.last.data).to eq([{ 'answer' => "true", 'correct' => true }, { 'answer' => "false", 'correct' => false }, { 'answer' => "yes", 'correct' => true }])
+    context 'when saved' do
+      before { subject.save }
+
+      its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
     end
   end
+
   describe 'data serialization' do
     subject { FactoryBot.build(:question_select_all_that_apply, data:) }
     [

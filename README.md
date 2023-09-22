@@ -48,7 +48,7 @@ bundle exec rspec
 ```
 
 ### Cypress
-Cypress is used to test the JavaScript code. Learn more about how to write these tests at https://docs.cypress.io/api/table-of-contents.
+Cypress is used to test the JavaScript code. Component tests will live next to the component file in the named folder. End to end tests live in "cypress/e2e". For reference on when to write which, refer to the [Cypress testing types documentation](https://docs.cypress.io/guides/core-concepts/testing-types#What-is-E2E-Testing).
 
 #### CLI
 _NOTE: Cypress defaults to running e2e tests. To run component tests, `--component` must be used._
@@ -86,6 +86,7 @@ rubocop # lint all available files
 
 ### ESLint
 For JavScript code. Refer to the `lint` scripts in package.json to understand the underlying command. Using `yarn` with a script is equivalent to using `yarn run <command>`.
+_NOTE: if you run lint on more than a single file without one of the scripts, add `--ext .jsx,.js`_
 
 ```bash
 docker compose exec web sh
@@ -93,4 +94,5 @@ yarn lint -h # list all eslint cli options
 yarn lint # this will do nothing on its own. you must pass it additional options
   # e.g.: `yarn lint app/javascript/components/App.jsx` which will lint that file
 yarn lint:all # lint all available files
+yarn lint <relative-path-to-file> # lint one file
 ```

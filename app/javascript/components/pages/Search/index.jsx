@@ -7,10 +7,10 @@ import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
 
 const Search = (props) => {
-  const { filteredQuestions, selectedCategories, selectedKeywords, selectedTypes, selectedLevels, categories, keywords, types, levels } = props
+  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels } = props
   const { setData, get, processing, errors, clearErrors, recentlySuccessful, data } = useForm({ // eslint-disable-line no-unused-vars
     selected_keywords: selectedKeywords || [],
-    selected_categories: selectedCategories || [],
+    selected_subjects: selectedSubjects || [],
     selected_types: selectedTypes || [],
     // TODO add selected levels once it is
     selected_levels: selectedLevels || [],
@@ -48,20 +48,20 @@ const Search = (props) => {
   return (
     <Layout>
       <SearchBar
-        categories={categories}
+        subjects={subjects}
         keywords={keywords}
         types={types}
         levels={levels}
         submit={submit}
         handleFilters={handleFilters}
         processing={processing}
-        selectedCategories={selectedCategories || []}
+        selectedSubjects={selectedSubjects || []}
         selectedKeywords={selectedKeywords || []}
         selectedTypes={selectedTypes || []}
         selectedLevels={selectedLevels || []}
       />
       <SearchFilters
-        selectedCategories={selectedCategories || []}
+        selectedSubjects={selectedSubjects || []}
         selectedKeywords={selectedKeywords || []}
         selectedTypes={selectedTypes || []}
         selectedLevels={selectedLevels || []}

@@ -9,12 +9,12 @@ RSpec.describe SearchController do
       sign_in user
     end
 
-    it "returns a 'Search' component with properties of :keywords, :types, :categories, and :filteredQuestions" do
-      question = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
+    it "returns a 'Search' component with properties of :keywords, :types, :subjects, and :filteredQuestions" do
+      question = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
       get :index
       expect_inertia.to render_component 'Search'
       expect(inertia.props[:keywords]).to be_a(Array)
-      expect(inertia.props[:categories]).to be_a(Array)
+      expect(inertia.props[:subjects]).to be_a(Array)
       expect(inertia.props[:types]).to be_a(Array)
       expect(inertia.props[:type_names]).to be_a(Array)
       expect(inertia.props[:levels]).to be_a(Array)
@@ -30,16 +30,16 @@ RSpec.describe SearchController do
                "type_label" => question.type_label,
                "level" => question.level,
                "keyword_names" => question.keywords.names,
-               "category_names" => question.categories.names
+               "subject_names" => question.subjects.names
              }
            ])
       )
     end
 
     # TODO: account for types and levels
-    it 'makes a request using selected_keywords, selected_categories, and selected_types, and filters the questions based on these selected values.' do
-      question1 = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
-      question2 = FactoryBot.create(:question_matching, :with_keywords, :with_categories)
+    it 'makes a request using selected_keywords, selected_subjects, and selected_types, and filters the questions based on these selected values.' do
+      question1 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
+      question2 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
 
       get :index
       # test that we have both question 1 and 2 to start with
@@ -54,7 +54,7 @@ RSpec.describe SearchController do
                "type_label" => question1.type_label,
                "level" => question1.level,
                "keyword_names" => question1.keywords.names,
-               "category_names" => question1.categories.names
+               "subject_names" => question1.subjects.names
              },
              {
                "id" => question2.id,
@@ -65,25 +65,25 @@ RSpec.describe SearchController do
                "type_label" => question2.type_label,
                "level" => question2.level,
                "keyword_names" => question2.keywords.names,
-               "category_names" => question2.categories.names
+               "subject_names" => question2.subjects.names
              }
            ])
       )
 
-      # set the selected keywords, categories, and types to the keywords, categories, and types of question 1
+      # set the selected keywords, subjects, and types to the keywords, subjects, and types of question 1
       selected_keywords = question1.keywords.names
-      selected_categories = question1.categories.names
+      selected_subjects = question1.subjects.names
       # selected_types = ['type1', 'type2']
 
       get :index, params: {
         selected_keywords:,
-        selected_categories:
+        selected_subjects:
         # selected_types: selected_types
       }
 
       # test that the page has the correct params
       expect(inertia.props[:selectedKeywords]).to eq(selected_keywords)
-      expect(inertia.props[:selectedCategories]).to eq(selected_categories)
+      expect(inertia.props[:selectedSubjects]).to eq(selected_subjects)
       # expect(inertia.props[:selectedTypes]).to eq(selected_types)
 
       # test that question 2 is filtered out
@@ -98,7 +98,7 @@ RSpec.describe SearchController do
                "type_label" => question1.type_label,
                "level" => question1.level,
                "keyword_names" => question1.keywords.names,
-               "category_names" => question1.categories.names
+               "subject_names" => question1.subjects.names
              }
            ])
       )

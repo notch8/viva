@@ -18,7 +18,7 @@ RSpec.describe Question::DragAndDrop do
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
                    "KEYWORD" => "One, Two",
-                   "CATEGORY" => "Big, Little")
+                   "SUBJECT" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -33,7 +33,7 @@ RSpec.describe Question::DragAndDrop do
         before { subject.save }
 
         its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Question::DragAndDrop do
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
                    "KEYWORD" => "One, Two",
-                   "CATEGORY" => "Big, Little")
+                   "SUBJECT" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -68,7 +68,7 @@ RSpec.describe Question::DragAndDrop do
         before { subject.save }
 
         its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
   end

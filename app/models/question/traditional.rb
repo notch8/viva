@@ -9,7 +9,7 @@ class Question::Traditional < Question
   def self.build_row(row)
     text = row['TEXT']
     answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
-    category_names = extract_category_names_from(row)
+    subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
     answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
 
@@ -18,7 +18,7 @@ class Question::Traditional < Question
       { answer: row[col], correct: answers.include?(index) }
     end
 
-    new(text:, data:, category_names:, keyword_names:)
+    new(text:, data:, subject_names:, keyword_names:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

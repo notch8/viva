@@ -17,7 +17,7 @@ RSpec.describe Question::SelectAllThatApply do
                  "ANSWER_2" => "false",
                  "ANSWER_3" => "yes",
                  "KEYWORD" => "One, Two",
-                 "CATEGORY" => "Big, Little")
+                 "SUBJECT" => "Big, Little")
     end
 
     it { is_expected.to be_valid }
@@ -28,7 +28,7 @@ RSpec.describe Question::SelectAllThatApply do
       before { subject.save }
 
       its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+      its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
     end
   end
 

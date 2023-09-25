@@ -27,9 +27,9 @@ RSpec.describe Question::BowTie do
                  "RIGHT_2" => "Vapor",
                  "RIGHT_3" => "Rabbits",
                  "RIGHT_ANSWERS" => "1,2",
-                 "CATEGORIES" => "True/False, Amazing",
-                 "CATEGORY_1" => "Fun Question",
-                 "CATEGORY" => "Hard Question",
+                 "SUBJECTS" => "True/False, Amazing",
+                 "SUBJECT_1" => "Fun Question",
+                 "SUBJECT" => "Hard Question",
                  "KEYWORDS" => "Red",
                  "KEYWORD_1" => "Green",
                  "KEYWORD_2" => "Orange",
@@ -67,7 +67,7 @@ RSpec.describe Question::BowTie do
       end
 
       its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
     end
   end
 

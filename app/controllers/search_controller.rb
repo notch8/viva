@@ -7,17 +7,17 @@ class SearchController < ApplicationController
   def index
     render inertia: 'Search', props: {
       keywords: Keyword.names,
-      categories: Category.names,
+      subjects: Subject.names,
       types: Question.type_names, # Deprecated Favor :type_names
       type_names: Question.type_names,
       levels: Level.names,
       selectedKeywords: params[:selected_keywords],
-      selectedCategories: params[:selected_categories],
+      selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       # TODO: Add :levels once it is set up in the back end
       filteredQuestions: Question.filter_as_json(
                keywords: params[:selected_keywords],
-               categories: params[:selected_categories],
+               subjects: params[:selected_subjects],
                # Deprecating :type; I'd prefer us to use :type_name
                type_name: params[:selected_types]
                # TODO: Add :levels once it is set up in the back end
@@ -30,6 +30,6 @@ class SearchController < ApplicationController
   private
 
   def filter_params
-    params.permit(:selected_keywords, :selected_categories, :selected_types, :selected_levels)
+    params.permit(:selected_keywords, :selected_subjects, :selected_types, :selected_levels)
   end
 end

@@ -56,11 +56,11 @@ const Uploads = (props) => {
                   <>
                     <p className='small'>
                       The CSV had missing headers. Please add the following headers to import successfully:</p>
-                      {responseErrors?.csv?.missing?.map((missingHeader, index) => (
-                        <small key={index}>
-                          <span><b>{missingHeader}</b></span>{index < responseErrors?.csv?.missing?.length - 1 && <span>, </span>}
-                        </small>
-                      ))}
+                    {responseErrors?.csv?.missing?.map((missingHeader, index) => (
+                      <small key={index}>
+                        <span><b>{missingHeader}</b></span>{index < responseErrors?.csv?.missing?.length - 1 && <span>, </span>}
+                      </small>
+                    ))}
                   </>
                 }
                 {/* errors on the row level */}

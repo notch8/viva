@@ -15,6 +15,7 @@ const UploadForm = ({ submit, setData, processing }) => {
                 aria-label="Upload a CSV here"
                 onChange={e => setData('csv', e.target.files)}
                 className='rounded-0 py-3'
+                multiple={false}
               />
             </Form.Group>
             <Button

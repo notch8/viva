@@ -1,8 +1,8 @@
 import React from 'react'
 import { Container, Button } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
-import UploadForm from '../ui/UploadForm'
-import Layout from '../App'
+import UploadForm from '../../ui/UploadForm/UploadForm'
+import Layout from '../../App'
 
 const Uploads = (props) => {
   let responseErrors = props.errors

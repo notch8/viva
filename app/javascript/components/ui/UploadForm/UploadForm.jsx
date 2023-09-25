@@ -16,6 +16,7 @@ const UploadForm = ({ submit, setData, processing }) => {
                 onChange={e => setData('csv', e.target.files)}
                 className='rounded-0 py-3'
                 multiple={false}
+                accept='.csv'
               />
             </Form.Group>
             <Button

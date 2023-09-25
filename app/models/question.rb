@@ -261,10 +261,10 @@ class Question < ApplicationRecord
       # NOTE: This assumes that we don't persist duplicate pairings of question/cateogry; this is
       # enforced in the database schema via a unique index.
       subjects_subquery = Subject.select('question_id')
-                                    .joins(:questions_subjects)
-                                    .where(name: subjects)
-                                    .having('count(question_id) = ?', subjects.size)
-                                    .group('question_id')
+                                 .joins(:questions_subjects)
+                                 .where(name: subjects)
+                                 .having('count(question_id) = ?', subjects.size)
+                                 .group('question_id')
       # We sanitize the subquery via Arel.  The above construction is adequate.
       questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
     end

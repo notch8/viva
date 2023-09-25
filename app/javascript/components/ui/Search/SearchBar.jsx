@@ -13,9 +13,9 @@ const SearchBar = (props) => {
     submit,
     handleFilters,
     processing,
-    selectedSubjects,
     selectedKeywords,
-    selectedTypes
+    selectedTypes,
+    selectedSubjects
   } = props
   const filters = { subjects, keywords, types, levels }
 

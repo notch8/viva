@@ -2,9 +2,9 @@
 
 RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: true, include_in_filterable_type: true|
   it { is_expected.to respond_to(:keyword_names) }
-  it { is_expected.to respond_to(:category_names) }
+  it { is_expected.to respond_to(:subject_names) }
   its(:keyword_names) { is_expected.to be_a(Array) }
-  its(:category_names) { is_expected.to be_a(Array) }
+  its(:subject_names) { is_expected.to be_a(Array) }
   its(:type_label) { is_expected.to be_a(String) }
   its(:type_name) { is_expected.to be_a(String) }
   its(:include_in_filterable_type) { is_expected.to eq(include_in_filterable_type) }
@@ -30,7 +30,7 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
 
   describe 'associations' do
     subject { described_class.new }
-    it { is_expected.to have_and_belong_to_many(:categories) }
+    it { is_expected.to have_and_belong_to_many(:subjects) }
     it { is_expected.to have_and_belong_to_many(:keywords) }
     it { is_expected.to have_one(:as_child_question_aggregations) }
     it { is_expected.to have_one(:parent_question) }
@@ -49,11 +49,11 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
         its(:keywords) { is_expected.not_to be_present }
       end
     end
-    describe ":with_categories trait" do
+    describe ":with_subjects trait" do
       context 'when provided' do
-        subject { FactoryBot.build(described_class.model_name.param_key, :with_categories) }
+        subject { FactoryBot.build(described_class.model_name.param_key, :with_subjects) }
 
-        its(:categories) { is_expected.to be_present }
+        its(:subjects) { is_expected.to be_present }
       end
       context 'when not provided' do
         its(:keywords) { is_expected.not_to be_present }

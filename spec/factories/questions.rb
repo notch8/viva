@@ -19,13 +19,13 @@ FactoryBot.define do
 
     ##
     # See https://thoughtbot.github.io/factory_bot/cookbook/has_and_belongs_to_many-associations.html
-    trait :with_categories do
+    trait :with_subjects do
       transient do
-        category_count { 1 + rand(2) }
+        subject_count { 1 + rand(2) }
       end
 
-      categories do
-        Array.new(category_count) { association(:category, questions: [instance]) }
+      subjects do
+        Array.new(subject_count) { association(:subject, questions: [instance]) }
       end
     end
 

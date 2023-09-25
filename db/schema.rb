@@ -51,10 +51,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_25_213514) do
   end
 
   create_table "questions_subjects", id: false, force: :cascade do |t|
-    t.bigint "subject_id", null: false
     t.bigint "question_id", null: false
-    t.index ["question_id", "subject_id"], name: "index_questions_subjects_on_question_id_and_subject_id"
-    t.index ["subject_id", "question_id"], name: "index_questions_subjects_on_subject_id_and_question_id", unique: true
+    t.bigint "subject_id", null: false
+    t.index ["question_id", "subject_id"], name: "index_questions_subjects_on_question_id_and_subject_id", unique: true
+    t.index ["subject_id", "question_id"], name: "index_questions_subjects_on_subject_id_and_question_id"
   end
 
   create_table "subjects", force: :cascade do |t|

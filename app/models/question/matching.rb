@@ -9,7 +9,7 @@ class Question::Matching < Question
 
   def self.build_row(row)
     text = row['TEXT']
-    category_names = extract_category_names_from(row)
+    subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
 
     # Ensure that we have all of the candidate indices (the left and right side)
@@ -27,7 +27,7 @@ class Question::Matching < Question
       { answer:, correct: }
     end
 
-    new(text:, data:, category_names:, keyword_names:)
+    new(text:, data:, subject_names:, keyword_names:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

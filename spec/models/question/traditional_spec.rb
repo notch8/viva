@@ -16,9 +16,9 @@ RSpec.describe Question::Traditional do
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
-                 "CATEGORIES" => "True/False, Amazing",
-                 "CATEGORY_1" => "Fun Question",
-                 "CATEGORY" => "Hard Question",
+                 "SUBJECTS" => "True/False, Amazing",
+                 "SUBJECT_1" => "Fun Question",
+                 "SUBJECT" => "Hard Question",
                  "KEYWORDS" => "Red",
                  "KEYWORD_1" => "Green",
                  "KEYWORD_2" => "Orange",
@@ -36,7 +36,7 @@ RSpec.describe Question::Traditional do
       end
 
       its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
     end
   end
 

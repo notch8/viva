@@ -6,18 +6,18 @@ import { MagnifyingGlass } from '@phosphor-icons/react'
 
 const SearchBar = (props) => {
   const {
-    categories,
+    subjects,
     keywords,
     types,
     levels,
     submit,
     handleFilters,
     processing,
-    selectedCategories,
+    selectedSubjects,
     selectedKeywords,
     selectedTypes
   } = props
-  const filters = { categories, keywords, types, levels }
+  const filters = { subjects, keywords, types, levels }
 
   // Function to set the width of the dropdown menu to match the button
   useEffect(() => {
@@ -60,7 +60,7 @@ const SearchBar = (props) => {
                     className='mx-0'
                     value={item}
                     onChange={(event) => handleFilters(event, key)}
-                    defaultChecked={selectedCategories.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item)}
+                    defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item)}
                   />
                   <Form.Check.Label className='ps-2'>
                     {filters[key] === 'types' ? item.substring(10) : item}

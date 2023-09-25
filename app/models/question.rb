@@ -8,7 +8,7 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
-  has_and_belongs_to_many :categories, -> { order(name: :asc) }
+  has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
 
   class_attribute :type_label, default: "Question", instance_writer: false
@@ -94,7 +94,7 @@ class Question < ApplicationRecord
     Question::ExpectedColumnMissing.new(expected: required_headers, given: row.headers)
   end
 
-  FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze
+  FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :subject_names].freeze
   FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name, :data].freeze
 
   ##
@@ -105,10 +105,10 @@ class Question < ApplicationRecord
   #
   # @note Why {.filter} and {.filter_as_json}?  There are two reasons: 1) we are interested in the
   #       STI field of :type and by default that is not something included in the base {#as_json}
-  #       behavior; 2) we want to include keyword_names and category_names.
+  #       behavior; 2) we want to include keyword_names and subject_names.
   #
-  #       The keyword_names and category_names are constructed differently so as to minimize
-  #       database queries.  I had tried to use keywords and categories, but those are relations and
+  #       The keyword_names and subject_names are constructed differently so as to minimize
+  #       database queries.  I had tried to use keywords and subjects, but those are relations and
   #       behave a bit differently.  You'll want to look at the specs to see how this resolves.
   #
   # @return [Array<Hash>] A Ruby array of hashes where the hashes have the the keys specified in the
@@ -135,10 +135,10 @@ class Question < ApplicationRecord
   ##
   # @param row [CsvRow]
   # @return [Array<String>]
-  def self.extract_category_names_from(row)
-    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "CATEGORIES" || header == "CATEGORY" || header.start_with?("CATEGORY_")) }.compact.sort
+  def self.extract_subject_names_from(row)
+    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_")) }.compact.sort
   end
-  private_class_method :extract_category_names_from
+  private_class_method :extract_subject_names_from
 
   ##
   # @param row [CsvRow]
@@ -156,42 +156,42 @@ class Question < ApplicationRecord
   # @return [Array<String>]
   #
   # @see .filter_as_json
-  # @see #find_or_create_categories_and_keywords
+  # @see #find_or_create_subjects_and_keywords
   def keyword_names
     @keyword_names.presence || attributes.fetch(:keyword_names) { keywords.map(&:name) } || []
   end
 
   ##
-  # @see #find_or_create_categories_and_keywords
+  # @see #find_or_create_subjects_and_keywords
   attr_writer :keyword_names
 
   ##
-  # This method ensures that we will consistently have a Question#category_names regardless of
+  # This method ensures that we will consistently have a Question#subject_names regardless of
   # whether the underlying query to reify the Question had a select statement that included the
-  # "category_names" query field.
+  # "subject_names" query field.
   #
   # @return [Array<String>]
   #
   # @see .filter_as_json
-  # @see #find_or_create_categories_and_keywords
-  def category_names
-    @category_names.presence || attributes.fetch(:category_names) { categories.map(&:name) } || []
+  # @see #find_or_create_subjects_and_keywords
+  def subject_names
+    @subject_names.presence || attributes.fetch(:subject_names) { subjects.map(&:name) } || []
   end
   ##
-  # @see #find_or_create_categories_and_keywords
-  attr_writer :category_names
+  # @see #find_or_create_subjects_and_keywords
+  attr_writer :subject_names
 
-  after_save :find_or_create_categories_and_keywords
+  after_save :find_or_create_subjects_and_keywords
 
   ##
-  # As part of the {.build_from_csv_row}, the subclasses are assigning the `@category_names' and
+  # As part of the {.build_from_csv_row}, the subclasses are assigning the `@subject_names' and
   # `@keyword_names'.  When we save a record being imported, we want to persist those values to the
-  # corresponding relationships (e.g. {#categories} and {#keywords}).
-  def find_or_create_categories_and_keywords
-    @category_names&.each do |name|
-      categories << Category.find_or_create_by(name:)
+  # corresponding relationships (e.g. {#subjects} and {#keywords}).
+  def find_or_create_subjects_and_keywords
+    @subject_names&.each do |name|
+      subjects << Subject.find_or_create_by(name:)
     end
-    @category_names = nil
+    @subject_names = nil
 
     @keyword_names&.each do |name|
       keywords << Keyword.find_or_create_by(name:)
@@ -200,14 +200,14 @@ class Question < ApplicationRecord
   end
 
   ##
-  # Filter questions by keywords and/or categories.
+  # Filter questions by keywords and/or subjects.
   #
   # We omit questions that are part of a {QuestionAggregation} (e.g. those that are children to a
   # {Question::StimulusCaseStudy}.
   #
   # @param keywords [Array<String>] when provided, a question must have all of the given keywords.
-  # @param categories [Array<String>] when provided, a question must have all of the provided
-  #        categories.
+  # @param subjects [Array<String>] when provided, a question must have all of the provided
+  #        subjects.
   # @param type_name [String,NilClass] when present, filter questions to only include the given
   #        type.
   # @param select [Array<Symbol>] the attributes to include in the filter.  By narrowing the
@@ -222,12 +222,12 @@ class Question < ApplicationRecord
   # @see .filter_as_json
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def self.filter(keywords: [], categories: [], type_name: nil, select: nil)
-    # By wrapping in an array we ensure that our keywords.size and categories.size are counting
+  def self.filter(keywords: [], subjects: [], type_name: nil, select: nil)
+    # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
     keywords = Array.wrap(keywords)
-    categories = Array.wrap(categories)
+    subjects = Array.wrap(subjects)
 
     # Specifying a very arbitrary order
     questions = Question.order(:id)
@@ -257,34 +257,34 @@ class Question < ApplicationRecord
       questions = questions.where(Arel.sql("id IN (#{keywords_subquery.to_sql})"))
     end
 
-    if categories.present?
+    if subjects.present?
       # NOTE: This assumes that we don't persist duplicate pairings of question/cateogry; this is
       # enforced in the database schema via a unique index.
-      categories_subquery = Category.select('question_id')
-                                    .joins(:categories_questions)
-                                    .where(name: categories)
-                                    .having('count(question_id) = ?', categories.size)
+      subjects_subquery = Subject.select('question_id')
+                                    .joins(:questions_subjects)
+                                    .where(name: subjects)
+                                    .having('count(question_id) = ?', subjects.size)
                                     .group('question_id')
       # We sanitize the subquery via Arel.  The above construction is adequate.
-      questions = questions.where(Arel.sql("id IN (#{categories_subquery.to_sql})"))
+      questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
     end
 
     return questions if select.blank?
 
-    # The following for category_names and keyword_names is to reduce the number of queries we send
+    # The following for subject_names and keyword_names is to reduce the number of queries we send
     # to the database.  By favoring this mechanism we create the virtual attributes of
-    # :category_names and :keyword_names.
+    # :subject_names and :keyword_names.
     #
     # We duplicate this as that results in an unfrozen array which we then proceed to modify
     select_statement = select.dup
 
-    if select.include?(:category_names)
-      select_statement.delete(:category_names)
-      select_statement << %((SELECT ARRAY_AGG (categories.name) AS kws
-        FROM categories
-        INNER JOIN categories_questions ON categories.id = categories_questions.category_id
-        INNER JOIN questions AS inner_q ON categories_questions.question_id = questions.id
-        WHERE inner_q.id = questions.id) AS "category_names")
+    if select.include?(:subject_names)
+      select_statement.delete(:subject_names)
+      select_statement << %((SELECT ARRAY_AGG (subjects.name) AS kws
+        FROM subjects
+        INNER JOIN questions_subjects ON subjects.id = questions_subjects.subject_id
+        INNER JOIN questions AS inner_q ON questions_subjects.question_id = questions.id
+        WHERE inner_q.id = questions.id) AS "subject_names")
     end
 
     if select.include?(:keyword_names)

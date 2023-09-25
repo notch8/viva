@@ -2,14 +2,14 @@
 
 require 'rails_helper'
 
-RSpec.describe Category, type: :model do
+RSpec.describe Subject, type: :model do
   describe '.names' do
     subject { described_class.names }
     it { is_expected.to be_a(Array) }
   end
 
   describe 'validations' do
-    subject { FactoryBot.build(:category) }
+    subject { FactoryBot.build(:subject) }
 
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_uniqueness_of(:name) }
@@ -20,7 +20,7 @@ RSpec.describe Category, type: :model do
   end
 
   describe 'factories' do
-    subject { FactoryBot.build(:category) }
+    subject { FactoryBot.build(:subject) }
 
     it { is_expected.to be_valid }
   end

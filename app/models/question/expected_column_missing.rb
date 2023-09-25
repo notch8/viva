@@ -9,7 +9,7 @@ class Question::ExpectedColumnMissing
   def initialize(expected:, given:)
     @expected = expected
     @given = given
-    @missing = expected & given
+    @missing = expected - given
   end
 
   def valid?

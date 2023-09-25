@@ -1,25 +1,25 @@
 import React from 'react'
-import {
-  Container, Form, InputGroup, Button
-} from 'react-bootstrap'
+import { Container, Button } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
-import { UploadSimple } from '@phosphor-icons/react'
+import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
 
-const Uploads = () => {
-  const { setData, post, processing, errors, clearErrors, recentlySuccessful, data, setError } = useForm({
+const Uploads = (props) => {
+  let responseErrors = props.errors
+  const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })
 
   const submit = (e) => {
     clearErrors()
+    let fileName = data.csv && data.csv[0].name
     e.preventDefault()
-    if (data.csv.length === 0) {
+    if (fileName.length === 0) {
       setError('csv', 'Please select a CSV to upload.')
       setTimeout(() => {
         clearErrors()
       }, 3000)
-    } else if (data.csv.slice(-3) !== 'csv') {
+    } else if (fileName.slice(-3) !== 'csv') {
       setError('csv', 'Please select a file with a CSV extension.')
       setTimeout(() => {
         clearErrors()
@@ -28,47 +28,37 @@ const Uploads = () => {
       post('/uploads/create')
     }
   }
-  console.log(errors)
 
   return (
     <Layout>
       <Container className='bg-light-1 rounded p-5'>
         <h2 className='h5 fw-bold'>Upload Questions</h2>
-        <p>Upload a CSV here in the following format:</p>
-        <p>Please make sure that your CSV matches the headers above in order to make a successful import.</p>
-        <Form onSubmit={submit} className='csv-upload-form text-uppercase'>
-          <InputGroup className='mb-3'>
-            <InputGroup.Text className='strait py-3'>
-              Select a CSV to Upload
-            </InputGroup.Text>
-            <Form.Group controlId='upload-csv'>
-              <Form.Control
-                type='file'
-                aria-label='Upload a CSV here'
-                onChange={e => setData('csv', e.target.value)}
-                className='rounded-0 py-3'
-              />
-            </Form.Group>
-            <Button
-              className='d-flex align-items-center fs-6 justify-content-center'
-              variant='light-4'
-              id='upload-csv'
-              size='lg'
-              type='submit'
-              disabled={processing}
-            >
-              <UploadSimple size={20} weight='bold' />
-            </Button>
-          </InputGroup>
-        </Form>
+        <span className='d-block'>Upload a CSV here using the following format:</span>
+        <Button className='my-4'>Download CSV Example Format</Button>
+        <p>Please make sure that your CSV matches the headers in the example above in order to make a successful import.</p>
+        <p>If the format of your CSV is incorrect, the errors will be displayed below the form. Note that the error displayed will be the first error that is found in your CSV row, as the CSV will not continue to process the row after hitting an error.</p>
+        <UploadForm submit={submit} setData={setData} processing={processing} />
         {recentlySuccessful &&
           <div className='alert alert-success'>
             Your CSV has been uploaded successfully!
           </div>
         }
-        {errors.csv &&
+        {/* TODO: Update how errors are displayed */}
+        {(errors.csv || responseErrors?.length > 0) &&
           <div className='alert alert-danger'>
-            <span>{errors.csv}</span>
+            {errors.csv ? (
+              <span>{errors.csv}</span>
+            ) : (
+              <>
+                <p>The following errors occured during your import. Please correct them and try again.</p>
+                {responseErrors.map((error, index) => (
+                  // TODO: update this when error handing for headers are added
+                  <p key={index} className='small'>
+                    <span><b>Row with import ID {error.row.IMPORT_ID}:</b> {error.errors.base}</span>
+                  </p>
+                ))}
+              </>
+            )}
           </div>
         }
       </Container>

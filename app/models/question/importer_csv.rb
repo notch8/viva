@@ -10,6 +10,7 @@
 # 2. Negotiating the parent/child relationship of {Question::StimulusCaseStudy} and it's
 #    {Question::Scenario} children as well as other children {Question} objects.
 class Question::ImporterCsv
+  require 'csv'
   ##
   # @todo Maybe we don't want to read the given CSV and pass the text into the object.  However,
   #       that is a later concern refactor that should be relatively easy given these various

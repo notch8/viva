@@ -9,6 +9,7 @@ RSpec.describe Question, type: :model do
 
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Question") }
+  its(:require_csv_headers) { is_expected.to eq(%w[IMPORT_ID TEXT TYPE]) }
 
   describe '.descendants' do
     subject { described_class.descendants }

@@ -9,7 +9,7 @@ RSpec.describe Question, type: :model do
 
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Question") }
-  its(:require_csv_headers) { is_expected.to eq(%w[IMPORT_ID TEXT TYPE]) }
+  its(:required_csv_headers) { is_expected.to eq(%w[IMPORT_ID TEXT TYPE]) }
 
   describe '.descendants' do
     subject { described_class.descendants }
@@ -38,12 +38,6 @@ RSpec.describe Question, type: :model do
       it { is_expected.to be_a(Question::NoType) }
       it { is_expected.not_to be_valid }
     end
-    context 'when no row IMPORT_ID is provided' do
-      let(:row) { CsvRow.new('TYPE' => 'Traditional') }
-
-      it { is_expected.to be_a(Question::NoImportId) }
-      it { is_expected.not_to be_valid }
-    end
     context "when row's TYPE is not one of the Question.descendants" do
       let(:row) { CsvRow.new('IMPORT_ID' => '1', 'TYPE' => 'Extra Spicy') }
 
@@ -55,6 +49,21 @@ RSpec.describe Question, type: :model do
   describe '.build_row' do
     it 'should be implemented by subclasses' do
       expect { described_class.build_row }.to raise_error(NotImplementedError)
+    end
+  end
+
+  describe '.invalid_question_due_to_missing_headers' do
+    subject { described_class.invalid_question_due_to_missing_headers(row:) }
+    let(:row) { CsvRow.new(values) }
+
+    context 'when given a row with valid headers' do
+      let(:values) { described_class.required_csv_headers.index_with { |key| "Value of #{key}" } }
+      it { is_expected.to be_nil }
+    end
+
+    context 'when given a row with invalid headers' do
+      let(:values) { {} }
+      it { is_expected.to be_a(Question::ExpectedColumnMissing) }
     end
   end
 

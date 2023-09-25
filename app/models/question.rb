@@ -15,7 +15,7 @@ class Question < ApplicationRecord
   class_attribute :type_name, default: "Question", instance_writer: false
   class_attribute :include_in_filterable_type, default: true, instance_writer: false
 
-  class_attribute :require_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
+  class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
 
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.
@@ -70,13 +70,28 @@ class Question < ApplicationRecord
   #         build the proper {Question} subclass.
   def self.build_from_csv_row(row)
     return Question::NoType.new(row) unless row['TYPE']
-    return Question::NoImportId.new(row) unless row['IMPORT_ID']
 
     klass = Question.type_name_to_class(row['TYPE'], fallback: nil)
 
     return Question::InvalidType.new(row) unless klass
 
+    klass.invalid_question_due_to_missing_headers(row:) || klass.build_row(row)
+
     klass.build_row(row)
+  end
+
+  ##
+  # @param row [Enumerable] likely a row from {CSV.read}
+  # @param required_headers [Array<String>] defaults to {.required_csv_headers}
+  #
+  # @return [NilClass] when the row has all the valid headers (e.g. column names for the CSV).
+  # @return [Question::ExpectedColumnMissing] when the row is missing one or more expected headers.
+  def self.invalid_question_due_to_missing_headers(row:, required_headers: required_csv_headers)
+    expected = required_headers.sort
+    overlap = (row.headers & expected).sort
+    return nil if expected == overlap
+
+    Question::ExpectedColumnMissing.new(expected: required_headers, given: row.headers)
   end
 
   FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :category_names].freeze

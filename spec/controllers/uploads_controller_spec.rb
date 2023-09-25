@@ -26,7 +26,7 @@ RSpec.describe UploadsController do
 
       it "will respond with a :success code (e.g. 200), there won't be any errors, and Question records will be created." do
         expect do
-          post :create, params: { csv: {"0" => file} }
+          post :create, params: { csv: { "0" => file } }
         end.to change(Question, :count)
 
         expect_inertia.to render_component 'Uploads'
@@ -41,7 +41,7 @@ RSpec.describe UploadsController do
 
       it "will respond with an :unprocessable_entity code (e.g. 422), errors will be present, and no Question records will be created." do
         expect do
-          post :create, params: { csv: {"0" => file} }
+          post :create, params: { csv: { "0" => file } }
         end.not_to change(Question, :count)
 
         expect_inertia.to render_component 'Uploads'

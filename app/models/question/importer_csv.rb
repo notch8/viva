@@ -34,12 +34,10 @@ class Question::ImporterCsv
     # columns are titlecase which we later expect.
     CSV.parse(@text, headers: true, skip_blanks: true, header_converters: ->(h) { h.to_s.strip.upcase.delete("\xEF\xBB\xBF") }, encoding: 'utf-8') do |row|
       unless have_already_verified_headers
-        expected = Question.require_csv_headers.sort
-        overlap = (row.headers & expected).sort
-        if expected != overlap
-          question = Question::ExpectedColumnMissing.new(expected: Question.require_csv_headers, given: row.headers)
-          @questions << question
-          @errors[:csv] = question.errors.to_hash
+        invalid_question = Question.invalid_question_due_to_missing_headers(row:)
+        if invalid_question
+          @questions << invalid_question
+          @errors[:csv] = invalid_question.errors.to_hash
           break
         else
           have_already_verified_headers = true

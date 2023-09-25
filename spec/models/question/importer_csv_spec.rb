@@ -6,9 +6,9 @@ RSpec.describe Question::ImporterCsv do
   subject(:instance) { described_class.new(text) }
 
   describe '.from_file' do
-    ["valid_bow_tie_question.csv"].each do |filename|
-      context "with #{filename} when saved" do
-        subject { described_class.from_file(file_fixture(filename)) }
+    Rails.root.glob("spec/fixtures/files/valid_*.csv").each do |path|
+      context "with \"#{File.basename(path)}\" when saved" do
+        subject { described_class.from_file(file_fixture(File.basename(path))) }
 
         it 'creates at least one question' do
           expect { subject.save }.to change(Question, :count)

@@ -28,14 +28,18 @@ const Uploads = (props) => {
       post('/uploads/create')
     }
   }
-  console.log(responseErrors)
 
   return (
     <Layout>
       <Container className='bg-light-1 rounded p-5'>
         <h2 className='h5 fw-bold'>Upload Questions</h2>
         <span className='d-block'>Upload a CSV here using the following format:</span>
-        <Button className='my-4'>Download CSV Example Format</Button>
+        <Button
+          id='download-csv-example'
+          className='my-4'
+          href='/AllQuestionTypes.csv'>
+            Download CSV Example Format
+        </Button>
         <p>Please make sure that your CSV matches the headers in the example above in order to make a successful import.</p>
         <p>If the format of your CSV is incorrect, the errors will be displayed below the form. Note that the error displayed will be the first error that is found in your CSV, as the CSV will not continue to process the row after hitting an error.</p>
         <UploadForm submit={submit} setData={setData} processing={processing} />

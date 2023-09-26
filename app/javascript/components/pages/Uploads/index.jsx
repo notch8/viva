@@ -1,5 +1,7 @@
 import React from 'react'
-import { Container, Button, Alert, Dropdown, ButtonGroup, SplitButton } from 'react-bootstrap'
+import {
+  Container, Button, Alert, Dropdown, ButtonGroup, SplitButton
+} from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
@@ -83,7 +85,7 @@ const Uploads = (props) => {
                 {/* errors on the row level */}
                 {responseErrors?.rows && responseErrors.rows.map((row, index) => (
                   <p key={index} className='small'>
-                    <span><b>Row with import ID {row.import_id}:</b> {row.base ? row.base : "Please check that all data is entered correctly in each cell"}</span>
+                    <span><b>Row with import ID {row.import_id}:</b> {row.base ? row.base : 'Please check that all data is entered correctly in each cell'}</span>
                   </p>
                 ))}
               </>

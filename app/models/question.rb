@@ -138,7 +138,7 @@ class Question < ApplicationRecord
   def self.extract_subject_names_from(row)
     row.flat_map do |header, value|
       next if value.blank?
-      value.split(/\s*,\s*/).map(&:strip)   if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_"))
+      value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_"))
     end.compact.sort
   end
   private_class_method :extract_subject_names_from

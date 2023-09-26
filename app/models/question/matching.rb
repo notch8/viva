@@ -7,6 +7,7 @@
 class Question::Matching < Question
   self.type_name = "Matching"
 
+  # rubocop:disable Metrics/MethodLength
   def self.build_row(row)
     text = row['TEXT']
     subject_names = extract_subject_names_from(row)
@@ -30,6 +31,7 @@ class Question::Matching < Question
 
     new(text:, data:, subject_names:, keyword_names:)
   end
+  # rubocop:enable Metrics/MethodLength
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.

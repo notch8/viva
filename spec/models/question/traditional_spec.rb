@@ -16,6 +16,7 @@ RSpec.describe Question::Traditional do
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
+                 "ANSWER_3" => "",
                  "SUBJECTS" => "True/False, Amazing",
                  "SUBJECT_1" => "Fun Question",
                  "SUBJECT" => "Hard Question",

@@ -13,9 +13,10 @@ class Question::Traditional < Question
     keyword_names = extract_keyword_names_from(row)
     answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
 
-    data = answer_columns.map do |col|
+    data = answer_columns.each_with_object([]) do |col, array|
       index = col.split(/_+/).last.to_i
-      { answer: row[col], correct: answers.include?(index) }
+      next if row[col].blank? && !answers.include?(index)
+      array << { answer: row[col], correct: answers.include?(index) }
     end
 
     new(text:, data:, subject_names:, keyword_names:)

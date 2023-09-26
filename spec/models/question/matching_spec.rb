@@ -16,6 +16,8 @@ RSpec.describe Question::Matching do
                  "RIGHT_1" => "Cat, Dog",
                  "LEFT_2" => "Plant",
                  "RIGHT_2" => "Catnip, Dogwood",
+                 "LEFT_3" => "",
+                 "RIGHT_3" => "",
                  "KEYWORD" => "One, Two",
                  "SUBJECT" => "Big, Little")
     end

@@ -40,6 +40,7 @@ class Question::DragAndDrop < Question
         next if header.blank?
         next unless header.start_with?("ANSWER_")
         slot_number = header.split(/_+/).last.to_i
+        next if row[header].blank? && !slot_numbers.include?(slot_number)
         array << { answer: row[header], correct: (slot_numbers.include?(slot_number) ? slot_number : false) }
       end
     else
@@ -49,6 +50,7 @@ class Question::DragAndDrop < Question
         next unless header.start_with?("ANSWER_")
 
         index = header.split(/_+/).last.to_i
+        next if row[header].blank? && !answers.include?(index)
         array << { answer: row[header], correct: answers.include?(index) }
       end
     end

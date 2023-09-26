@@ -1,11 +1,12 @@
 import React from 'react'
-import { Container, Button, Alert } from 'react-bootstrap'
+import { Container, Button, Alert, Dropdown, ButtonGroup, SplitButton } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
 
 const Uploads = (props) => {
   let responseErrors = props.errors
+  const typeNamesFromPublicFiles = ['traditional', 'bow_tie', 'drag_and_drop', 'sata', 'matching']
   const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })
@@ -34,12 +35,23 @@ const Uploads = (props) => {
       <Container className='bg-light-1 rounded p-5'>
         <h2 className='h5 fw-bold'>Upload Questions</h2>
         <span className='d-block'>Upload a CSV here using the following format:</span>
-        <Button
-          id='download-csv-example'
-          className='my-4'
-          href='/AllQuestionTypes.csv'>
-            Download CSV Example Format
-        </Button>
+        <ButtonGroup className='my-4'>
+          <Button
+            id='download-csv-example'
+            href='/example-csv-all-questions.csv'>
+              Download CSV Example Format
+          </Button>
+          <SplitButton
+            drop='down-centered'
+            as={ButtonGroup}
+            id='question-type-csvs-dropdown'
+            title='Download CSV for Specific Question Type'
+            variant='secondary'>
+            {typeNamesFromPublicFiles.map((typeName) => (
+              <Dropdown.Item key={typeName} href={`/valid_${typeName}_question.csv`}>Download {typeName} CSV</Dropdown.Item>
+            ))}
+          </SplitButton>
+        </ButtonGroup>
         <p>Please make sure that your CSV matches the headers in the example above in order to make a successful import.</p>
         <p>If the format of your CSV is incorrect, the errors will be displayed below the form. Note that the error displayed will be the first error that is found in your CSV, as the CSV will not continue to process the row after hitting an error.</p>
         <UploadForm submit={submit} setData={setData} processing={processing} />

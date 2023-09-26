@@ -66,6 +66,7 @@ class Question::BowTie < Question
       direction = match[:direction].downcase
       index = match[:index].to_i
       correct = correct_answer_colum_numbers[direction].include?(index)
+      next if value.blank? && !correct
       data[direction]['answers'] << { "answer" => value, "correct" => correct }
     end
 

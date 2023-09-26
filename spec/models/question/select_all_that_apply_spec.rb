@@ -16,6 +16,7 @@ RSpec.describe Question::SelectAllThatApply do
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
                  "ANSWER_3" => "yes",
+                 "ANSWER_4" => "",
                  "KEYWORD" => "One, Two",
                  "SUBJECT" => "Big, Little")
     end

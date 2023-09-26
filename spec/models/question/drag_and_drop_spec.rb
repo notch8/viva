@@ -11,12 +11,13 @@ RSpec.describe Question::DragAndDrop do
     subject { described_class.build_row(row) }
     context 'when given slotted data' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
+        CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "The ___1___ gets high on ___2___:",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
+                   "ANSWER_5" => "",
                    "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end
@@ -39,13 +40,14 @@ RSpec.describe Question::DragAndDrop do
 
     context 'when given non-slotted data' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
+        CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "Select all of the animals:",
                    "ANSWERS" => "1,4",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
+                   "ANSWER_5" => "",
                    "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end

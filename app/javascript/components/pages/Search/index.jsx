@@ -44,7 +44,6 @@ const Search = (props) => {
     get('/')
   }
 
-  // console.log({filteredQuestions})
   return (
     <Layout>
       <SearchBar

@@ -136,7 +136,10 @@ class Question < ApplicationRecord
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_subject_names_from(row)
-    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_")) }.compact.sort
+    row.flat_map do |header, value|
+      next if value.blank?
+      value.split(/\s*,\s*/).map(&:strip)   if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_"))
+    end.compact.sort
   end
   private_class_method :extract_subject_names_from
 
@@ -144,7 +147,10 @@ class Question < ApplicationRecord
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_keyword_names_from(row)
-    row.flat_map { |header, value| value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "KEYWORDS" || header == "KEYWORD" || header.start_with?("KEYWORD_")) }.compact.sort
+    row.flat_map do |header, value|
+      next if value.blank?
+      value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "KEYWORDS" || header == "KEYWORD" || header.start_with?("KEYWORD_"))
+    end.compact.sort
   end
   private_class_method :extract_keyword_names_from
 

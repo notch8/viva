@@ -62,12 +62,12 @@ const Uploads = (props) => {
             Your CSV has been uploaded successfully!
           </div>
         }
-        {(errors.csv || responseErrors) &&
+        {(errors.csv || (responseErrors && Object.keys(responseErrors).length > 0)) &&
           <Alert variant='danger' dismissible>
             {/* NOTE: there are 2 types of errors here, frontend, presubmit errors which are stored periodically in errors.csv, and responseErrors which only appear after the form is submitted */}
             {/* presubmit errors */}
             {errors?.csv && <span>{errors?.csv}</span>}
-            {responseErrors &&
+            {(responseErrors && Object.keys(responseErrors).length > 0) &&
               <>
                 <p>The following errors occured during your import. Please correct them and try again.</p>
                 {/* errors on on the csv level (checks for headers) */}

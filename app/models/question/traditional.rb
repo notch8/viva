@@ -12,7 +12,7 @@ class Question::Traditional < Question
     subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
     answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
-    answer_columns = row.headers.select { |header| header.present? && header.start_with?( "ANSWER_") }
+    answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
 
     data = answer_columns.each_with_object([]) do |col, array|
       index = col.split(/_+/).last.to_i

@@ -128,7 +128,6 @@ class Question < ApplicationRecord
     filter(select:, **kwargs).as_json(only:, methods:)
   end
 
-
   ##
   # @param row [CsvRow]
   # @return [Array<String>]

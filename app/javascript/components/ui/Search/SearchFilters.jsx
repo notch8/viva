@@ -34,9 +34,9 @@ const SearchFilters = (props) => {
                     <Col key={index} sm={6}>
                       <h3 className='fw-bold h6'>
                         {filter === selectedSubjects ? 'Subjects' :
-                         filter === selectedKeywords ? 'Keywords' :
-                         filter === selectedTypes ? 'Types' :
-                         'Levels'}
+                          filter === selectedKeywords ? 'Keywords' :
+                            filter === selectedTypes ? 'Types' :
+                              'Levels'}
                       </h3>
                       {filter.map((item, itemIndex) => (
                         <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>

@@ -5,6 +5,6 @@
 #
 class Question::InvalidLevel < Question::InvalidQuestion
   def message
-    "row had LEVEL of #{row['LEVEL']} but expected to be one of the following: #{Level.names.map{ |name| name }.join(', ')}"
+    "row had LEVEL of #{row['LEVEL']} but expected to be one of the following: #{Level.names.map { |name| name }.join(', ')}"
   end
 end

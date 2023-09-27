@@ -12,6 +12,7 @@ RSpec.describe Question::BowTie do
     let(:data) do
       CsvRow.new("TYPE" => described_class.type_name,
                  "TEXT" => "Lifecycle of chemicals.",
+                 "LEVEL" => Level.names.first,
                  "CENTER_LABEL" => "Center Label",
                  "CENTER_1" => "...when boiled becomes...",
                  "CENTER_2" => "...when eaten becomes...",
@@ -71,6 +72,7 @@ RSpec.describe Question::BowTie do
 
       its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
       its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:level) { is_expected.to eq(Level.names.first) }
     end
   end
 

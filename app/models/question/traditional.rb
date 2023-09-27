@@ -8,18 +8,18 @@ class Question::Traditional < Question
 
   def self.build_row(row)
     text = row['TEXT']
-    answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
+    level = row['LEVEL']
     subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
-    answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+    answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
+    answer_columns = row.headers.select { |header| header.present? && header.start_with?( "ANSWER_") }
 
     data = answer_columns.each_with_object([]) do |col, array|
       index = col.split(/_+/).last.to_i
       next if row[col].blank? && !answers.include?(index)
       array << { answer: row[col], correct: answers.include?(index) }
     end
-
-    new(text:, data:, subject_names:, keyword_names:)
+    new(text:, data:, subject_names:, keyword_names:, level:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

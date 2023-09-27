@@ -48,8 +48,9 @@ class Question::BowTie < Question
   # rubocop:disable Metrics/AbcSize
   def self.build_row(row)
     text = row['TEXT']
-    keyword_names = extract_keyword_names_from(row)
+    level = row['LEVEL']
     subject_names = extract_subject_names_from(row)
+    keyword_names = extract_keyword_names_from(row)
 
     correct_answer_colum_numbers = {}
     data = {}
@@ -70,7 +71,7 @@ class Question::BowTie < Question
       data[direction]['answers'] << { "answer" => value, "correct" => correct }
     end
 
-    new(text:, data:, keyword_names:, subject_names:)
+    new(text:, data:, level:, keyword_names:, subject_names:)
   end
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity

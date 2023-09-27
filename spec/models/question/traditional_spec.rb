@@ -13,6 +13,7 @@ RSpec.describe Question::Traditional do
       CsvRow.new("IMPORT_ID" => "123456",
                  "TYPE" => "Traditional",
                  "TEXT" => "Which one is true?",
+                 "LEVEL" => Level.names.first,
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
@@ -29,6 +30,7 @@ RSpec.describe Question::Traditional do
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
     its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
+    its(:level) { is_expected.to eq(Level.names.first) }
 
     describe 'once saved' do
       before do

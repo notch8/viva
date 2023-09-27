@@ -14,14 +14,13 @@ class SearchController < ApplicationController
       selectedKeywords: params[:selected_keywords],
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
-      # TODO: Add :levels once it is set up in the back end
+      selectedLevels: params[:selected_levels],
       filteredQuestions: Question.filter_as_json(
                keywords: params[:selected_keywords],
                subjects: params[:selected_subjects],
                # Deprecating :type; I'd prefer us to use :type_name
-               type_name: params[:selected_types]
-               # TODO: Add :levels once it is set up in the back end
-               # level: params[:selected_levels]
+               type_name: params[:selected_types],
+               levels: params[:selected_levels]
              )
     }
   end

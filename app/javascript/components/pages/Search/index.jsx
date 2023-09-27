@@ -8,11 +8,10 @@ import SearchFilters from '../../ui/Search/SearchFilters'
 
 const Search = (props) => {
   const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels } = props
-  const { setData, get, processing, errors, clearErrors, recentlySuccessful, data } = useForm({ // eslint-disable-line no-unused-vars
+  const { setData, get, processing, clearErrors } = useForm({
     selected_keywords: selectedKeywords || [],
     selected_subjects: selectedSubjects || [],
     selected_types: selectedTypes || [],
-    // TODO add selected levels once it is
     selected_levels: selectedLevels || [],
   })
 

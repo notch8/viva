@@ -4,7 +4,6 @@ import {
 } from 'react-bootstrap'
 
 const SearchFilters = (props) => {
-  // TODO: set up levels
   const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
 

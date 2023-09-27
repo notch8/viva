@@ -231,6 +231,7 @@ class Question < ApplicationRecord
     # provided.
     keywords = Array.wrap(keywords)
     subjects = Array.wrap(subjects)
+    levels = Array.wrap(levels)
 
     # Specifying a very arbitrary order
     questions = Question.order(:id)
@@ -245,6 +246,8 @@ class Question < ApplicationRecord
       [klass.sti_name] + klass.descendants.map(&:sti_name)
     end
     questions = questions.where(type: types) if types.present?
+
+    questions = questions.where(level: levels) if levels.present?
 
     questions = questions.where(child_of_aggregation: false)
 

@@ -13,6 +13,7 @@ RSpec.describe Question::DragAndDrop do
       let(:row) do
         CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "The ___1___ gets high on ___2___:",
+                   "LEVEL" => Level.names.first,
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
@@ -35,6 +36,7 @@ RSpec.describe Question::DragAndDrop do
 
         its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
         its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:level) { is_expected.to eq(Level.names.first) }
       end
     end
 

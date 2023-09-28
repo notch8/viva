@@ -15,7 +15,8 @@ const SearchBar = (props) => {
     processing,
     selectedKeywords,
     selectedTypes,
-    selectedSubjects
+    selectedSubjects,
+    selectedLevels
   } = props
   const filters = { subjects, keywords, types, levels }
 
@@ -60,7 +61,7 @@ const SearchBar = (props) => {
                     className='mx-0'
                     value={item}
                     onChange={(event) => handleFilters(event, key)}
-                    defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item)}
+                    defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item) || selectedLevels.includes(item)}
                   />
                   <Form.Check.Label className='ps-2'>
                     {filters[key] === 'types' ? item.substring(10) : item}

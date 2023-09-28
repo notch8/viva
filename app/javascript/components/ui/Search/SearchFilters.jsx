@@ -4,15 +4,15 @@ import {
 } from 'react-bootstrap'
 
 const SearchFilters = (props) => {
-  // TODO: set up levels
-  const { selectedSubjects, selectedKeywords, selectedTypes, submit, handleFilters } = props
-  const filterArray = [selectedSubjects, selectedKeywords, selectedTypes]
+  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters } = props
+  const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
 
   const arrayHasItems = (array) => array.length > 0
   const hasFilters =
     arrayHasItems(selectedSubjects) ||
     arrayHasItems(selectedKeywords) ||
-    arrayHasItems(selectedTypes)
+    arrayHasItems(selectedTypes) ||
+    arrayHasItems(selectedLevels)
 
   const removeFilterAndSearch = (event, item, filter) => {
     handleFilters({ target: { value: item } }, filter === selectedSubjects ? 'subjects' : filter === selectedKeywords ? 'keywords' : filter === selectedTypes ? 'types' : 'levels')
@@ -33,7 +33,10 @@ const SearchFilters = (props) => {
                   arrayHasItems(filter) && (
                     <Col key={index} sm={6}>
                       <h3 className='fw-bold h6'>
-                        {filter === selectedSubjects ? 'Subjects' : filter === selectedKeywords ? 'Keywords' : 'Types'}
+                        {filter === selectedSubjects ? 'Subjects' :
+                          filter === selectedKeywords ? 'Keywords' :
+                            filter === selectedTypes ? 'Types' :
+                              'Levels'}
                       </h3>
                       {filter.map((item, itemIndex) => (
                         <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>

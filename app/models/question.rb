@@ -77,6 +77,8 @@ class Question < ApplicationRecord
 
     klass.invalid_question_due_to_missing_headers(row:) || klass.build_row(row)
 
+    return Question::InvalidLevel.new(row) if row['LEVEL'] && !Level.names.include?(row['LEVEL'])
+
     klass.build_row(row)
   end
 
@@ -94,8 +96,8 @@ class Question < ApplicationRecord
     Question::ExpectedColumnMissing.new(expected: required_headers, given: row.headers)
   end
 
-  FILTER_DEFAULT_SELECT = [:id, :data, :text, :type, :keyword_names, :subject_names].freeze
-  FILTER_DEFAULT_METHODS = [:level, :type_label, :type_name, :data].freeze
+  FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names].freeze
+  FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data].freeze
 
   ##
   # @param select [Array<Symbol>] attribute names both passed forward to {.filter} and exposed in
@@ -124,12 +126,6 @@ class Question < ApplicationRecord
     # Hence we want to :select that data for querying, but rely instead on the :method.
     only = select - methods
     filter(select:, **kwargs).as_json(only:, methods:)
-  end
-
-  ##
-  # @todo A placeholder for future properties/values
-  def level
-    1
   end
 
   ##
@@ -228,12 +224,13 @@ class Question < ApplicationRecord
   # @see .filter_as_json
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
-  def self.filter(keywords: [], subjects: [], type_name: nil, select: nil)
+  def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
     keywords = Array.wrap(keywords)
     subjects = Array.wrap(subjects)
+    levels = Array.wrap(levels)
 
     # Specifying a very arbitrary order
     questions = Question.order(:id)
@@ -248,6 +245,8 @@ class Question < ApplicationRecord
       [klass.sti_name] + klass.descendants.map(&:sti_name)
     end
     questions = questions.where(type: types) if types.present?
+
+    questions = questions.where(level: levels) if levels.present?
 
     questions = questions.where(child_of_aggregation: false)
 

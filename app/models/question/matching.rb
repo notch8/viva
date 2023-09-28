@@ -10,6 +10,7 @@ class Question::Matching < Question
   # rubocop:disable Metrics/MethodLength
   def self.build_row(row)
     text = row['TEXT']
+    level = row['LEVEL']
     subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
 
@@ -29,7 +30,7 @@ class Question::Matching < Question
       array << { answer:, correct: }
     end
 
-    new(text:, data:, subject_names:, keyword_names:)
+    new(text:, data:, subject_names:, keyword_names:, level:)
   end
   # rubocop:enable Metrics/MethodLength
 

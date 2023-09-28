@@ -7,7 +7,7 @@ import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
 
 const Search = (props) => {
-  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels } = props
+  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels, exportURL } = props
   const { setData, get, processing, clearErrors } = useForm({
     selected_keywords: selectedKeywords || [],
     selected_subjects: selectedSubjects || [],
@@ -65,6 +65,8 @@ const Search = (props) => {
         selectedLevels={selectedLevels || []}
         handleFilters={handleFilters}
         submit={submit}
+        exportURL={exportURL}
+        useForm={useForm}
       />
       {filteredQuestions.length ?
         (filteredQuestions.map((question) => {

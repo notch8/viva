@@ -7,12 +7,15 @@ Rails.application.routes.draw do
 
   devise_scope :user do
     authenticated :user do
+      # search page routes
       root 'search#index', as: :authenticated_root
+      # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'
       patch '/settings/update', to: 'settings#update'
       patch '/settings/update-password', to: 'settings#update_password'
+      # uploads page routes
       get '/uploads', to: 'uploads#index', as: 'uploads'
-      post '/uploads/create', to: 'uploads#create'
+      post '/uploads', to: 'uploads#create'
     end
 
     unauthenticated do

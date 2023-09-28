@@ -1,11 +1,19 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
-  Container, Row, Col, Button, CloseButton
+  Container, Row, Col, Button, CloseButton, Alert, ProgressBar, Form
 } from 'react-bootstrap'
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters } = props
+  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, useForm, exportURL, errors } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
+
+  const { get, processing, clearErrors, recentlySuccessful, progress, setData, reset } = useForm({
+    selected_keywords: selectedKeywords,
+    selected_subjects: selectedSubjects,
+    selected_types: selectedTypes,
+    selected_levels: selectedLevels,
+    export: null
+  })
 
   const arrayHasItems = (array) => array.length > 0
   const hasFilters =
@@ -19,8 +27,27 @@ const SearchFilters = (props) => {
     submit(event)
   }
 
+  // this may need to be async as the exportURL will come as part of a response
+  const handleExport = (e) => {
+    clearErrors()
+    e.preventDefault()
+    get('/');
+    if (exportURL) {
+      console.log('here')
+      const downloadLink = document.createElement('a');
+      downloadLink.href = exportURL;
+      downloadLink.target = '_blank'; // Open in a new tab
+      downloadLink.download = 'questions.csv'
+      downloadLink.click();
+    }
+    reset('export')
+  }
+
+  console.log({exportURL})
+
   return (
     hasFilters &&
+    <>
       <Container className='bg-light-1 rounded p-0 search-filters'>
         <Row>
           <Col md={3} className='d-flex justify-content-center align-items-center text-center p-2 border-end'>
@@ -54,11 +81,35 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <Button>Export All Questions</Button>
+              <Form onSubmit={handleExport}>
+                <Button
+                  onClick={(() => setData('export', true))}
+                  type='submit'
+                  disabled={processing}>
+                    Export All Questions
+                </Button>
+              </Form>
             </Col>
           </Col>
         </Row>
       </Container>
+      {(processing && progress) &&
+        <ProgressBar now={progress.percentage} dismissible variant='info'>
+          Your export is being processed.
+        </ProgressBar>
+      }
+      {recentlySuccessful &&
+        <Alert dismissible variant='success'>
+          Your export completed successfully.
+        </Alert>
+      }
+      {errors &&
+      // TODO: more error handling here depending on what errors are returned
+        <Alert dismissible variant='danger'>
+          An error occurred while processing your export.
+        </Alert>
+      }
+    </>
   )
 }
 

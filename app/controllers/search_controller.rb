@@ -41,7 +41,7 @@ class SearchController < ApplicationController
   def export_url
     # create_new_export
     # set the exportURL prop to the resulting URL of the export. for now, we are using a dummy URL to set up the download functionality in the UI
-    { exportURL: '/example-csv-all-questions.csv' }
+    { exportURL: '/dummy-document.pdf' }
   end
 
   def create_new_export

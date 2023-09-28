@@ -31,14 +31,14 @@ const SearchFilters = (props) => {
   const handleExport = (e) => {
     clearErrors()
     e.preventDefault()
-    get('/');
+    get('/')
     if (exportURL) {
-      console.log('here')
-      const downloadLink = document.createElement('a');
-      downloadLink.href = exportURL;
-      downloadLink.target = '_blank'; // Open in a new tab
-      downloadLink.download = 'questions.csv'
-      downloadLink.click();
+      const downloadLink = document.createElement('a')
+      downloadLink.href = exportURL
+      downloadLink.target = '_blank'
+      // TODO: Make sure to change the file extension when this becomes an xml file
+      downloadLink.download = 'questions.pdf'
+      downloadLink.click()
     }
     reset('export')
   }

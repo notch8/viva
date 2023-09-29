@@ -3,7 +3,7 @@ import {
   InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import { setDropdownWidth } from '../../../utilities/dropdown-width'
+import CustomDropdown from '../../ui/CustomDropdown'
 
 const SearchBar = (props) => {
   const {
@@ -21,44 +21,39 @@ const SearchBar = (props) => {
   } = props
   const filters = { subjects, keywords, types, levels }
 
-  useEffect(() => {
-    const removeResizeListener = setDropdownWidth()
-    return () => {
-      removeResizeListener()
-    }
-  }, [])
-
   return (
     <Form onSubmit={submit}>
       <Container className='p-0 mt-2 search-bar'>
         <InputGroup className='mb-3 flex-column flex-md-row'>
           {/* props being passed to this component are each of the filters. the keys are the name of the filter, and the values are the list of items to filter by */}
           {Object.keys(filters).map((key, index) => (
-            <DropdownButton
-              key={index}
-              variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
-              title={key}
-              id={`input-group-dropdown-${index}`}
-              size='lg'
-              autoClose='outside'
-            >
-              {filters[key].map((item, itemIndex) => (
-                <Form.Check type='checkbox' id={item} className='p-2' key={itemIndex}>
-                  <Form.Check.Input
-                    type='checkbox'
-                    id={item}
-                    className='mx-0'
-                    value={item}
-                    onChange={(event) => handleFilters(event, key)}
-                    defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item) || selectedLevels.includes(item)}
-                  />
-                  <Form.Check.Label className='ps-2'>
-                    {filters[key] === 'types' ? item.substring(10) : item}
-                  </Form.Check.Label>
-                </Form.Check>
-              )
-              )}
-            </DropdownButton>
+            <CustomDropdown dropdownSelector='.dropdown-toggle'>
+              <DropdownButton
+                key={index}
+                variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
+                title={key}
+                id={`input-group-dropdown-${index}`}
+                size='lg'
+                autoClose='outside'
+              >
+                {filters[key].map((item, itemIndex) => (
+                  <Form.Check type='checkbox' id={item} className='p-2' key={itemIndex}>
+                    <Form.Check.Input
+                      type='checkbox'
+                      id={item}
+                      className='mx-0'
+                      value={item}
+                      onChange={(event) => handleFilters(event, key)}
+                      defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item) || selectedLevels.includes(item)}
+                    />
+                    <Form.Check.Label className='ps-2'>
+                      {filters[key] === 'types' ? item.substring(10) : item}
+                    </Form.Check.Label>
+                  </Form.Check>
+                )
+                )}
+              </DropdownButton>
+            </CustomDropdown>
           ))}
           <Button
             className='d-flex align-items-center fs-6 justify-content-center'

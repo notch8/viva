@@ -76,7 +76,7 @@ const SearchFilters = (props) => {
                     target='_blank'
                     download={`questions.${fileInfo.type}`}
                     eventKey={index}>
-                      {fileInfo.type.toUpperCase()}
+                    {fileInfo.type.toUpperCase()}
                   </Dropdown.Item>
                 ))}
               </DropdownButton>

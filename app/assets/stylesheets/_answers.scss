@@ -5,3 +5,7 @@
 .correct {
   background-color: darken($light, 15%);
 }
+
+td.matcher {
+  border-bottom: 2px solid $gray-300
+}

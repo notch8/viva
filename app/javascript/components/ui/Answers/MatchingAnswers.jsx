@@ -6,7 +6,6 @@ const MatchingAnswers = ({ answers }) => {
     <Table bordered className='bg-white'>
       <tbody>
         {answers.map((answer, index) => {
-          console.log(answer)
           return (
             <tr className='matching-table-row' key={index}>
               <td className='px-3 text-primary fw-semibold matchee align-middle text-center'>{answer.answer}</td>

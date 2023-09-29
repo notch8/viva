@@ -3,18 +3,6 @@
 @import '../../../node_modules/bootstrap/scss/mixins';
 
 .search-bar {
-  .dropdown-menu.show {
-    padding: 0;
-    margin-top: -2px;
-    border-top: 0;
-    border-top-right-radius: 0;
-    border-top-left-radius: 0;
-    .form-check {
-      &:hover, &:active, &:focus {
-        background-color: var(--bs-tertiary-bg);
-      }
-    }
-  }
 
   .input-group .dropdown-toggle {
     flex: 1;
@@ -49,4 +37,17 @@
 .search-filters .btn-close {
   width: 0.1em;
   height: 0.1em;
+}
+
+.dropdown-menu.show {
+  padding: 0;
+  margin-top: -2px;
+  border-top: 0;
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+  .form-check {
+    &:hover, &:active, &:focus {
+      background-color: var(--bs-tertiary-bg);
+    }
+  }
 }

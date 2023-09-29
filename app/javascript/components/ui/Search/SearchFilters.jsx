@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
-  Container, Row, Col, Button, CloseButton
+  Container, Row, Col, DropdownButton, Dropdown, CloseButton, Alert
 } from 'react-bootstrap'
+import { setDropdownWidth } from '../../../utilities/dropdown-width'
+
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters } = props
+  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
 
   const arrayHasItems = (array) => array.length > 0
@@ -19,8 +21,16 @@ const SearchFilters = (props) => {
     submit(event)
   }
 
+  useEffect(() => {
+    const removeResizeListener = setDropdownWidth()
+    return () => {
+      removeResizeListener()
+    }
+  }, [])
+
   return (
     hasFilters &&
+    <>
       <Container className='bg-light-1 rounded p-0 search-filters'>
         <Row>
           <Col md={3} className='d-flex justify-content-center align-items-center text-center p-2 border-end'>
@@ -54,11 +64,33 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <Button>Export All Questions</Button>
+              <DropdownButton
+                id='download-questions-button'
+                title='Export Questions'
+              >
+                {exportHrefs.map((fileInfo, index) => (
+                  <Dropdown.Item
+                    className='p-2'
+                    key={fileInfo.type}
+                    href={fileInfo.href}
+                    target='_blank'
+                    download={`questions.${fileInfo.type}`}
+                    eventKey={index}>
+                    {fileInfo.type.toUpperCase()}
+                  </Dropdown.Item>
+                ))}
+              </DropdownButton>
             </Col>
           </Col>
         </Row>
       </Container>
+      {errors &&
+      // TODO: more error handling here depending on what errors are returned
+        <Alert dismissible variant='danger'>
+          An error occurred while processing your export.
+        </Alert>
+      }
+    </>
   )
 }
 

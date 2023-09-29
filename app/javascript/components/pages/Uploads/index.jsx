@@ -28,7 +28,7 @@ const Uploads = (props) => {
         clearErrors()
       }, 3000)
     } else {
-      post('/uploads/create')
+      post('/uploads')
     }
   }
 

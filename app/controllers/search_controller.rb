@@ -50,6 +50,6 @@ class SearchController < ApplicationController
   private
 
   def search_params
-    params.permit(:selected_keywords, :selected_subjects, :selected_types, :selected_levels, :export)
+    params.permit(:selected_keywords, :selected_subjects, :selected_types, :selected_levels)
   end
 end

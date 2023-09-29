@@ -66,7 +66,6 @@ const Search = (props) => {
         handleFilters={handleFilters}
         submit={submit}
         exportURL={exportURL}
-        useForm={useForm}
       />
       {filteredQuestions.length ?
         (filteredQuestions.map((question) => {

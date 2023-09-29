@@ -1,19 +1,11 @@
 import React from 'react'
 import {
-  Container, Row, Col, Button, CloseButton, Alert, ProgressBar, Form
+  Container, Row, Col, Button, CloseButton, Alert
 } from 'react-bootstrap'
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, useForm, exportURL, errors } = props
+  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportURL, errors } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
-
-  const { get, processing, clearErrors, recentlySuccessful, progress, setData, reset } = useForm({
-    selected_keywords: selectedKeywords,
-    selected_subjects: selectedSubjects,
-    selected_types: selectedTypes,
-    selected_levels: selectedLevels,
-    export: null
-  })
 
   const arrayHasItems = (array) => array.length > 0
   const hasFilters =
@@ -27,23 +19,6 @@ const SearchFilters = (props) => {
     submit(event)
   }
 
-  // this may need to be async as the exportURL will come as part of a response
-  const handleExport = (e) => {
-    clearErrors()
-    e.preventDefault()
-    get('/')
-    if (exportURL) {
-      const downloadLink = document.createElement('a')
-      downloadLink.href = exportURL
-      downloadLink.target = '_blank'
-      // TODO: Make sure to change the file extension when this becomes an xml file
-      downloadLink.download = 'questions.pdf'
-      downloadLink.click()
-    }
-    reset('export')
-  }
-
-  console.log({exportURL})
 
   return (
     hasFilters &&
@@ -81,28 +56,18 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <Form onSubmit={handleExport}>
-                <Button
-                  onClick={(() => setData('export', true))}
-                  type='submit'
-                  disabled={processing}>
-                    Export All Questions
-                </Button>
-              </Form>
+              <Button
+                href={exportURL}
+                type='submit'
+                target='_blank'
+                download='questions.xml'
+              >
+                  Export All Questions
+              </Button>
             </Col>
           </Col>
         </Row>
       </Container>
-      {(processing && progress) &&
-        <ProgressBar now={progress.percentage} dismissible variant='info'>
-          Your export is being processed.
-        </ProgressBar>
-      }
-      {recentlySuccessful &&
-        <Alert dismissible variant='success'>
-          Your export completed successfully.
-        </Alert>
-      }
       {errors &&
       // TODO: more error handling here depending on what errors are returned
         <Alert dismissible variant='danger'>

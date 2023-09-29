@@ -4,11 +4,7 @@
 # The controller to handle methods related to the search page.
 class SearchController < ApplicationController
   def index
-    if params[:export]
-      render inertia: 'Search', props: shared_props.merge(export_url)
-    else
-      render inertia: 'Search', props: shared_props
-    end
+    render inertia: 'Search', props: shared_props
   end
 
   def filtered_questions
@@ -33,7 +29,8 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: filtered_questions
+      filteredQuestions: filtered_questions,
+      exportURL: export_url
     }
   end
   # rubocop:enable Metrics/MethodLength
@@ -41,7 +38,7 @@ class SearchController < ApplicationController
   def export_url
     # create_new_export
     # set the exportURL prop to the resulting URL of the export. for now, we are using a dummy URL to set up the download functionality in the UI
-    { exportURL: '/dummy-document.pdf' }
+    ".xml#{request.original_fullpath.slice(1..-1)}"
   end
 
   def create_new_export

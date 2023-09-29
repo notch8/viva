@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from 'react'
 
 const CustomDropdown = ({ children, dropdownSelector }) => {
   useEffect(() => {
@@ -7,7 +7,7 @@ const CustomDropdown = ({ children, dropdownSelector }) => {
       dropdownButtons.forEach((dropdownButton) => {
         let dropdownMenu = dropdownButton.nextSibling
         if (!dropdownMenu) {
-          dropdownMenu = dropdownButton.querySelector('.dropdown-menu');
+          dropdownMenu = dropdownButton.querySelector('.dropdown-menu')
         }
         if (dropdownMenu) {
           const buttonWidth = dropdownButton.offsetWidth
@@ -16,16 +16,16 @@ const CustomDropdown = ({ children, dropdownSelector }) => {
       })
     }
 
-    setWidth();
+    setWidth()
 
-    window.addEventListener('resize', setWidth);
+    window.addEventListener('resize', setWidth)
 
     return () => {
-      window.removeEventListener('resize', setWidth);
-    };
-  }, []);
+      window.removeEventListener('resize', setWidth)
+    }
+  }, [])
 
-  return <>{children}</>;
-};
+  return <>{children}</>
+}
 
-export default CustomDropdown;
+export default CustomDropdown

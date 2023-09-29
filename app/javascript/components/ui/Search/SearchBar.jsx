@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
@@ -27,9 +27,8 @@ const SearchBar = (props) => {
         <InputGroup className='mb-3 flex-column flex-md-row'>
           {/* props being passed to this component are each of the filters. the keys are the name of the filter, and the values are the list of items to filter by */}
           {Object.keys(filters).map((key, index) => (
-            <CustomDropdown dropdownSelector='.dropdown-toggle'>
+            <CustomDropdown key={index} dropdownSelector='.dropdown-toggle'>
               <DropdownButton
-                key={index}
                 variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
                 title={key}
                 id={`input-group-dropdown-${index}`}

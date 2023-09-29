@@ -39,26 +39,26 @@ const Uploads = (props) => {
       <Container className='bg-light-1 rounded p-5'>
         <h2 className='h5 fw-bold'>Upload Questions</h2>
         <span className='d-block'>Upload a CSV here using the following format:</span>
-          <ButtonGroup className='my-4'>
-            <Button
-              id='download-csv-example'
-              href='/example-csv-all-questions.csv'>
+        <ButtonGroup className='my-4'>
+          <Button
+            id='download-csv-example'
+            href='/example-csv-all-questions.csv'>
                 Download CSV Example Format
-            </Button>
-            <CustomDropdown dropdownSelector='.question-type-csvs-button-group'>
-              <SplitButton
-                className='question-type-csvs-button-group'
-                as={ButtonGroup}
-                id='question-type-csvs-dropdown'
-                title='Download CSV for Specific Question Type'
-                align={{ lg: 'start' }}
-                variant='secondary'>
-                {typeNamesFromPublicFiles.map((typeName) => (
-                  <Dropdown.Item key={typeName} href={`/valid_${typeName}_question.csv`}>Download {typeName} CSV</Dropdown.Item>
-                ))}
-              </SplitButton>
-            </CustomDropdown>
-          </ButtonGroup>
+          </Button>
+          <CustomDropdown dropdownSelector='.question-type-csvs-button-group'>
+            <SplitButton
+              className='question-type-csvs-button-group'
+              as={ButtonGroup}
+              id='question-type-csvs-dropdown'
+              title='Download CSV for Specific Question Type'
+              align={{ lg: 'start' }}
+              variant='secondary'>
+              {typeNamesFromPublicFiles.map((typeName) => (
+                <Dropdown.Item key={typeName} href={`/valid_${typeName}_question.csv`}>Download {typeName} CSV</Dropdown.Item>
+              ))}
+            </SplitButton>
+          </CustomDropdown>
+        </ButtonGroup>
         <p>Please make sure that your CSV matches the headers in the example above in order to make a successful import.</p>
         <p>If the format of your CSV is incorrect, the errors will be displayed below the form. Note that the error displayed will be the first error that is found in your CSV, as the CSV will not continue to process the row after hitting an error.</p>
         <UploadForm submit={submit} setData={setData} processing={processing} />

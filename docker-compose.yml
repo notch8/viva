@@ -66,9 +66,9 @@ services:
     volumes:
       - ./:/cypress
     depends_on:
-      initialize_app:
-        condition: service_completed_successfully
-
+      - web
+    entrypoint: /bin/bash
+    command: -c 'tail -f /dev/null'
 
 volumes:
   postgres:

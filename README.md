@@ -50,20 +50,17 @@ bundle exec rspec
 ### Cypress
 Cypress is used to test the JavaScript code. Component tests will live next to the component file in the named folder. End to end tests live in "cypress/e2e". For reference on when to write which, refer to the [Cypress testing types documentation](https://docs.cypress.io/guides/core-concepts/testing-types#What-is-E2E-Testing).
 
-#### CLI
-_NOTE: Cypress defaults to running e2e tests. To run component tests, `--component` must be used._
-
-- Use one of the `cy` scripts in the [package.json](./package.json) file
-- If you don't see the command you'd like to run, use `yarn run [COMMAND]`
-  - Ref: https://docs.cypress.io/guides/guides/command-line#Commands
-
+#### CLI (via Docker)
 ``` bash
-# examples
-yarn cy:e2e
-# yarn cy:comp # TODO: Figure out why component tests are broken now.
-  # Inside the web container it throws an "xvfb" error. (https://docs.cypress.io/guides/continuous-integration/introduction#Xvfb)
-yarn cy:comp --spec 'cypress/e2e/splash.cy.jsx'
+docker compose exec cypress-tests sh
+  # ref package.json for the underlying commands of the scripts below
+  yarn cy:comp
+  yarn cy:e2e
 ```
+
+- You can also use other cypress commands via `yarn run [COMMAND]`
+  - Ref: https://docs.cypress.io/guides/guides/command-line#cypress-run
+  - Cypress defaults to running e2e tests. To run component tests without the script above, `--component` must be used.
 
 #### LaunchPad
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_

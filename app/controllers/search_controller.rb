@@ -30,14 +30,13 @@ class SearchController < ApplicationController
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
       filteredQuestions: filtered_questions,
-      exportURL: export_url
+      exportHrefs: export_hrefs
     }
   end
   # rubocop:enable Metrics/MethodLength
 
-  def export_url
-    # create_new_export
-    ".xml#{request.original_fullpath.slice(1..-1)}"
+  def export_hrefs
+    [{ type: "xml", href: ".xml#{request.original_fullpath.slice(1..-1)}" }]
   end
 
   def create_new_export

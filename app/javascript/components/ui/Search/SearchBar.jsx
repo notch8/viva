@@ -3,6 +3,7 @@ import {
   InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
+import { setDropdownWidth } from '../../../utilities/dropdown-width'
 
 const SearchBar = (props) => {
   const {
@@ -20,22 +21,10 @@ const SearchBar = (props) => {
   } = props
   const filters = { subjects, keywords, types, levels }
 
-  // Function to set the width of the dropdown menu to match the button
   useEffect(() => {
-    const setDropdownWidth = () => {
-      const dropdownButtons = document.querySelectorAll('.dropdown-toggle')
-      dropdownButtons.forEach((dropdownButton) => {
-        const dropdownMenu = dropdownButton.nextSibling
-        if (dropdownMenu) {
-          const buttonWidth = dropdownButton.offsetWidth
-          dropdownMenu.style.minWidth = `${buttonWidth}px`
-        }
-      })
-    }
-    setDropdownWidth()
-    window.addEventListener('resize', setDropdownWidth)
+    const removeResizeListener = setDropdownWidth()
     return () => {
-      window.removeEventListener('resize', setDropdownWidth)
+      removeResizeListener()
     }
   }, [])
 

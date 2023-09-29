@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
-  Container, Row, Col, Button, CloseButton, Alert
+  Container, Row, Col, DropdownButton, Dropdown, CloseButton, Alert
 } from 'react-bootstrap'
+import { setDropdownWidth } from '../../../utilities/dropdown-width'
+
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportURL, errors } = props
+  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
 
   const arrayHasItems = (array) => array.length > 0
@@ -19,6 +21,12 @@ const SearchFilters = (props) => {
     submit(event)
   }
 
+  useEffect(() => {
+    const removeResizeListener = setDropdownWidth()
+    return () => {
+      removeResizeListener()
+    }
+  }, [])
 
   return (
     hasFilters &&
@@ -56,14 +64,22 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <Button
-                href={exportURL}
-                type='submit'
-                target='_blank'
-                download='questions.xml'
+              <DropdownButton
+                id='download-questions-button'
+                title='Export Questions'
               >
-                  Export All Questions
-              </Button>
+                {exportHrefs.map((fileInfo, index) => (
+                  <Dropdown.Item
+                    className='p-2'
+                    key={fileInfo.type}
+                    href={fileInfo.href}
+                    target='_blank'
+                    download={`questions.${fileInfo.type}`}
+                    eventKey={index}>
+                      {fileInfo.type.toUpperCase()}
+                  </Dropdown.Item>
+                ))}
+              </DropdownButton>
             </Col>
           </Col>
         </Row>

@@ -12,12 +12,14 @@ RSpec.describe Question::SelectAllThatApply do
     let(:row) do
       CsvRow.new("TYPE" => "AllThatApply",
                  "TEXT" => "Which one is affirmative?",
+                 "LEVEL" => Level.names.first,
                  "ANSWERS" => "1, 3",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
                  "ANSWER_3" => "yes",
+                 "ANSWER_4" => "",
                  "KEYWORD" => "One, Two",
-                 "CATEGORY" => "Big, Little")
+                 "SUBJECT" => "Big, Little")
     end
 
     it { is_expected.to be_valid }
@@ -28,7 +30,8 @@ RSpec.describe Question::SelectAllThatApply do
       before { subject.save }
 
       its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+      its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+      its(:level) { is_expected.to eq(Level.names.first) }
     end
   end
 

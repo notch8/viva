@@ -11,14 +11,16 @@ RSpec.describe Question::DragAndDrop do
     subject { described_class.build_row(row) }
     context 'when given slotted data' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
+        CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "The ___1___ gets high on ___2___:",
+                   "LEVEL" => Level.names.first,
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
+                   "ANSWER_5" => "",
                    "KEYWORD" => "One, Two",
-                   "CATEGORY" => "Big, Little")
+                   "SUBJECT" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -33,21 +35,23 @@ RSpec.describe Question::DragAndDrop do
         before { subject.save }
 
         its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:level) { is_expected.to eq(Level.names.first) }
       end
     end
 
     context 'when given non-slotted data' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
+        CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "Select all of the animals:",
                    "ANSWERS" => "1,4",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",
                    "ANSWER_4" => "Dog",
+                   "ANSWER_5" => "",
                    "KEYWORD" => "One, Two",
-                   "CATEGORY" => "Big, Little")
+                   "SUBJECT" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
@@ -68,7 +72,7 @@ RSpec.describe Question::DragAndDrop do
         before { subject.save }
 
         its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-        its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
   end

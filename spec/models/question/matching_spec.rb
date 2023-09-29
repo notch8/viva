@@ -12,12 +12,15 @@ RSpec.describe Question::Matching do
     let(:row) do
       CsvRow.new("TYPE" => "Matching",
                  "TEXT" => "Matching the proper pairings:",
+                 "LEVEL" => Level.names.first,
                  "LEFT_1" => "Animal",
                  "RIGHT_1" => "Cat, Dog",
                  "LEFT_2" => "Plant",
                  "RIGHT_2" => "Catnip, Dogwood",
+                 "LEFT_3" => "",
+                 "RIGHT_3" => "",
                  "KEYWORD" => "One, Two",
-                 "CATEGORY" => "Big, Little")
+                 "SUBJECT" => "Big, Little")
     end
 
     it { is_expected.to be_valid }
@@ -28,7 +31,8 @@ RSpec.describe Question::Matching do
       before { subject.save }
 
       its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-      its(:category_names) { is_expected.to match_array(["Big", "Little"]) }
+      its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+      its(:level) { is_expected.to eq(Level.names.first) }
     end
   end
 

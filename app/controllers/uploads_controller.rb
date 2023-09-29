@@ -8,10 +8,12 @@ class UploadsController < ApplicationController
   end
 
   def create
-    @questions = Question::ImporterCsv.from_file(create_params)
+    temp_file = create_params["0"].tempfile
+    @questions = Question::ImporterCsv.from_file(temp_file)
     if @questions.save
       render inertia: 'Uploads', props: @questions.as_json, status: :created
     else
+      # NOTE: that the errors are automatically passed in the props as part of questions
       render inertia: 'Uploads', props: @questions.as_json, status: :unprocessable_entity
     end
   end

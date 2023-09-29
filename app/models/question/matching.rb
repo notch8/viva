@@ -7,9 +7,11 @@
 class Question::Matching < Question
   self.type_name = "Matching"
 
+  # rubocop:disable Metrics/MethodLength
   def self.build_row(row)
     text = row['TEXT']
-    category_names = extract_category_names_from(row)
+    level = row['LEVEL']
+    subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
 
     # Ensure that we have all of the candidate indices (the left and right side)
@@ -19,16 +21,18 @@ class Question::Matching < Question
       array << header.split(/_+/).last.to_i
     end.uniq.sort
 
-    data = indices.map do |index|
+    data = indices.each_with_object([]) do |index, array|
       # It is okay that these will possibly be nil; because our downstream validation will catch
       # them.
       answer = row["LEFT_#{index}"]
       correct = row["RIGHT_#{index}"]&.split(/\s*,\s*/)
-      { answer:, correct: }
+      next if answer.blank? && correct.blank?
+      array << { answer:, correct: }
     end
 
-    new(text:, data:, category_names:, keyword_names:)
+    new(text:, data:, subject_names:, keyword_names:, level:)
   end
+  # rubocop:enable Metrics/MethodLength
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.

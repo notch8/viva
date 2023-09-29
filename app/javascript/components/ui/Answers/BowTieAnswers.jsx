@@ -43,7 +43,7 @@ const BowTieAnswers = ({ answers }) => {
                   sourceAnchor: 'right',
                 }]}
               >
-                <div className='left-answer bg-light-4 p-2 m-2 rounded' key={index}>
+                <div className='left-answer bg-light-4 p-2 m-2 rounded'>
                   {leftAnswer.answer}
                 </div>
               </ArcherElement>
@@ -69,7 +69,7 @@ const BowTieAnswers = ({ answers }) => {
                   sourceAnchor: 'left',
                 }]}
               >
-                <div className='right-answer bg-light-4 p-2 m-2 rounded' key={index}>
+                <div className='right-answer bg-light-4 p-2 m-2 rounded'>
                   {rightAnswer.answer}
                 </div>
               </ArcherElement>

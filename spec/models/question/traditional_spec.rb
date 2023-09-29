@@ -10,14 +10,17 @@ RSpec.describe Question::Traditional do
   describe '.build_row' do
     subject { described_class.build_row(data) }
     let(:data) do
-      CsvRow.new("TYPE" => "Traditional",
+      CsvRow.new("IMPORT_ID" => "123456",
+                 "TYPE" => "Traditional",
                  "TEXT" => "Which one is true?",
+                 "LEVEL" => Level.names.first,
                  "ANSWERS" => "1",
                  "ANSWER_1" => "true",
                  "ANSWER_2" => "false",
-                 "CATEGORIES" => "True/False, Amazing",
-                 "CATEGORY_1" => "Fun Question",
-                 "CATEGORY" => "Hard Question",
+                 "ANSWER_3" => "",
+                 "SUBJECTS" => "True/False, Amazing",
+                 "SUBJECT_1" => "Fun Question",
+                 "SUBJECT" => "Hard Question",
                  "KEYWORDS" => "Red",
                  "KEYWORD_1" => "Green",
                  "KEYWORD_2" => "Orange",
@@ -27,6 +30,7 @@ RSpec.describe Question::Traditional do
     it { is_expected.to be_valid }
     it { is_expected.not_to be_persisted }
     its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
+    its(:level) { is_expected.to eq(Level.names.first) }
 
     describe 'once saved' do
       before do
@@ -35,7 +39,7 @@ RSpec.describe Question::Traditional do
       end
 
       its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
     end
   end
 

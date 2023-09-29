@@ -28,11 +28,11 @@ class Question::DragAndDrop < Question
   # rubocop:disable Metrics/PerceivedComplexity
   def self.build_row(row)
     text = row['TEXT']
-    category_names = extract_category_names_from(row)
+    level = row['LEVEL']
+    subject_names = extract_subject_names_from(row)
     keyword_names = extract_keyword_names_from(row)
-
     # We need to sniff out the subtype and handle accordingly.
-    record = new(text:, keyword_names:, category_names:)
+    record = new(text:, keyword_names:, subject_names:, level:)
 
     if record.sub_type == SUB_TYPE_SLOTTED
       slot_numbers = record.slot_numbers_from_text
@@ -40,6 +40,7 @@ class Question::DragAndDrop < Question
         next if header.blank?
         next unless header.start_with?("ANSWER_")
         slot_number = header.split(/_+/).last.to_i
+        next if row[header].blank? && !slot_numbers.include?(slot_number)
         array << { answer: row[header], correct: (slot_numbers.include?(slot_number) ? slot_number : false) }
       end
     else
@@ -49,6 +50,7 @@ class Question::DragAndDrop < Question
         next unless header.start_with?("ANSWER_")
 
         index = header.split(/_+/).last.to_i
+        next if row[header].blank? && !answers.include?(index)
         array << { answer: row[header], correct: answers.include?(index) }
       end
     end

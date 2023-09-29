@@ -7,4 +7,7 @@ export default defineConfig({
     RubyPlugin(),
     react(),
   ],
+  define: {
+    'process.env': process.env
+  }
 })

@@ -10,23 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_13_192753) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_27_171851) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "categories", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_categories_on_name", unique: true
-  end
-
-  create_table "categories_questions", id: false, force: :cascade do |t|
-    t.bigint "question_id", null: false
-    t.bigint "category_id", null: false
-    t.index ["category_id", "question_id"], name: "index_categories_questions_on_category_id_and_question_id"
-    t.index ["question_id", "category_id"], name: "index_categories_questions_on_question_id_and_category_id", unique: true
-  end
 
   create_table "keywords", force: :cascade do |t|
     t.string "name", null: false
@@ -61,7 +47,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_13_192753) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "data"
+    t.string "level"
     t.index ["type"], name: "index_questions_on_type"
+  end
+
+  create_table "questions_subjects", id: false, force: :cascade do |t|
+    t.bigint "question_id", null: false
+    t.bigint "subject_id", null: false
+    t.index ["question_id", "subject_id"], name: "index_questions_subjects_on_question_id_and_subject_id", unique: true
+    t.index ["subject_id", "question_id"], name: "index_questions_subjects_on_subject_id_and_question_id"
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_subjects_on_name", unique: true
   end
 
   create_table "users", force: :cascade do |t|

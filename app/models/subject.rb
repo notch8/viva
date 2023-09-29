@@ -2,14 +2,14 @@
 
 ##
 # The categorization for questions.
-class Category < ApplicationRecord
+class Subject < ApplicationRecord
   has_and_belongs_to_many :questions
   validates :name, presence: true, uniqueness: true
 
   self.implicit_order_column = :name
 
   ##
-  # @return [Array<String>] an alphabetized list of category names.
+  # @return [Array<String>] an alphabetized list of subject names.
   def self.names
     all.order(name: :asc).pluck(:name)
   end

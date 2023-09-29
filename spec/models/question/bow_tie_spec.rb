@@ -12,24 +12,28 @@ RSpec.describe Question::BowTie do
     let(:data) do
       CsvRow.new("TYPE" => described_class.type_name,
                  "TEXT" => "Lifecycle of chemicals.",
+                 "LEVEL" => Level.names.first,
                  "CENTER_LABEL" => "Center Label",
                  "CENTER_1" => "...when boiled becomes...",
                  "CENTER_2" => "...when eaten becomes...",
                  "CENTER_3" => "...when worn becomes...",
+                 "CENTER_4" => "",
                  "CENTER_ANSWERS" => "1",
                  "LEFT_LABEL" => "Left Label",
                  "LEFT_1" => "Water",
                  "LEFT_2" => "Cabbage",
                  "LEFT_3" => "Shoe",
+                 "LEFT_4" => "",
                  "LEFT_ANSWERS" => "1",
                  "RIGHT_LABEL" => "Right Label",
                  "RIGHT_1" => "Steam",
                  "RIGHT_2" => "Vapor",
                  "RIGHT_3" => "Rabbits",
+                 "RIGHT_4" => "",
                  "RIGHT_ANSWERS" => "1,2",
-                 "CATEGORIES" => "True/False, Amazing",
-                 "CATEGORY_1" => "Fun Question",
-                 "CATEGORY" => "Hard Question",
+                 "SUBJECTS" => "True/False, Amazing",
+                 "SUBJECT_1" => "Fun Question",
+                 "SUBJECT" => "Hard Question",
                  "KEYWORDS" => "Red",
                  "KEYWORD_1" => "Green",
                  "KEYWORD_2" => "Orange",
@@ -67,7 +71,8 @@ RSpec.describe Question::BowTie do
       end
 
       its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:category_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      its(:level) { is_expected.to eq(Level.names.first) }
     end
   end
 

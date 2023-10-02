@@ -25,7 +25,7 @@ const CustomDropdown = ({ children, dropdownSelector }) => {
     }
   }, [])
 
-  return <>{children}</>
+  return children
 }
 
 export default CustomDropdown

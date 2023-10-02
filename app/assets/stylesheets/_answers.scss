@@ -5,3 +5,10 @@
 .correct {
   background-color: darken($light, 15%);
 }
+
+tr.matching-table-row {
+  border-bottom: 2px solid $gray-300;
+  td.matcher span:not(:last-child) {
+    border-bottom: 1px solid $gray-300;
+  }
+}

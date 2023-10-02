@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import {
   Container, Row, Col, DropdownButton, Dropdown, CloseButton, Alert
 } from 'react-bootstrap'
-import { setDropdownWidth } from '../../../utilities/dropdown-width'
-
+import CustomDropdown from '../../ui/CustomDropdown'
 
 const SearchFilters = (props) => {
   const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
@@ -20,13 +19,6 @@ const SearchFilters = (props) => {
     handleFilters({ target: { value: item } }, filter === selectedSubjects ? 'subjects' : filter === selectedKeywords ? 'keywords' : filter === selectedTypes ? 'types' : 'levels')
     submit(event)
   }
-
-  useEffect(() => {
-    const removeResizeListener = setDropdownWidth()
-    return () => {
-      removeResizeListener()
-    }
-  }, [])
 
   return (
     hasFilters &&
@@ -64,22 +56,24 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <DropdownButton
-                id='download-questions-button'
-                title='Export Questions'
-              >
-                {exportHrefs.map((fileInfo, index) => (
-                  <Dropdown.Item
-                    className='p-2'
-                    key={fileInfo.type}
-                    href={fileInfo.href}
-                    target='_blank'
-                    download={`questions.${fileInfo.type}`}
-                    eventKey={index}>
-                    {fileInfo.type.toUpperCase()}
-                  </Dropdown.Item>
-                ))}
-              </DropdownButton>
+              <CustomDropdown dropdownSelector='.dropdown-toggle'>
+                <DropdownButton
+                  id='download-questions-button'
+                  title='Export Questions'
+                >
+                  {exportHrefs.map((fileInfo, index) => (
+                    <Dropdown.Item
+                      className='p-2'
+                      key={fileInfo.type}
+                      href={fileInfo.href}
+                      target='_blank'
+                      download={`questions.${fileInfo.type}`}
+                      eventKey={index}>
+                      {fileInfo.type.toUpperCase()}
+                    </Dropdown.Item>
+                  ))}
+                </DropdownButton>
+              </CustomDropdown>
             </Col>
           </Col>
         </Row>

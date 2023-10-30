@@ -8,11 +8,15 @@ class Question::Traditional < Question
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.
-  class CsvRow
-    attr_reader :question, :row, :question_type
-
-    delegate :save!, :valid?, :persisted?, :keywords, :level, :data, :save, :reload, :errors, to: :question
-    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns
+  #
+  # The primary purpose of this class is to convey meaningful error messages for invalid CSV
+  # structures.
+  #
+  # @see {#validate_well_formed_row}
+  class ImportCsvRow
+    delegate :persisted?, :keywords, :reload, to: :question
+    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns, :data
+    attr_reader :row, :question_type
 
     def initialize(row:, question_type:)
       @row = row
@@ -20,26 +24,50 @@ class Question::Traditional < Question
 
       @text = row['TEXT']
       @level = row['LEVEL']
-      @subject_names = Question.extract_subject_names_from(row)
-      @keyword_names = Question.extract_keyword_names_from(row)
+      @subject_names = question_type.extract_subject_names_from(row)
+      @keyword_names = question_type.extract_keyword_names_from(row)
+
+      # Specific to the subclass
       @answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+      @data = answer_columns.each_with_object([]) do |col, array|
+        index = col.split(/_+/).last.to_i
+        next if row[col].blank? && !answers.include?(index)
+        array << { "answer" => row[col], "correct" => answers.include?(index) }
+      end
+    end
+
+    include ActiveModel::Validations
+
+    validates :text, presence: true
+    validate :validate_well_formed_row
+
+    def validate_well_formed_row
+      if answers.size == 1
+        if answer_columns.exclude?("ANSWER_#{answers.first}")
+          errors.add(:data, "ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")
+        end
+      else
+        errors.add(:data, "Expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
+      end
+    end
+
+    def save!
+      raise ActiveRecord::RecordInvalid, self unless valid?
+      question.save!
+    end
+
+    def save
+      valid? && question.save
     end
 
     def question
-      return @question if defined?(@question)
-
-      data = answer_columns.each_with_object([]) do |col, array|
-        index = col.split(/_+/).last.to_i
-        next if row[col].blank? && !answers.include?(index)
-        array << { answer: row[col], correct: answers.include?(index) }
-      end
-      @question = question_type.new(text:, data:, subject_names:, keyword_names:, level:)
+      @question ||= question_type.new(text:, data:, subject_names:, keyword_names:, level:)
     end
   end
 
   def self.build_row(row)
-    CsvRow.new(question_type: self, row: row)
+    ImportCsvRow.new(question_type: self, row:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

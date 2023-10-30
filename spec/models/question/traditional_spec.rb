@@ -7,6 +7,23 @@ RSpec.describe Question::Traditional do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Traditional") }
 
+  describe "ImportCsvRow inner_class" do
+    describe 'save!' do
+      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class) }
+
+      context 'when inner_class is invalid' do
+        let(:data) do
+          CsvRow.new("ANSWERS" => "2", "ANSWER_1" => "Hello World!")
+        end
+
+        it "will not call the underlying question's save!" do
+          expect(subject.question).not_to receive(:save!)
+          expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /Data ANSWERS column indicates that ANSWER_2/)
+        end
+      end
+    end
+  end
+
   describe '.build_row' do
     subject { described_class.build_row(data) }
     let(:data) do

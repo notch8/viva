@@ -74,4 +74,44 @@ RSpec.describe Question::Traditional do
       end
     end
   end
+
+  its(:maximum_choices) { is_expected.to eq(1) }
+  its(:minimum_choices) { is_expected.to eq(1) }
+  its(:response_cardinality) { is_expected.to eq("single") }
+
+  describe '#to_xml' do
+    let(:question) { FactoryBot.create(:question_traditional) }
+    subject { question.to_xml }
+
+    it 'includes the text prompt' do
+      expect(subject).to include(%(<qti-prompt>#{question.text}</qti-prompt>))
+    end
+
+    it 'does not include the XML pre-amble' do
+      # The pre-amble is to be included when we stitch all of this together.
+      expect(subject).not_to match(%r{\A<\?xml})
+    end
+  end
+
+  describe '#correct_response_identifiers' do
+    subject { FactoryBot.build(:question_traditional, data:).correct_response_identifiers }
+
+    [
+      [[{ answer: "Green", correct: false }, { answer: "Blue", correct: true }], [1]]
+    ].each do |given_data, expected_correct_response_identifiers|
+      context "with #{given_data}" do
+        let(:data) { given_data }
+
+        it { is_expected.to match_array(expected_correct_response_identifiers) }
+      end
+    end
+  end
+
+  describe "#with_each_choice_identifier_and_label" do
+    subject { FactoryBot.build(:question_traditional, data: [{ answer: "Green", correct: false }, { answer: "Blue", correct: true }]) }
+
+    it 'yields the index and answer pair' do
+      expect { |b| subject.with_each_choice_identifier_and_label(&b) }.to yield_successive_args([0, "Green"], [1, "Blue"])
+    end
+  end
 end

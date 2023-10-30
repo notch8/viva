@@ -1,0 +1,22 @@
+<qti-assessment-item xmlns="http://www.imsglobal.org/xsd/imsqtiasi_v3p0"
+		     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		     xsi:schemaLocation="http://www.imsglobal.org/xsd/imsqtiasi_v3p0
+					 https://purl.imsglobal.org/spec/qti/v3p0/schema/xsd/imsqti_asiv3p0_v1p0.xsd"
+		     xml:lang="en-US" identifier="<%= question.id %>" time-dependent="false">
+  <qti-response-declaration identifier="RESPONSE" cardinality="<%= question.response_cardinality %>" base-type="identifier">
+    <qti-correct-response>
+      <% question.correct_response_identifiers.each do |identifier| %>
+        <qti-value><%= identifier %></qti-value>
+      <% end %>
+    </qti-correct-response>
+  </qti-response-declaration>
+  <qti-outcome-declaration identifier="SCORE" cardinality="single" base-type="float"/>
+  <qti-item-body>
+    <qti-choice-interaction response-identifier="RESPONSE" min-choices="<%= question.minimum_choices %>" max-choices="<%= question.maximum_choices %>">
+      <qti-prompt><%= question.text %></qti-prompt>
+      <% question.with_each_choice_identifier_and_label do |identifier, label| %>
+        <qti-simple-choice identifier="<%= identifier %>"><%= label %></qti-simple-choice>
+      <% end %>
+    </qti-choice-interaction>
+  </qti-item-body>
+</qti-assessment-item>

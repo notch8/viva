@@ -11,17 +11,23 @@ class Question::Traditional < Question
   class CsvRow
     attr_reader :question, :row, :question_type
 
-    delegate :save!, :valid?, :persisted?, :keywords, :level, :data, :save, :reload, :keyword_names, :subject_names, :errors, to: :question
+    delegate :save!, :valid?, :persisted?, :keywords, :level, :data, :save, :reload, :errors, to: :question
+    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns
+
     def initialize(row:, question_type:)
       @row = row
       @question_type = question_type
 
-      text = row['TEXT']
-      level = row['LEVEL']
-      subject_names = Question.extract_subject_names_from(row)
-      keyword_names = Question.extract_keyword_names_from(row)
-      answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
-      answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+      @text = row['TEXT']
+      @level = row['LEVEL']
+      @subject_names = Question.extract_subject_names_from(row)
+      @keyword_names = Question.extract_keyword_names_from(row)
+      @answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
+      @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+    end
+
+    def question
+      return @question if defined?(@question)
 
       data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i

@@ -54,7 +54,9 @@ class Question::ImporterCsv
 
     return false if @errors.present?
 
-    @questions.all?(&:save!)
+    Question.transaction do
+      @questions.all?(&:save!)
+    end
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize

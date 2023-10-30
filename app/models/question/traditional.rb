@@ -6,20 +6,34 @@
 class Question::Traditional < Question
   self.type_name = "Traditional"
 
-  def self.build_row(row)
-    text = row['TEXT']
-    level = row['LEVEL']
-    subject_names = extract_subject_names_from(row)
-    keyword_names = extract_keyword_names_from(row)
-    answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
-    answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+  ##
+  # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.
+  class CsvRow
+    attr_reader :question, :row, :question_type
 
-    data = answer_columns.each_with_object([]) do |col, array|
-      index = col.split(/_+/).last.to_i
-      next if row[col].blank? && !answers.include?(index)
-      array << { answer: row[col], correct: answers.include?(index) }
+    delegate :save!, :valid?, :persisted?, :keywords, :level, :data, :save, :reload, :keyword_names, :subject_names, :errors, to: :question
+    def initialize(row:, question_type:)
+      @row = row
+      @question_type = question_type
+
+      text = row['TEXT']
+      level = row['LEVEL']
+      subject_names = Question.extract_subject_names_from(row)
+      keyword_names = Question.extract_keyword_names_from(row)
+      answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
+      answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+
+      data = answer_columns.each_with_object([]) do |col, array|
+        index = col.split(/_+/).last.to_i
+        next if row[col].blank? && !answers.include?(index)
+        array << { answer: row[col], correct: answers.include?(index) }
+      end
+      @question = question_type.new(text:, data:, subject_names:, keyword_names:, level:)
     end
-    new(text:, data:, subject_names:, keyword_names:, level:)
+  end
+
+  def self.build_row(row)
+    CsvRow.new(question_type: self, row: row)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

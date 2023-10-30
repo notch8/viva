@@ -129,6 +129,8 @@ class Question < ApplicationRecord
   end
 
   ##
+  # @api private
+  #
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_subject_names_from(row)
@@ -137,9 +139,10 @@ class Question < ApplicationRecord
       value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_"))
     end.compact.sort
   end
-  private_class_method :extract_subject_names_from
 
   ##
+  # @api private
+  #
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_keyword_names_from(row)
@@ -148,7 +151,6 @@ class Question < ApplicationRecord
       value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "KEYWORDS" || header == "KEYWORD" || header.start_with?("KEYWORD_"))
     end.compact.sort
   end
-  private_class_method :extract_keyword_names_from
 
   ##
   # This method ensures that we will consistently have a Question#keyword_names regardless of

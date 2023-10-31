@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :question do
+  # Yup, I want question_question as a valid factory because working with sub-types when I
+  # "demodulize" the class name we get the following:
+  #
+  # - Question.name.demodulize == "Question"
+  # - Question::BowTie.name.demodulize == "BowTie"
+  factory :question, aliases: [:question_question] do
     text { Faker::Lorem.unique.sentence }
     child_of_aggregation { false }
 

@@ -94,4 +94,52 @@ class Question::SelectAllThatApply < Question
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
+
+  ##
+  # @!group QTI Exporter
+
+  self.qti_xml_template_filename = 'traditional.qti.xml.erb'
+
+  ##
+  # @return [String]
+  def response_cardinality
+    "multiple"
+  end
+
+  ##
+  # @return [Array<Integer>]
+  def correct_response_identifiers
+    returning_value = []
+    data.each_with_index do |datum, index|
+      returning_value << index if datum.fetch("correct") == true
+    end
+    returning_value
+  end
+
+  ##
+  # @return [Integer]
+  def minimum_choices
+    1
+  end
+
+  ##
+  # @return [Integer]
+  def maximum_choices
+    data.size
+  end
+
+  ##
+  # @return [Array<Integer, String>]
+  # @yieldparam choice_identifier [Integer]
+  # @yieldparam label [String]
+  def with_each_choice_identifier_and_label
+    returning = []
+    data.each_with_index do |datum, index|
+      returning << [index, datum.fetch("answer")]
+      yield index, datum.fetch("answer") if block_given?
+    end
+    returning
+  end
+  # @!endgroup QTI Exporter
+  ##
 end

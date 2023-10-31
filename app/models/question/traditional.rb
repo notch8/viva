@@ -88,20 +88,7 @@ class Question::Traditional < Question
   ##
   # @!group QTI Exporter
 
-  ##
-  # Necessary for exposing a view like behavior for the {#to_xml} behavior.
-  def question
-    self
-  end
-
-  ##
-  # @return [String] a document
-  # @see https://www.imsglobal.org/spec/qti/v3p0/impl#choice-interaction
-  #
-  # @todo We'll need to consider the structure for multiple
-  def to_xml
-    ERB.new(Rails.root.join("app", "views", "questions", "traditional.qti.xml.erb").read).result(binding)
-  end
+  self.qti_xml_template_filename = "traditional.qti.xml.erb"
 
   ##
   # @return [String]

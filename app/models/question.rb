@@ -18,6 +18,29 @@ class Question < ApplicationRecord
   class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
 
   ##
+  # @!group QTI Exporter
+  class_attribute :qti_xml_template_filename, default: nil
+
+  ##
+  # Necessary for exposing a view like behavior for the {#to_xml} behavior.
+  def question
+    self
+  end
+
+  ##
+  # @return [String] a document
+  # @see https://www.imsglobal.org/spec/qti/v3p0/impl#choice-interaction
+  #
+  # @todo We'll need to consider the structure for multiple
+  def to_xml(*)
+    return "" if qti_xml_template_filename.blank?
+
+    ERB.new(Rails.root.join("app", "views", "questions", qti_xml_template_filename).read).result(binding)
+  end
+  # @!endgroup QTI Exporter
+  ##
+
+  ##
   # @see {Question::StimulusCaseStudy} for aggregation.
   has_one :as_child_question_aggregations, class_name: 'QuestionAggregation', dependent: :destroy, as: :child_question
   has_one :parent_question, through: :as_child_question_aggregations, class_name: "Question", source_type: "Question"
@@ -128,16 +151,6 @@ class Question < ApplicationRecord
 
   def self.build_row(*args)
     raise NotImplementedError, "#{self}.#{__method__}"
-  end
-
-  ##
-  # @return [String]
-  #
-  # @note Yes, by default a question should not have an XML representation...at least until we
-  #       complete the XML mapping.  This is in play to prevent weird breakage of
-  #       {SearchController#index}'s handling of the `xml' format.
-  def to_xml(*)
-    ""
   end
 
   ##

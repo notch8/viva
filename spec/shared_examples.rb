@@ -34,6 +34,8 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
     it { is_expected.to have_and_belong_to_many(:keywords) }
     it { is_expected.to have_one(:as_child_question_aggregations) }
     it { is_expected.to have_one(:parent_question) }
+    its(:question) { is_expected.to eq(subject) }
+    its(:to_xml) { is_expected.to be_a(String) }
   end
 
   describe 'factories' do

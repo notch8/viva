@@ -17,6 +17,19 @@ RSpec.describe Question::ImporterCsv do
     end
   end
 
+  context 'with duplicate IMPORT_ID' do
+    let(:text) do
+      "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
+      "1,Traditional,Which one is true?,1,true,false,Orc\n" \
+      "1,Traditional,Creature of Middle Earth?,3,true,false,Orc\n"
+    end
+
+    it 'does not persist the records and report errors' do
+      expect { subject.save }.not_to change(Question::Traditional, :count)
+      expect(subject.errors).to eq({ rows: [{ data: "duplicate IMPORT_ID 1 found on multiple rows", import_id: "1" }] })
+    end
+  end
+
   context 'with valid data' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \

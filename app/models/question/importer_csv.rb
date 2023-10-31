@@ -28,7 +28,7 @@ class Question::ImporterCsv
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def save
-    @questions = []
+    @questions = {}
     @errors = {}
     have_already_verified_headers = false
     # The header_converters ensures that we don't have squirelly little BOM characters and that all
@@ -37,7 +37,7 @@ class Question::ImporterCsv
       unless have_already_verified_headers
         invalid_question = Question.invalid_question_due_to_missing_headers(row:)
         if invalid_question
-          @questions << invalid_question
+          @questions[0] = invalid_question
           @errors[:csv] = invalid_question.errors.to_hash
           break
         else
@@ -45,23 +45,31 @@ class Question::ImporterCsv
         end
       end
       question = Question.build_from_csv_row(row)
+      import_id = row['IMPORT_ID'].to_s.strip
       unless question.valid?
         @errors[:rows] ||= []
-        @errors[:rows] << question.errors.to_hash.merge(import_id: row['IMPORT_ID'])
+        @errors[:rows] << question.errors.to_hash.merge(import_id:)
       end
-      @questions << question
+
+      # We need to guard against duplicates
+      if @questions.key?(import_id)
+        @errors[:rows] ||= []
+        @errors[:rows] << { import_id:, data: "duplicate IMPORT_ID #{import_id} found on multiple rows" }
+      else
+        @questions[import_id] = question
+      end
     end
 
     return false if @errors.present?
 
     Question.transaction do
-      @questions.all?(&:save!)
+      @questions.values.all?(&:save!)
     end
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
   def as_json(*args)
-    { questions: @questions.as_json(*args), errors: @errors.as_json(*args) }
+    { questions: @questions.values.as_json(*args), errors: @errors.as_json(*args) }
   end
 end

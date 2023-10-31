@@ -42,41 +42,101 @@ class Question::BowTie < Question
   EXPECTED_DATA_HASH_KEYS = %w[left center right].freeze
   ANSWER_AND_POSITION_REGEXP = %r{\A(?<direction>#{EXPECTED_DATA_HASH_KEYS.map(&:upcase).join('|')})_(?<index>\d+)}
 
-  # rubocop:disable Metrics/PerceivedComplexity
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
-  def self.build_row(row)
-    text = row['TEXT']
-    level = row['LEVEL']
-    subject_names = extract_subject_names_from(row)
-    keyword_names = extract_keyword_names_from(row)
+  ##
+  # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.
+  #
+  # The primary purpose of this class is to convey meaningful error messages for invalid CSV
+  # structures.
+  #
+  # @see {#validate_well_formed_row}
+  class ImportCsvRow < Question::ImportCsvRow
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    def extract_answers_and_data_from(row)
+      correct_answer_colum_numbers = {}
+      @data = {}
+      question_type::EXPECTED_DATA_HASH_KEYS.each do |key|
+        correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
+        data[key] = { "label" => row["#{key.upcase}_LABEL"], "answers" => [] }
+      end
 
-    correct_answer_colum_numbers = {}
-    data = {}
-    EXPECTED_DATA_HASH_KEYS.each do |key|
-      correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
-      data[key] = { "label" => row["#{key.upcase}_LABEL"], "answers" => [] }
+      row.each do |header, value|
+        next if header.blank?
+        match = question_type::ANSWER_AND_POSITION_REGEXP.match(header)
+        next unless match
+
+        direction = match[:direction].downcase
+        index = match[:index].to_i
+        correct = correct_answer_colum_numbers[direction].include?(index)
+        next if value.blank? && !correct
+        data[direction]['answers'] << { "answer" => value, "correct" => correct }
+      end
+    end
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+
+    def validate_well_formed_row
+      validate_labels
+      validate_answers
+      validate_candidates
     end
 
-    row.each do |header, value|
-      next if header.blank?
-      match = ANSWER_AND_POSITION_REGEXP.match(header)
-      next unless match
+    def validate_labels
+      expected = question_type::EXPECTED_DATA_HASH_KEYS.map { |direction| "#{direction.upcase}_LABEL" }.sort
+      given = row.headers.select { |h| h.present? && h.end_with?("_LABEL") }.sort
 
-      direction = match[:direction].downcase
-      index = match[:index].to_i
-      correct = correct_answer_colum_numbers[direction].include?(index)
-      next if value.blank? && !correct
-      data[direction]['answers'] << { "answer" => value, "correct" => correct }
+      return true if (expected & given) == expected
+
+      errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
     end
 
-    new(text:, data:, level:, keyword_names:, subject_names:)
+    def validate_answers
+      expected = question_type::EXPECTED_DATA_HASH_KEYS.map { |direction| "#{direction.upcase}_ANSWERS" }.sort
+      given = row.headers.select { |h| h.present? && h.end_with?("_ANSWERS") }.sort
+
+      return true if (expected & given) == expected
+
+      errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+    end
+
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/PerceivedComplexity
+    def validate_candidates
+      # I need to ensure that each "answer" for each direction exists
+      expected_answer_columns = question_type::EXPECTED_DATA_HASH_KEYS.each_with_object({}) do |direction, hash|
+        indices = row["#{direction.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
+        hash[direction] = indices.map { |i| "#{direction.upcase}_#{i}" }
+      end
+
+      given_answer_columns = row.headers.each_with_object({}) do |header, hash|
+        next if header.blank?
+        match = question_type::ANSWER_AND_POSITION_REGEXP.match(header)
+        next unless match
+
+        direction = match[:direction].downcase
+        hash[direction] ||= []
+        hash[direction] << "#{direction.upcase}_#{match[:index].to_i}"
+      end
+
+      question_type::EXPECTED_DATA_HASH_KEYS.each do |direction|
+        expected = expected_answer_columns.fetch(direction, []).sort
+        given = given_answer_columns.fetch(direction, []).sort
+        next if (expected & given) == expected
+
+        errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+      end
+    end
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/PerceivedComplexity
   end
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
+
+  def self.build_row(row)
+    ImportCsvRow.new(question_type: self, row:)
+  end
 
   ##
   # Verify that the resulting data attribute is an array with each element being an array of two

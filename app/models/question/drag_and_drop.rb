@@ -22,46 +22,72 @@
 class Question::DragAndDrop < Question
   self.type_name = "Drag and Drop"
 
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
-  def self.build_row(row)
-    text = row['TEXT']
-    level = row['LEVEL']
-    subject_names = extract_subject_names_from(row)
-    keyword_names = extract_keyword_names_from(row)
-    # We need to sniff out the subtype and handle accordingly.
-    record = new(text:, keyword_names:, subject_names:, level:)
+  ##
+  # Represents the mapping process of a CSV Row to the underlying {Question::DragAndDrop}.
+  #
+  # The primary purpose of this class is to convey meaningful error messages for invalid CSV
+  # structures.
+  #
+  # @see {#validate_well_formed_row}
+  class ImportCsvRow < Question::ImportCsvRow
+    attr_reader :answers, :answer_columns
 
-    if record.sub_type == SUB_TYPE_SLOTTED
-      slot_numbers = record.slot_numbers_from_text
-      data = row.headers.each_with_object([]) do |header, array|
+    def extract_answers_and_data_from(row)
+      # We need to sniff out the type based on the text.
+      record = question_type.new(text:, keyword_names:, subject_names:, level:)
+      send("extract_#{record.sub_type}", row:, record:)
+    end
+
+    def validate_well_formed_row
+      # For each of the named slot numbers; there needs to be a corresponding ANSWER_i column
+      answers_as_column_names = answers.map { |a| "ANSWER_#{a}" }
+      intersect = (answers_as_column_names & answer_columns)
+
+      if intersect != answers_as_column_names
+        message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
+                  "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
+        errors.add(:data, message)
+      end
+      correct_answers = data.select { |pair| pair['correct'] }
+      return unless correct_answers.count.zero?
+      errors.add(:data, "expected at least one correct answer, but no correct answers were specified.")
+      false
+    end
+
+    private
+
+    def extract_drag_and_drop_to_slots(row:, record:)
+      @answers = record.slot_numbers_from_text
+      @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+      @data = row.headers.each_with_object([]) do |header, array|
         next if header.blank?
         next unless header.start_with?("ANSWER_")
+
         slot_number = header.split(/_+/).last.to_i
-        next if row[header].blank? && !slot_numbers.include?(slot_number)
-        array << { answer: row[header], correct: (slot_numbers.include?(slot_number) ? slot_number : false) }
+        next if row[header].blank? && !@answers.include?(slot_number)
+        array << { 'answer' => row[header], 'correct' => (@answers.include?(slot_number) ? slot_number : false) }
       end
-    else
-      answers = row['ANSWERS']&.split(",")&.map { |answer| answer.strip.to_i }
-      data = row.headers.each_with_object([]) do |header, array|
+    end
+
+    # rubocop:disable Metrics/CyclomaticComplexity
+    def extract_drag_and_drop_all_that_apply(row:, **)
+      @answers = row['ANSWERS']&.split(",")&.map { |answer| answer.strip.to_i }
+      @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+      @data = row.headers.each_with_object([]) do |header, array|
         next if header.blank?
         next unless header.start_with?("ANSWER_")
 
         index = header.split(/_+/).last.to_i
         next if row[header].blank? && !answers.include?(index)
-        array << { answer: row[header], correct: answers.include?(index) }
+        array << { 'answer' => row[header], 'correct' => answers.include?(index) }
       end
     end
-
-    record.data = data
-    record
+    # rubocop:enable Metrics/CyclomaticComplexity
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
+
+  def self.build_row(row)
+    ImportCsvRow.new(question_type: self, row:)
+  end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.

@@ -62,6 +62,16 @@ class Question < ApplicationRecord
   end
 
   ##
+  # @return [String]
+  #
+  # @note Yes, by default a question should not have an XML representation...at least until we
+  #       complete the XML mapping.  This is in play to prevent weird breakage of
+  #       {SearchController#index}'s handling of the `xml' format.
+  def to_xml(*)
+    ""
+  end
+
+  ##
   # @see Question::ImporterCsv
   #
   # @param row [Enumerable] likely a row from {CSV.read}.

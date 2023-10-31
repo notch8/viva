@@ -13,20 +13,8 @@ class Question::Traditional < Question
   # structures.
   #
   # @see {#validate_well_formed_row}
-  class ImportCsvRow
-    delegate :persisted?, :keywords, :reload, to: :question
-    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns, :data
-    attr_reader :row, :question_type
-
-    def initialize(row:, question_type:)
-      @row = row
-      @question_type = question_type
-
-      @text = row['TEXT']
-      @level = row['LEVEL']
-      @subject_names = question_type.extract_subject_names_from(row)
-      @keyword_names = question_type.extract_keyword_names_from(row)
-
+  class ImportCsvRow < Question::ImportCsvRow
+    def extract_answers_and_data_from(row)
       # Specific to the subclass
       @answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
@@ -37,11 +25,6 @@ class Question::Traditional < Question
       end
     end
 
-    include ActiveModel::Validations
-
-    validates :text, presence: true
-    validate :validate_well_formed_row
-
     def validate_well_formed_row
       if answers.size == 1
         if answer_columns.exclude?("ANSWER_#{answers.first}")
@@ -50,19 +33,6 @@ class Question::Traditional < Question
       else
         errors.add(:data, "Expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
       end
-    end
-
-    def save!
-      raise ActiveRecord::RecordInvalid, self unless valid?
-      question.save!
-    end
-
-    def save
-      valid? && question.save
-    end
-
-    def question
-      @question ||= question_type.new(text:, data:, subject_names:, keyword_names:, level:)
     end
   end
 

@@ -57,6 +57,58 @@ class Question < ApplicationRecord
     Question.descendants.detect { |d| d.type_name == name || d == name } || fallback
   end
 
+  ##
+  # Represents the mapping process of a CSV Row to the underlying {Question}.
+  #
+  # The primary purpose of this class is to convey meaningful error messages for invalid CSV
+  # structures.
+  #
+  # @see {#validate_well_formed_row}
+  class ImportCsvRow
+    delegate :persisted?, :keywords, :reload, to: :question
+    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns, :data
+    attr_reader :row, :question_type
+
+    def initialize(row:, question_type:)
+      @row = row
+      @question_type = question_type
+
+      @text = row['TEXT']
+      @level = row['LEVEL']
+      @subject_names = question_type.extract_subject_names_from(row)
+      @keyword_names = question_type.extract_keyword_names_from(row)
+
+      extract_answers_and_data_from(row)
+    end
+
+    include ActiveModel::Validations
+
+    # @note All {Question} classes validate their :text attribute
+    validates :text, presence: true
+    validate :validate_well_formed_row
+
+    def validate_well_formed_row
+      raise NotImplementedError, "#{self}##{__method__}"
+    end
+
+    def extract_answers_and_data_from(row)
+      raise NotImplementedError, "#{self}##{__method__}"
+    end
+
+    def save!
+      raise ActiveRecord::RecordInvalid, self unless valid?
+      question.save!
+    end
+
+    def save
+      valid? && question.save
+    end
+
+    def question
+      @question ||= question_type.new(text:, data:, subject_names:, keyword_names:, level:)
+    end
+  end
+
   def self.build_row(*args)
     raise NotImplementedError, "#{self}.#{__method__}"
   end

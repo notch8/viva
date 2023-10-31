@@ -9,7 +9,28 @@ RSpec.describe Question::DragAndDrop do
 
   describe '.build_row' do
     subject { described_class.build_row(row) }
-    context 'when given slotted data' do
+
+    context 'when given invalid slotted data' do
+      let(:row) do
+        CsvRow.new("TYPE" => "Drag and Drop",
+                   "TEXT" => "___1___ is comprised of ___2___",
+                   "LEVEL" => Level.names.first,
+                   "ANSWER_1" => "Hello World!",
+                   "ANSWER_3" => "Something",
+                   "KEYWORD" => "One, Two",
+                   "SUBJECT" => "Big, Little")
+      end
+
+      it { is_expected.not_to be_valid }
+      it { is_expected.not_to be_persisted }
+
+      it "will not call the underlying question's save!" do
+        expect(subject.question).not_to receive(:save!)
+        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /ANSWERS column indicates that ANSWER_1, ANSWER_2/)
+      end
+    end
+
+    context 'when given valid slotted data' do
       let(:row) do
         CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "The ___1___ gets high on ___2___:",
@@ -25,7 +46,6 @@ RSpec.describe Question::DragAndDrop do
 
       it { is_expected.to be_valid }
       it { is_expected.not_to be_persisted }
-      its(:sub_type) { is_expected.to eq(described_class::SUB_TYPE_SLOTTED) }
       its(:data) do
         is_expected.to eq([{ "answer" => "Cat", "correct" => 1 }, { 'answer' => "Catnip", "correct" => 2 }, { 'answer' => "Blue", 'correct' => false },
                            { 'answer' => "Dog", 'correct' => false }])
@@ -40,7 +60,29 @@ RSpec.describe Question::DragAndDrop do
       end
     end
 
-    context 'when given non-slotted data' do
+    context 'when given invalid drag and drop all that apply data' do
+      let(:row) do
+        CsvRow.new("TYPE" => "Drag and Drop",
+                   "TEXT" => "The prompt is...",
+                   "LEVEL" => Level.names.first,
+                   "ANSWERS" => "2,4,6",
+                   "ANSWER_1" => "Hello World!",
+                   "ANSWER_3" => "Something",
+                   "ANSWER_5" => "Else",
+                   "KEYWORD" => "One, Two",
+                   "SUBJECT" => "Big, Little")
+      end
+
+      it { is_expected.not_to be_valid }
+      it { is_expected.not_to be_persisted }
+
+      it "will not call the underlying question's save!" do
+        expect(subject.question).not_to receive(:save!)
+        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/)
+      end
+    end
+
+    context 'when given valid drag and drop all that apply data' do
       let(:row) do
         CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "Select all of the animals:",
@@ -56,7 +98,6 @@ RSpec.describe Question::DragAndDrop do
 
       it { is_expected.to be_valid }
       it { is_expected.not_to be_persisted }
-      its(:sub_type) { is_expected.to eq(described_class::SUB_TYPE_ATA) }
       its(:data) do
         is_expected.to(
           eq([

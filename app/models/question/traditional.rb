@@ -14,6 +14,8 @@ class Question::Traditional < Question
   #
   # @see {#validate_well_formed_row}
   class ImportCsvRow < Question::ImportCsvRow
+    attr_reader :answers, :answer_columns
+
     def extract_answers_and_data_from(row)
       # Specific to the subclass
       @answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)

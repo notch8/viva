@@ -58,6 +58,8 @@ class Question < ApplicationRecord
   end
 
   ##
+  # @abstract
+  #
   # Represents the mapping process of a CSV Row to the underlying {Question}.
   #
   # The primary purpose of this class is to convey meaningful error messages for invalid CSV
@@ -66,7 +68,7 @@ class Question < ApplicationRecord
   # @see {#validate_well_formed_row}
   class ImportCsvRow
     delegate :persisted?, :keywords, :reload, to: :question
-    attr_reader :text, :level, :subject_names, :keyword_names, :answers, :answer_columns, :data
+    attr_reader :text, :level, :subject_names, :keyword_names, :data
     attr_reader :row, :question_type
 
     def initialize(row:, question_type:)
@@ -93,6 +95,21 @@ class Question < ApplicationRecord
 
     def extract_answers_and_data_from(row)
       raise NotImplementedError, "#{self}##{__method__}"
+    end
+
+    ##
+    # What's happening here?  Given that we have layers of validation; it would be nice to rely on
+    # the top layer first.  However, we should ask the model if the data we're providing is also
+    # valid.  The model validation is less helpful for legibility; but ultimately speaks protects
+    # the potential for "garbage out" for the serialized Question#data.
+    #
+    # @return [TrueClass] when the CSV row is valid and the underlying model is valid.
+    # @return [FalseClass] when the CSV row is invalid and/or the underlying model is invalid.
+    def valid?
+      return false unless super
+      return true if question.valid?
+      # TODO: add errors from underlying question to the import
+      false
     end
 
     def save!

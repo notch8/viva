@@ -16,6 +16,8 @@ class Question::SelectAllThatApply < Question
   #
   # @see {#validate_well_formed_row}
   class ImportCsvRow < Question::ImportCsvRow
+    attr_reader :answers, :answer_columns
+
     def extract_answers_and_data_from(row)
       @answers = row['ANSWERS']&.split(',')&.map(&:to_i)
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }

@@ -9,70 +9,101 @@ RSpec.describe Question::BowTie do
 
   describe '.build_row' do
     subject { described_class.build_row(data) }
-    let(:data) do
-      CsvRow.new("TYPE" => described_class.type_name,
-                 "TEXT" => "Lifecycle of chemicals.",
-                 "LEVEL" => Level.names.first,
-                 "CENTER_LABEL" => "Center Label",
-                 "CENTER_1" => "...when boiled becomes...",
-                 "CENTER_2" => "...when eaten becomes...",
-                 "CENTER_3" => "...when worn becomes...",
-                 "CENTER_4" => "",
-                 "CENTER_ANSWERS" => "1",
-                 "LEFT_LABEL" => "Left Label",
-                 "LEFT_1" => "Water",
-                 "LEFT_2" => "Cabbage",
-                 "LEFT_3" => "Shoe",
-                 "LEFT_4" => "",
-                 "LEFT_ANSWERS" => "1",
-                 "RIGHT_LABEL" => "Right Label",
-                 "RIGHT_1" => "Steam",
-                 "RIGHT_2" => "Vapor",
-                 "RIGHT_3" => "Rabbits",
-                 "RIGHT_4" => "",
-                 "RIGHT_ANSWERS" => "1,2",
-                 "SUBJECTS" => "True/False, Amazing",
-                 "SUBJECT_1" => "Fun Question",
-                 "SUBJECT" => "Hard Question",
-                 "KEYWORDS" => "Red",
-                 "KEYWORD_1" => "Green",
-                 "KEYWORD_2" => "Orange",
-                 "KEYWORD" => "Yellow")
+
+    let(:base_line_data) do
+      {
+        "TYPE" => described_class.type_name,
+        "TEXT" => "Lifecycle of chemicals.",
+        "LEVEL" => Level.names.first,
+        "SUBJECTS" => "True/False, Amazing",
+        "KEYWORDS" => "Red"
+      }
     end
 
-    it { is_expected.to be_valid }
-    it { is_expected.not_to be_persisted }
-    its(:data) do
-      is_expected.to eq({ "center" => {
-                            "label" => "Center Label",
-                            "answers" => [{ "answer" => "...when boiled becomes...", "correct" => true },
-                                          { "answer" => "...when eaten becomes...", "correct" => false },
-                                          { "answer" => "...when worn becomes...", "correct" => false }]
-                          },
-                          "left" => {
-                            "label" => "Left Label",
-                            "answers" => [{ "answer" => "Water", "correct" => true },
-                                          { "answer" => "Cabbage", "correct" => false },
-                                          { "answer" => "Shoe", "correct" => false }]
-                          },
-                          "right" => {
-                            "label" => "Right Label",
-                            "answers" =>
-                            [{ "answer" => "Steam", "correct" => true },
-                             { "answer" => "Vapor", "correct" => true },
-                             { "answer" => "Rabbits", "correct" => false }]
-                          } })
+    [
+      [{ "CENTER_LABEL" => "Center", "CENTER_1" => "...hello..." }, /missing LEFT_LABEL, RIGHT_LABEL/],
+      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "LEFT_LABEL" => "L" }, /missing CENTER_ANSWERS, LEFT_ANSWERS, RIGHT_ANSWERS/],
+      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => '1', "LEFT_LABEL" => "L" }, /missing CENTER_ANSWERS, LEFT_ANSWERS/],
+      [{ "CENTER_LABEL" => "C", "CENTER_ANSWERS" => '1', "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => '1', "LEFT_LABEL" => "L", 'LEFT_ANSWERS' => '1', 'LEFT_1' => 'Hello' },
+       /Expected columns CENTER_1 but was missing CENTER_1/]
+    ].each do |given_data, message|
+      context "with #{given_data.inspect}" do
+        let(:data) { CsvRow.new(base_line_data.merge(given_data)) }
+        it { is_expected.not_to be_valid }
+
+        it "does not attempt to save" do
+          expect(subject.question).not_to receive(:save!)
+          expect { subject.save! }.to raise_error(message)
+        end
+      end
     end
 
-    describe 'once saved' do
-      before do
-        subject.save
-        subject.reload
+    context 'with valid CSV row' do
+      let(:data) do
+        CsvRow.new("TYPE" => described_class.type_name,
+                   "TEXT" => "Lifecycle of chemicals.",
+                   "LEVEL" => Level.names.first,
+                   "CENTER_LABEL" => "Center Label",
+                   "CENTER_1" => "...when boiled becomes...",
+                   "CENTER_2" => "...when eaten becomes...",
+                   "CENTER_3" => "...when worn becomes...",
+                   "CENTER_4" => "",
+                   "CENTER_ANSWERS" => "1",
+                   "LEFT_LABEL" => "Left Label",
+                   "LEFT_1" => "Water",
+                   "LEFT_2" => "Cabbage",
+                   "LEFT_3" => "Shoe",
+                   "LEFT_4" => "",
+                   "LEFT_ANSWERS" => "1",
+                   "RIGHT_LABEL" => "Right Label",
+                   "RIGHT_1" => "Steam",
+                   "RIGHT_2" => "Vapor",
+                   "RIGHT_3" => "Rabbits",
+                   "RIGHT_4" => "",
+                   "RIGHT_ANSWERS" => "1,2",
+                   "SUBJECTS" => "True/False, Amazing",
+                   "SUBJECT_1" => "Fun Question",
+                   "SUBJECT" => "Hard Question",
+                   "KEYWORDS" => "Red",
+                   "KEYWORD_1" => "Green",
+                   "KEYWORD_2" => "Orange",
+                   "KEYWORD" => "Yellow")
       end
 
-      its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
-      its(:level) { is_expected.to eq(Level.names.first) }
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
+      its(:data) do
+        is_expected.to eq({ "center" => {
+                              "label" => "Center Label",
+                              "answers" => [{ "answer" => "...when boiled becomes...", "correct" => true },
+                                            { "answer" => "...when eaten becomes...", "correct" => false },
+                                            { "answer" => "...when worn becomes...", "correct" => false }]
+                            },
+                            "left" => {
+                              "label" => "Left Label",
+                              "answers" => [{ "answer" => "Water", "correct" => true },
+                                            { "answer" => "Cabbage", "correct" => false },
+                                            { "answer" => "Shoe", "correct" => false }]
+                            },
+                            "right" => {
+                              "label" => "Right Label",
+                              "answers" =>
+                              [{ "answer" => "Steam", "correct" => true },
+                               { "answer" => "Vapor", "correct" => true },
+                               { "answer" => "Rabbits", "correct" => false }]
+                            } })
+      end
+
+      describe 'once saved' do
+        before do
+          subject.save!
+          subject.reload
+        end
+
+        its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
+        its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+        its(:level) { is_expected.to eq(Level.names.first) }
+      end
     end
   end
 

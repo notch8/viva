@@ -114,4 +114,65 @@ class Question::Traditional < Question
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/MethodLength
+
+  ##
+  # @!group QTI Exporter
+
+  ##
+  # Necessary for exposing a view like behavior for the {#to_xml} behavior.
+  def question
+    self
+  end
+
+  ##
+  # @return [String] a document
+  # @see https://www.imsglobal.org/spec/qti/v3p0/impl#choice-interaction
+  #
+  # @todo We'll need to consider the structure for multiple
+  def to_xml
+    ERB.new(Rails.root.join("app", "views", "questions", "traditional.qti.xml.erb").read).result(binding)
+  end
+
+  ##
+  # @return [String]
+  def response_cardinality
+    "single"
+  end
+
+  ##
+  # @return [Array<Integer>]
+  def correct_response_identifiers
+    returning_value = []
+    data.each_with_index do |datum, index|
+      returning_value << index if datum.fetch("correct") == true
+    end
+    returning_value
+  end
+
+  ##
+  # @return [Integer]
+  def minimum_choices
+    1
+  end
+
+  ##
+  # @return [Integer]
+  def maximum_choices
+    1
+  end
+
+  ##
+  # @return [Array<Integer, String>]
+  # @yieldparam choice_identifier [Integer]
+  # @yieldparam label [String]
+  def with_each_choice_identifier_and_label
+    returning = []
+    data.each_with_index do |datum, index|
+      returning << [index, datum.fetch("answer")]
+      yield index, datum.fetch("answer") if block_given?
+    end
+    returning
+  end
+  # @!endgroup QTI Exporter
+  ##
 end

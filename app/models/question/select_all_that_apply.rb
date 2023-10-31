@@ -1,25 +1,49 @@
 # frozen_string_literal: true
 
 ##
-# The "Select All That Apply" question has one or more possible correct answers.
+# The "Select All That Apply" question has one or more possible correct answers.  This is quite
+# similar to the {Question::Traditional}; as evidenced by the duplication of code in
+# {Question::SelectAllThatApply::ImportCsvRow#extract_answers_and_data_from}.  But I'd rather have
+# duplication than more complicated inheritance.
 class Question::SelectAllThatApply < Question
   self.type_name = "Select All That Apply"
 
-  def self.build_row(row)
-    text = row['TEXT']
-    level = row['LEVEL']
-    subject_names = extract_subject_names_from(row)
-    keyword_names = extract_keyword_names_from(row)
-
-    answers = row['ANSWERS']&.split(',')&.map(&:to_i)
-    answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
-    data = answer_columns.each_with_object([]) do |col, array|
-      index = col.split(/_+/).last.to_i
-      next if row[col].blank? && !answers.include?(index)
-      array << { answer: row[col], correct: answers.include?(index) }
+  ##
+  # Represents the mapping process of a CSV Row to the underlying {Question::SelectAllThatApply}.
+  #
+  # The primary purpose of this class is to convey meaningful error messages for invalid CSV
+  # structures.
+  #
+  # @see {#validate_well_formed_row}
+  class ImportCsvRow < Question::ImportCsvRow
+    def extract_answers_and_data_from(row)
+      @answers = row['ANSWERS']&.split(',')&.map(&:to_i)
+      @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
+      @data = answer_columns.each_with_object([]) do |col, array|
+        index = col.split(/_+/).last.to_i
+        next if row[col].blank? && !answers.include?(index)
+        array << { 'answer' => row[col], 'correct' => answers.include?(index) }
+      end
     end
 
-    new(text:, data:, level:, subject_names:, keyword_names:)
+    def validate_well_formed_row
+      answers_as_column_names = answers.map { |a| "ANSWER_#{a}" }
+      intersect = (answers_as_column_names & answer_columns)
+      if intersect != answers_as_column_names
+        message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
+                  "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
+        errors.add(:data, message)
+      end
+
+      correct_answers = data.select { |pair| pair['correct'] == true }
+      return unless correct_answers.count.zero?
+      errors.add(:data, "expected at least one correct answer, but no correct answers were specified.")
+      false
+    end
+  end
+
+  def self.build_row(row)
+    ImportCsvRow.new(question_type: self, row:)
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

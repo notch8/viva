@@ -20,7 +20,11 @@ class Question::StimulusCaseStudy < Question
   class ImportCsvRow < Question::ImportCsvRow
     def extract_answers_and_data_from(*); end
 
-    def validate_well_formed_row; end
+    def validate_well_formed_row
+      return unless row['PART_OF']
+
+      errors.add(:data, "A #{question.type_name} cannot be part of another question.")
+    end
   end
 
   ##

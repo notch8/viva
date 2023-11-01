@@ -11,11 +11,20 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
 
+  ##
+  # @!group Class Attributes
+
+  ##
+  # @!attribute has_parts
+  #   @return [TrueClass] when the model is one that has parts (e.g. {Question::StimulusCaseStudy})
+  #   @return [FalseClass] when the model is not one has parts (e.g. {Question::Traditional})
+  class_attribute :has_parts, default: false
+  class_attribute :included_in_filterable_type, default: true, instance_writer: false
+  class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false
-  class_attribute :include_in_filterable_type, default: true, instance_writer: false
-
-  class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
+  # @!endgroup Class Attributes
+  ##
 
   ##
   # @!group QTI Exporter
@@ -67,7 +76,20 @@ class Question < ApplicationRecord
   # @return [Array<String>]
   def self.type_names
     Question.descendants.each_with_object([]) do |descendant, array|
-      array << descendant.type_name if descendant.include_in_filterable_type
+      array << descendant.type_name if descendant.included_in_filterable_type
+    end
+  end
+
+  ##
+  # The list of valid type names that "has_parts?"
+  #
+  # @return [Array<String>]
+  #
+  # @see .type_names
+  # @see .has_parts
+  def self.type_names_that_have_parts
+    Question.descendants.each_with_object([]) do |descendant, array|
+      array << descendant.type_name if descendant.has_parts?
     end
   end
 
@@ -93,6 +115,8 @@ class Question < ApplicationRecord
     delegate :persisted?,
              :keywords,
              :reload,
+             :type_name,
+             :has_parts?,
              :as_json, # When we ask self for as_json we'd get a stack level too deep error
              :to_json, # as :as_json
              to: :question
@@ -117,9 +141,20 @@ class Question < ApplicationRecord
     # @note All {Question} classes validate their :text attribute
     validates :text, presence: true
     validate :validate_well_formed_row
+    validate :valid_question_for_part_of
 
     def validate_well_formed_row
       raise NotImplementedError, "#{self}##{__method__}"
+    end
+
+    def valid_question_for_part_of
+      return unless row['PART_OF']
+      parent_question = questions[row['PART_OF']]
+      if parent_question
+        errors.add(:data, "expected PART_OF to be one of #{Question.type_names_that_have_parts.join(', ')}, got #{parent_question.type_name}.") unless parent_question.has_parts?
+      else
+        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.")
+      end
     end
 
     def extract_answers_and_data_from(row)
@@ -151,7 +186,17 @@ class Question < ApplicationRecord
     end
 
     def question
-      @question ||= question_type.new(text:, data:, subject_names:, keyword_names:, level:)
+      return @question if defined?(@question)
+
+      parent_question = questions[row['PART_OF']]&.question
+      attributes = { text:, data:, subject_names:, keyword_names:, level: }
+      if parent_question&.has_parts?
+        attributes[:parent_question] = parent_question
+        attributes[:child_of_aggregation] = true
+      end
+      @question = question_type.new(**attributes)
+      parent_question.child_questions << @question if parent_question
+      @question
     end
   end
 

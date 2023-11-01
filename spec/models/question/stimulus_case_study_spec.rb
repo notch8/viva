@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Question::StimulusCaseStudy do
-  it_behaves_like "a Question"
+  it_behaves_like "a Question", has_parts: true
   its(:type_label) { is_expected.to eq("Case Study") }
   its(:type_name) { is_expected.to eq("Stimulus Case Study") }
 

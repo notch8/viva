@@ -28,6 +28,10 @@ class Question::Traditional < Question
     end
 
     def validate_well_formed_row
+      if row['PART_OF']
+        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.") unless questions[row['PART_OF']]
+      end
+
       if answers.size == 1
         if answer_columns.exclude?("ANSWER_#{answers.first}")
           errors.add(:data, "ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")

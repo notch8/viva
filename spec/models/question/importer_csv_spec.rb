@@ -17,23 +17,46 @@ RSpec.describe Question::ImporterCsv do
     end
   end
 
+  context 'with type that does not have parts other rows say they are part of that type' do
+    let(:text) do
+      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1\n" \
+      "1,Traditional,Valid traditional,,1,You are correct sir!\n" \
+      "2,Scenario,Valid scenario,1,\n"
+    end
+
+    it 'is not valid' do
+      expect do
+        expect(subject.save).to be_falsey
+      end.not_to change(Question, :count)
+
+      # Verifying the error message
+      expect(subject.errors.dig(:rows, 0, :data, 0)).to include(Question.type_names_that_have_parts.join(', '))
+    end
+  end
+
   context 'with stimulus case study and child scenario' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,PART_OF\n" \
+      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1\n" \
       "1,Stimulus Case Study,Valid study,,\n" \
-      "2,Scenario,Valid scenario,1,\n"
+      "2,Scenario,Valid scenario,1,\n" \
+      "3,Traditional,Valid traditional,1,1,You are correct sir!\n"
     end
 
     it 'creates a case study and child scenario' do
       expect do
         expect do
-          subject.save
-        end.to change(Question::StimulusCaseStudy, :count).by(1)
-      end.to change(Question::Scenario, :count).by(1)
+          expect do
+            subject.save
+          end.to change(Question::StimulusCaseStudy, :count).by(1)
+        end.to change(Question::Scenario, :count).by(1)
+      end.to change(Question::Traditional, :count).by(1)
 
       scs = Question::StimulusCaseStudy.last
       scenario = Question::Scenario.last
-      expect(scs.child_questions).to match_array(scenario)
+      expect(scenario.parent_question).to eq(scs)
+      traditional = Question::Traditional.last
+      expect(traditional.parent_question).to eq(scs)
+      expect(scs.child_questions).to match_array([scenario, traditional])
     end
   end
 

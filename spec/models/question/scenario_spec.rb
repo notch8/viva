@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Question::Scenario do
-  it_behaves_like "a Question", test_type_name_to_class: false, include_in_filterable_type: false
+  it_behaves_like "a Question", test_type_name_to_class: false, included_in_filterable_type: false
   its(:type_label) { is_expected.to eq("Scenario") }
   its(:type_name) { is_expected.to eq("Scenario") }
 

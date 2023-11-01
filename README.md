@@ -50,25 +50,31 @@ bundle exec rspec
 ### Cypress
 Cypress is used to test the JavaScript code. Component tests will live next to the component file in the named folder. End to end tests live in "cypress/e2e". For reference on when to write which, refer to the [Cypress testing types documentation](https://docs.cypress.io/guides/core-concepts/testing-types#What-is-E2E-Testing).
 
-#### CLI
-_NOTE: Cypress defaults to running e2e tests. To run component tests, add `--component` to any of the commands you run._
+There are two cypress tests:
 
-- Use one of the `cypress:run` scripts in the [package.json](./package.json) file
-- If you don't see the command you'd like to run, use `yarn run [COMMAND]`
-  - Ref: https://docs.cypress.io/guides/guides/command-line#Commands
+- components :: runs to test the React components
+- end to end (e2e) :: runs with a browser and verifies that the homepage renders.
 
-``` bash
-# examples
-yarn cypress:run
-# yarn cypress:run --component # TODO: Figure out why component tests are broken now.
-  # Outside the containers it throws a "The package "@esbuild/darwin-x64" could not be found, and is needed by esbuild." error.
-  # Inside the web container it throws an "xvfb" error. (https://docs.cypress.io/guides/continuous-integration/introduction#Xvfb)
-yarn cypress:run --spec 'cypress/e2e/splash.cy.jsx'
-```
+There is a `cypress-tests` container that runs as part of the build.  To run the cypress test locally there are two options:
+
+- `docker compose up cypress-tests` :: will run the e2e tests
+- `yarn cypress:run` :: will run them cypress tests on your machine (see *Running on Your Machine* for the full details)
+
+#### Running On Your Machine
+
+For this to work, there are a few steps to take:
+
+- Install Cypress (e.g. `yarn install`)
+- Update [./cypress.config.js](./cypress.config.js); replacing `baseUrl: 'http://web:3000'` with `baseUrl: 'http://viva.test'`.  (This is done because you'll be running Cypress against your machines environment instead of within the docker ecosystem)
+- `yarn cypress:run` to run the e2e tests.
+- `yarn cypress:run --components` to run the component tests.
+
+_Note: You cannot run the Cypress tests within the `web` container because it does not, by design and intention, have the development dependencies necessary for Cypress._
 
 #### LaunchPad
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
 
+0. Update the `./cypress.config.js` as listed above.
 1. Open the Cypress Launchpad: `yarn cypress:open`
 2. Choose to run end-to-end or component tests.
 3. Select a browser to run the tests in.

@@ -16,6 +16,12 @@ class Question::StimulusCaseStudy < Question
            class_name: "Question",
            source_type: "Question"
 
+  class ImportCsvRow < Question::ImportCsvRow
+    def extract_answers_and_data_from(*); end
+
+    def validate_well_formed_row; end
+  end
+
   ##
   # @note Due to the implementation of {Question.filter_as_json} and {Question.filter}, this is not
   #       performant.  That is it will result in potentially many sub-queries.  One solution would

@@ -9,20 +9,35 @@ class Question::Scenario < Question
   self.type_name = "Scenario"
   self.include_in_filterable_type = false
 
-  def self.build_row(row:, **)
-    # TODO: This is naive in that it assumes a full blown object.  It's also highlighting that we're
-    # likely going to want a Csv Importer class; one that can handle the validation then reporting
-    # errors or persisting objects.
-    parent_question = row['PART_OF']
+  class ImportCsvRow < Question::ImportCsvRow
+    def extract_answers_and_data_from(_row)
+      true
+    end
 
-    new(text: row['TEXT'], parent_question:)
+    def question
+      return @question if defined?(@question)
+
+      parent_question = questions[row['PART_OF']]&.question
+
+      @question = question_type.new(text: row['TEXT'], parent_question:)
+
+      parent_question.child_questions << @question if parent_question
+
+      @question
+    end
+
+    def validate_well_formed_row
+      if row['PART_OF']
+        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.") unless questions[row['PART_OF']]
+      else
+        errors.add(:data, "expected PART_OF column for CSV row.")
+      end
+    end
   end
 
   validate :must_have_a_parent_question
 
   def must_have_a_parent_question
-    # TODO: Consider that we're validating rows of data; and will likely not persist until after we
-    # validate all rows.
     errors.add(:base, "must have an associated parent question") if parent_question.blank?
   end
   private :must_have_a_parent_question

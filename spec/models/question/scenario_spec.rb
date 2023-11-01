@@ -13,14 +13,15 @@ RSpec.describe Question::Scenario do
   its(:data) { is_expected.to be_nil }
 
   describe '.build_row' do
-    subject { described_class.build_row(row:, questions: {}) }
+    subject { described_class.build_row(row:, questions:) }
     let(:row) do
       CsvRow.new("TYPE" => "Scenario",
                  "TEXT" => "Something Something Scenario",
-                 "PART_OF" => case_study)
+                 "PART_OF" => 1)
     end
 
     context 'when provided an existing PART_OF' do
+      let(:questions) { { 1 => case_study } }
       let(:case_study) { FactoryBot.build(:question_stimulus_case_study_without_children) }
 
       it { is_expected.to be_valid }
@@ -28,6 +29,7 @@ RSpec.describe Question::Scenario do
     end
 
     context 'when not provided a PART_OF' do
+      let(:questions) { {} }
       let(:case_study) { nil }
       it { is_expected.not_to be_valid }
       it { is_expected.not_to be_persisted }

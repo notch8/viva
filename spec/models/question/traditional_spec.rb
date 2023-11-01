@@ -9,7 +9,7 @@ RSpec.describe Question::Traditional do
 
   describe "ImportCsvRow inner_class" do
     describe 'save!' do
-      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class) }
+      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class, questions: {}) }
 
       context 'when inner_class is invalid' do
         let(:data) do
@@ -25,7 +25,7 @@ RSpec.describe Question::Traditional do
   end
 
   describe '.build_row' do
-    subject { described_class.build_row(data) }
+    subject { described_class.build_row(row: data, questions: {}) }
     let(:data) do
       CsvRow.new("IMPORT_ID" => "123456",
                  "TYPE" => "Traditional",

@@ -44,10 +44,6 @@ class Question::SelectAllThatApply < Question
     end
   end
 
-  def self.build_row(row)
-    ImportCsvRow.new(question_type: self, row:)
-  end
-
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.
   serialize :data, JSON

@@ -134,10 +134,6 @@ class Question::BowTie < Question
     # rubocop:enable Metrics/PerceivedComplexity
   end
 
-  def self.build_row(row)
-    ImportCsvRow.new(question_type: self, row:)
-  end
-
   ##
   # Verify that the resulting data attribute is an array with each element being an array of two
   # strings.

@@ -8,7 +8,7 @@ RSpec.describe Question::DragAndDrop do
   its(:type_name) { is_expected.to eq("Drag and Drop") }
 
   describe '.build_row' do
-    subject { described_class.build_row(row) }
+    subject { described_class.build_row(row:, questions: {}) }
 
     context 'when given invalid slotted data' do
       let(:row) do

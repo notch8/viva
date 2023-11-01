@@ -17,6 +17,26 @@ RSpec.describe Question::ImporterCsv do
     end
   end
 
+  context 'with stimulus case study and child scenario' do
+    let(:text) do
+      "IMPORT_ID,TYPE,TEXT,PART_OF\n" \
+      "1,Stimulus Case Study,Valid study,,\n" \
+      "2,Scenario,Valid scenario,1,\n"
+    end
+
+    it 'creates a case study and child scenario' do
+      expect do
+        expect do
+          subject.save
+        end.to change(Question::StimulusCaseStudy, :count).by(1)
+      end.to change(Question::Scenario, :count).by(1)
+
+      scs = Question::StimulusCaseStudy.last
+      scenario = Question::Scenario.last
+      expect(scs.child_questions).to match_array(scenario)
+    end
+  end
+
   context 'with duplicate IMPORT_ID' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \

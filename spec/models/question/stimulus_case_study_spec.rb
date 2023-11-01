@@ -10,6 +10,31 @@ RSpec.describe Question::StimulusCaseStudy do
   it { is_expected.to have_many(:as_parent_question_aggregations) }
   it { is_expected.to have_many(:child_questions) }
 
+  describe '.build_row' do
+    subject { described_class.build_row(row:, questions: { 1 => FactoryBot.build(:question_stimulus_case_study) }) }
+
+    context 'when PART_OF another question' do
+      let(:row) do
+        CsvRow.new("TITLE" => "Title",
+                   "PART_OF" => 1,
+                   "IMPORT_ID" => 2,
+                   "TEXT" => "Hello World")
+      end
+
+      it { is_expected.not_to be_valid }
+    end
+
+    context 'when PART_OF another question' do
+      let(:row) do
+        CsvRow.new("TITLE" => "Title",
+                   "IMPORT_ID" => 2,
+                   "TEXT" => "Hello World")
+      end
+
+      it { is_expected.to be_valid }
+    end
+  end
+
   describe 'factories' do
     it "generates child questions" do
       expect do

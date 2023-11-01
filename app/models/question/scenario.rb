@@ -7,31 +7,15 @@
 class Question::Scenario < Question
   self.type_label = "Scenario"
   self.type_name = "Scenario"
-  self.include_in_filterable_type = false
+  self.included_in_filterable_type = false
 
   class ImportCsvRow < Question::ImportCsvRow
     def extract_answers_and_data_from(_row)
       true
     end
 
-    def question
-      return @question if defined?(@question)
-
-      parent_question = questions[row['PART_OF']]&.question
-
-      @question = question_type.new(text: row['TEXT'], parent_question:)
-
-      parent_question.child_questions << @question if parent_question
-
-      @question
-    end
-
     def validate_well_formed_row
-      if row['PART_OF']
-        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.") unless questions[row['PART_OF']]
-      else
-        errors.add(:data, "expected PART_OF column for CSV row.")
-      end
+      errors.add(:data, "expected PART_OF column for CSV row.") unless row['PART_OF']
     end
   end
 

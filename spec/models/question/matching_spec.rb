@@ -8,7 +8,7 @@ RSpec.describe Question::Matching do
   its(:type_name) { is_expected.to eq("Matching") }
 
   describe '.build_row' do
-    subject { described_class.build_row(row) }
+    subject { described_class.build_row(row:, questions: {}) }
     context 'with invalid data due to mismatched columns' do
       let(:row) do
         CsvRow.new("TYPE" => "Matching",

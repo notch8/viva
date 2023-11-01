@@ -30,7 +30,7 @@ RSpec.describe Question, type: :model do
   end
 
   describe '.build_from_csv_row' do
-    subject { described_class.build_from_csv_row(row) }
+    subject { described_class.build_from_csv_row(row:, questions: {}) }
 
     context 'when no row TYPE is provided' do
       let(:row) { CsvRow.new('IMPORT_ID' => '1') }
@@ -43,12 +43,6 @@ RSpec.describe Question, type: :model do
 
       it { is_expected.to be_a(Question::InvalidType) }
       it { is_expected.not_to be_valid }
-    end
-  end
-
-  describe '.build_row' do
-    it 'should be implemented by subclasses' do
-      expect { described_class.build_row }.to raise_error(NotImplementedError)
     end
   end
 
@@ -137,7 +131,6 @@ RSpec.describe Question, type: :model do
     end
 
     # rubocop:disable RSpec/ExampleLength
-    # rubocop:disable RSpec/MultipleExpectations
     it 'filters by keyword' do
       # Why this one large test instead of many smaller tests?  Because the setup cost for the state
       # of the data is noticable.  In other words, by running multiple tests with one setup
@@ -196,6 +189,16 @@ RSpec.describe Question, type: :model do
       expect(described_class.filter(type_name: question1.type_name, keywords: [keyword2.name])).to eq([])
     end
     # rubocop:enable RSpec/ExampleLength
-    # rubocop:enable RSpec/MultipleExpectations
+  end
+
+  describe '#errors' do
+    subject { described_class.new }
+
+    # This spec verifies the interface of the Question#errors#to_hash
+    it 'is a Hash<Symbol,Array<String>> data structure' do
+      expect(subject).not_to be_valid
+
+      expect(subject.errors.to_hash[:text]).to be_a(Array)
+    end
   end
 end

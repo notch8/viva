@@ -90,13 +90,19 @@ class Question < ApplicationRecord
   #
   # @see {#validate_well_formed_row}
   class ImportCsvRow
-    delegate :persisted?, :keywords, :reload, to: :question
+    delegate :persisted?,
+             :keywords,
+             :reload,
+             :as_json, # When we ask self for as_json we'd get a stack level too deep error
+             :to_json, # as :as_json
+             to: :question
     attr_reader :text, :level, :subject_names, :keyword_names, :data
-    attr_reader :row, :question_type
+    attr_reader :row, :question_type, :questions
 
-    def initialize(row:, question_type:)
+    def initialize(row:, question_type:, questions:)
       @row = row
       @question_type = question_type
+      @questions = questions
 
       @text = row['TEXT']
       @level = row['LEVEL']
@@ -149,31 +155,37 @@ class Question < ApplicationRecord
     end
   end
 
-  def self.build_row(*args)
-    raise NotImplementedError, "#{self}.#{__method__}"
+  ##
+
+  def self.build_row(row:, questions:)
+    # In relying on inner classes, we need to specifically target the current class (a sub-class of
+    # Question).  Oddly `self::ImportCsvRow` does not work.  We can use
+    # `self.const_get(:ImportCsvRow)` but constantize is Rails idiomatic
+    "#{name}::ImportCsvRow".constantize.new(row:, questions:, question_type: self)
   end
 
   ##
   # @see Question::ImporterCsv
   #
   # @param row [Enumerable] likely a row from {CSV.read}.
+  # @param questions [Hash<#to_s,Question>] a hash of questions already processed from the
+  #        originating CSV.  Useful for exposing a means of connecting relationships for a
+  #        {Question::StimulusCaseStudy}
   # @return [Question] a subclass of {Question} derived from the row's TYPE property.
   # @return [Question::InvalidQuestion] when we have a row that doesn't have adequate information to
   #         build the proper {Question} subclass.
   # @return [#valid?, #save!, #errors] These three methods are the expected interface for what will
   #         be returned.
-  def self.build_from_csv_row(row)
+  def self.build_from_csv_row(row:, questions:)
     return Question::NoType.new(row) unless row['TYPE']
 
     klass = Question.type_name_to_class(row['TYPE'], fallback: nil)
 
     return Question::InvalidType.new(row) unless klass
 
-    klass.invalid_question_due_to_missing_headers(row:) || klass.build_row(row)
-
     return Question::InvalidLevel.new(row) if row['LEVEL'] && !Level.names.include?(row['LEVEL'])
 
-    klass.build_row(row)
+    klass.build_row(row:, questions:)
   end
 
   ##

@@ -27,6 +27,7 @@ class Question::ImporterCsv
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/PerceivedComplexity
   def save
     @questions = {}
     @errors = {}
@@ -34,29 +35,31 @@ class Question::ImporterCsv
     # The header_converters ensures that we don't have squirelly little BOM characters and that all
     # columns are titlecase which we later expect.
     CSV.parse(@text, headers: true, skip_blanks: true, header_converters: ->(h) { h.to_s.strip.upcase.delete("\xEF\xBB\xBF") }, encoding: 'utf-8') do |row|
+      # Guard clause for verifying the provided headers of the CSV.  This is perhaps something to
+      # extract.
       unless have_already_verified_headers
         invalid_question = Question.invalid_question_due_to_missing_headers(row:)
         if invalid_question
           @questions[0] = invalid_question
           @errors[:csv] = invalid_question.errors.to_hash
-          break
+          break # Don't process any more
         else
           have_already_verified_headers = true
         end
       end
-      question = Question.build_from_csv_row(row)
-      import_id = row['IMPORT_ID'].to_s.strip
-      unless question.valid?
-        @errors[:rows] ||= []
-        @errors[:rows] << question.errors.to_hash.merge(import_id:)
-      end
 
-      # We need to guard against duplicates
-      if @questions.key?(import_id)
-        @errors[:rows] ||= []
-        @errors[:rows] << { import_id:, data: "duplicate IMPORT_ID #{import_id} found on multiple rows" }
-      else
+      import_id = row['IMPORT_ID'].to_s.strip
+      question = Question.build_from_csv_row(row:, questions: @questions)
+      if question.valid? && !@questions.key?(import_id)
         @questions[import_id] = question
+      else
+        @errors[:rows] ||= []
+        error = question.errors.to_hash.merge(import_id:)
+        if @questions.key?(import_id)
+          error[:data] ||= []
+          error[:data] << "duplicate IMPORT_ID #{import_id} found on multiple rows"
+        end
+        @errors[:rows] << error
       end
     end
 
@@ -66,6 +69,7 @@ class Question::ImporterCsv
       @questions.values.all?(&:save!)
     end
   end
+  # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 

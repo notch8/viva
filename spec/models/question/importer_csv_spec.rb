@@ -26,7 +26,7 @@ RSpec.describe Question::ImporterCsv do
 
     it 'does not persist the records and report errors' do
       expect { subject.save }.not_to change(Question::Traditional, :count)
-      expect(subject.errors).to eq({ rows: [{ data: "duplicate IMPORT_ID 1 found on multiple rows", import_id: "1" }] })
+      expect(subject.errors).to eq({ rows: [{ data: ["duplicate IMPORT_ID 1 found on multiple rows"], import_id: "1" }] })
     end
   end
 
@@ -86,7 +86,7 @@ RSpec.describe Question::ImporterCsv do
       json = subject.as_json
       expect(json.keys.sort).to eq([:errors, :questions])
       expect(json[:errors]['rows'].first.keys).to match_array(["data", "import_id"])
-      expect(json[:questions]).to be_present
+      expect(json[:questions]).not_to be_present
     end
   end
 

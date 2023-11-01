@@ -9,7 +9,7 @@ RSpec.describe Question::SelectAllThatApply do
 
   describe "ImportCsvRow inner_class" do
     describe 'save!' do
-      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class) }
+      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class, questions: {}) }
 
       context 'when inner_class is invalid' do
         let(:data) do
@@ -28,7 +28,7 @@ RSpec.describe Question::SelectAllThatApply do
   end
 
   describe '.build_row' do
-    subject { described_class.build_row(row) }
+    subject { described_class.build_row(row:, questions: {}) }
     let(:row) do
       CsvRow.new("TYPE" => "AllThatApply",
                  "TEXT" => "Which one is affirmative?",

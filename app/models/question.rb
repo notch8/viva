@@ -143,9 +143,11 @@ class Question < ApplicationRecord
     validate :validate_well_formed_row
     validate :valid_question_for_part_of
 
+    # :nocov:
     def validate_well_formed_row
       raise NotImplementedError, "#{self}##{__method__}"
     end
+    # :nocov:
 
     def valid_question_for_part_of
       return unless row['PART_OF']
@@ -157,9 +159,11 @@ class Question < ApplicationRecord
       end
     end
 
+    # :nocov:
     def extract_answers_and_data_from(row)
       raise NotImplementedError, "#{self}##{__method__}"
     end
+    # :nocov:
 
     ##
     # What's happening here?  Given that we have layers of validation; it would be nice to rely on

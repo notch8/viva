@@ -64,8 +64,4 @@ class SearchController < ApplicationController
       levels: params[:selected_levels]
     }
   end
-
-  def search_params
-    params.permit(:selected_keywords, :selected_subjects, :selected_types, :selected_levels)
-  end
 end

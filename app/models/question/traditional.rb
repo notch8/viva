@@ -18,7 +18,9 @@ class Question::Traditional < Question
 
     def extract_answers_and_data_from(row)
       # Specific to the subclass
-      @answers = row['ANSWERS']&.split(/\s*,\s*/)&.map(&:to_i)
+      @answers = row['ANSWERS']
+                 &.split(/\s*,\s*/)
+                 &.map(&:to_i) || []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i
@@ -27,10 +29,9 @@ class Question::Traditional < Question
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def validate_well_formed_row
-      if row['PART_OF']
-        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.") unless questions[row['PART_OF']]
-      end
+      errors.add(:data, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
 
       if answers.size == 1
         if answer_columns.exclude?("ANSWER_#{answers.first}")
@@ -40,6 +41,7 @@ class Question::Traditional < Question
         errors.add(:data, "expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
       end
     end
+    # rubocop:enable Metrics/AbcSize
   end
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need

@@ -20,8 +20,8 @@ class Question::SelectAllThatApply < Question
 
     def extract_answers_and_data_from(row)
       @answers = row['ANSWERS']
-                   &.split(',')
-                   &.map(&:to_i) || []
+                 &.split(',')
+                 &.map(&:to_i) || []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i

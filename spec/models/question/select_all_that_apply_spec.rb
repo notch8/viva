@@ -12,7 +12,6 @@ RSpec.describe Question::SelectAllThatApply do
       subject { described_class::ImportCsvRow.new(row: data, question_type: described_class, questions: {}) }
 
       context 'when inner_class is invalid' do
-
       end
     end
   end
@@ -21,8 +20,7 @@ RSpec.describe Question::SelectAllThatApply do
     subject { described_class.build_row(row:, questions: {}) }
     [
       [{ "ANSWERS" => "2,4,6", "ANSWER_1" => "A1", "ANSWER_3" => "A3" },
-       /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/
-      ],
+       /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/],
       [{ "ANSWER_1" => "A1" }, /expected ANSWERS column/]
     ].each do |given_data, error_message|
       context "with invalid data #{given_data.inspect}" do

@@ -87,7 +87,7 @@ class Question::BowTie < Question
 
       return true if (expected & given) == expected
 
-      errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+      errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
     end
 
     def validate_answers
@@ -96,7 +96,7 @@ class Question::BowTie < Question
 
       return true if (expected & given) == expected
 
-      errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+      errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
     end
 
     # rubocop:disable Metrics/AbcSize
@@ -104,20 +104,33 @@ class Question::BowTie < Question
     # rubocop:disable Metrics/MethodLength
     # rubocop:disable Metrics/PerceivedComplexity
     def validate_candidates
+      index_errors = {}
       # I need to ensure that each "answer" for each direction exists
       expected_answer_columns = question_type::EXPECTED_DATA_HASH_KEYS.each_with_object({}) do |direction, hash|
-        indices = row["#{direction.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
+        indices = row["#{direction.upcase}_ANSWERS"]&.split(/\s*,\s*/) || []
+        indices.each do |i|
+          Integer(i)
+        rescue ArgumentError
+          index_errors[direction] ||= []
+          index_errors[direction] << i
+        end
         hash[direction] = indices.map { |i| "#{direction.upcase}_#{i}" }
+      end
+
+      index_errors.each_pair do |direction, columns|
+        next if errors.blank?
+        errors.add(:data, %(#{direction.upcase}_ANSWERS should reference only #{direction.upcase}_<INTEGER> columns; instead got #{columns.map { |c| "#{direction.upcase}_#{c}" }.join(', ')}.))
       end
 
       given_answer_columns = row.headers.each_with_object({}) do |header, hash|
         next if header.blank?
         match = question_type::ANSWER_AND_POSITION_REGEXP.match(header)
+
         next unless match
 
         direction = match[:direction].downcase
         hash[direction] ||= []
-        hash[direction] << "#{direction.upcase}_#{match[:index].to_i}"
+        hash[direction] << "#{direction.upcase}_#{match[:index]}"
       end
 
       question_type::EXPECTED_DATA_HASH_KEYS.each do |direction|
@@ -125,7 +138,7 @@ class Question::BowTie < Question
         given = given_answer_columns.fetch(direction, []).sort
         next if (expected & given) == expected
 
-        errors.add(:base, "Expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+        errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
       end
     end
     # rubocop:enable Metrics/AbcSize

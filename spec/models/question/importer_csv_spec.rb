@@ -36,27 +36,35 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with stimulus case study and child scenario' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1\n" \
+      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1,CENTER_LABEL,CENTER_1,CENTER_ANSWERS,LEFT_LABEL,LEFT_1,LEFT_ANSWERS,RIGHT_LABEL,RIGHT_1,RIGHT_ANSWERS\n" \
       "1,Stimulus Case Study,Valid study,,\n" \
       "2,Scenario,Valid scenario,1,\n" \
-      "3,Traditional,Valid traditional,1,1,You are correct sir!\n"
+      "3,Traditional,Valid traditional,1,1,You are correct sir!\n" \
+      "4,Select All That Apply,Valid SATA,1,1,You are correct sir!\n" \
+      "5,Bow Tie,Valid Bow Tie,1,,,CL,CA,1,LL,LA,1,RL,RA,1\n" \
+      "6,Matching,Valid Matching,1,,,,,1,,LA,1,,RA,1\n"
     end
 
     it 'creates a case study and child scenario' do
-      expect do
-        expect do
-          expect do
-            subject.save
-          end.to change(Question::StimulusCaseStudy, :count).by(1)
-        end.to change(Question::Scenario, :count).by(1)
-      end.to change(Question::Traditional, :count).by(1)
+      part_ofs = [
+        Question::Scenario,
+        Question::Traditional,
+        Question::SelectAllThatApply,
+        Question::BowTie,
+        Question::Matching
+      ]
+
+      expect { subject.save }.to change(Question, :count).by(1 + part_ofs.size)
 
       scs = Question::StimulusCaseStudy.last
-      scenario = Question::Scenario.last
-      expect(scenario.parent_question).to eq(scs)
-      traditional = Question::Traditional.last
-      expect(traditional.parent_question).to eq(scs)
-      expect(scs.child_questions).to match_array([scenario, traditional])
+
+      children = part_ofs.each_with_object([]) do |part_of, array|
+        child = part_of.last
+        expect(child.parent_question).to eq(scs)
+        array << child
+      end
+
+      expect(scs.child_questions).to match_array(children)
     end
   end
 

@@ -21,11 +21,16 @@ RSpec.describe Question::BowTie do
     end
 
     [
-      [{ "CENTER_LABEL" => "Center", "CENTER_1" => "...hello..." }, /missing LEFT_LABEL, RIGHT_LABEL/],
-      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "LEFT_LABEL" => "L" }, /missing CENTER_ANSWERS, LEFT_ANSWERS, RIGHT_ANSWERS/],
-      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => '1', "LEFT_LABEL" => "L" }, /missing CENTER_ANSWERS, LEFT_ANSWERS/],
+      [{ "CENTER_LABEL" => "Center", "CENTER_1" => "...hello..." },
+       /missing LEFT_LABEL, RIGHT_LABEL/],
+      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "LEFT_LABEL" => "L" },
+       /missing CENTER_ANSWERS, LEFT_ANSWERS, RIGHT_ANSWERS/],
+      [{ "CENTER_LABEL" => "C", "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => '1', "LEFT_LABEL" => "L" },
+       /missing CENTER_ANSWERS, LEFT_ANSWERS/],
+      [{ "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => 'R,r' },
+       /RIGHT_ANSWERS should reference only RIGHT_\<INTEGER\> columns; instead got RIGHT_R, RIGHT_r/],
       [{ "CENTER_LABEL" => "C", "CENTER_ANSWERS" => '1', "RIGHT_LABEL" => "R", "RIGHT_ANSWERS" => '1', "LEFT_LABEL" => "L", 'LEFT_ANSWERS' => '1', 'LEFT_1' => 'Hello' },
-       /Expected columns CENTER_1 but was missing CENTER_1/]
+       /expected columns CENTER_1 but was missing CENTER_1/]
     ].each do |given_data, message|
       context "with #{given_data.inspect}" do
         let(:data) { CsvRow.new(base_line_data.merge(given_data)) }

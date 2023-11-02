@@ -7,56 +7,56 @@ RSpec.describe Question::Traditional do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Traditional") }
 
-  describe "ImportCsvRow inner_class" do
-    describe 'save!' do
-      subject { described_class::ImportCsvRow.new(row: data, question_type: described_class, questions: {}) }
+  describe '.build_row' do
+    subject { described_class.build_row(row: data, questions: {}) }
 
-      context 'when inner_class is invalid' do
-        let(:data) do
-          CsvRow.new("ANSWERS" => "2", "ANSWER_1" => "Hello World!")
-        end
+    [
+      [{ "ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /Data ANSWERS column indicates that ANSWER_2/],
+      [{ "ANSWERS" => "1,2", "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected ANSWERS cell to have one correct answer/]
+    ].each do |given_data, error_message|
+      context "with invalid data #{given_data.inspect}" do
+        let(:data) { CsvRow.new(given_data) }
 
         it "will not call the underlying question's save!" do
           expect(subject.question).not_to receive(:save!)
-          expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /Data ANSWERS column indicates that ANSWER_2/)
+          expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, error_message)
         end
       end
     end
-  end
 
-  describe '.build_row' do
-    subject { described_class.build_row(row: data, questions: {}) }
-    let(:data) do
-      CsvRow.new("IMPORT_ID" => "123456",
-                 "TYPE" => "Traditional",
-                 "TEXT" => "Which one is true?",
-                 "LEVEL" => Level.names.first,
-                 "ANSWERS" => "1",
-                 "ANSWER_1" => "true",
-                 "ANSWER_2" => "false",
-                 "ANSWER_3" => "",
-                 "SUBJECTS" => "True/False, Amazing",
-                 "SUBJECT_1" => "Fun Question",
-                 "SUBJECT" => "Hard Question",
-                 "KEYWORDS" => "Red",
-                 "KEYWORD_1" => "Green",
-                 "KEYWORD_2" => "Orange",
-                 "KEYWORD" => "Yellow")
-    end
-
-    it { is_expected.to be_valid }
-    it { is_expected.not_to be_persisted }
-    its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
-    its(:level) { is_expected.to eq(Level.names.first) }
-
-    describe 'once saved' do
-      before do
-        subject.save
-        subject.reload
+    context 'with valid data' do
+      let(:data) do
+        CsvRow.new("IMPORT_ID" => "123456",
+                   "TYPE" => "Traditional",
+                   "TEXT" => "Which one is true?",
+                   "LEVEL" => Level.names.first,
+                   "ANSWERS" => "1",
+                   "ANSWER_1" => "true",
+                   "ANSWER_2" => "false",
+                   "ANSWER_3" => "",
+                   "SUBJECTS" => "True/False, Amazing",
+                   "SUBJECT_1" => "Fun Question",
+                   "SUBJECT" => "Hard Question",
+                   "KEYWORDS" => "Red",
+                   "KEYWORD_1" => "Green",
+                   "KEYWORD_2" => "Orange",
+                   "KEYWORD" => "Yellow")
       end
 
-      its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-      its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
+      its(:data) { is_expected.to eq([{ "answer" => "true", "correct" => true }, { "answer" => "false", "correct" => false }]) }
+      its(:level) { is_expected.to eq(Level.names.first) }
+
+      describe 'once saved' do
+        before do
+          subject.save
+          subject.reload
+        end
+
+        its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
+        its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+      end
     end
   end
 

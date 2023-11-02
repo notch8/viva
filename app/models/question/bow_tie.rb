@@ -87,7 +87,7 @@ class Question::BowTie < Question
 
       return true if (expected & given) == expected
 
-      errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+      errors.add(:base, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
     end
 
     def validate_answers
@@ -96,7 +96,7 @@ class Question::BowTie < Question
 
       return true if (expected & given) == expected
 
-      errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+      errors.add(:base, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
     end
 
     # rubocop:disable Metrics/AbcSize
@@ -119,7 +119,7 @@ class Question::BowTie < Question
 
       index_errors.each_pair do |direction, columns|
         next if errors.blank?
-        errors.add(:data, %(#{direction.upcase}_ANSWERS should reference only #{direction.upcase}_<INTEGER> columns; instead got #{columns.map { |c| "#{direction.upcase}_#{c}" }.join(', ')}.))
+        errors.add(:base, %(#{direction.upcase}_ANSWERS should reference only #{direction.upcase}_<INTEGER> columns; instead got #{columns.map { |c| "#{direction.upcase}_#{c}" }.join(', ')}.))
       end
 
       given_answer_columns = row.headers.each_with_object({}) do |header, hash|
@@ -138,7 +138,7 @@ class Question::BowTie < Question
         given = given_answer_columns.fetch(direction, []).sort
         next if (expected & given) == expected
 
-        errors.add(:data, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
+        errors.add(:base, "expected columns #{expected.join(', ')} but was missing #{(expected - given).join(', ')} columns.")
       end
     end
     # rubocop:enable Metrics/AbcSize
@@ -156,12 +156,12 @@ class Question::BowTie < Question
   # rubocop:disable Metrics/PerceivedComplexity
   def well_formed_serialized_data
     unless data.is_a?(Hash)
-      errors.add(:data, "expected to be a Hash, got a #{data.class}")
+      errors.add(:base, "expected to be a Hash, got a #{data.class}")
       return false
     end
 
     unless data.keys.map(&:to_s).sort == EXPECTED_DATA_HASH_KEYS.sort
-      errors.add(:data, "expected data Hash keys to be #{EXPECTED_DATA_HASH_KEYS.inspect}, got #{data.keys.inspect}")
+      errors.add(:base, "expected data Hash keys to be #{EXPECTED_DATA_HASH_KEYS.inspect}, got #{data.keys.inspect}")
       return false
     end
 
@@ -188,23 +188,23 @@ class Question::BowTie < Question
   def __validate_is_a_hash(key, elements)
     if elements.is_a?(Hash)
       return true if elements.key?(:answers) && elements.key?(:label)
-      errors.add(:data, "expected #{key} to be a Hash with keys of 'answers' and 'label'")
+      errors.add(:base, "expected #{key} to be a Hash with keys of 'answers' and 'label'")
     else
-      errors.add(:data, "expected #{key} to be a Hash, got a #{elements.class}")
+      errors.add(:base, "expected #{key} to be a Hash, got a #{elements.class}")
       false
     end
   end
 
   def __validate_answers_structure(key, answers)
     unless answers.is_a?(Array)
-      errors.add(:data, "expected #{key} answers to be an Array, got #{answers.class}.")
+      errors.add(:base, "expected #{key} answers to be an Array, got #{answers.class}.")
       return false
     end
 
     return true if answers.all? do |a|
                      a.is_a?(Hash) && a.keys.sort == ['answer', 'correct'] && a['answer'].is_a?(String) && a['answer'].present? && (a['correct'].is_a?(TrueClass) || a['correct'].is_a?(FalseClass))
                    end
-    errors.add(:data, "expected #{key} answers to be an Array of Arrays; the sub-array having the first element being a String and the second being a Boolean.")
+    errors.add(:base, "expected #{key} answers to be an Array of Arrays; the sub-array having the first element being a String and the second being a Boolean.")
 
     false
   end
@@ -213,21 +213,21 @@ class Question::BowTie < Question
     count = answers.count { |answer| answer['correct'] == true }
     return true if count == 1
 
-    errors.add(:data, "expected #{key}'s answers to have one and only one correct value; got #{count}.")
+    errors.add(:base, "expected #{key}'s answers to have one and only one correct value; got #{count}.")
     false
   end
 
   def __validate_at_least_one_true_answer(key, answers)
     return true unless answers.none? { |answer| answer['correct'] == true }
 
-    errors.add(:data, "expected #{key}'s answers to have at least one correct value; got none.")
+    errors.add(:base, "expected #{key}'s answers to have at least one correct value; got none.")
     false
   end
 
   def __validate_label_structure(key, label)
     return true if label.is_a?(String) && label.present?
 
-    errors.add(:data, "expected #{key}'s label to be a non-blank String")
+    errors.add(:base, "expected #{key}'s label to be a non-blank String")
     false
   end
 end

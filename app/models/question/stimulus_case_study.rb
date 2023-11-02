@@ -23,7 +23,7 @@ class Question::StimulusCaseStudy < Question
     def validate_well_formed_row
       return unless row['PART_OF']
 
-      errors.add(:data, "A #{question.type_name} cannot be part of another question.")
+      errors.add(:base, "A #{question.type_name} cannot be part of another question.")
     end
   end
 

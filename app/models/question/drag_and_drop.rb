@@ -46,11 +46,11 @@ class Question::DragAndDrop < Question
       if intersect != answers_as_column_names
         message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
                   "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
-        errors.add(:data, message)
+        errors.add(:base, message)
       end
       correct_answers = data.select { |pair| pair['correct'] }
       return unless correct_answers.count.zero?
-      errors.add(:data, "expected at least one correct answer, but no correct answers were specified.")
+      errors.add(:base, "expected at least one correct answer, but no correct answers were specified.")
       false
     end
 
@@ -123,12 +123,12 @@ class Question::DragAndDrop < Question
   # rubocop:disable Metrics/AbcSize
   def well_formed_serialized_data
     unless data.is_a?(Array)
-      errors.add(:data, "expected to be an array, got #{data.class.inspect}")
+      errors.add(:base, "expected to be an array, got #{data.class.inspect}")
       return false
     end
 
     unless data.all? { |pair| pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && pair['answer'].present? }
-      errors.add(:data, "expected to be an array of hashs, each sub-array having an answer and correct element, the answers being strings")
+      errors.add(:base, "expected to be an array of hashs, each sub-array having an answer and correct element, the answers being strings")
       return false
     end
 
@@ -140,16 +140,16 @@ class Question::DragAndDrop < Question
         text_slots = slot_numbers_from_text
 
         if answer_slots.sort != text_slots.sort
-          errors.add(:data, "mismatch of declared slots in text and answers")
+          errors.add(:base, "mismatch of declared slots in text and answers")
           return false
         end
       else
-        errors.add(:data, "expected all answers to either map to a text slot or to be false.  Instead have answers marked as True.")
+        errors.add(:base, "expected all answers to either map to a text slot or to be false.  Instead have answers marked as True.")
       end
     end
 
     if sub_type == SUB_TYPE_ATA && candidates.any? { |candidate| !(candidate.is_a?(TrueClass) || candidate.is_a?(FalseClass)) }
-      errors.add(:data, "expected all answer candidates to either be either: 1) all True and/or False, or 2) all Numeric or false.")
+      errors.add(:base, "expected all answer candidates to either be either: 1) all True and/or False, or 2) all Numeric or false.")
       return false
     end
 

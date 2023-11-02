@@ -153,9 +153,9 @@ class Question < ApplicationRecord
       return unless row['PART_OF']
       parent_question = questions[row['PART_OF']]
       if parent_question
-        errors.add(:data, "expected PART_OF to be one of #{Question.type_names_that_have_parts.join(', ')}, got #{parent_question.type_name}.") unless parent_question.has_parts?
+        errors.add(:base, "expected PART_OF to be one of #{Question.type_names_that_have_parts.join(', ')}, got #{parent_question.type_name}.") unless parent_question.has_parts?
       else
-        errors.add(:data, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.")
+        errors.add(:base, "expected PART_OF value to be an IMPORT_ID of another row in the CSV.")
       end
     end
 

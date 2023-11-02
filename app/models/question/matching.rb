@@ -54,7 +54,7 @@ class Question::Matching < Question
       message += " Have LEFT_#{left_has.join(', LEFT_')} columns without corresponding RIGHT_#{left_has.join(', RIGHT_')} columns." if left_has.any?
       right_has = @rights - @lefts
       message += " Have RIGHT_#{right_has.join(', RIGHT_')} columns without corresponding LEFT_#{right_has.join(', LEFT_')} columns." if right_has.any?
-      errors.add(:data, message)
+      errors.add(:base, message)
     end
   end
 
@@ -72,7 +72,7 @@ class Question::Matching < Question
   # rubocop:disable Metrics/CyclomaticComplexity
   def well_formed_serialized_data
     unless data.is_a?(Array)
-      errors.add(:data, "expected to be an array, got #{data.class.inspect}")
+      errors.add(:base, "expected to be an array, got #{data.class.inspect}")
       return false
     end
 
@@ -85,7 +85,7 @@ class Question::Matching < Question
       pair['correct'].is_a?(Array) &&
       pair['correct'].all?(&:present?)
     end
-      errors.add(:data, "expected to be an array of hashes, each hash having an answer and correct, both of which are strings")
+      errors.add(:base, "expected to be an array of hashes, each hash having an answer and correct, both of which are strings")
       return false
     end
 

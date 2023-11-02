@@ -19,7 +19,9 @@ class Question::SelectAllThatApply < Question
     attr_reader :answers, :answer_columns
 
     def extract_answers_and_data_from(row)
-      @answers = row['ANSWERS']&.split(',')&.map(&:to_i)
+      @answers = row['ANSWERS']
+                   &.split(',')
+                   &.map(&:to_i) || []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i
@@ -29,6 +31,8 @@ class Question::SelectAllThatApply < Question
     end
 
     def validate_well_formed_row
+      errors.add(:data, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
+
       answers_as_column_names = answers.map { |a| "ANSWER_#{a}" }
       intersect = (answers_as_column_names & answer_columns)
       if intersect != answers_as_column_names

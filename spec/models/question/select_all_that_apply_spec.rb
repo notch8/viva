@@ -12,46 +12,54 @@ RSpec.describe Question::SelectAllThatApply do
       subject { described_class::ImportCsvRow.new(row: data, question_type: described_class, questions: {}) }
 
       context 'when inner_class is invalid' do
-        let(:data) do
-          CsvRow.new("ANSWERS" => "2,4,6",
-                     "ANSWER_1" => "Hello World!",
-                     "ANSWER_3" => "Something",
-                     "ANSWER_5" => "Else")
-        end
 
-        it "will not call the underlying question's save!" do
-          expect(subject.question).not_to receive(:save!)
-          expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/)
-        end
       end
     end
   end
 
   describe '.build_row' do
     subject { described_class.build_row(row:, questions: {}) }
-    let(:row) do
-      CsvRow.new("TYPE" => "AllThatApply",
-                 "TEXT" => "Which one is affirmative?",
-                 "LEVEL" => Level.names.first,
-                 "ANSWERS" => "1, 3",
-                 "ANSWER_1" => "true",
-                 "ANSWER_2" => "false",
-                 "ANSWER_3" => "yes",
-                 "ANSWER_4" => "",
-                 "KEYWORD" => "One, Two",
-                 "SUBJECT" => "Big, Little")
+    [
+      [{ "ANSWERS" => "2,4,6", "ANSWER_1" => "A1", "ANSWER_3" => "A3" },
+       /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/
+      ],
+      [{ "ANSWER_1" => "A1" }, /expected ANSWERS column/]
+    ].each do |given_data, error_message|
+      context "with invalid data #{given_data.inspect}" do
+        let(:row) { CsvRow.new(given_data) }
+
+        it "will not call the underlying question's save!" do
+          expect(subject.question).not_to receive(:save!)
+          expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, error_message)
+        end
+      end
     end
 
-    it { is_expected.to be_valid }
-    it { is_expected.not_to be_persisted }
-    its(:data) { is_expected.to eq([{ 'answer' => "true", 'correct' => true }, { 'answer' => "false", 'correct' => false }, { 'answer' => "yes", 'correct' => true }]) }
+    context 'with valid data' do
+      let(:row) do
+        CsvRow.new("TYPE" => "AllThatApply",
+                   "TEXT" => "Which one is affirmative?",
+                   "LEVEL" => Level.names.first,
+                   "ANSWERS" => "1, 3",
+                   "ANSWER_1" => "true",
+                   "ANSWER_2" => "false",
+                   "ANSWER_3" => "yes",
+                   "ANSWER_4" => "",
+                   "KEYWORD" => "One, Two",
+                   "SUBJECT" => "Big, Little")
+      end
 
-    context 'when saved' do
-      before { subject.save }
+      it { is_expected.to be_valid }
+      it { is_expected.not_to be_persisted }
+      its(:data) { is_expected.to eq([{ 'answer' => "true", 'correct' => true }, { 'answer' => "false", 'correct' => false }, { 'answer' => "yes", 'correct' => true }]) }
 
-      its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-      its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
-      its(:level) { is_expected.to eq(Level.names.first) }
+      context 'when saved' do
+        before { subject.save }
+
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:level) { is_expected.to eq(Level.names.first) }
+      end
     end
   end
 

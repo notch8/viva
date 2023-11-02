@@ -15,7 +15,7 @@ class Question::Scenario < Question
     end
 
     def validate_well_formed_row
-      errors.add(:data, "expected PART_OF column for CSV row.") unless row['PART_OF']
+      errors.add(:base, "expected PART_OF column for CSV row.") unless row['PART_OF']
     end
   end
 

@@ -31,19 +31,19 @@ class Question::SelectAllThatApply < Question
     end
 
     def validate_well_formed_row
-      errors.add(:data, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
+      errors.add(:base, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
 
       answers_as_column_names = answers.map { |a| "ANSWER_#{a}" }
       intersect = (answers_as_column_names & answer_columns)
       if intersect != answers_as_column_names
         message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
                   "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
-        errors.add(:data, message)
+        errors.add(:base, message)
       end
 
       correct_answers = data.select { |pair| pair['correct'] == true }
       return unless correct_answers.count.zero?
-      errors.add(:data, "expected at least one correct answer, but no correct answers were specified.")
+      errors.add(:base, "expected at least one correct answer, but no correct answers were specified.")
       false
     end
   end
@@ -65,7 +65,7 @@ class Question::SelectAllThatApply < Question
   # rubocop:disable Metrics/MethodLength
   def well_formed_serialized_data
     unless data.is_a?(Array)
-      errors.add(:data, "expected to be an array, got #{data.class.inspect}")
+      errors.add(:base, "expected to be an array, got #{data.class.inspect}")
       return false
     end
 
@@ -75,7 +75,7 @@ class Question::SelectAllThatApply < Question
       pair['answer'].present? && pair['answer'].is_a?(String) &&
       pair['answer'].present? && (pair['correct'].is_a?(TrueClass) || pair['correct'].is_a?(FalseClass))
     end
-      errors.add(:data, "expected to be an array of arrays, each sub-array having two elements, both of which are strings")
+      errors.add(:base, "expected to be an array of arrays, each sub-array having two elements, both of which are strings")
       return false
     end
 
@@ -83,7 +83,7 @@ class Question::SelectAllThatApply < Question
     correct_answers = data.select { |pair| pair['correct'] == true }
 
     if correct_answers.count.zero?
-      errors.add(:data, "expected one correct answer, but no correct answers were specified.")
+      errors.add(:base, "expected one correct answer, but no correct answers were specified.")
       return false
     end
 

@@ -31,14 +31,14 @@ class Question::Traditional < Question
 
     # rubocop:disable Metrics/AbcSize
     def validate_well_formed_row
-      errors.add(:data, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
+      errors.add(:base, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
 
       if answers.size == 1
         if answer_columns.exclude?("ANSWER_#{answers.first}")
-          errors.add(:data, "ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")
+          errors.add(:base, "ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")
         end
       else
-        errors.add(:data, "expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
+        errors.add(:base, "expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
       end
     end
     # rubocop:enable Metrics/AbcSize
@@ -62,12 +62,12 @@ class Question::Traditional < Question
   # rubocop:disable Metrics/AbcSize
   def well_formed_serialized_data
     unless data.is_a?(Array)
-      errors.add(:data, "expected to be a Array, got #{data.class.inspect}")
+      errors.add(:base, "expected to be a Array, got #{data.class.inspect}")
       return false
     end
 
     unless data.all? { |pair| pair.is_a?(Hash) && pair.keys.sort == ['answer', 'correct'] && pair['answer'].is_a?(String) && (pair['correct'].is_a?(TrueClass) || pair['correct'].is_a?(FalseClass)) }
-      errors.add(:data, "expected to be an array of hashes, each hash an answer and correct element, the answer being a string and the correct being a boolean")
+      errors.add(:base, "expected to be an array of hashes, each hash an answer and correct element, the answer being a string and the correct being a boolean")
       return false
     end
 
@@ -75,10 +75,10 @@ class Question::Traditional < Question
     correct_answers = data.select { |pair| pair['correct'] == true }
 
     if correct_answers.count.zero?
-      errors.add(:data, "expected one correct answer, but no correct answers were specified.")
+      errors.add(:base, "expected one correct answer, but no correct answers were specified.")
       return false
     elsif correct_answers.count > 1
-      errors.add(:data, "expected only one correct answer, but instead have #{correct_answers.count} correct answers.")
+      errors.add(:base, "expected only one correct answer, but instead have #{correct_answers.count} correct answers.")
       return false
     end
 

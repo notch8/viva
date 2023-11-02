@@ -11,7 +11,7 @@ RSpec.describe Question::Traditional do
     subject { described_class.build_row(row: data, questions: {}) }
 
     [
-      [{ "ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /Data ANSWERS column indicates that ANSWER_2/],
+      [{ "ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /ANSWERS column indicates that ANSWER_2/],
       [{ "ANSWERS" => "1,2", "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected ANSWERS cell to have one correct answer/],
       [{ "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected ANSWERS cell to have one correct answer/]
     ].each do |given_data, error_message|

@@ -11,7 +11,24 @@ RSpec.describe Question::ImporterCsv do
         subject { described_class.from_file(file_fixture(File.basename(path))) }
 
         it 'creates at least one question' do
+          # Also this is a great place to put a debug to see the output.
           expect { subject.save }.to change(Question, :count)
+        end
+      end
+    end
+
+    Rails.root.glob("spec/fixtures/files/invalid_*.csv").each do |path|
+      context "with \"#{File.basename(path)}\" when saved" do
+        subject { described_class.from_file(file_fixture(File.basename(path))) }
+
+        it 'creates no questions' do
+          # Also this is a great place to put a debug to see the output.
+          expect { subject.save }.not_to change(Question, :count)
+
+          subject.errors[:rows].each do |errors|
+            expect(errors).to have_key(:import_id)
+            expect(errors).to have_key(:base) # Probably
+          end
         end
       end
     end
@@ -30,7 +47,7 @@ RSpec.describe Question::ImporterCsv do
       end.not_to change(Question, :count)
 
       # Verifying the error message
-      expect(subject.errors.dig(:rows, 0, :data, 0)).to include(Question.type_names_that_have_parts.join(', '))
+      expect(subject.errors.dig(:rows, 0, :base, 0)).to include(Question.type_names_that_have_parts.join(', '))
     end
   end
 
@@ -136,7 +153,7 @@ RSpec.describe Question::ImporterCsv do
 
       json = subject.as_json
       expect(json.keys.sort).to eq([:errors, :questions])
-      expect(json[:errors]['rows'].first.keys).to match_array(["data", "import_id"])
+      expect(json[:errors]['rows'].first.keys).to match_array(["base", "import_id"])
       expect(json[:questions]).not_to be_present
     end
   end

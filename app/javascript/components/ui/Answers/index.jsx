@@ -5,17 +5,29 @@ import MatchingAnswers from './MatchingAnswers'
 import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
 import TraditionalAnswers from './TraditionalAnswers'
 
-const Answers = ({ question_type, answers }) => {
+const Answers = ({ question_type_name, answers }) => {
   return (
     <>
-      <h3 className='h6 fw-bold default-answers'>Answers</h3>
-      {question_type === 'Question::BowTie' && <BowTieAnswers answers={answers} />}
-      {question_type === 'Question::DragAndDrop' && <DragAndDropAnswers answers={answers} />}
-      {question_type === 'Question::Matching' && <MatchingAnswers answers={answers} />}
-      {question_type === 'Question::StimulusCaseStudy' && <StimulusCaseStudyAnswers answers={answers} />}
+      {question_type_name === 'Stimulus Case Study' && (
+        <StimulusCaseStudyAnswers answers={answers} />
+      )}
+      {question_type_name !== 'Stimulus Case Study' && (
+        <h3 className='h6 fw-bold default-answers'>Answers</h3>
+      )}
+      {question_type_name === 'Bow Tie' && <BowTieAnswers answers={answers} />}
+      {question_type_name === 'Drag And Drop' && (
+        <DragAndDropAnswers answers={answers} />
+      )}
+      {question_type_name === 'Matching' && (
+        <MatchingAnswers answers={answers} />
+      )}
       {/* Traditional and SATA types use the same format */}
-      {question_type === 'Question::Traditional' && <TraditionalAnswers answers={answers} />}
-      {question_type === 'Question::SelectAllThatApply' && <TraditionalAnswers answers={answers} />}
+      {question_type_name === 'Traditional' && (
+        <TraditionalAnswers answers={answers} />
+      )}
+      {question_type_name === 'Select All That Apply' && (
+        <TraditionalAnswers answers={answers} />
+      )}
     </>
   )
 }

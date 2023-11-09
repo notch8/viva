@@ -56,7 +56,10 @@ class Question::BowTie < Question
       correct_answer_colum_numbers = {}
       @data = {}
       question_type::EXPECTED_DATA_HASH_KEYS.each do |key|
-        correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]&.split(/\s*,\s*/)&.map(&:to_i) || []
+        correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]
+                                            &.split(/\s*,\s*/)
+                                            &.map(&:to_i) ||
+                                            []
         data[key] = { "label" => row["#{key.upcase}_LABEL"], "answers" => [] }
       end
 
@@ -107,7 +110,9 @@ class Question::BowTie < Question
       index_errors = {}
       # I need to ensure that each "answer" for each direction exists
       expected_answer_columns = question_type::EXPECTED_DATA_HASH_KEYS.each_with_object({}) do |direction, hash|
-        indices = row["#{direction.upcase}_ANSWERS"]&.split(/\s*,\s*/) || []
+        indices = row["#{direction.upcase}_ANSWERS"]
+                  &.split(/\s*,\s*/) ||
+                  []
         indices.each do |i|
           Integer(i)
         rescue ArgumentError

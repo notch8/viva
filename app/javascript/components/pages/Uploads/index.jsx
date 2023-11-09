@@ -90,7 +90,7 @@ const Uploads = (props) => {
                 {/* errors on the row level */}
                 {responseErrors?.rows && responseErrors.rows.map((row, index) => (
                   <p key={index} className='small'>
-                    <span><b>Row with import ID {row.import_id}:</b> {row.base ? row.base : 'Please check that all data is entered correctly in each cell'}</span>
+                    <span><b>Row with import ID {row.import_id}:</b> {row.base ? [row.base].flat().join('; '): 'Please check that all data is entered correctly in each cell'}</span>
                   </p>
                 ))}
               </>

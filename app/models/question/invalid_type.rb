@@ -7,6 +7,6 @@
 # @see {Question}
 class Question::InvalidType < Question::InvalidQuestion
   def message
-    "row had TYPE of #{row['TYPE'].inspect} but expected to be one of the following: #{Question.descendants.map(&:type_name)}"
+    "row had TYPE of #{row['TYPE'].inspect} but expected to be one of the following: #{Question.descendants.map(&:type_name).join(', ')}"
   end
 end

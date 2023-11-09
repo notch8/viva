@@ -70,8 +70,12 @@ class Question::DragAndDrop < Question
     end
 
     # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def extract_drag_and_drop_all_that_apply(row:, **)
-      @answers = row['ANSWERS']&.split(",")&.map { |answer| answer.strip.to_i }
+      @answers = row['ANSWERS']
+                 &.split(",")
+                 &.map { |answer| answer.strip.to_i } ||
+                 []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = row.headers.each_with_object([]) do |header, array|
         next if header.blank?
@@ -82,6 +86,7 @@ class Question::DragAndDrop < Question
         array << { 'answer' => row[header], 'correct' => answers.include?(index) }
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
     # rubocop:enable Metrics/CyclomaticComplexity
   end
 

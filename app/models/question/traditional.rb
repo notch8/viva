@@ -20,7 +20,8 @@ class Question::Traditional < Question
       # Specific to the subclass
       @answers = row['ANSWERS']
                  &.split(/\s*,\s*/)
-                 &.map(&:to_i) || []
+                 &.map(&:to_i) ||
+                 []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i

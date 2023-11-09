@@ -9,6 +9,10 @@ Rails.application.routes.draw do
     authenticated :user do
       # search page routes
       root 'search#index', as: :authenticated_root
+
+      # Necessary for downloading the XML file from the search result.
+      get '/(.:format)', to: 'search#index'
+
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'
       patch '/settings/update', to: 'settings#update'

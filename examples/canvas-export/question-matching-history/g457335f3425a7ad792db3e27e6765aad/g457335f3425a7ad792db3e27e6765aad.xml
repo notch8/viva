@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+  <assessment ident="g457335f3425a7ad792db3e27e6765aad" title="Matching question - history">
+    <qtimetadata>
+      <qtimetadatafield>
+        <fieldlabel>cc_maxattempts</fieldlabel>
+        <fieldentry>1</fieldentry>
+      </qtimetadatafield>
+    </qtimetadata>
+    <section ident="root_section">
+      <item ident="18d69932879aee1dfb6327a2353e6764" title="Projection ">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>matching_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>67455,68706,74569</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>c8a3b547e011c4b1dd8e675677cc7408</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialDeep</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;p&gt;&lt;span style="font-weight: 400;"&gt;Match the map projection with the year it was created: &lt;/span&gt;&lt;/p&gt;</mattext>
+          </material>
+          <response_lid ident="response_74569">
+            <material>
+              <mattext texttype="text/plain">Mercator</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="67455">
+                <material>
+                  <mattext>Before 150CE</mattext>
+                </material>
+              </response_label>
+              <response_label ident="68706">
+                <material>
+                  <mattext>1963</mattext>
+                </material>
+              </response_label>
+              <response_label ident="74569">
+                <material>
+                  <mattext>1569</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+          <response_lid ident="response_67455">
+            <material>
+              <mattext texttype="text/plain">Stereographic</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="67455">
+                <material>
+                  <mattext>Before 150CE</mattext>
+                </material>
+              </response_label>
+              <response_label ident="68706">
+                <material>
+                  <mattext>1963</mattext>
+                </material>
+              </response_label>
+              <response_label ident="74569">
+                <material>
+                  <mattext>1569</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+          <response_lid ident="response_68706">
+            <material>
+              <mattext texttype="text/plain">Robinson</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="67455">
+                <material>
+                  <mattext>Before 150CE</mattext>
+                </material>
+              </response_label>
+              <response_label ident="68706">
+                <material>
+                  <mattext>1963</mattext>
+                </material>
+              </response_label>
+              <response_label ident="74569">
+                <material>
+                  <mattext>1569</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition>
+            <conditionvar>
+              <varequal respident="response_74569">74569</varequal>
+            </conditionvar>
+            <setvar action="Add" varname="SCORE">33.33</setvar>
+          </respcondition>
+          <respcondition>
+            <conditionvar>
+              <varequal respident="response_67455">67455</varequal>
+            </conditionvar>
+            <setvar action="Add" varname="SCORE">33.33</setvar>
+          </respcondition>
+          <respcondition>
+            <conditionvar>
+              <varequal respident="response_68706">68706</varequal>
+            </conditionvar>
+            <setvar action="Add" varname="SCORE">33.33</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+    </section>
+  </assessment>
+</questestinterop>

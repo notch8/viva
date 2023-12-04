@@ -8,8 +8,6 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
-  autoload :MatchingBehavior, 'question/concerns/matching_behavior.rb'
-
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
 

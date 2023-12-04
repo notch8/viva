@@ -7,8 +7,8 @@
 class Question::Categorization < Question
   self.type_name = "Categorization"
 
-  class ImportCsvRow < Question::MatchingBehavior::ImportCsvRow
+  class ImportCsvRow < MatchingQuestionBehavior::ImportCsvRow
   end
 
-  include Question::MatchingBehavior
+  include MatchingQuestionBehavior
 end

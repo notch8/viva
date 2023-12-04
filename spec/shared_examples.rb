@@ -81,8 +81,8 @@ RSpec.shared_examples 'a Matching Question' do
     subject { described_class.build_row(row:, questions: {}) }
     context 'with invalid data due to mismatched columns' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
-                   "TEXT" => "Matching the proper pairings:",
+        CsvRow.new("TYPE" => described_class.type_name,
+                   "TEXT" => "#{described_class.type_name} the proper pairings:",
                    "LEVEL" => Level.names.first,
                    "LEFT_1" => "Animal",
                    "LEFT_3" => "Mineral",
@@ -105,8 +105,8 @@ RSpec.shared_examples 'a Matching Question' do
 
     context 'with valid data' do
       let(:row) do
-        CsvRow.new("TYPE" => "Matching",
-                   "TEXT" => "Matching the proper pairings:",
+        CsvRow.new("TYPE" => described_class.type_name,
+                   "TEXT" => "#{described_class.type_name} the proper pairings:",
                    "LEVEL" => Level.names.first,
                    "LEFT_1" => "Animal",
                    "RIGHT_1" => "Cat, Dog",

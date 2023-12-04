@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-module Question::MatchingBehavior
+##
+# This module provides common behavior between the {Question::Matching} and {Question::Categorization}.
+module MatchingQuestionBehavior
   extend ActiveSupport::Concern
 
   ##
-  # Represents the mapping process of a CSV Row to the underlying {Question::Matching}.
+  # Represents the mapping process of a CSV Row to the underlying {Question}.
   #
   # The primary purpose of this class is to convey meaningful error messages for invalid CSV
   # structures.

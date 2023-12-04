@@ -26,7 +26,8 @@ RSpec.describe Question, type: :model do
                      Question::Matching,
                      Question::SelectAllThatApply,
                      Question::StimulusCaseStudy,
-                     Question::Traditional])
+                     Question::Traditional,
+                     Question::Upload])
       )
     end
     # rubocop:enable RSpec/ExampleLength
@@ -78,7 +79,8 @@ RSpec.describe Question, type: :model do
                       "Matching",
                       "Select All That Apply",
                       "Stimulus Case Study",
-                      "Traditional"
+                      "Traditional",
+                      "Upload"
                     ])
       )
     end

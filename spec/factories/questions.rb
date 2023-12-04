@@ -71,6 +71,10 @@ FactoryBot.define do
       data { { "markdown" => "Hello\n* World\n\nLink to [Samvera](https://samvera.org)" } }
     end
 
+    factory :question_upload, class: Question::Upload, parent: :question do
+      data { { "markdown" => "Hello\n* World\n\nLink to [Samvera](https://samvera.org)" } }
+    end
+
     factory :question_scenario, class: Question::Scenario, parent: :question do
       parent_question factory: :question_stimulus_case_study_without_children
     end

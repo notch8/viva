@@ -2,9 +2,9 @@
 
 require 'rails_helper'
 
-RSpec.describe Question::Essay do
+RSpec.describe Question::Upload do
   it_behaves_like "a Question"
   it_behaves_like "a Markdown Question"
   its(:type_label) { is_expected.to eq("Question") }
-  its(:type_name) { is_expected.to eq("Essay") }
+  its(:type_name) { is_expected.to eq("Upload") }
 end

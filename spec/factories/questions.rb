@@ -130,7 +130,7 @@ FactoryBot.define do
     end
 
     factory :question_essay, class: Question::Essay, parent: :question do
-      data { { "markdown" => "Hello\n* World\n\nLink to [Samvera](https://samvera.org)" } }
+      data { { "html" => "<p>Hello</p><ul><li>World</li><li>Link to <a href='https://samvera.org'>Samvera</a></li></ul>" } }
     end
 
     factory :question_matching, class: Question::Matching, parent: :question do
@@ -177,7 +177,7 @@ FactoryBot.define do
     end
 
     factory :question_upload, class: Question::Upload, parent: :question do
-      data { { "markdown" => "Hello\n* World\n\nLink to [Samvera](https://samvera.org)" } }
+      data { { "html" => "<p>Hello</p><ul><li>World</li><li>Link to <a href='https://samvera.org'>Samvera</a></li></ul>" } }
     end
   end
 end

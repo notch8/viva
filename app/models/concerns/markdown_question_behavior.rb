@@ -14,6 +14,16 @@ module MarkdownQuestionBehavior
   end
 
   class ImportCsvRow < Question::ImportCsvRow
+    # rubocop:disable Metrics/MethodLength
+
+    ##
+    # This method will set the @text and @data for import.  Most notably we're assuming that the
+    # input is multiple columns of Markdown.  It will also strip the provided text fields of any
+    # HTML, then convert that text to markdown.
+    #
+    # @param row [CsvRow, Hash]
+    #
+    # @see https://api.rubyonrails.org/classes/ActionView/Helpers/SanitizeHelper.html#method-i-strip_tags SanitizeHelper.strip_tags
     def extract_answers_and_data_from(row)
       @section_integers = []
 
@@ -25,16 +35,25 @@ module MarkdownQuestionBehavior
       @section_integers.sort!
       rows = []
       rows << row.fetch('TEXT') if row.headers.include?("TEXT") && row['TEXT'].present?
-      markdown = @section_integers.each_with_object(rows) do |integer, acc|
+
+      # Why the double carriage return?  Without that if we have "Text\n* Bullet" that will be
+      # converted to "<p>Text\n* Bullet</p>" But with the "\n\n" we end up with
+      # "<p>Text</p><ul><li>Bullet</li></ul>"; and multiple bullets also work.
+      @text = @section_integers.each_with_object(rows) do |integer, acc|
         acc << row.fetch("TEXT_#{integer}")
-      end.join("\n")
+      end.join("\n\n")
 
-      @text = markdown
+      # We need to ensure that we're not letting stray HTML make it's way into the application;
+      # without stripping tags this is a vector for Javascript injection.
+      @text = ApplicationController.helpers.strip_tags(@text)
 
-      # TODO: When should we convert this to HTML?  I assume Markdown is inadequate?  We can defer
-      # on this decision until approval of the data transport format.
-      @data = { "markdown" => markdown }
+      # We're stripping the new line characters as those are not technically not-needed for storage
+      # nor transport.
+      html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@text).delete("\n")
+
+      @data = { "html" => html }
     end
+    # rubocop:enable Metrics/MethodLength
 
     def validate_well_formed_row
       errors.add(:base, "expected one or more TEXT columns") unless row.key?("TEXT") || @section_integers.any?

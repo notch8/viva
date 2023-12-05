@@ -185,13 +185,16 @@ RSpec.shared_examples 'a Markdown Question' do
         CsvRow.new("TYPE" => described_class.type_name,
                    "TEXT" => "Title of Question",
                    "TEXT_1" => "* Bullet Point",
+                   "TEXT_2" => "* Second Point",
+                   "TEXT_3" => "<script>alert('Hello');</script>",
                    "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end
 
       it { is_expected.to be_valid }
       it { is_expected.not_to be_persisted }
-      its(:data) { is_expected.to eq({ "markdown" => "Title of Question\n* Bullet Point" }) }
+      let(:expected_html) { "<p>Title of Question</p><ul><li><p>Bullet Point</p></li><li><p>Second Point</p></li></ul>" }
+      its(:data) { is_expected.to eq({ "html" => expected_html }) }
 
       it 'will save the underlying record' do
         expect { subject.save }.to change(described_class, :count).by(1)

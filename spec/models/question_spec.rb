@@ -19,6 +19,7 @@ RSpec.describe Question, type: :model do
     it do
       is_expected.to(
         match_array([Question::BowTie,
+                     Question::Categorization,
                      Question::Scenario,
                      Question::DragAndDrop,
                      Question::Matching,
@@ -70,6 +71,7 @@ RSpec.describe Question, type: :model do
       is_expected.to(
         match_array([
                       "Bow Tie",
+                      "Categorization",
                       "Drag and Drop",
                       "Matching",
                       "Select All That Apply",

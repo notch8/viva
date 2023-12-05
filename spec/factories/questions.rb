@@ -56,6 +56,17 @@ FactoryBot.define do
       end
     end
 
+    factory :question_categorization, class: Question::Categorization, parent: :question do
+      data do
+        (1..4).map do |i|
+          {
+            answer: "Left #{i} #{Faker::Lorem.word}",
+            correct: (0..rand(4)).map { |j| "Right #{i}-#{j} #{Faker::Lorem.word}" }
+          }
+        end
+      end
+    end
+
     factory :question_scenario, class: Question::Scenario, parent: :question do
       parent_question factory: :question_stimulus_case_study_without_children
     end

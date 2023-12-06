@@ -4,6 +4,7 @@ import DragAndDropAnswers from './DragAndDropAnswers'
 import MatchingAnswers from './MatchingAnswers'
 import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
 import TraditionalAnswers from './TraditionalAnswers'
+import EssayAnswers from './EssayAnswers'
 
 const Answers = ({ question_type_name, answers }) => {
   return (
@@ -11,7 +12,11 @@ const Answers = ({ question_type_name, answers }) => {
       {question_type_name === 'Stimulus Case Study' && (
         <StimulusCaseStudyAnswers answers={answers} />
       )}
-      {question_type_name !== 'Stimulus Case Study' && (
+      {question_type_name === 'Essay' && (
+        <EssayAnswers answers={answers} />
+      )}
+      {(question_type_name !== 'Stimulus Case Study' &&
+        question_type_name !== 'Essay') && (
         <h3 className='h6 fw-bold default-answers'>Answers</h3>
       )}
       {question_type_name === 'Bow Tie' && <BowTieAnswers answers={answers} />}

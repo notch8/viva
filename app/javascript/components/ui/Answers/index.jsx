@@ -18,7 +18,7 @@ const Answers = ({ question_type_name, answers }) => {
       {question_type_name === 'Drag And Drop' && (
         <DragAndDropAnswers answers={answers} />
       )}
-      {question_type_name === 'Matching' && (
+      {(question_type_name === 'Matching' || question_type_name === 'Categorization') && (
         <MatchingAnswers answers={answers} />
       )}
       {/* Traditional and SATA types use the same format */}

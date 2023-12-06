@@ -12,7 +12,8 @@ const Answers = ({ question_type_name, answers }) => {
       {question_type_name === 'Stimulus Case Study' && (
         <StimulusCaseStudyAnswers answers={answers} />
       )}
-      {question_type_name === 'Essay' && (
+      {(question_type_name === 'Essay' ||
+        question_type_name === 'Upload') && (
         <EssayAnswers answers={answers} />
       )}
       {(question_type_name !== 'Stimulus Case Study' &&
@@ -27,10 +28,8 @@ const Answers = ({ question_type_name, answers }) => {
         <MatchingAnswers answers={answers} />
       )}
       {/* Traditional and SATA types use the same format */}
-      {question_type_name === 'Traditional' && (
-        <TraditionalAnswers answers={answers} />
-      )}
-      {question_type_name === 'Select All That Apply' && (
+      {(question_type_name === 'Traditional' ||
+        question_type_name === 'Select All That Apply') && (
         <TraditionalAnswers answers={answers} />
       )}
     </>

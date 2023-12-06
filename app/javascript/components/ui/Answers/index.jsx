@@ -6,7 +6,6 @@ import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
 import TraditionalAnswers from './TraditionalAnswers'
 
 const Answers = ({ question_type_name, answers }) => {
-  console.log('question_type_name', question_type_name)
   return (
     <>
       {question_type_name === 'Stimulus Case Study' && (

@@ -17,7 +17,8 @@ const Answers = ({ question_type_name, answers }) => {
         <EssayAnswers answers={answers} />
       )}
       {(question_type_name !== 'Stimulus Case Study' &&
-        question_type_name !== 'Essay') && (
+        question_type_name !== 'Essay' &&
+        question_type_name !== 'Upload') && (
         <h3 className='h6 fw-bold default-answers'>Answers</h3>
       )}
       {question_type_name === 'Bow Tie' && <BowTieAnswers answers={answers} />}

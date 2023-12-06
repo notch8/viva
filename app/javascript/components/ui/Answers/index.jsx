@@ -6,6 +6,7 @@ import StimulusCaseStudyAnswers from './StimulusCaseStudyAnswers'
 import TraditionalAnswers from './TraditionalAnswers'
 
 const Answers = ({ question_type_name, answers }) => {
+  console.log('question_type_name', question_type_name)
   return (
     <>
       {question_type_name === 'Stimulus Case Study' && (
@@ -15,7 +16,7 @@ const Answers = ({ question_type_name, answers }) => {
         <h3 className='h6 fw-bold default-answers'>Answers</h3>
       )}
       {question_type_name === 'Bow Tie' && <BowTieAnswers answers={answers} />}
-      {question_type_name === 'Drag And Drop' && (
+      {question_type_name === 'Drag and Drop' && (
         <DragAndDropAnswers answers={answers} />
       )}
       {question_type_name === 'Matching' && (

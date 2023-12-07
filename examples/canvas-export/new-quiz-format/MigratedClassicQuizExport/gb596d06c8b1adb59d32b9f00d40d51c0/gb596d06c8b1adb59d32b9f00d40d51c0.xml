@@ -1,0 +1,2289 @@
+<?xml version="1.0"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+  <assessment ident="gb596d06c8b1adb59d32b9f00d40d51c0" title="qti">
+    <qtimetadata>
+      <qtimetadatafield>
+        <fieldlabel>cc_maxattempts</fieldlabel>
+        <fieldentry>1</fieldentry>
+      </qtimetadatafield>
+    </qtimetadata>
+    <section ident="root_section">
+      <item ident="182fe40b8ed723be67e7bd75350a5e82" title="Question 1">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>94ca7495-783a-43fa-84af-91a7770a5f69,e3f146fd-8a52-4208-a8bc-f89d939057b1,809f276e-f6c0-4279-80f8-8093aba25131,fcc268f1-5722-454f-9d19-db47ff845bd5,16993574-03b6-4192-83fc-83b4f0e2704e</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>7667adeb621360b1f0c75919c35f512f</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q1&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="94ca7495-783a-43fa-84af-91a7770a5f69">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e3f146fd-8a52-4208-a8bc-f89d939057b1">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="809f276e-f6c0-4279-80f8-8093aba25131">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="fcc268f1-5722-454f-9d19-db47ff845bd5">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="16993574-03b6-4192-83fc-83b4f0e2704e">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">e3f146fd-8a52-4208-a8bc-f89d939057b1</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="bdaee80f62b6c12ea23a553daa0d6468" title="Question 2">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>44eef61a-b96b-47fb-bef0-639dcf1b13a7,90d49f9a-e612-499f-b482-bb862a400a96,b167988b-f7a8-4f29-a27a-ef5625c3a539,d612ac94-b37c-433c-8d30-efbb410dfd44,b232fe81-82ba-4810-b8b9-14435356f505</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>fd8c4f9cfb4e4b4114399eb905118078</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q2&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="44eef61a-b96b-47fb-bef0-639dcf1b13a7">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="90d49f9a-e612-499f-b482-bb862a400a96">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b167988b-f7a8-4f29-a27a-ef5625c3a539">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="d612ac94-b37c-433c-8d30-efbb410dfd44">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b232fe81-82ba-4810-b8b9-14435356f505">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">90d49f9a-e612-499f-b482-bb862a400a96</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="9f95792f33e72153c50ce9682fb342a4" title="Question 3">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>8a2f0732-e6f5-44ad-b355-6c52b8ae5d27,5689d2bd-994d-4e0b-9078-d01c8350b7a2,e76cbfa4-997c-4409-98da-92d0e2dbd933,69d1d12f-a93e-4716-b98c-6e179b583696,c860a1cd-bca5-4789-9345-812a28dd610e</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>e0d854e4c806316a8a411edbaaac4edd</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q3&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="8a2f0732-e6f5-44ad-b355-6c52b8ae5d27">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="5689d2bd-994d-4e0b-9078-d01c8350b7a2">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e76cbfa4-997c-4409-98da-92d0e2dbd933">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="69d1d12f-a93e-4716-b98c-6e179b583696">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c860a1cd-bca5-4789-9345-812a28dd610e">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">5689d2bd-994d-4e0b-9078-d01c8350b7a2</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="1ae666d2f214c1e4a605be77dc6a4b52" title="Question 4">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>ed9f5eac-2048-4f2f-aaf4-5557a30b1d97,b427346a-d97f-4880-becb-5405585303bd,fc0b377b-341b-44c6-8fb0-fcb5689943a2,c906d93e-83d2-429c-aef6-b874a507c47c,9272dad0-a7b9-4a49-a8fc-a48ee299f825</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>2f5e55b9af1c58bd636f3d83527caec1</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q4&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="ed9f5eac-2048-4f2f-aaf4-5557a30b1d97">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b427346a-d97f-4880-becb-5405585303bd">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="fc0b377b-341b-44c6-8fb0-fcb5689943a2">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c906d93e-83d2-429c-aef6-b874a507c47c">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="9272dad0-a7b9-4a49-a8fc-a48ee299f825">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">fc0b377b-341b-44c6-8fb0-fcb5689943a2</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="dcf2eae4db4f6b36202f787ad8806a25" title="Question 5">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>4ad5f4ac-149f-4abe-8150-9fdcfbd83a13,1af4cf22-2250-46ac-bea5-f12df96f328d,bfa0d774-194e-4c13-a13a-e8cee70465c8,50deccc7-75df-4c55-9fe9-a357598c6dab,5b600daf-f772-44f3-9c7d-8403c64e0ad3</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>26a0c25a431a509233086e31c08e3dba</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q5&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="4ad5f4ac-149f-4abe-8150-9fdcfbd83a13">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="1af4cf22-2250-46ac-bea5-f12df96f328d">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="bfa0d774-194e-4c13-a13a-e8cee70465c8">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="50deccc7-75df-4c55-9fe9-a357598c6dab">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="5b600daf-f772-44f3-9c7d-8403c64e0ad3">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">1af4cf22-2250-46ac-bea5-f12df96f328d</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="47c71c7aa82cfe8623c5dde2467d4c97" title="Question 6">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>db954316-c294-41da-be21-5b6847a49f3d,475dcd8c-fb53-4ee5-8f75-799cd197b810,6c49c7d5-f745-475c-bf83-c21e20b77101,b41ea3d6-26fb-4b7a-bfcf-16c57dcfcad0,d0c91fd3-16bc-4641-b47c-6eda9996c936</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>17f4b67509ecc87f4cae38650e75d1e8</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q6&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="db954316-c294-41da-be21-5b6847a49f3d">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="475dcd8c-fb53-4ee5-8f75-799cd197b810">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="6c49c7d5-f745-475c-bf83-c21e20b77101">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b41ea3d6-26fb-4b7a-bfcf-16c57dcfcad0">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="d0c91fd3-16bc-4641-b47c-6eda9996c936">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">6c49c7d5-f745-475c-bf83-c21e20b77101</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="13f9d2d74d398fd650e2d6abbd0ce7ae" title="Question 7">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>a0cde47f-ab7d-4a86-9654-71432e9e3282,c29e1aa7-fb50-42a1-ada7-d67ef0e590e0,97ff693e-7d8a-460c-9097-ed208ed2f32a,64ec27fb-69b8-4e57-a654-589e6ff94cf4,e5226977-0eac-4716-acde-b937df5dc5ea</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>afd060cf4b7b214b9e3fb3ad642f0868</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q7&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="a0cde47f-ab7d-4a86-9654-71432e9e3282">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c29e1aa7-fb50-42a1-ada7-d67ef0e590e0">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="97ff693e-7d8a-460c-9097-ed208ed2f32a">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="64ec27fb-69b8-4e57-a654-589e6ff94cf4">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e5226977-0eac-4716-acde-b937df5dc5ea">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">c29e1aa7-fb50-42a1-ada7-d67ef0e590e0</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="d5ea60ce3fad583573ad401dadcfb165" title="Question 8">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>b12a9790-38af-4bad-96c4-4d915d610faf,c8ae2af2-ed28-4d99-a13c-a9e8db87ab96,bdb071b3-e05f-4bda-8c6c-f8e56bb22481,53fb7d9c-cb10-4751-af8b-9c8ef27f9c5b,a9e42e73-d63b-417b-a142-2c34795f171e</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>9effd5a9a9e20209df17e571f33ba664</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q8&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="b12a9790-38af-4bad-96c4-4d915d610faf">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c8ae2af2-ed28-4d99-a13c-a9e8db87ab96">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="bdb071b3-e05f-4bda-8c6c-f8e56bb22481">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="53fb7d9c-cb10-4751-af8b-9c8ef27f9c5b">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a9e42e73-d63b-417b-a142-2c34795f171e">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">b12a9790-38af-4bad-96c4-4d915d610faf</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="bc7c04668db96d02aad24c0b9f6d44ae" title="Question 9">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>224471d5-7a28-4e94-b49f-f89ff3abce20,1a85b8a0-3440-4638-9803-e9ac5827933d,4acb76f2-f287-4960-b9ea-23a182f3d574,b90cb6ae-a5ba-453d-ab3f-40ba1055d396,cd1e1349-75fa-44b6-a54d-bfc93f412311</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>554c579026786488ff171f1c95987c4f</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q9&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="224471d5-7a28-4e94-b49f-f89ff3abce20">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="1a85b8a0-3440-4638-9803-e9ac5827933d">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4acb76f2-f287-4960-b9ea-23a182f3d574">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b90cb6ae-a5ba-453d-ab3f-40ba1055d396">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="cd1e1349-75fa-44b6-a54d-bfc93f412311">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">1a85b8a0-3440-4638-9803-e9ac5827933d</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="3727c791982cdddef24c60caaab3b805" title="Question 10">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>e92300dc-9de6-47bb-a55e-338e9b61133c,14a22028-58fd-4c7d-a688-e25760eb0fdb,a98f7809-2ac1-4e78-8049-5d606c3c5fad,c67bd481-38aa-4634-b5a8-9601ac222d0c,eda848f3-b86e-4c8e-9c56-ce912715b46b</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>dae3bb2f3484069cc82ff79faa88b7d5</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q10&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="e92300dc-9de6-47bb-a55e-338e9b61133c">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="14a22028-58fd-4c7d-a688-e25760eb0fdb">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a98f7809-2ac1-4e78-8049-5d606c3c5fad">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c67bd481-38aa-4634-b5a8-9601ac222d0c">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="eda848f3-b86e-4c8e-9c56-ce912715b46b">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">c67bd481-38aa-4634-b5a8-9601ac222d0c</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="e2ed7175400bd02f6d6647ad99b03135" title="Question 11">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>fe0c868d-a53b-4c12-927f-6ad11d48dbf7,80955e79-4bb4-42bf-97a7-34c900c21363,758e4a89-23bf-4e6a-9c54-bd5905504e61,f4e1ba3c-2efe-417b-9376-8340c723632a,8b9573f4-4c8f-4885-9e1f-3cbd0aff6b73</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>cba610f26016f25246fc14cdf1ffb185</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q11&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="fe0c868d-a53b-4c12-927f-6ad11d48dbf7">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="80955e79-4bb4-42bf-97a7-34c900c21363">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="758e4a89-23bf-4e6a-9c54-bd5905504e61">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f4e1ba3c-2efe-417b-9376-8340c723632a">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="8b9573f4-4c8f-4885-9e1f-3cbd0aff6b73">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">80955e79-4bb4-42bf-97a7-34c900c21363</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="c6b9b9c32af8790f48f0a4131dcea23f" title="Question 12">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>a657cf64-7a42-4176-b4f4-0fecc1229eee,b04f646c-8ccf-44f0-8faf-bbe45e6f531d,699a8170-9883-46ab-bd80-f3f9113f0d9b,c12e92b0-88c4-4a50-b0ff-300eee17e51f,d4ac8291-0b47-4515-8279-35cb92dc0c6c</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>bc4d83d00bf717c0a4fb4cacda38e4ce</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q12&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="a657cf64-7a42-4176-b4f4-0fecc1229eee">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="b04f646c-8ccf-44f0-8faf-bbe45e6f531d">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="699a8170-9883-46ab-bd80-f3f9113f0d9b">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c12e92b0-88c4-4a50-b0ff-300eee17e51f">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="d4ac8291-0b47-4515-8279-35cb92dc0c6c">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">c12e92b0-88c4-4a50-b0ff-300eee17e51f</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="5575b1c2121cc9a03e923cd6429b3624" title="Question 13">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>ba412228-2fac-4f82-8c14-03c2d344d4a2,f8e42542-1373-4dcc-a025-26f068267b02,d7e2443e-ee04-4dc6-aaeb-95739ecc7b83,23007531-bfcc-41d7-95db-254071fbed47,4f043bfa-60fa-4a1d-94e8-51f1c902cb38</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>f774c9ca4f045735042a9b1b36f2a3f3</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q13&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="ba412228-2fac-4f82-8c14-03c2d344d4a2">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f8e42542-1373-4dcc-a025-26f068267b02">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="d7e2443e-ee04-4dc6-aaeb-95739ecc7b83">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="23007531-bfcc-41d7-95db-254071fbed47">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4f043bfa-60fa-4a1d-94e8-51f1c902cb38">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">23007531-bfcc-41d7-95db-254071fbed47</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="4e49718b227b7125e7ae045914694f25" title="Question 14">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>83ab3b71-a30e-4b12-85e5-78ffd64e318c,2771d2dc-5eb0-4ca2-868d-2cabb30c6a6c,7d9f178b-dad8-4d7b-8fac-f09bcfee98da,836aa1fd-db3b-4707-baf9-8f5ba30eb61f,2de12e21-febe-46dd-a59e-d1442d9da7c3</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>dd71ae3d2d1d79c2a77e8774299bed7b</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q14&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="83ab3b71-a30e-4b12-85e5-78ffd64e318c">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="2771d2dc-5eb0-4ca2-868d-2cabb30c6a6c">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="7d9f178b-dad8-4d7b-8fac-f09bcfee98da">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="836aa1fd-db3b-4707-baf9-8f5ba30eb61f">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="2de12e21-febe-46dd-a59e-d1442d9da7c3">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">83ab3b71-a30e-4b12-85e5-78ffd64e318c</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="79680b44693731c7681f5ac2dbade928" title="Question 15">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>86b6f168-dc8c-4163-a7cb-bf18c302ef6d,a722ffe3-6b7c-4b67-a14d-00c4ee6c4217,4e866ca0-1667-4879-830e-4c9b4d1d13df,59e10cc7-f964-4074-8f0e-20ed2c389c7d,daac3244-4cdd-45db-96d4-1a679e181fc8</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>326328ba7b90ad3ffbdfbee0275dd0c6</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q15&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="86b6f168-dc8c-4163-a7cb-bf18c302ef6d">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a722ffe3-6b7c-4b67-a14d-00c4ee6c4217">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4e866ca0-1667-4879-830e-4c9b4d1d13df">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="59e10cc7-f964-4074-8f0e-20ed2c389c7d">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="daac3244-4cdd-45db-96d4-1a679e181fc8">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">4e866ca0-1667-4879-830e-4c9b4d1d13df</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="c5cf58f5bce1b1dd2e763a80b402092a" title="Question 16">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>cac42c13-825d-419c-a16c-eafbd0304687,c3272786-52c6-4d06-a109-9c50af9019c9,108fedb6-bdb3-4d4a-b0cf-cd7e8bce1115,28dd4caf-bd42-49e6-8984-d346e73e0647,fdbe9826-6755-4bcc-ad43-d70615dd0db1</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>428d47be815ad60f5dd2848ed266b966</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q16&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="cac42c13-825d-419c-a16c-eafbd0304687">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c3272786-52c6-4d06-a109-9c50af9019c9">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="108fedb6-bdb3-4d4a-b0cf-cd7e8bce1115">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="28dd4caf-bd42-49e6-8984-d346e73e0647">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="fdbe9826-6755-4bcc-ad43-d70615dd0db1">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">c3272786-52c6-4d06-a109-9c50af9019c9</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="81dfe4d38f975bf7bc787aa4fa095df8" title="Question 17">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>97b9a6aa-9893-41bd-94b2-8997e2dde22c,2aa572ef-2fff-4f7d-877f-b00beba81bb0,dff801c6-eec4-4d50-9022-eb525843e3d6,cd57b97a-22d8-4f57-805e-505375c5aff9,a29268bb-519a-4e30-86da-9efa5e8c2e0d</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>4390f1d480b2d7bfbf5169f1f8e05d3c</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q17&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="97b9a6aa-9893-41bd-94b2-8997e2dde22c">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="2aa572ef-2fff-4f7d-877f-b00beba81bb0">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="dff801c6-eec4-4d50-9022-eb525843e3d6">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="cd57b97a-22d8-4f57-805e-505375c5aff9">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a29268bb-519a-4e30-86da-9efa5e8c2e0d">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">cd57b97a-22d8-4f57-805e-505375c5aff9</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="1b7256e864a89ff0e42b9f7f194b6e24" title="Question 18">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>f9f8f646-b53c-4285-aed7-2f34d802e09e,09d813e3-2738-4a7e-a34f-1d045b057b37,02a8d260-0668-4533-810b-24305169c5c0,50b453f0-5e4f-4cba-8f03-96f78c76293f,8f817db4-090f-4d03-8ceb-cc9510e67796</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>20147a1dc712f0eb29f00397663c8a38</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q18&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="f9f8f646-b53c-4285-aed7-2f34d802e09e">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="09d813e3-2738-4a7e-a34f-1d045b057b37">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="02a8d260-0668-4533-810b-24305169c5c0">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="50b453f0-5e4f-4cba-8f03-96f78c76293f">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="8f817db4-090f-4d03-8ceb-cc9510e67796">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">02a8d260-0668-4533-810b-24305169c5c0</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="2f8efe15f0ebf69ee5782b787e30baef" title="Question 19">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>f1f5f666-d760-4e94-8a55-ea6e57617b45,0628c08e-5029-4765-9da1-20da1b73268c,24ac20c3-ffb5-433f-99e9-e83081b42b7c,27190296-9f2d-4c9a-9986-0e8388b65236,ebdad69b-4671-4c3e-87de-7ca0f27d0e68</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>efe34cdd5e5fbc9d4296a94e4ee60cc1</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q19&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="f1f5f666-d760-4e94-8a55-ea6e57617b45">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="0628c08e-5029-4765-9da1-20da1b73268c">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="24ac20c3-ffb5-433f-99e9-e83081b42b7c">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="27190296-9f2d-4c9a-9986-0e8388b65236">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="ebdad69b-4671-4c3e-87de-7ca0f27d0e68">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">27190296-9f2d-4c9a-9986-0e8388b65236</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="b34aa77fcd252465f76129088e83b5c7" title="Question 20">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_choice_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>95d016f8-8b3f-4e2f-ae1d-e425d5e01864,f075a1ba-fab9-437a-9c6e-98df86b0317e,6a3e0ce1-30dc-4c06-b1b4-df459bf9c64d,90662765-462f-42fa-a4f4-18b0900a8155,3647e303-88f2-4443-88f3-7f79ccd11079</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>b10fbb4a435646777177227d7f290a7a</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q20&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Single">
+            <render_choice>
+              <response_label ident="95d016f8-8b3f-4e2f-ae1d-e425d5e01864">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f075a1ba-fab9-437a-9c6e-98df86b0317e">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="6a3e0ce1-30dc-4c06-b1b4-df459bf9c64d">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="90662765-462f-42fa-a4f4-18b0900a8155">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="3647e303-88f2-4443-88f3-7f79ccd11079">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <varequal respident="response1">3647e303-88f2-4443-88f3-7f79ccd11079</varequal>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="a8235609883e0704f51fb6256c50d509" title="Question 21">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>e01b44ad-9e88-4c5c-8900-02c5866e8d1a,79841099-b6a0-40df-b41b-449bc62171d0,20cc64db-176c-4515-b29c-b84f264882b4,e27cdf41-aac8-44b3-861b-dbc082421bf3,51e5d363-c1ea-46d6-b3b2-f8b26685116c</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>7b215d819b71198b857ce44b6c78e250</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q21&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="e01b44ad-9e88-4c5c-8900-02c5866e8d1a">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="79841099-b6a0-40df-b41b-449bc62171d0">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="20cc64db-176c-4515-b29c-b84f264882b4">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e27cdf41-aac8-44b3-861b-dbc082421bf3">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="51e5d363-c1ea-46d6-b3b2-f8b26685116c">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">79841099-b6a0-40df-b41b-449bc62171d0</varequal>
+                <varequal respident="response1">e27cdf41-aac8-44b3-861b-dbc082421bf3</varequal>
+                <not>
+                  <varequal respident="response1">e01b44ad-9e88-4c5c-8900-02c5866e8d1a</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">20cc64db-176c-4515-b29c-b84f264882b4</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">51e5d363-c1ea-46d6-b3b2-f8b26685116c</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="f13267eef47679ce58d52d63fb21c1ac" title="Question 22">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>d73b1678-a582-4da1-97f6-3fbd8d92e636,e266d022-9e23-4dcd-add2-e3eaa1f42890,f93e4c3f-47f5-4ba4-bba3-9b3e3629d3e4,e81f8cea-0839-4b39-99fa-aa048d0f473d,875e1394-c22f-442e-b591-dfb624a8cd90</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>f9e9991669c40c77fa02dc8867baf793</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q22&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="d73b1678-a582-4da1-97f6-3fbd8d92e636">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e266d022-9e23-4dcd-add2-e3eaa1f42890">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f93e4c3f-47f5-4ba4-bba3-9b3e3629d3e4">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e81f8cea-0839-4b39-99fa-aa048d0f473d">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="875e1394-c22f-442e-b591-dfb624a8cd90">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">d73b1678-a582-4da1-97f6-3fbd8d92e636</varequal>
+                <varequal respident="response1">f93e4c3f-47f5-4ba4-bba3-9b3e3629d3e4</varequal>
+                <not>
+                  <varequal respident="response1">e266d022-9e23-4dcd-add2-e3eaa1f42890</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">e81f8cea-0839-4b39-99fa-aa048d0f473d</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">875e1394-c22f-442e-b591-dfb624a8cd90</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="d641e59ee38c551568411f1094e52652" title="Question 23">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>4c187678-9299-48a8-a89f-7a827c4f6f40,7089d318-c92c-452a-b1c2-e7f8fae2be79,c5f2de27-5ac6-4b3a-97d1-09a27223f53d,0eff2e4f-f2f0-42bb-a77c-ad2588acf89a,90d63711-fd46-4082-ab02-24585a1129fb</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>cf36c259e91cd8e6ffe3011ad1ce23bd</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q23&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="4c187678-9299-48a8-a89f-7a827c4f6f40">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="7089d318-c92c-452a-b1c2-e7f8fae2be79">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c5f2de27-5ac6-4b3a-97d1-09a27223f53d">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="0eff2e4f-f2f0-42bb-a77c-ad2588acf89a">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="90d63711-fd46-4082-ab02-24585a1129fb">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">4c187678-9299-48a8-a89f-7a827c4f6f40</varequal>
+                <varequal respident="response1">7089d318-c92c-452a-b1c2-e7f8fae2be79</varequal>
+                <varequal respident="response1">c5f2de27-5ac6-4b3a-97d1-09a27223f53d</varequal>
+                <not>
+                  <varequal respident="response1">0eff2e4f-f2f0-42bb-a77c-ad2588acf89a</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">90d63711-fd46-4082-ab02-24585a1129fb</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="87a44d1902a70841a7a4f00b6cd97cfb" title="Question 24">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>617a64c4-08d1-4317-9eea-5296cadb23d0,aca691c4-a8a3-477d-ad77-0d5837810378,7e3b8026-a728-4799-abfa-3fd0d179d58a,45d16383-d08f-4d9b-ab8e-f6537f80109e,e4c79c09-0794-439d-8457-3e991ca02c39</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>fadc6b1918c4fcf06cc4aa66c83723e6</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q24&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="617a64c4-08d1-4317-9eea-5296cadb23d0">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="aca691c4-a8a3-477d-ad77-0d5837810378">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="7e3b8026-a728-4799-abfa-3fd0d179d58a">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="45d16383-d08f-4d9b-ab8e-f6537f80109e">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e4c79c09-0794-439d-8457-3e991ca02c39">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">617a64c4-08d1-4317-9eea-5296cadb23d0</varequal>
+                <varequal respident="response1">7e3b8026-a728-4799-abfa-3fd0d179d58a</varequal>
+                <varequal respident="response1">45d16383-d08f-4d9b-ab8e-f6537f80109e</varequal>
+                <varequal respident="response1">e4c79c09-0794-439d-8457-3e991ca02c39</varequal>
+                <not>
+                  <varequal respident="response1">aca691c4-a8a3-477d-ad77-0d5837810378</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="22e327881992f3342fa5a74321f037c4" title="Question 25">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>c659b7a5-c264-40e4-b1a7-c9d8054ab9f5,bc529821-df5b-466f-9a39-de331fb5b733,a78b26be-9033-4155-90a0-3c9e528c4942,14cf5f11-739a-4dcd-820d-5b880b6b4b39,fa755812-35a6-4c75-aa51-dac12bfa9de0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>4a216cfb7fd1b518ccf7b312c75957fa</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q25&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="c659b7a5-c264-40e4-b1a7-c9d8054ab9f5">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="bc529821-df5b-466f-9a39-de331fb5b733">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a78b26be-9033-4155-90a0-3c9e528c4942">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="14cf5f11-739a-4dcd-820d-5b880b6b4b39">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="fa755812-35a6-4c75-aa51-dac12bfa9de0">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">c659b7a5-c264-40e4-b1a7-c9d8054ab9f5</varequal>
+                <varequal respident="response1">bc529821-df5b-466f-9a39-de331fb5b733</varequal>
+                <varequal respident="response1">a78b26be-9033-4155-90a0-3c9e528c4942</varequal>
+                <varequal respident="response1">14cf5f11-739a-4dcd-820d-5b880b6b4b39</varequal>
+                <varequal respident="response1">fa755812-35a6-4c75-aa51-dac12bfa9de0</varequal>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="ed2e58ea4ff009c12b96b43da0c060fc" title="Question 26">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>8e6ea62e-ed94-4d8b-8655-60efb7319fb1,7bb968ec-fc3c-4966-b626-97a17397ae5a,4c63180a-1b01-4b41-a422-3ea54e41385c,f1b53aaf-3f90-47df-af7c-b5b58c35e17f,355f9349-eb52-464d-9807-13db3371f11e</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>e5b67bbe40bfb92cdb4bbd498e7b2e5c</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q26&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="8e6ea62e-ed94-4d8b-8655-60efb7319fb1">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="7bb968ec-fc3c-4966-b626-97a17397ae5a">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4c63180a-1b01-4b41-a422-3ea54e41385c">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f1b53aaf-3f90-47df-af7c-b5b58c35e17f">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="355f9349-eb52-464d-9807-13db3371f11e">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">f1b53aaf-3f90-47df-af7c-b5b58c35e17f</varequal>
+                <varequal respident="response1">355f9349-eb52-464d-9807-13db3371f11e</varequal>
+                <not>
+                  <varequal respident="response1">8e6ea62e-ed94-4d8b-8655-60efb7319fb1</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">7bb968ec-fc3c-4966-b626-97a17397ae5a</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">4c63180a-1b01-4b41-a422-3ea54e41385c</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="e8c624f74e906821f6ee7f143ddaeb35" title="Question 27">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>019048c2-ab76-4a5e-8174-d065f506f614,a1f8c74c-af92-4854-8de3-faef7c7dc625,a810ccd6-15b6-458c-8db5-d806a2a92b92,e7666c7f-9900-4027-81bb-5b1e1960d422,2bd3d86e-c688-4558-bb99-4a2f99ed25c4</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>29be96ad6b9be811b2c39facfead5713</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q27&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="019048c2-ab76-4a5e-8174-d065f506f614">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a1f8c74c-af92-4854-8de3-faef7c7dc625">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a810ccd6-15b6-458c-8db5-d806a2a92b92">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="e7666c7f-9900-4027-81bb-5b1e1960d422">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="2bd3d86e-c688-4558-bb99-4a2f99ed25c4">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">a810ccd6-15b6-458c-8db5-d806a2a92b92</varequal>
+                <varequal respident="response1">2bd3d86e-c688-4558-bb99-4a2f99ed25c4</varequal>
+                <not>
+                  <varequal respident="response1">019048c2-ab76-4a5e-8174-d065f506f614</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">a1f8c74c-af92-4854-8de3-faef7c7dc625</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">e7666c7f-9900-4027-81bb-5b1e1960d422</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="c671d13ecbf1a2a5a5735c882c39d4d3" title="Question 28">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>da55e71e-14ae-4a8f-ad9f-41558f6efffb,85e5cc71-56f7-4388-bbdd-8da56dd3d737,959f7158-9961-421c-8982-e8a5376a1851,d558d044-2328-45a1-ae22-a7b1ea7a9de1,57611d8c-286b-42df-9e83-e30e3b1d429c</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>3be3a3b0f9f72fafe5a140157c0318f0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q28&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="da55e71e-14ae-4a8f-ad9f-41558f6efffb">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="85e5cc71-56f7-4388-bbdd-8da56dd3d737">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="959f7158-9961-421c-8982-e8a5376a1851">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="d558d044-2328-45a1-ae22-a7b1ea7a9de1">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="57611d8c-286b-42df-9e83-e30e3b1d429c">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">959f7158-9961-421c-8982-e8a5376a1851</varequal>
+                <varequal respident="response1">57611d8c-286b-42df-9e83-e30e3b1d429c</varequal>
+                <not>
+                  <varequal respident="response1">da55e71e-14ae-4a8f-ad9f-41558f6efffb</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">85e5cc71-56f7-4388-bbdd-8da56dd3d737</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">d558d044-2328-45a1-ae22-a7b1ea7a9de1</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="1f738373a31a5fc4852dac15f8bfa080" title="Question 29">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>4396a75c-2209-4c40-b4e5-bf2987b28554,c80a8a07-2130-4891-ac80-954c9f5519a4,cf729a91-de13-46c1-9329-88073253eeac,7e1bf332-60e5-4c43-a501-85a13b0038f3,a589ce0d-2570-4deb-941f-88460575a2b4</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>f07c6ccb31262876bd6e980f7664b727</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q29&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="4396a75c-2209-4c40-b4e5-bf2987b28554">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c80a8a07-2130-4891-ac80-954c9f5519a4">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="cf729a91-de13-46c1-9329-88073253eeac">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="7e1bf332-60e5-4c43-a501-85a13b0038f3">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a589ce0d-2570-4deb-941f-88460575a2b4">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">4396a75c-2209-4c40-b4e5-bf2987b28554</varequal>
+                <varequal respident="response1">c80a8a07-2130-4891-ac80-954c9f5519a4</varequal>
+                <not>
+                  <varequal respident="response1">cf729a91-de13-46c1-9329-88073253eeac</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">7e1bf332-60e5-4c43-a501-85a13b0038f3</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">a589ce0d-2570-4deb-941f-88460575a2b4</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+      <item ident="0f831be773214772a6a74e9763a9aa4f" title="Question 30">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>multiple_answers_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>5.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry>77c462bf-f56a-4b7e-b47f-26816e6ef368,8e8f12df-87dc-4557-9697-acc56d0f86ab,a77ab4a8-0df8-4841-bf24-4837f223a30e,842039ec-97cf-46cc-be99-45078a83f894,5e364900-f604-4ef9-a713-a4631a1d1f92</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>769f3f8d4a1a55b0eb978c0dbd019b71</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>scoring_algorithm</fieldlabel>
+              <fieldentry>PartialScore</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;div&gt;Q30&lt;/div&gt;</mattext>
+          </material>
+          <response_lid ident="response1" rcardinality="Multiple">
+            <render_choice>
+              <response_label ident="77c462bf-f56a-4b7e-b47f-26816e6ef368">
+                <material>
+                  <mattext texttype="text/html">a</mattext>
+                </material>
+              </response_label>
+              <response_label ident="8e8f12df-87dc-4557-9697-acc56d0f86ab">
+                <material>
+                  <mattext texttype="text/html">b</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a77ab4a8-0df8-4841-bf24-4837f223a30e">
+                <material>
+                  <mattext texttype="text/html">c</mattext>
+                </material>
+              </response_label>
+              <response_label ident="842039ec-97cf-46cc-be99-45078a83f894">
+                <material>
+                  <mattext texttype="text/html">d</mattext>
+                </material>
+              </response_label>
+              <response_label ident="5e364900-f604-4ef9-a713-a4631a1d1f92">
+                <material>
+                  <mattext texttype="text/html">e</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition continue="No">
+            <conditionvar>
+              <and>
+                <varequal respident="response1">77c462bf-f56a-4b7e-b47f-26816e6ef368</varequal>
+                <varequal respident="response1">a77ab4a8-0df8-4841-bf24-4837f223a30e</varequal>
+                <varequal respident="response1">842039ec-97cf-46cc-be99-45078a83f894</varequal>
+                <not>
+                  <varequal respident="response1">8e8f12df-87dc-4557-9697-acc56d0f86ab</varequal>
+                </not>
+                <not>
+                  <varequal respident="response1">5e364900-f604-4ef9-a713-a4631a1d1f92</varequal>
+                </not>
+              </and>
+            </conditionvar>
+            <setvar action="Set" varname="SCORE">100</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+    </section>
+  </assessment>
+</questestinterop>

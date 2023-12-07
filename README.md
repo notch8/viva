@@ -1,16 +1,32 @@
 # VIVA
 
+A prototype for uploading classroom questions, searching for existing questions, and exporting questions.
+
 ## Table of Contents
 
-- [Getting Started](#getting-started)
-- [Testing](#testing)
-  - [RSpec](#rspec)
-  - [Cypress](#cypress)
-- [Linting](#linting)
+- [About](#about)
+- [Development](#development)
+  - [Getting Started](#getting-started)
+  - [Testing](#testing)
+    - [RSpec](#rspec)
+    - [Cypress](#cypress)
+  - [Linting](#linting)
 
 ---
 
-## Getting Started
+## About
+
+This application, with a Rails back-end and React front-end, prototypes a "Classroom question exchange".  It provides a "simplified" CSV import format for a variety of questions.
+
+The CSV format is not as expressive as the XML format of something like QTI; as such the questions are more paired down.  It is envisioned that once you pick the questions, you would export them into another application to add the more granular information for your specific use-case.
+
+### Examples
+
+There is an [Examples directory README](./examples/README.md) that provides insight into the examples of quizzes exported to Canvas as well as imported into Canvas.
+
+## Development
+
+### Getting Started
 
 - To run the application using Docker, will need to have Docker installed on your machine.
   [Get Docker](https://docs.docker.com/get-docker/)
@@ -37,9 +53,9 @@
 
 - After running `dory up`, you can view the app in the browser at `http://viva.test`.
 
-## Testing
+### Testing
 
-### RSpec
+#### RSpec
 RSpec is used to test the Rails code.
 
 ```bash
@@ -47,7 +63,7 @@ docker compose exec web bash
 bundle exec rspec
 ```
 
-### Cypress
+#### Cypress
 Cypress is used to test the JavaScript code. Component tests will live next to the component file in the named folder. End to end tests live in "cypress/e2e". For reference on when to write which, refer to the [Cypress testing types documentation](https://docs.cypress.io/guides/core-concepts/testing-types#What-is-E2E-Testing).
 
 There are two cypress tests:
@@ -60,7 +76,7 @@ There is a `cypress-tests` container that runs as part of the build.  To run the
 - `docker compose up cypress-tests` :: will run the e2e tests
 - `yarn cypress:run` :: will run them cypress tests on your machine (see *Running on Your Machine* for the full details)
 
-#### Running On Your Machine
+##### Running On Your Machine
 
 For this to work, there are a few steps to take:
 
@@ -71,7 +87,7 @@ For this to work, there are a few steps to take:
 
 _Note: You cannot run the Cypress tests within the `web` container because it does not, by design and intention, have the development dependencies necessary for Cypress._
 
-#### LaunchPad
+##### LaunchPad
 _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launchpad or the test suite will hang. (Reference: [this comment](https://github.com/cypress-io/cypress/issues/23903#issuecomment-1515286486))_
 
 0. Update the `./cypress.config.js` as listed above.
@@ -81,8 +97,8 @@ _NOTE: comment out `RubyPlugin()` in "vite.config.ts", before opening the Launch
     - This opens the test suite in the browser you chose
 3. Click on the name of the test you'd like to run
 
-## Linting
-### Rubocop
+### Linting
+#### Rubocop
 For Rails code.
 
 ```bash
@@ -91,7 +107,7 @@ rubocop -h # list all rubocop cli options
 rubocop # lint all available files
 ```
 
-### ESLint
+#### ESLint
 For JavScript code. Refer to the `lint` scripts in package.json to understand the underlying command. Using `yarn` with a script is equivalent to using `yarn run <command>`.
 _NOTE: if you run lint on more than a single file without one of the scripts, add `--ext .jsx,.js`_
 

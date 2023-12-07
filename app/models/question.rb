@@ -28,26 +28,39 @@ class Question < ApplicationRecord
 
   ##
   # @!group QTI Exporter
-  class_attribute :qti_xml_template_filename, default: nil
 
   ##
-  # Necessary for exposing a view like behavior for the {#to_xml} behavior.
+  # @return [String] a unique identifier for the `item` node.
+  #
+  # @see https://community.canvaslms.com/t5/Canvas-Question-Forum/QTI-SDK-how-to-create-Assessment-identifier-and-question-Item/m-p/547937
+  def item_ident
+    @item_ident ||= "item-#{assessment_question_identifierref}"
+  end
+
+  ##
+  # @return [String] a unique identifier for the `fieldvalue` node
+  #
+  # @see https://community.canvaslms.com/t5/Canvas-Question-Forum/QTI-SDK-how-to-create-Assessment-identifier-and-question-Item/m-p/547937
+  def assessment_question_identifierref
+    @assessment_question_identifierref ||= Digest::SHA1.hexdigest("#{text}\n#{data}")
+  end
+
+  ##
+  # @!attribute export_as_xml [r|w]
+  #   @return [TrueClass] when we can export this file as XML.
+  #   @return [FalseClass] when we cannot export this file as XML.
+  class_attribute :export_as_xml, default: false, instance_writer: false, instance_reader: true, instance_predicate: true
+  # @!endgroup QTI Exporter
+  ##
+
+  ##
+  # A duck-typing helper method; useful when were working with a CsvImporter and want the underlying
+  # question.
+  #
+  # @return [Question]
   def question
     self
   end
-
-  ##
-  # @return [String] a document
-  # @see https://www.imsglobal.org/spec/qti/v3p0/impl#choice-interaction
-  #
-  # @todo We'll need to consider the structure for multiple
-  def to_xml(*)
-    return "" if qti_xml_template_filename.blank?
-
-    ERB.new(Rails.root.join("app", "views", "questions", qti_xml_template_filename).read).result(binding)
-  end
-  # @!endgroup QTI Exporter
-  ##
 
   ##
   # @see {Question::StimulusCaseStudy} for aggregation.

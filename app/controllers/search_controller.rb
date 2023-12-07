@@ -3,7 +3,6 @@
 ##
 # The controller to handle methods related to the search page.
 class SearchController < ApplicationController
-  XML_PREAMBLE = %(<?xml version="1.0" encoding="UTF-8"?>)
   def index
     # This is a bit different than you might be used to.  Ideally we'd have respond_to behavior.
     #
@@ -16,12 +15,15 @@ class SearchController < ApplicationController
     #
     # Why? Because inertia is not registered as a mime-type
     if request.format.xml?
-      # Don't forget the pre-amble
-      xml = XML_PREAMBLE
-      Question.filter(**filter_values).each do |q|
-        xml += "#{q.to_xml}\n"
-      end
-      send_data xml, layout: false, filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S')}.qti.xml", format: :xml
+      now = Time.current
+      @title = "Viva Questions for #{now.strftime('%B %-d, %Y %9N')}"
+      filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.qti.xml"
+      @questions = Question.filter(**filter_values)
+
+      # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the
+      # browser, we instead tell the browser to automatically download this file.
+      response.headers['Content-Disposition'] = %(attachment; filename="#{filename}")
+      render format: :xml
     else
       render inertia: 'Search', props: shared_props
     end
@@ -47,6 +49,8 @@ class SearchController < ApplicationController
   end
   # rubocop:enable Metrics/MethodLength
 
+  ##
+  # @return [Array<Hash<Symbol,String>] the types of exports supported by the {SearchController}.
   def export_hrefs
     [{ type: "xml", href: ".xml#{request.original_fullpath.slice(1..-1)}" }]
   end

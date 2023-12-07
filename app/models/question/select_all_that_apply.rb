@@ -97,48 +97,21 @@ class Question::SelectAllThatApply < Question
 
   ##
   # @!group QTI Exporter
-
-  self.qti_xml_template_filename = 'traditional.qti.xml.erb'
-
-  ##
-  # @return [String]
-  def response_cardinality
-    "multiple"
-  end
+  self.export_as_xml = true
 
   ##
-  # @return [Array<Integer>]
-  def correct_response_identifiers
+  # @yieldparam index [Integer]
+  # @yieldparam label [String] label for the choice
+  # @yieldparam correctness [Boolean] true when correct answer; false when not
+  # @return [Array<Integer, String, Boolean>]
+  def with_each_choice_index_label_and_correctness
     returning_value = []
     data.each_with_index do |datum, index|
-      returning_value << index if datum.fetch("correct") == true
+      element = [index, datum.fetch('answer'), datum.fetch('correct')]
+      returning_value << element
+      yield(*element) if block_given?
     end
     returning_value
-  end
-
-  ##
-  # @return [Integer]
-  def minimum_choices
-    1
-  end
-
-  ##
-  # @return [Integer]
-  def maximum_choices
-    data.size
-  end
-
-  ##
-  # @return [Array<Integer, String>]
-  # @yieldparam choice_identifier [Integer]
-  # @yieldparam label [String]
-  def with_each_choice_identifier_and_label
-    returning = []
-    data.each_with_index do |datum, index|
-      returning << [index, datum.fetch("answer")]
-      yield index, datum.fetch("answer") if block_given?
-    end
-    returning
   end
   # @!endgroup QTI Exporter
   ##

@@ -14,12 +14,14 @@ RSpec.describe SearchController do
         FactoryBot.create(:question_traditional, :with_keywords, :with_subjects)
         get :index, format: :xml
 
-        expect(response.body).to start_with(described_class::XML_PREAMBLE)
-
-        # Once https://github.com/scientist-softserv/viva/pull/189 is merged, uncomment the
-        # following lines:
-        # question = Question.last
-        # expect(response.body).to include(%(identifier="#{question.id}"))
+        expect(response.content_type).to eq('application/xml; charset=utf-8')
+        expect(response).to be_successful
+        expect(assigns(:questions).count).to eq(1)
+        # Yes, you're reading this right.  The body for attachments is empty.  We need to instead
+        # check the content disposition.  Unfortunately we don't have access to the contents of that
+        # file.
+        expect(response.body).to be_empty
+        expect(response.headers['Content-Disposition']).to match(%r{^attachment; filename="questions-\d{4}-\d{2}})
       end
     end
 

@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<questestinterop xmlns="http://www.imsglobal.org/xsd/ims_qtiasiv1p2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd">
+  <assessment ident="gb3097d6440739dea351ae758877a2637" title="Categorization question - nursing">
+    <qtimetadata>
+      <qtimetadatafield>
+        <fieldlabel>cc_maxattempts</fieldlabel>
+        <fieldentry>1</fieldentry>
+      </qtimetadatafield>
+    </qtimetadata>
+    <section ident="root_section">
+      <item ident="64cdda3f1c91c71a46c3ba918b31f5cd" title="Categorization question - nursing">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>categorization_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1.0</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>original_answer_ids</fieldlabel>
+              <fieldentry/>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>374907b96bef007bd5e087e02c18fe2e</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>calculator_type</fieldlabel>
+              <fieldentry>none</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+        <presentation>
+          <material>
+            <mattext texttype="text/html">&lt;p&gt;Identify the benzodiazepines and sedative-hypnotics.&lt;/p&gt;</mattext>
+          </material>
+          <response_lid ident="13c37fdc-d96c-4c7d-a11d-b94511c4211f" rcardinality="Multiple">
+            <material>
+              <mattext texttype="text/plain">Sedative-Hypnotics</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="2507b4b1-f04c-4218-9801-a21229f73614">
+                <material>
+                  <mattext texttype="text/plain">Alprazolam</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4fe92b20-1aa9-44dd-a3e4-751ce1e46716">
+                <material>
+                  <mattext texttype="text/plain">Eszopiclone</mattext>
+                </material>
+              </response_label>
+              <response_label ident="93de7500-e67e-49c9-b23c-69db1b0c989a">
+                <material>
+                  <mattext texttype="text/plain">Ramelteon</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a8bf3149-0ac4-4816-8236-4ea13ae5b554">
+                <material>
+                  <mattext texttype="text/plain">Zolpidem</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c570303c-25d6-43a3-ac77-07482bb77b6a">
+                <material>
+                  <mattext texttype="text/plain">Lorazepam</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f49fcddc-464a-40d0-bb84-faac141aadec">
+                <material>
+                  <mattext texttype="text/plain">Diazepam</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+          <response_lid ident="2afae664-d8b3-4595-9534-684e6c53b511" rcardinality="Multiple">
+            <material>
+              <mattext texttype="text/plain">Benzodiazepines</mattext>
+            </material>
+            <render_choice>
+              <response_label ident="2507b4b1-f04c-4218-9801-a21229f73614">
+                <material>
+                  <mattext texttype="text/plain">Alprazolam</mattext>
+                </material>
+              </response_label>
+              <response_label ident="4fe92b20-1aa9-44dd-a3e4-751ce1e46716">
+                <material>
+                  <mattext texttype="text/plain">Eszopiclone</mattext>
+                </material>
+              </response_label>
+              <response_label ident="93de7500-e67e-49c9-b23c-69db1b0c989a">
+                <material>
+                  <mattext texttype="text/plain">Ramelteon</mattext>
+                </material>
+              </response_label>
+              <response_label ident="a8bf3149-0ac4-4816-8236-4ea13ae5b554">
+                <material>
+                  <mattext texttype="text/plain">Zolpidem</mattext>
+                </material>
+              </response_label>
+              <response_label ident="c570303c-25d6-43a3-ac77-07482bb77b6a">
+                <material>
+                  <mattext texttype="text/plain">Lorazepam</mattext>
+                </material>
+              </response_label>
+              <response_label ident="f49fcddc-464a-40d0-bb84-faac141aadec">
+                <material>
+                  <mattext texttype="text/plain">Diazepam</mattext>
+                </material>
+              </response_label>
+            </render_choice>
+          </response_lid>
+        </presentation>
+        <resprocessing>
+          <outcomes>
+            <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+          </outcomes>
+          <respcondition>
+            <conditionvar>
+              <varequal respident="2afae664-d8b3-4595-9534-684e6c53b511">2507b4b1-f04c-4218-9801-a21229f73614</varequal>
+              <varequal respident="2afae664-d8b3-4595-9534-684e6c53b511">f49fcddc-464a-40d0-bb84-faac141aadec</varequal>
+              <varequal respident="2afae664-d8b3-4595-9534-684e6c53b511">c570303c-25d6-43a3-ac77-07482bb77b6a</varequal>
+            </conditionvar>
+            <setvar action="Add" varname="SCORE">50.00</setvar>
+          </respcondition>
+          <respcondition>
+            <conditionvar>
+              <varequal respident="13c37fdc-d96c-4c7d-a11d-b94511c4211f">4fe92b20-1aa9-44dd-a3e4-751ce1e46716</varequal>
+              <varequal respident="13c37fdc-d96c-4c7d-a11d-b94511c4211f">93de7500-e67e-49c9-b23c-69db1b0c989a</varequal>
+              <varequal respident="13c37fdc-d96c-4c7d-a11d-b94511c4211f">a8bf3149-0ac4-4816-8236-4ea13ae5b554</varequal>
+            </conditionvar>
+            <setvar action="Add" varname="SCORE">50.00</setvar>
+          </respcondition>
+        </resprocessing>
+      </item>
+    </section>
+  </assessment>
+</questestinterop>

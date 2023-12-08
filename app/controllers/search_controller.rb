@@ -17,7 +17,12 @@ class SearchController < ApplicationController
     if request.format.xml?
       now = Time.current
       @title = "Viva Questions for #{now.strftime('%B %-d, %Y %9N')}"
-      filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.qti.xml"
+
+      # Why the long suffix?  Because Canvas supports both "classic" and "new" format; and per
+      # conversations with the client, we're looking to only export classic (as you can migrate a
+      # classic question to new format).  This filename is another "helpful clue" and introduces
+      # later considerations for what the file format might be.
+      filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
       @questions = Question.filter(**filter_values)
 
       # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the

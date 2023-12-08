@@ -22,6 +22,7 @@ RSpec.describe SearchController do
         # file.
         expect(response.body).to be_empty
         expect(response.headers['Content-Disposition']).to match(%r{^attachment; filename="questions-\d{4}-\d{2}})
+        expect(response.headers['Content-Disposition']).to end_with(%(classic-question-canvas.qti.xml"))
       end
     end
 

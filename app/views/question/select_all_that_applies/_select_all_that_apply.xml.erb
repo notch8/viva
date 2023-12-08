@@ -19,7 +19,7 @@
     <material>
       <mattext texttype="text/plain"><%= select_all_that_apply.text %></mattext>
     </material>
-    <response_lid ident="response1" rcardinality="Multiple">
+    <response_lid ident="response_<%= select_all_that_apply.item_ident %>" rcardinality="Multiple">
       <render_choice>
         <%- select_all_that_apply.with_each_choice_index_label_and_correctness do |index, label, _correctness| %>
 	  <response_label ident="<%= select_all_that_apply.item_ident %>-<%= index %>" >
@@ -40,7 +40,7 @@
         <and>
 	  <% select_all_that_apply.with_each_choice_index_label_and_correctness do |index, _label, correctness| %>
 	    <% if correctness %><not><% end %>
-	      <varequal respident="response1"><%= select_all_that_apply.item_ident %>-<%= index %></varequal>
+	      <varequal respident="response_<%= select_all_that_apply.item_ident %>"><%= select_all_that_apply.item_ident %>-<%= index %></varequal>
 	      <% if correctness %></not><% end %>
 	  <% end %>
         </and>

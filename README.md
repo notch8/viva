@@ -53,6 +53,28 @@ There is an [Examples directory README](./examples/README.md) that provides insi
 
 - After running `dory up`, you can view the app in the browser at `http://viva.test`.
 
+### Creating New Question Types
+
+You will need:
+
+- A *model* and corresponding specs
+- A *React component* for rending the question in the [Search results](./app/controllers/search_controller.rb)
+- An *XML export* view and corresponding specs
+
+#### Model
+
+Each new question type **must** be a direct descendant of [`Question`](./app/models/question.rb).  As duplicate logic for questions emerges, extract a module that extends `Active::Support`.  See [MarkdownQuestionBehavior](./app/models/concerns/markdown_question_behavior.rb) for an example of the module and [`Question::Upload`](./app/models/question/upload.rb) or [`Question::Essay`](./app/models/question/essay.rb) for implementation.
+
+#### React Component
+
+TBD
+
+#### XML Export
+
+Each new question should implement specs to ensure conformance to expectations.  The [`./spec/models/question/`](./spec/models/question/) directory has many examples; including leveraging [share examples](./spec/shared_examples.rb)
+
+As you work on questions, you'll also be looking at writing views that represent their export to QTI XML format.  See [./app/views/question/README.md](./app/views/question/README.md) for an overview of how we create XML templates for questions.
+
 ### Testing
 
 #### RSpec

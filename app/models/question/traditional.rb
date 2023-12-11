@@ -1,4 +1,3 @@
-
 # frozen_string_literal: true
 
 ##
@@ -92,46 +91,30 @@ class Question::Traditional < Question
 
   ##
   # @!group QTI Exporter
-
-  self.qti_xml_template_filename = "traditional.qti.xml.erb"
-
-  ##
-  # @return [String]
-  def response_cardinality
-    "single"
-  end
+  self.export_as_xml = true
 
   ##
-  # @return [Array<Integer>]
-  def correct_response_identifiers
-    returning_value = []
-    data.each_with_index do |datum, index|
-      returning_value << index if datum.fetch("correct") == true
+  # @return [Integer]
+  def correct_response_index
+    index = nil
+    data.each_with_index do |datum, i|
+      next unless datum.fetch('correct')
+      index = i
+      break
     end
-    returning_value
-  end
-
-  ##
-  # @return [Integer]
-  def minimum_choices
-    1
-  end
-
-  ##
-  # @return [Integer]
-  def maximum_choices
-    1
+    index
   end
 
   ##
   # @return [Array<Integer, String>]
-  # @yieldparam choice_identifier [Integer]
+  # @yieldparam index [Integer]
   # @yieldparam label [String]
-  def with_each_choice_identifier_and_label
+  def with_each_choice_index_and_label
     returning = []
     data.each_with_index do |datum, index|
-      returning << [index, datum.fetch("answer")]
-      yield index, datum.fetch("answer") if block_given?
+      element = [index, datum.fetch("answer")]
+      returning << element
+      yield(*element) if block_given?
     end
     returning
   end

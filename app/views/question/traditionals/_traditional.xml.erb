@@ -1,0 +1,43 @@
+<item ident="<%= traditional.item_ident %>" title="Question <%= traditional.id %>" >
+  <itemmetadata>
+    <qtimetadatafield>
+      <fieldlabel>question_type</fieldlabel>
+      <fieldentry>multiple_choice_question</fieldentry>
+    </qtimetadatafield>
+    <qtimetadatafield>
+      <fieldlabel>points_possible</fieldlabel>
+      <fieldentry>5</fieldentry>
+    </qtimetadatafield>
+    <qtimetadatafield>
+      <fieldlabel>assessment_question_identifierref</fieldlabel>
+      <fieldentry><%= traditional.assessment_question_identifierref %></fieldentry>
+    </qtimetadatafield>
+  </itemmetadata>
+  <presentation>
+    <material>
+      <mattext texttype="text/plain"><%= traditional.text %></mattext>
+    </material>
+    <response_lid ident="response_<%= traditional.item_ident %>" rcardinality="Single">
+      <%- traditional.with_each_choice_index_and_label do |index, label| %>
+	<render_choice>
+	  <response_label ident="<%= traditional.item_ident %>-<%= index %>" >
+            <material>
+              <mattext texttype="text/plain"><%= label %></mattext>
+            </material>
+          </response_label>
+	</render_choice>
+      <%- end %>
+    </response_lid>
+  </presentation>
+  <resprocessing>
+    <outcomes>
+      <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+    </outcomes>
+    <respcondition continue="No">
+      <conditionvar>
+        <varequal respident="response_<%= traditional.item_ident %>"><%= traditional.item_ident %>-<%= traditional.correct_response_index %></varequal>
+      </conditionvar>
+      <setvar action="Set" varname="SCORE">100</setvar>
+    </respcondition>
+  </resprocessing>
+</item>

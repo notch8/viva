@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: true, included_in_filterable_type: true, has_parts: false|
+RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_type_name_to_class: true, included_in_filterable_type: true, has_parts: false|
   it { is_expected.to respond_to(:keyword_names) }
   it { is_expected.to respond_to(:subject_names) }
   its(:keyword_names) { is_expected.to be_a(Array) }
@@ -9,6 +9,8 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
   its(:type_name) { is_expected.to be_a(String) }
   its(:included_in_filterable_type?) { is_expected.to eq(included_in_filterable_type) }
   its(:has_parts?) { is_expected.to eq(has_parts) }
+  its(:question) { is_expected.to be_a(described_class) }
+  its(:question) { is_expected.to eq(subject) }
 
   if test_type_name_to_class
     describe '.type_name_to_class' do
@@ -16,6 +18,11 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
 
       it { is_expected.to eq(described_class) }
     end
+  end
+
+  describe 'QTI Export' do
+    its(:assessment_question_identifierref) { is_expected.to be_a(String) }
+    its(:export_as_xml) { is_expected.to eq(export_as_xml) }
   end
 
   describe 'validations' do
@@ -35,13 +42,6 @@ RSpec.shared_examples 'a Question' do |valid: true, test_type_name_to_class: tru
     it { is_expected.to have_and_belong_to_many(:keywords) }
     it { is_expected.to have_one(:as_child_question_aggregations) }
     it { is_expected.to have_one(:parent_question) }
-  end
-
-  describe 'QTI Export' do
-    subject { FactoryBot.build("question_#{described_class.name.demodulize.underscore}") }
-
-    its(:question) { is_expected.to eq(subject) }
-    its(:to_xml) { is_expected.to be_a(String) }
   end
 
   describe 'factories' do

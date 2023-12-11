@@ -15,7 +15,8 @@ spec:
   - host: {{ . | quote }}
     http:
       paths:
-      - backend:
+      - pathType: ImplementationSpecific
+        backend:
           service:
             name: {{ printf "%s" $serviceName | trunc 63 | trimSuffix "-" }}-web
             port:

@@ -33,7 +33,7 @@
   </presentation>
   <resprocessing>
     <outcomes>
-      <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+      <decvar maxvalue="<%= select_all_that_apply.qti_max_value %>" minvalue="0" varname="SCORE" vartype="Decimal"/>
     </outcomes>
     <respcondition continue="No">
       <conditionvar>
@@ -45,7 +45,7 @@
 	  <% end %>
         </and>
       </conditionvar>
-      <setvar action="Set" varname="SCORE">100</setvar>
+      <setvar action="Set" varname="SCORE"><%= select_all_that_apply.qti_max_value %></setvar>
     </respcondition>
   </resprocessing>
 </item>

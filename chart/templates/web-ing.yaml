@@ -1,4 +1,3 @@
----
 {{- $releaseName := .Release.Name -}}
 {{- $serviceName := include "app.fullname" . -}}
 apiVersion: networking.k8s.io/v1
@@ -6,28 +5,28 @@ kind: Ingress
 metadata:
   name: {{ template "app.web.name" . }}-in
   annotations:
-  {{- range $key, $value := .Values.ingress.annotations }}
+    {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
 spec:
   rules:
-  {{- range .Values.ingress.hosts }}
-  - host: {{ . | quote }}
-    http:
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-          backend:
-            service:
-              name: {{ printf "%s" $serviceName | trunc 63 | trimSuffix "-" }}-web
-              port:
-                number: 3000
-  {{- end }}
-  {{- if .Values.ingress.tlsSecretName }}
-  tls:
-  - secretName: {{ .Values.ingress.tlsSecretName }}
-    hosts:
-      {{- range .Values.ingress.hosts }}
-      - {{ . | quote }}
-      {{- end }}
-  {{- end -}}
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ printf "%s" $serviceName | trunc 63 | trimSuffix "-" }}-web
+                port:
+                  number: 3000
+    {{- end }}
+    {{- if .Values.ingress.tlsSecretName }}
+    tls:
+      - secretName: {{ .Values.ingress.tlsSecretName }}
+        hosts:
+          {{- range .hosts }}
+          - {{ . | quote }}
+          {{- end }}
+    {{- end }}

@@ -35,7 +35,7 @@
     </outcomes>
     <respcondition continue="No">
       <conditionvar>
-        <varequal respident="response_<%= traditional.item_ident %>"><%= traditional.id %>-<%= traditional.correct_response_index %></varequal>
+        <varequal respident="response_<%= traditional.item_ident %>"><%= traditional.item_ident %>-<%= traditional.correct_response_index %></varequal>
       </conditionvar>
       <setvar action="Set" varname="SCORE">100</setvar>
     </respcondition>

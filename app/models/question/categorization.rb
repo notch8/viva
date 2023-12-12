@@ -11,4 +11,6 @@ class Question::Categorization < Question
   end
 
   include MatchingQuestionBehavior
+
+  self.choice_cardinality_is_multiple = true
 end

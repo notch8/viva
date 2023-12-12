@@ -23,36 +23,36 @@
     <material>
       <mattext texttype="text/plain"><%= categorization.text %></mattext>
     </material>
-    <%- categorization.qti_choices.each do |choice| %>
-      <response_lid ident="<%= choice.ident %>" rcardinality="Multiple">
+    <% categorization.qti_responses.each do |response| %>
+      <response_lid ident="<%= response.ident %>" rcardinality="Multiple">
 	<material>
-          <mattext texttype="text/plain"><%= choice.text %></mattext>
+          <mattext texttype="text/plain"><%= response.text %></mattext>
 	</material>
 	<render_choice>
-	  <%- categorization.qti_responses.each do |qresponse| %>
-            <response_label ident="<%= qresponse.ident %>">
+	  <% categorization.qti_choices.each do |choice| %>
+            <response_label ident="<%= choice.ident %>">
               <material>
-		<mattext><%= qresponse.text %></mattext>
+		<mattext><%= choice.text %></mattext>
               </material>
             </response_label>
-	  <%- end %>
+	  <% end %>
       </render_choice>
       </response_lid>
-    <%- end %>
+    <% end %>
   </presentation>
   <resprocessing>
     <outcomes>
       <decvar maxvalue="<%= categorization.qti_max_value %>" minvalue="0" varname="SCORE" vartype="Decimal"/>
     </outcomes>
-    <%- categorization.qti_response_conditions.each do |condition| %>
+    <% categorization.qti_response_conditions.each do |condition| %>
       <respcondition>
 	<conditionvar>
-	  <%- condition.responses.each do |response| %>
-          <varequal respident="<%= condition.choice_ident %>"><%= response.ident %></varequal>
+	  <%- condition.choices.each do |choice| %>
+            <varequal respident="<%= condition.response_ident %>"><%= choice.ident %></varequal>
 	  <%- end %>
 	</conditionvar>
 	<setvar varname="SCORE" action="Add"><%= condition.value %></setvar>
       </respcondition>
-    <%- end %>
+    <% end %>
   </resprocessing>
 </item>

@@ -12,4 +12,6 @@ class Question::Matching < Question
   end
 
   include MatchingQuestionBehavior
+
+  self.choice_cardinality_is_multiple = false
 end

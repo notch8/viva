@@ -7,9 +7,10 @@ RSpec.describe Question::Categorization do
   it_behaves_like "a Matching Question"
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Categorization") }
+  its(:choice_cardinality_is_multiple?) { is_expected.to be_truthy }
 
   describe '.build_row' do
-    context 'for arrange answers in an order' do
+    context 'for cardinality validation' do
       subject { described_class.build_row(row:, questions: {}) }
 
       let(:row) do

@@ -1,2 +1,2 @@
-IMPORT_ID,TYPE,TEXT,KEYWORD,SUBJECT,LEVEL,LEFT_1,LEFT_2,LEFT_3,LEFT_4,LEFT_5,RIGHT_1,RIGHT_2,RIGHT_3,RIGHT_4,RIGHT_5
-1,Categorization,Arrange these Chinese dynasties into chronological order from oldest to most recent:,History,History,1,,,,,,Qin,Han,Shang,Ming,Yuan
+IMPORT_ID,TYPE,TEXT,KEYWORD,SUBJECT,LEVEL,LEFT_1,LEFT_2,RIGHT_1,RIGHT_2
+1,Categorization,Group the named elements by type:,History,History,1,Animal,Plan,"Cat, Dog","Dogwood,Catnip"

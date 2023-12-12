@@ -80,48 +80,59 @@ end
 RSpec.shared_examples 'a Matching Question' do
   describe '.build_row' do
     subject { described_class.build_row(row:, questions: {}) }
-    context 'with invalid data due to mismatched columns' do
-      let(:row) do
-        CsvRow.new("TYPE" => described_class.type_name,
-                   "TEXT" => "#{described_class.type_name} the proper pairings:",
-                   "LEVEL" => Level.names.first,
-                   "LEFT_1" => "Animal",
-                   "LEFT_3" => "Mineral",
-                   "RIGHT_2" => "Cat, Dog",
-                   "RIGHT_4" => "Weird",
-                   "LEFT_5" => "Yup",
-                   "RIGHT_5" => "It Matches",
-                   "KEYWORD" => "One, Two",
-                   "SUBJECT" => "Big, Little")
-      end
-      it { is_expected.not_to be_valid }
-      it { is_expected.not_to be_persisted }
-      it "will not call the underlying question's save!" do
-        expect(subject.question).not_to receive(:save!)
-        # I could have one regular expression for this, but figure splitting it apart helps show with clarity.
-        expect { subject.save! }.to raise_error(/Have LEFT_1, LEFT_3 columns without corresponding RIGHT_1, RIGHT_3 columns/)
-        expect { subject.save! }.to raise_error(/Have RIGHT_2, RIGHT_4 columns without corresponding LEFT_2, LEFT_4 columns/)
+    let(:base_row_data) do
+      {
+        "TYPE" => described_class.type_name,
+        "TEXT" => "#{described_class.type_name} the proper pairings:",
+        "LEVEL" => Level.names.first,
+        "KEYWORD" => "One, Two",
+        "SUBJECT" => "Big, Little"
+      }
+    end
+
+    let(:row) { CsvRow.new(base_row_data.merge(given_row_data)) }
+
+    context 'invalid data' do
+      [
+        [
+          { "LEFT_1" => "Color", "LEFT_2" => "Food", "RIGHT_1" => "Orange,Red", "RIGHT_2" => "Orange,Banana" },
+          [%r{expected "Orange" to be unique within RIGHT columns}]
+        ],
+        [
+          { "LEFT_1" => "Color", "LEFT_2" => "Food", "RIGHT_1" => "Red", "RIGHT_3" => "Banana" },
+          [%r{mismatch of LEFT and RIGHT columns}]
+        ]
+      ].each do |given_data, error_messages|
+        context "given #{given_data.inspect}" do
+          let(:given_row_data) { given_data }
+          it { is_expected.not_to be_valid }
+          it { is_expected.not_to be_persisted }
+          Array.wrap(error_messages).each do |error|
+            it "will raise #{error.inspect} message" do
+              expect(subject.question).not_to receive(:save!)
+              # I could have one regular expression for this, but figure splitting it apart helps show with clarity.
+              expect { subject.save! }.to raise_error(error)
+            end
+          end
+        end
       end
     end
 
-    context 'with valid data' do
-      let(:row) do
-        CsvRow.new("TYPE" => described_class.type_name,
-                   "TEXT" => "#{described_class.type_name} the proper pairings:",
-                   "LEVEL" => Level.names.first,
-                   "LEFT_1" => "Animal",
-                   "RIGHT_1" => "Cat, Dog",
-                   "LEFT_2" => "Plant",
-                   "RIGHT_2" => "Catnip, Dogwood",
-                   "LEFT_3" => "",
-                   "RIGHT_3" => "",
-                   "KEYWORD" => "One, Two",
-                   "SUBJECT" => "Big, Little")
+    context 'valid data' do
+      let(:given_row_data) do
+        {
+          "LEFT_1" => "Animal",
+          "RIGHT_1" => "Cat",
+          "LEFT_2" => "Plant",
+          "RIGHT_2" => "Catnip",
+          "LEFT_3" => "",
+          "RIGHT_3" => ""
+        }
       end
 
       it { is_expected.to be_valid }
       it { is_expected.not_to be_persisted }
-      its(:data) { is_expected.to eq([{ "answer" => "Animal", "correct" => ["Cat", "Dog"] }, { "answer" => "Plant", "correct" => ["Catnip", "Dogwood"] }]) }
+      its(:data) { is_expected.to eq([{ "answer" => "Animal", "correct" => ["Cat"] }, { "answer" => "Plant", "correct" => ["Catnip"] }]) }
 
       context 'when saved' do
         before { subject.save }

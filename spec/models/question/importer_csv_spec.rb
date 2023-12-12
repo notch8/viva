@@ -58,8 +58,7 @@ RSpec.describe Question::ImporterCsv do
       "2,Scenario,Valid scenario,1,\n" \
       "3,Traditional,Valid traditional,1,1,You are correct sir!\n" \
       "4,Select All That Apply,Valid SATA,1,1,You are correct sir!\n" \
-      "5,Bow Tie,Valid Bow Tie,1,,,CL,CA,1,LL,LA,1,RL,RA,1\n" \
-      "6,Matching,Valid Matching,1,,,,,1,,LA,1,,RA,1\n"
+      "5,Bow Tie,Valid Bow Tie,1,,,CL,CA,1,LL,LA,1,RL,RA,1"
     end
 
     it 'creates a case study and child scenario' do
@@ -68,7 +67,6 @@ RSpec.describe Question::ImporterCsv do
         Question::Traditional,
         Question::SelectAllThatApply,
         Question::BowTie,
-        Question::Matching
       ]
 
       expect { subject.save }.to change(Question, :count).by(1 + part_ofs.size)
@@ -116,7 +114,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with mixed valid data' do
     let(:text) do
-      "IMPORT_ID,TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1,ANSWER_3\n" \
+      "IMPORT_ID,TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2,RESPONSE_1,CHOICE_1,ANSWER_3\n" \
       "1,Traditional,,Which one is true?,1,true,false,,,Orc\n" \
       "2,Matching,,Pair Up,,,,Animal,Cat\n" \
       "3,Select All That Apply,,Which one is affirmative?,\"1,3\",true,false,,,yes\n" \

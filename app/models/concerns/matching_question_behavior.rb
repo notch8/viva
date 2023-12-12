@@ -19,26 +19,26 @@ module MatchingQuestionBehavior
     # rubocop:disable Metrics/MethodLength
     def extract_answers_and_data_from(row)
       # These are reused in #validate_well_formed_row
-      @lefts = []
-      @rights = []
+      @choices = []
+      @responses = []
       # Ensure that we have all of the candidate indices (the left and right side)
       row.headers.each do |header|
         next if header.blank?
 
-        if header.start_with?("LEFT_")
-          @lefts << header.split(/_+/).last.to_i
-        elsif header.start_with?("RIGHT_")
-          @rights << header.split(/_+/).last.to_i
+        if header.start_with?("CHOICE_")
+          @choices << header.split(/_+/).last.to_i
+        elsif header.start_with?("RESPONSE_")
+          @responses << header.split(/_+/).last.to_i
         end
       end
 
-      indices = (@lefts + @rights).uniq.sort
+      indices = (@choices + @responses).uniq.sort
 
       @data = indices.each_with_object([]) do |index, array|
         # It is okay that these will possibly be nil; because our downstream validation will catch
         # them.
-        answer = row["LEFT_#{index}"]
-        correct = row["RIGHT_#{index}"]&.split(/\s*,\s*/)
+        answer = row["CHOICE_#{index}"]
+        correct = row["RESPONSE_#{index}"]&.split(/\s*,\s*/)
         next if answer.blank? && correct.blank?
         array << { "answer" => answer, "correct" => correct }
       end
@@ -46,12 +46,12 @@ module MatchingQuestionBehavior
     # rubocop:enable Metrics/MethodLength
 
     def validate_well_formed_row
-      return unless @lefts.sort != @rights.sort
-      message = "mismatch of LEFT and RIGHT columns."
-      left_has = @lefts - @rights
-      message += " Have LEFT_#{left_has.join(', LEFT_')} columns without corresponding RIGHT_#{left_has.join(', RIGHT_')} columns." if left_has.any?
-      right_has = @rights - @lefts
-      message += " Have RIGHT_#{right_has.join(', RIGHT_')} columns without corresponding LEFT_#{right_has.join(', LEFT_')} columns." if right_has.any?
+      return unless @choices.sort != @responses.sort
+      message = "mismatch of CHOICE and RESPONSE columns."
+      choice_has = @choices - @responses
+      message += " Have CHOICE_#{choice_has.join(', CHOICE_')} columns without corresponding RESPONSE_#{choice_has.join(', RESPONSE_')} columns." if choice_has.any?
+      response_has = @responses - @choices
+      message += " Have RESPONSE_#{response_has.join(', RESPONSE_')} columns without corresponding CHOICE_#{response_has.join(', CHOICE_')} columns." if response_has.any?
       errors.add(:base, message)
     end
   end

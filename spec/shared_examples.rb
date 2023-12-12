@@ -85,12 +85,12 @@ RSpec.shared_examples 'a Matching Question' do
         CsvRow.new("TYPE" => described_class.type_name,
                    "TEXT" => "#{described_class.type_name} the proper pairings:",
                    "LEVEL" => Level.names.first,
-                   "LEFT_1" => "Animal",
-                   "LEFT_3" => "Mineral",
-                   "RIGHT_2" => "Cat, Dog",
-                   "RIGHT_4" => "Weird",
-                   "LEFT_5" => "Yup",
-                   "RIGHT_5" => "It Matches",
+                   "CHOICE_1" => "Animal",
+                   "CHOICE_3" => "Mineral",
+                   "RESPONSE_2" => "Cat, Dog",
+                   "RESPONSE_4" => "Weird",
+                   "CHOICE_5" => "Yup",
+                   "RESPONSE_5" => "It Matches",
                    "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end
@@ -99,8 +99,8 @@ RSpec.shared_examples 'a Matching Question' do
       it "will not call the underlying question's save!" do
         expect(subject.question).not_to receive(:save!)
         # I could have one regular expression for this, but figure splitting it apart helps show with clarity.
-        expect { subject.save! }.to raise_error(/Have LEFT_1, LEFT_3 columns without corresponding RIGHT_1, RIGHT_3 columns/)
-        expect { subject.save! }.to raise_error(/Have RIGHT_2, RIGHT_4 columns without corresponding LEFT_2, LEFT_4 columns/)
+        expect { subject.save! }.to raise_error(/Have CHOICE_1, CHOICE_3 columns without corresponding RESPONSE_1, RESPONSE_3 columns/)
+        expect { subject.save! }.to raise_error(/Have RESPONSE_2, RESPONSE_4 columns without corresponding CHOICE_2, CHOICE_4 columns/)
       end
     end
 
@@ -109,12 +109,12 @@ RSpec.shared_examples 'a Matching Question' do
         CsvRow.new("TYPE" => described_class.type_name,
                    "TEXT" => "#{described_class.type_name} the proper pairings:",
                    "LEVEL" => Level.names.first,
-                   "LEFT_1" => "Animal",
-                   "RIGHT_1" => "Cat, Dog",
-                   "LEFT_2" => "Plant",
-                   "RIGHT_2" => "Catnip, Dogwood",
-                   "LEFT_3" => "",
-                   "RIGHT_3" => "",
+                   "CHOICE_1" => "Animal",
+                   "RESPONSE_1" => "Cat, Dog",
+                   "CHOICE_2" => "Plant",
+                   "RESPONSE_2" => "Catnip, Dogwood",
+                   "CHOICE_3" => "",
+                   "RESPONSE_3" => "",
                    "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end

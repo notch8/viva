@@ -1,2 +1,2 @@
-IMPORT_ID,TYPE,TEXT,KEYWORD,SUBJECT,LEVEL,LEFT_1,LEFT_2,LEFT_3,LEFT_4,LEFT_5,RIGHT_1,RIGHT_2,RIGHT_3,RIGHT_4,RIGHT_5
+IMPORT_ID,TYPE,TEXT,KEYWORD,SUBJECT,LEVEL,CHOICE_1,CHOICE_2,CHOICE_3,CHOICE_4,CHOICE_5,RESPONSE_1,RESPONSE_2,RESPONSE_3,RESPONSE_4,RESPONSE_5
 1,Categorization,Arrange these Chinese dynasties into chronological order from oldest to most recent:,History,History,1,First,Second,Third,Fourth,Fifth,Qin,Han,Shang,Ming,Yuan

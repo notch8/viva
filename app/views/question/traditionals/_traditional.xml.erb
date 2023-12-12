@@ -31,13 +31,13 @@
   </presentation>
   <resprocessing>
     <outcomes>
-      <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
+      <decvar maxvalue="<%= traditional.qti_max_value %>" minvalue="0" varname="SCORE" vartype="Decimal"/>
     </outcomes>
     <respcondition continue="No">
       <conditionvar>
         <varequal respident="response_<%= traditional.item_ident %>"><%= traditional.item_ident %>-<%= traditional.correct_response_index %></varequal>
       </conditionvar>
-      <setvar action="Set" varname="SCORE">100</setvar>
+      <setvar action="Set" varname="SCORE"><%= traditional.qti_max_value %></setvar>
     </respcondition>
   </resprocessing>
 </item>

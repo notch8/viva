@@ -23,6 +23,11 @@ class Question < ApplicationRecord
   class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false
+
+  ##
+  # @!attribute qti_max_value [r|w]
+  #   @return [Integer]
+  class_attribute :qti_max_value, default: 100
   # @!endgroup Class Attributes
   ##
 

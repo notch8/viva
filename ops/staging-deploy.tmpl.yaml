@@ -27,7 +27,7 @@ rails:
   image:
     repository: ghcr.io/scientist-softserv/viva
     # Overrides the image tag whose default is the chart appVersion.
-    tag: latest
+    tag: ""
   imagepullPolicy: IfNotPresent
   imagePullSecrets:
     - name: github
@@ -38,7 +38,7 @@ rails:
 
 service:
   type: ClusterIP
-  port: 3000
+  port: 80
 
 ingress:
   enabled: true

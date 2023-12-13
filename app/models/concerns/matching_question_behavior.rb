@@ -178,7 +178,7 @@ module MatchingQuestionBehavior
     data.each_with_index do |datum, index|
       choices = []
       Array.wrap(datum.fetch('correct')).each do |choice|
-        Choice.new(ident: "#{item_ident}-c-#{choice_index}", text: choice)
+        choices << Choice.new(ident: "#{item_ident}-c-#{choice_index}", text: choice)
         choice_index += 1
       end
       response = Response.new(ident: "#{item_ident}-r-#{index}", text: datum.fetch('answer'))

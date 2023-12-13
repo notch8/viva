@@ -5,13 +5,12 @@
 #
 # @see #well_formed_serialized_data
 class Question::Matching < Question
+  include MatchingQuestionBehavior
+
   self.type_name = "Matching"
   self.export_as_xml = true
+  self.choice_cardinality_is_multiple = false
 
   class ImportCsvRow < MatchingQuestionBehavior::ImportCsvRow
   end
-
-  include MatchingQuestionBehavior
-
-  self.choice_cardinality_is_multiple = false
 end

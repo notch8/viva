@@ -175,22 +175,25 @@ RSpec.shared_examples 'a Matching Question' do
   end
 
   describe 'QTI Exporting' do
-    let(:instance) { FactoryBot.build(:question_matching) }
+    let(:instance) { FactoryBot.build("question_#{described_class.name.demodulize.underscore}") }
 
     describe '#qti_choices' do
       it "is an Array of Choice objects" do
+        expect(instance.qti_choices).to be_present
         expect(instance.qti_choices.all? { |r| r.is_a?(described_class::Choice) }).to be_truthy
       end
     end
 
     describe '#qti_response_conditions' do
       it "is an Array of ResponseCondition objects" do
+        expect(instance.qti_response_conditions).to be_present
         expect(instance.qti_response_conditions.all? { |r| r.is_a?(described_class::ResponseCondition) }).to be_truthy
       end
     end
 
     describe '#qti_responses' do
       it "is an Array of Response objects" do
+        expect(instance.qti_responses).to be_present
         expect(instance.qti_responses.all? { |r| r.is_a?(described_class::Response) }).to be_truthy
       end
     end

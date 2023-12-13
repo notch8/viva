@@ -201,6 +201,26 @@ RSpec.shared_examples 'a Matching Question' do
 end
 
 RSpec.shared_examples 'a Markdown Question' do
+  describe '#html' do
+    context 'with no data' do
+      subject { described_class.new.html }
+      it { is_expected.to be_nil }
+    end
+
+    context 'with well formed data' do
+      subject { FactoryBot.build("question_#{described_class.name.demodulize.underscore}").html }
+      it { is_expected.to start_with("<") }
+    end
+
+    context 'with ill-formed data' do
+      subject { FactoryBot.build("question_#{described_class.name.demodulize.underscore}", data: { "not-html" => "Hello" }).html }
+
+      it 'raises a KeyError' do
+        expect { subject }.to raise_error(KeyError)
+      end
+    end
+  end
+
   describe '.build_row' do
     subject { described_class.build_row(row:, questions: {}) }
     context 'with invalid data due to mismatched columns' do

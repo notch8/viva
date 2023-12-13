@@ -13,6 +13,7 @@ module MarkdownQuestionBehavior
     validates :data, presence: true
   end
 
+  DATA_KEY_NAME = 'html'
   class ImportCsvRow < Question::ImportCsvRow
     # rubocop:disable Metrics/MethodLength
 
@@ -51,12 +52,22 @@ module MarkdownQuestionBehavior
       # nor transport.
       html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@text).delete("\n")
 
-      @data = { "html" => html }
+      @data = { DATA_KEY_NAME => html }
     end
     # rubocop:enable Metrics/MethodLength
 
     def validate_well_formed_row
       errors.add(:base, "expected one or more TEXT columns") unless row.key?("TEXT") || @section_integers.any?
     end
+  end
+
+  ##
+  # @return [NilClass] when we have not yet set the data.
+  # @return [String] HTML unsafe content (e.g. raw HTML that has not been verified as safe nor
+  #         escaped.)
+  # @raise [KeyError] when the data does not have an 'html' key.  This is indicative of a disconnect
+  #        in the mapping of the imported data to the serialized form.
+  def html
+    data&.fetch(DATA_KEY_NAME)
   end
 end

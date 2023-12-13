@@ -7,9 +7,11 @@
 # @note the {#data} attribute will be a Hash with one key: "html".  That "html" will be safe to
 #       render in the UI.
 class Question::Upload < Question
-  self.type_name = "Upload"
-
   include MarkdownQuestionBehavior
+
+  self.type_name = "Upload"
+  self.export_as_xml = true
+
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow
   end
 end

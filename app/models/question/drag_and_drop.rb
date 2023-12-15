@@ -44,7 +44,7 @@ class Question::DragAndDrop < Question
       intersect = (answers_as_column_names & answer_columns)
 
       if intersect != answers_as_column_names
-        message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
+        message = "CORRECT_ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
                   "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
         errors.add(:base, message)
       end
@@ -72,7 +72,7 @@ class Question::DragAndDrop < Question
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def extract_drag_and_drop_all_that_apply(row:, **)
-      @answers = row['ANSWERS']
+      @answers = row['CORRECT_ANSWERS']
                  &.split(",")
                  &.map { |answer| answer.strip.to_i } ||
                  []

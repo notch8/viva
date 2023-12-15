@@ -26,7 +26,7 @@ RSpec.describe Question::DragAndDrop do
 
       it "will not call the underlying question's save!" do
         expect(subject.question).not_to receive(:save!)
-        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /ANSWERS column indicates that ANSWER_1, ANSWER_2/)
+        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /CORRECT_ANSWERS column indicates that ANSWER_1, ANSWER_2/)
       end
     end
 
@@ -65,7 +65,7 @@ RSpec.describe Question::DragAndDrop do
         CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "The prompt is...",
                    "LEVEL" => Level.names.first,
-                   "ANSWERS" => "2,4,6",
+                   "CORRECT_ANSWERS" => "2,4,6",
                    "ANSWER_1" => "Hello World!",
                    "ANSWER_3" => "Something",
                    "ANSWER_5" => "Else",
@@ -78,7 +78,7 @@ RSpec.describe Question::DragAndDrop do
 
       it "will not call the underlying question's save!" do
         expect(subject.question).not_to receive(:save!)
-        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/)
+        expect { subject.save! }.to raise_error(ActiveRecord::RecordInvalid, /CORRECT_ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/)
       end
     end
 
@@ -86,7 +86,7 @@ RSpec.describe Question::DragAndDrop do
       let(:row) do
         CsvRow.new("TYPE" => "Drag and Drop",
                    "TEXT" => "Select all of the animals:",
-                   "ANSWERS" => "1,4",
+                   "CORRECT_ANSWERS" => "1,4",
                    "ANSWER_1" => "Cat",
                    "ANSWER_2" => "Catnip",
                    "ANSWER_3" => "Blue",

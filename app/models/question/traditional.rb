@@ -17,7 +17,7 @@ class Question::Traditional < Question
 
     def extract_answers_and_data_from(row)
       # Specific to the subclass
-      @answers = row['ANSWERS']
+      @answers = row['CORRECT_ANSWERS']
                  &.split(/\s*,\s*/)
                  &.map(&:to_i) ||
                  []
@@ -31,14 +31,14 @@ class Question::Traditional < Question
 
     # rubocop:disable Metrics/AbcSize
     def validate_well_formed_row
-      errors.add(:base, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
+      errors.add(:base, "expected CORRECT_ANSWERS column") unless row['CORRECT_ANSWERS']&.strip&.present?
 
       if answers.size == 1
         if answer_columns.exclude?("ANSWER_#{answers.first}")
-          errors.add(:base, "ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")
+          errors.add(:base, "CORRECT_ANSWERS column indicates that ANSWER_#{answers.first} column should be the correct answer, but there is no ANSWER_#{answers.first}")
         end
       else
-        errors.add(:base, "expected ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
+        errors.add(:base, "expected CORRECT_ANSWERS cell to have one correct answer.  The following columns are marked as correct answers: #{answers.map { |a| "ANSWER_#{a}" }.join(',')}")
       end
     end
     # rubocop:enable Metrics/AbcSize

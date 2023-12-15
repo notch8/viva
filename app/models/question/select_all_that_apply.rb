@@ -19,7 +19,7 @@ class Question::SelectAllThatApply < Question
     attr_reader :answers, :answer_columns
 
     def extract_answers_and_data_from(row)
-      @answers = row['ANSWERS']
+      @answers = row['CORRECT_ANSWERS']
                  &.split(',')
                  &.map(&:to_i) || []
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
@@ -31,12 +31,12 @@ class Question::SelectAllThatApply < Question
     end
 
     def validate_well_formed_row
-      errors.add(:base, "expected ANSWERS column") unless row['ANSWERS']&.strip&.present?
+      errors.add(:base, "expected CORRECT_ANSWERS column") unless row['CORRECT_ANSWERS']&.strip&.present?
 
       answers_as_column_names = answers.map { |a| "ANSWER_#{a}" }
       intersect = (answers_as_column_names & answer_columns)
       if intersect != answers_as_column_names
-        message = "ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
+        message = "CORRECT_ANSWERS column indicates that #{answers_as_column_names.join(', ')} " \
                   "columns should be the correct answer, but there's a mismatch with the provided ANSWER_ columns."
         errors.add(:base, message)
       end

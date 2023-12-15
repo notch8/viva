@@ -40,7 +40,7 @@ class Question::BowTie < Question
   validates :data, presence: true
 
   EXPECTED_DATA_HASH_KEYS = %w[left center right].freeze
-  ANSWER_AND_POSITION_REGEXP = %r{\A(?<direction>#{EXPECTED_DATA_HASH_KEYS.map(&:upcase).join('|')})_(?<index>\d+)}
+  CHOICE_AND_POSITION_REGEXP = %r{\A(?<direction>#{EXPECTED_DATA_HASH_KEYS.map(&:upcase).join('|')})_(?<index>\d+)}
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.
@@ -56,7 +56,7 @@ class Question::BowTie < Question
       correct_answer_colum_numbers = {}
       @data = {}
       question_type::EXPECTED_DATA_HASH_KEYS.each do |key|
-        correct_answer_colum_numbers[key] = row["#{key.upcase}_ANSWERS"]
+        correct_answer_colum_numbers[key] = row["#{key.upcase}_CORRECT_ANSWERS"]
                                             &.split(/\s*,\s*/)
                                             &.map(&:to_i) ||
                                             []
@@ -65,7 +65,7 @@ class Question::BowTie < Question
 
       row.each do |header, value|
         next if header.blank?
-        match = question_type::ANSWER_AND_POSITION_REGEXP.match(header)
+        match = question_type::CHOICE_AND_POSITION_REGEXP.match(header)
         next unless match
 
         direction = match[:direction].downcase
@@ -94,8 +94,8 @@ class Question::BowTie < Question
     end
 
     def validate_answers
-      expected = question_type::EXPECTED_DATA_HASH_KEYS.map { |direction| "#{direction.upcase}_ANSWERS" }.sort
-      given = row.headers.select { |h| h.present? && h.end_with?("_ANSWERS") }.sort
+      expected = question_type::EXPECTED_DATA_HASH_KEYS.map { |direction| "#{direction.upcase}_CORRECT_ANSWERS" }.sort
+      given = row.headers.select { |h| h.present? && h.end_with?("_CORRECT_ANSWERS") }.sort
 
       return true if (expected & given) == expected
 
@@ -110,7 +110,7 @@ class Question::BowTie < Question
       index_errors = {}
       # I need to ensure that each "answer" for each direction exists
       expected_answer_columns = question_type::EXPECTED_DATA_HASH_KEYS.each_with_object({}) do |direction, hash|
-        indices = row["#{direction.upcase}_ANSWERS"]
+        indices = row["#{direction.upcase}_CORRECT_ANSWERS"]
                   &.split(/\s*,\s*/) ||
                   []
         indices.each do |i|
@@ -124,12 +124,12 @@ class Question::BowTie < Question
 
       index_errors.each_pair do |direction, columns|
         next if errors.blank?
-        errors.add(:base, %(#{direction.upcase}_ANSWERS should reference only #{direction.upcase}_<INTEGER> columns; instead got #{columns.map { |c| "#{direction.upcase}_#{c}" }.join(', ')}.))
+        errors.add(:base, %(#{direction.upcase}_CORRECT_ANSWERS should reference only #{direction.upcase}_<INTEGER> columns; instead got #{columns.map { |c| "#{direction.upcase}_#{c}" }.join(', ')}.))
       end
 
       given_answer_columns = row.headers.each_with_object({}) do |header, hash|
         next if header.blank?
-        match = question_type::ANSWER_AND_POSITION_REGEXP.match(header)
+        match = question_type::CHOICE_AND_POSITION_REGEXP.match(header)
 
         next unless match
 

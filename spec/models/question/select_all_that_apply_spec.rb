@@ -19,9 +19,9 @@ RSpec.describe Question::SelectAllThatApply do
   describe '.build_row' do
     subject { described_class.build_row(row:, questions: {}) }
     [
-      [{ "ANSWERS" => "2,4,6", "ANSWER_1" => "A1", "ANSWER_3" => "A3" },
-       /ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/],
-      [{ "ANSWER_1" => "A1" }, /expected ANSWERS column/]
+      [{ "CORRECT_ANSWERS" => "2,4,6", "ANSWER_1" => "A1", "ANSWER_3" => "A3" },
+       /CORRECT_ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/],
+      [{ "ANSWER_1" => "A1" }, /expected CORRECT_ANSWERS column/]
     ].each do |given_data, error_message|
       context "with invalid data #{given_data.inspect}" do
         let(:row) { CsvRow.new(given_data) }
@@ -38,7 +38,7 @@ RSpec.describe Question::SelectAllThatApply do
         CsvRow.new("TYPE" => "AllThatApply",
                    "TEXT" => "Which one is affirmative?",
                    "LEVEL" => Level.names.first,
-                   "ANSWERS" => "1, 3",
+                   "CORRECT_ANSWERS" => "1, 3",
                    "ANSWER_1" => "true",
                    "ANSWER_2" => "false",
                    "ANSWER_3" => "yes",

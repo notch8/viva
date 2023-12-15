@@ -11,9 +11,9 @@ RSpec.describe Question::Traditional do
     subject { described_class.build_row(row: data, questions: {}) }
 
     [
-      [{ "ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /ANSWERS column indicates that ANSWER_2/],
-      [{ "ANSWERS" => "1,2", "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected ANSWERS cell to have one correct answer/],
-      [{ "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected ANSWERS cell to have one correct answer/]
+      [{ "CORRECT_ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /CORRECT_ANSWERS column indicates that ANSWER_2/],
+      [{ "CORRECT_ANSWERS" => "1,2", "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected CORRECT_ANSWERS cell to have one correct answer/],
+      [{ "ANSWER_1" => "A1", "ANSWER_2" => "A2" }, /expected CORRECT_ANSWERS cell to have one correct answer/]
     ].each do |given_data, error_message|
       context "with invalid data #{given_data.inspect}" do
         let(:data) { CsvRow.new(given_data) }
@@ -31,7 +31,7 @@ RSpec.describe Question::Traditional do
                    "TYPE" => "Traditional",
                    "TEXT" => "Which one is true?",
                    "LEVEL" => Level.names.first,
-                   "ANSWERS" => "1",
+                   "CORRECT_ANSWERS" => "1",
                    "ANSWER_1" => "true",
                    "ANSWER_2" => "false",
                    "ANSWER_3" => "",

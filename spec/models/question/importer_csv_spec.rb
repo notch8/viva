@@ -36,7 +36,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with type that does not have parts other rows say they are part of that type' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1\n" \
+      "IMPORT_ID,TYPE,TEXT,PART_OF,CORRECT_ANSWERS,ANSWER_1\n" \
       "1,Traditional,Valid traditional,,1,You are correct sir!\n" \
       "2,Scenario,Valid scenario,1,\n"
     end
@@ -53,7 +53,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with stimulus case study and child scenario' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,PART_OF,ANSWERS,ANSWER_1,CENTER_LABEL,CENTER_1,CENTER_ANSWERS,LEFT_LABEL,LEFT_1,LEFT_ANSWERS,RIGHT_LABEL,RIGHT_1,RIGHT_ANSWERS\n" \
+      "IMPORT_ID,TYPE,TEXT,PART_OF,CORRECT_ANSWERS,ANSWER_1,CENTER_LABEL,CENTER_1,CENTER_CORRECT_ANSWERS,LEFT_LABEL,LEFT_1,LEFT_CORRECT_ANSWERS,RIGHT_LABEL,RIGHT_1,RIGHT_CORRECT_ANSWERS\n" \
       "1,Stimulus Case Study,Valid study,,\n" \
       "2,Scenario,Valid scenario,1,\n" \
       "3,Traditional,Valid traditional,1,1,You are correct sir!\n" \
@@ -87,7 +87,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with duplicate IMPORT_ID' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
+      "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
       "1,Traditional,Which one is true?,1,true,false,Orc\n" \
       "1,Traditional,Creature of Middle Earth?,3,true,false,Orc\n"
     end
@@ -100,7 +100,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with valid data' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
+      "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
       "1,Traditional,Which one is true?,1,true,false,Orc\n"
     end
 
@@ -116,7 +116,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with mixed valid data' do
     let(:text) do
-      "IMPORT_ID,TYPE,,TEXT,ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1,ANSWER_3\n" \
+      "IMPORT_ID,TYPE,,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1,ANSWER_3\n" \
       "1,Traditional,,Which one is true?,1,true,false,,,Orc\n" \
       "2,Matching,,Pair Up,,,,Animal,Cat\n" \
       "3,Select All That Apply,,Which one is affirmative?,\"1,3\",true,false,,,yes\n" \
@@ -141,7 +141,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'with invalid data' do
     let(:text) do
-      "IMPORT_ID,TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
+      "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
       "1,Traditional,I don't know?,4,a,b,c\n"
     end
 
@@ -160,7 +160,7 @@ RSpec.describe Question::ImporterCsv do
 
   context 'without an IMPORT_ID column' do
     let(:text) do
-      "TYPE,TEXT,ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
+      "TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
       "Traditional,I don't know?,1,a,b,c\n"
     end
 

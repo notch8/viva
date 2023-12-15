@@ -10,7 +10,7 @@
     - [Common Columns](#common-columns)
       - [Indexed Columns](#indexed-columns)
     - [Question Type Documentation](#question-type-documentation)
-  - [Exporting XML](#exporting-xml)
+    - [Exporting XML](#exporting-xml)
   - [Development](#development)
     - [Getting Started](#getting-started)
     - [Creating New Question Types](#creating-new-question-types)
@@ -261,7 +261,7 @@ Purple is comprised of Red (and Blue).
 As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-14 Thu&gt;</span></span>, the Upload question behaves in the same manner as the Essay question; see it’s documentation for details.
 </details>
 
-## Exporting XML
+### Exporting XML
 
 From the home page.
 

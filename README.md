@@ -94,7 +94,7 @@ All question types support the following CSV headers:
 -   `SUBJECT` (Recommended): One or more subjects that are topical for this question; separate each phrase with a comma
 -   `LEVEL` (Recommended):
 
-A reminder, when you want to have a comma (e.g. `,`) in a cell, you must wrap the cell in double hack marks (e.g. `"`).
+A reminder, when you want to have a comma (e.g. `,`) in a cell, you must wrap the cell in double quotes (e.g. `"`).
 
 Below is an example in which the question will have the "Introspection" and "Group Feedback" keywords and the "History" and "Literature" subjects.
 

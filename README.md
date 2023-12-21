@@ -144,8 +144,6 @@ In the above fragment of CSV, the question prompt is "Match the pairs".  And the
 
 The Drag and Drop is similar to Select All That Apply, allowing one or more correct answers.  The drag and drop has two “forms”:
 
-</details>
-
 <details><summary> Form One</summary>
 
 Form one is identical to the later described Select All that Apply.

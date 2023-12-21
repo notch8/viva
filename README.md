@@ -11,6 +11,9 @@
       - [Indexed Columns](#indexed-columns)
     - [Question Type Documentation](#question-type-documentation)
     - [Exporting XML](#exporting-xml)
+  - [Data Management](#data-management)
+    - [Creating New Users](#creating-new-users)
+    - [Reseting Questions and Data](#reseting-questions-and-data)
   - [Development](#development)
     - [Getting Started](#getting-started)
     - [Creating New Question Types](#creating-new-question-types)
@@ -282,6 +285,30 @@ As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-13 Wed
 2.  In Canvas you may migrate “Classic” questions to “new” formats, but not vice versa.
 
 *Note:* Only after providing a Search Filter will you be able to “Export” questions.
+
+## Data Management
+
+As a proof of concept and prototype, there are administrative functions that are only available via the command-line on the server.
+
+### Creating New Users
+
+In the `Rails` console run the following:
+
+```ruby
+User.create!(email: "<EMAIL>", password: "<PASSWORD>")
+```
+
+### Reseting Questions and Data
+
+Over the course of testing and experimenting, you might want to reset the questions.
+
+There are three `rake` tasks that you can run on the server:
+
+| Task                         | Description                                      |
+|------------------------------|--------------------------------------------------|
+| `rake data:cleanup`          | Reset all question related information           |
+| `rake data:cleanup:metadata` | Clear all existing metadata related to questions |
+| `rake data:cleanup:prompts`  | Clear all existing questions                     |
 
 ## Development
 

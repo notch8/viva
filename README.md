@@ -159,8 +159,6 @@ Form one is identical to the later described Select All that Apply.
 
 The primary colors are Red, Yellow, and Blue.
 
-</details>
-
 <details><summary> Form Two</summary>
 
 In this form, we do not need to include a `CORRECT_ANSWERS` column; it is derived from the `TEXT`.
@@ -200,6 +198,9 @@ In the above example we will produce the following HTML:
 ```
 
 </details>
+
+</details>
+
 
 <details><summary>Matching</summary>
 

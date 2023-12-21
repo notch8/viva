@@ -156,6 +156,7 @@ Form one is identical to the later described Select All that Apply.
 | Select the primary colors: | 2,4,6           | Green    | Red      | Orange   | Yellow   | Purple   | Blue     |
 
 The primary colors are Red, Yellow, and Blue.
+</details>
 
 <details><summary> Form Two</summary>
 
@@ -166,6 +167,8 @@ In this form, we do not need to include a `CORRECT_ANSWERS` column; it is derive
 | The \_\_\_2\_\_\_ loves the smell of \_\_\_3\_\_\_. | Dogwood  | Cat      | Catnip   | Blue     |
 
 In the above example, the `___2___` references `ANSWER_2` column and `___3___` references `ANSWER_3`; creating the sentence “The cat loves the smell of catnip.”
+</details>
+
 </details>
 
 <details><summary>Essay</summary>

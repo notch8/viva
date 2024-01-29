@@ -28,6 +28,7 @@ class Question::ImporterCsv
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def save
     @questions = {}
     @errors = {}
@@ -68,7 +69,15 @@ class Question::ImporterCsv
     Question.transaction do
       @questions.values.all?(&:save!)
     end
+  rescue CSV::MalformedCSVError => e
+    malformed_csv = Question::GeneralCsvError.new(exception: e)
+    @questions[0] = malformed_csv
+    @errors[:csv] = malformed_csv.errors.to_hash
+
+    # We have errors, save should return false
+    false
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize

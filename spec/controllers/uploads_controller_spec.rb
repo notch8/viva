@@ -50,5 +50,20 @@ RSpec.describe UploadsController do
         expect(response).to have_http_status(422)
       end
     end
+
+    context 'with a malformed CSV' do
+      let(:file) { fixture_file_upload("malformed_sata_question.csv", "text/csv") }
+
+      it "will respond with an :unprocessable_entity code (e.g. 422), errors will be present, and no Question records will be created." do
+        expect do
+          post :create, params: { csv: { "0" => file } }
+        end.not_to change(Question, :count)
+
+        expect_inertia.to render_component 'Uploads'
+        expect(inertia.props[:errors]).to be_present
+        expect(inertia.props[:questions]).not_to be_empty
+        expect(response).to have_http_status(422)
+      end
+    end
   end
 end

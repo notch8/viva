@@ -13,6 +13,7 @@ RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesourc
 # Install Node.js and other dependencies
 RUN apt-get update -qq && \
     apt-get install -y \
+    npm \
     nodejs \
     postgresql-client \
     vim-tiny && \

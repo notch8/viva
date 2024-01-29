@@ -23,12 +23,30 @@ RSpec.describe Question::ImporterCsv do
 
         it 'creates no questions' do
           # Also this is a great place to put a debug to see the output.
-          expect { subject.save }.not_to change(Question, :count)
+          expect do
+            expect(subject.save).to be_falsey
+          end.not_to change(Question, :count)
 
           subject.errors[:rows].each do |errors|
             expect(errors).to have_key(:import_id)
             expect(errors).to have_key(:base) # Probably
           end
+        end
+      end
+    end
+
+    Rails.root.glob("spec/fixtures/files/malformed_*.csv").each do |path|
+      context "with \"#{File.basename(path)}\" when saved" do
+        subject { described_class.from_file(file_fixture(File.basename(path))) }
+
+        it 'creates no questions and indicates the message' do
+          # Also this is a great place to put a debug to see the output.
+          expect do
+            expect(subject.save).to be_falsey
+          end.not_to change(Question, :count)
+
+          expect(subject.errors[:csv]).not_to be_empty
+          expect(subject.errors[:csv].keys).to match_array([:message])
         end
       end
     end

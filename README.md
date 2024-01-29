@@ -238,12 +238,17 @@ The primary colors are Red, Yellow, and Blue.
 
 The Stimulus Case Study is comprised of other questions, instead of having answers a Stimulus Case Study is referenced by later rows via the `PART_OF` column.
 
-| IMPORT_ID | TYPE                  | TEXT                                                                               | PART_OF | CORRECT_ANSWERS | ANSWER_1 | ANSWER_2 | ANSWER_3    | ANSWER_4   |
-|-----------|-----------------------|------------------------------------------------------------------------------------|---------|-----------------|----------|----------|-------------|------------|
-| 1         | Stimulus Case Study   | In this case study we’ll discuss Muppets                                           |         |                 |          |          |             |            |
-| 2         | Select All That Apply | In the original Muppet Movie which two Muppets first road together in a Studebaker | 1       | 2,3             | Gonzo    | Kermit   | Fozzie Bear | Miss Piggy |
+| IMPORT_ID | TYPE                  | TEXT                                                                               | PART_OF | CORRECT_ANSWERS | ANSWER_1 | ANSWER_2        | ANSWER_3    | ANSWER_4       |
+|-----------|-----------------------|------------------------------------------------------------------------------------|---------|-----------------|----------|-----------------|-------------|----------------|
+| 1         | Stimulus Case Study   | In this case study we’ll discuss Muppets                                           |         |                 |          |                 |             |                |
+| 2         | Select All That Apply | In the original Muppet Movie which two Muppets first road together in a Studebaker | 1       | 2,3             | Gonzo    | Kermit          | Fozzie Bear | Miss Piggy     |
+| 3         | Scenario              | Later in the movie, the Muppets in the Studebaker continue driving                 | 1       |                 |          |                 |             |                |
+| 4         | Traditional           | In a church they encounter which performer/band?                                   | 1       | 2               | Journey  | Electric Mayhem | John Denver | The Carpenters |
 
-In the above example, the Select All That Apply question is *part of* the Stimulus Case Study.  All questions that are part of a Stimulus Case Study will not be individually filterable.
+In the above example, the Select All That Apply question is *part of* the Stimulus Case Study as is the Scenario and Traditional.  All questions that are part of a Stimulus Case Study will not be individually filterable.
+
+The Scenario type is a special "question" type available only as *part_of* a Stimulus Case Study.  The Scenario type is provided as a place to insert text between the constituent questions of a Stimulus Case Study.
+
 </details>
 
 <details><summary>Traditional</summary>

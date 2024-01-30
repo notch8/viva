@@ -20,5 +20,5 @@ namespace :data do
     end
   end
   desc "Reset all question related information"
-  task cleanup: ["data:cleanup:questions", "data:cleanup:metadata"]
+  task cleanup: ["data:cleanup:prompts", "data:cleanup:metadata"]
 end

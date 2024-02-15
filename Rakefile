@@ -37,4 +37,24 @@ namespace :data do
   end
   desc "Reset all question related information"
   task cleanup: ["data:cleanup:prompts", "data:cleanup:metadata"]
+
+  desc "Normalize existing keywords and subject"
+  task normalize: :environment do
+    [Subject, Keyword].each do |model|
+      model.all.each do |record|
+        next if record.name.downcase == record.name
+        other = model.where(name: record.name.downcase).where.not(id: record.id).first
+        if other
+          # We want to move data from this record to the other
+          join_table = Subject.reflections['questions'].join_table
+          fk = Subject.reflections['questions'].foreign_key
+          sql = "UPDATE #{join_table} SET #{fk} = #{other.id} WHERE #{fk} = #{record.id}"
+          model.connection.execute(sql)
+          record.destroy
+        else
+          record.update(name: record.name.downcase)
+        end
+      end
+    end
+  end
 end

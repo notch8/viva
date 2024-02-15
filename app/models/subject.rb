@@ -13,4 +13,10 @@ class Subject < ApplicationRecord
   def self.names
     all.order(name: :asc).pluck(:name)
   end
+
+  before_save :downcase_name
+
+  def downcase_name
+    self.name = name.downcase
+  end
 end

@@ -307,10 +307,7 @@ class Question < ApplicationRecord
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_subject_names_from(row)
-    row.flat_map do |header, value|
-      next if value.blank?
-      value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "SUBJECTS" || header == "SUBJECT" || header.start_with?("SUBJECT_"))
-    end.compact.sort
+    extract_names_from(row, "SUBJECT")
   end
 
   ##
@@ -319,11 +316,17 @@ class Question < ApplicationRecord
   # @param row [CsvRow]
   # @return [Array<String>]
   def self.extract_keyword_names_from(row)
+    extract_names_from(row, "KEYWORD")
+  end
+
+  def self.extract_names_from(row, column)
     row.flat_map do |header, value|
       next if value.blank?
-      value.split(/\s*,\s*/).map(&:strip) if header.present? && (header == "KEYWORDS" || header == "KEYWORD" || header.start_with?("KEYWORD_"))
-    end.compact.sort
+      next unless header.present? && (header == "#{column}S" || header == column || header.start_with?("#{column}_"))
+      value.split(/\s*,\s*/).map { |v| v.strip.downcase }
+    end.uniq.compact.sort
   end
+  private_class_method :extract_names_from
 
   ##
   # This method ensures that we will consistently have a Question#keyword_names regardless of

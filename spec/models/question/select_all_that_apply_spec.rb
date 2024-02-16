@@ -54,8 +54,8 @@ RSpec.describe Question::SelectAllThatApply do
       context 'when saved' do
         before { subject.save }
 
-        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
-        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
+        its(:keyword_names) { is_expected.to match_array(["one", "two"]) }
+        its(:subject_names) { is_expected.to match_array(["big", "little"]) }
         its(:level) { is_expected.to eq(Level.names.first) }
       end
     end

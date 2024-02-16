@@ -105,8 +105,8 @@ RSpec.describe Question::BowTie do
           subject.reload
         end
 
-        its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-        its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+        its(:keyword_names) { is_expected.to match_array(["green", "orange", "red", "yellow"]) }
+        its(:subject_names) { is_expected.to match_array(["amazing", "fun question", "hard question", "true/false"]) }
         its(:level) { is_expected.to eq(Level.names.first) }
       end
     end

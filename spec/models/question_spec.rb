@@ -34,6 +34,28 @@ RSpec.describe Question, type: :model do
     # rubocop:enable RSpec/ExampleLength
   end
 
+  describe '.extract_subject_names_from' do
+    let(:row) do
+      CsvRow.new("SUBJECT" => "a", "SUBJECTS" => "A,b", "SUBJECT_1" => "c,d", "SUBJECT_2" => "a,E,f")
+    end
+    subject { described_class.extract_subject_names_from(row) }
+
+    it "downcases and sets unique entries" do
+      expect(subject).to match_array(%w[a b c d e f])
+    end
+  end
+
+  describe '.extract_keyword_names_from' do
+    let(:row) do
+      CsvRow.new("KEYWORD" => "a", "KEYWORDS" => "A,b", "KEYWORD_1" => "c,d", "KEYWORD_2" => "a,E,f")
+    end
+    subject { described_class.extract_keyword_names_from(row) }
+
+    it "downcases and sets unique entries" do
+      expect(subject).to match_array(%w[a b c d e f])
+    end
+  end
+
   describe '.build_from_csv_row' do
     subject { described_class.build_from_csv_row(row:, questions: {}) }
 

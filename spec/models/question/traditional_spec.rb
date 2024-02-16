@@ -55,8 +55,8 @@ RSpec.describe Question::Traditional do
           subject.reload
         end
 
-        its(:keyword_names) { is_expected.to match_array(["Green", "Orange", "Red", "Yellow"]) }
-        its(:subject_names) { is_expected.to match_array(["Amazing", "Fun Question", "Hard Question", "True/False"]) }
+        its(:keyword_names) { is_expected.to match_array(["green", "orange", "red", "yellow"]) }
+        its(:subject_names) { is_expected.to match_array(["amazing", "fun question", "hard question", "true/false"]) }
       end
     end
   end

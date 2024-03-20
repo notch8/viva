@@ -21,7 +21,7 @@ jobs:
     secrets: inherit
     with:
       platforms: 'linux/amd64'
-      target: viva-base
+      webTarget: viva-base
   rspec-tests:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/test.yaml@seperate_reports

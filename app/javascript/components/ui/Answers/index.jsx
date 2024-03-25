@@ -30,6 +30,7 @@ const Answers = ({ question_type_name, answers }) => {
       )}
       {/* Traditional and SATA types use the same format */}
       {(question_type_name === 'Traditional' ||
+        question_type_name === 'Multiple Choice' ||
         question_type_name === 'Select All That Apply') && (
         <TraditionalAnswers answers={answers} />
       )}

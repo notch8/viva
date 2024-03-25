@@ -100,9 +100,9 @@ RSpec.describe Question, type: :model do
                       "Drag and Drop",
                       "Essay",
                       "Matching",
+                      "Multiple Choice",
                       "Select All That Apply",
                       "Stimulus Case Study",
-                      "Traditional",
                       "Upload"
                     ])
       )

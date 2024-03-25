@@ -3,7 +3,13 @@
 ##
 # One question, many candidate answers, but only one is correct.
 class Question::Traditional < Question
-  self.type_name = "Traditional"
+  ##
+  # Prior to Issue #261, this was labeled "Traditional".  In the database, we
+  # maintain the "type" value of Traditional; as that is how we handle Single
+  # Table Inheritance (STI).
+  #
+  # @see https://github.com/scientist-softserv/viva/issues/261
+  self.type_name = "Multiple Choice"
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.

@@ -22,7 +22,7 @@ RSpec.describe UploadsController do
     end
 
     context 'with valid data' do
-      let(:file) { fixture_file_upload("valid_traditional_question.csv", "text/csv") }
+      let(:file) { fixture_file_upload("valid_multiple_choice_question.csv", "text/csv") }
 
       it "will respond with a :success code (e.g. 200), there won't be any errors, and Question records will be created." do
         expect do

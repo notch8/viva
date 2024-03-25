@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Question::Traditional do
   it_behaves_like "a Question", export_as_xml: true
   its(:type_label) { is_expected.to eq("Question") }
-  its(:type_name) { is_expected.to eq("Traditional") }
+  its(:type_name) { is_expected.to eq("Multiple Choice") }
 
   describe '.build_row' do
     subject { described_class.build_row(row: data, questions: {}) }

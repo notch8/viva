@@ -55,7 +55,7 @@ RSpec.describe Question::ImporterCsv do
   context 'with type that does not have parts other rows say they are part of that type' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,PART_OF,CORRECT_ANSWERS,ANSWER_1\n" \
-      "1,Traditional,Valid traditional,,1,You are correct sir!\n" \
+      "1,Multiple Choice,Valid traditional,,1,You are correct sir!\n" \
       "2,Scenario,Valid scenario,1,\n"
     end
 
@@ -74,7 +74,7 @@ RSpec.describe Question::ImporterCsv do
       "IMPORT_ID,TYPE,TEXT,PART_OF,CORRECT_ANSWERS,ANSWER_1,CENTER_LABEL,CENTER_1,CENTER_CORRECT_ANSWERS,LEFT_LABEL,LEFT_1,LEFT_CORRECT_ANSWERS,RIGHT_LABEL,RIGHT_1,RIGHT_CORRECT_ANSWERS\n" \
       "1,Stimulus Case Study,Valid study,,\n" \
       "2,Scenario,Valid scenario,1,\n" \
-      "3,Traditional,Valid traditional,1,1,You are correct sir!\n" \
+      "3,Multiple Choice,Valid traditional,1,1,You are correct sir!\n" \
       "4,Select All That Apply,Valid SATA,1,1,You are correct sir!\n" \
       "5,Bow Tie,Valid Bow Tie,1,,,CL,CA,1,LL,LA,1,RL,RA,1\n" \
       "6,Matching,Valid Matching,1,,,,,1,,LA,1,,RA,1\n"
@@ -106,8 +106,8 @@ RSpec.describe Question::ImporterCsv do
   context 'with duplicate IMPORT_ID' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
-      "1,Traditional,Which one is true?,1,true,false,Orc\n" \
-      "1,Traditional,Creature of Middle Earth?,3,true,false,Orc\n"
+      "1,Multiple Choice,Which one is true?,1,true,false,Orc\n" \
+      "1,Multiple Choice,Creature of Middle Earth?,3,true,false,Orc\n"
     end
 
     it 'does not persist the records and report errors' do
@@ -119,7 +119,7 @@ RSpec.describe Question::ImporterCsv do
   context 'with valid data' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
-      "1,Traditional,Which one is true?,1,true,false,Orc\n"
+      "1,Multiple Choice,Which one is true?,1,true,false,Orc\n"
     end
 
     it 'persists the given records' do
@@ -135,7 +135,7 @@ RSpec.describe Question::ImporterCsv do
   context 'with mixed valid data' do
     let(:text) do
       "IMPORT_ID,TYPE,,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,RIGHT_1,LEFT_1,ANSWER_3\n" \
-      "1,Traditional,,Which one is true?,1,true,false,,,Orc\n" \
+      "1,Multiple Choice,,Which one is true?,1,true,false,,,Orc\n" \
       "2,Matching,,Pair Up,,,,Animal,Cat\n" \
       "3,Select All That Apply,,Which one is affirmative?,\"1,3\",true,false,,,yes\n" \
       "4,Drag and Drop,,What are Anmials?,\"1,2\",Cat,Dog,,,Shoe\n" \
@@ -160,7 +160,7 @@ RSpec.describe Question::ImporterCsv do
   context 'with invalid data' do
     let(:text) do
       "IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
-      "1,Traditional,I don't know?,4,a,b,c\n"
+      "1,Multiple Choice,I don't know?,4,a,b,c\n"
     end
 
     it 'does not persist the given records' do
@@ -179,7 +179,7 @@ RSpec.describe Question::ImporterCsv do
   context 'without an IMPORT_ID column' do
     let(:text) do
       "TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3\n" \
-      "Traditional,I don't know?,1,a,b,c\n"
+      "Multiple Choice,I don't know?,1,a,b,c\n"
     end
 
     it 'does not persist the given records' do

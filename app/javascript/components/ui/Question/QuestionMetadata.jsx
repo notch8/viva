@@ -41,7 +41,7 @@ const QuestionMetadata = ({ question }) => {
         </Col>
         <Col className='bg-light-3 rounded-end p-2'>
           <h6 className='fw-bold'>Type</h6>
-          <span className='strait small'>{question.type.substring(10)}</span>
+          <span className='strait small'>{question.type_name}</span>
         </Col>
       </div>
     </div>

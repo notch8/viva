@@ -56,9 +56,9 @@ The below table outlines the question types:
 | Drag and Drop         | Yes                | No                 |
 | Essay                 | Yes                | Yes                |
 | Matching              | Yes                | Yes                |
+| Multiple Choice       | Yes                | Yes                |
 | Select All That Apply | Yes                | Yes                |
 | Stimulus Case Study   | Yes                | No                 |
-| Traditional           | Yes                | Yes                |
 | Upload                | Yes                | Yes                |
 
 ### Importing a CSV
@@ -85,7 +85,7 @@ All question types support the following CSV headers:
     -   Matching
     -   Select All That Apply
     -   Stimulus Case Study
-    -   Traditional
+    -   Multiple Choice
     -   Upload
 -   `KEYWORD` (Recommended): One or more phrases that describe the question; separate each phrase with a comma
 -   `SUBJECT` (Recommended): One or more subjects that are topical for this question; separate each phrase with a comma
@@ -95,9 +95,9 @@ A reminder, when you want to have a comma (e.g. `,`) in a cell, you must wrap th
 
 Below is an example in which the question will have the "Introspection" and "Group Feedback" keywords and the "History" and "Literature" subjects.
 
-| IMPORT_ID | TYPE        | KEYWORD                         | SUBJECT               |
-|-----------|-------------|---------------------------------|-----------------------|
-| 1         | Traditional | "Introspection, Group Feedback" | "History, Literature" |
+| IMPORT_ID | TYPE            | KEYWORD                         | SUBJECT               |
+|-----------|-----------------|---------------------------------|-----------------------|
+| 1         | Multiple Choice | "Introspection, Group Feedback" | "History, Literature" |
 
 #### Indexed Columns
 
@@ -220,9 +220,24 @@ The Matching question is similar to the Categorization question; with one differ
 In the above fragment of CSV, the question prompt is "Match the pairs".  And the student will need to match the *left* terms of "Color" and "Food" to the *right* terms of "Red" and "Bread".  The correct answer for "Color" is "Red".  We indicate correct pairs via the index (e.g. `LEFT_1` matches `RIGHT_1`).
 </details>
 
+<details><summary>Multiple Choice</summary>
+
+Like the Multiple Choice question is similar to the Select All That Apply question, with the primary difference being that the Multiple Choice allows for one and only one correct answer.
+
+-   `ANSWER_i`: The plain text of a possible answer to the question.
+-   `CORRECT_ANSWERS`: one integer that references an `ANSWER_i` column.
+
+| TEXT                             | CORRECT_ANSWERS | ANSWER_1 | ANSWER_2 | ANSWER_3 |
+|----------------------------------|-----------------|----------|----------|----------|
+| Which color is comprised of Red: | 2               | Green    | Purple   | Blue     |
+
+Purple is comprised of Red (and Blue).
+
+</details>
+
 <details><summary>Select All That Apply</summary>
 
-The Select All That Apply question is similar to the Traditional question, with the primary difference being that the Select All That Apply allows for more than one correct answer.
+The Select All That Apply question is similar to the Multiple Choice question, with the primary difference being that the Select All That Apply allows for more than one correct answer.
 
 -   `ANSWER_i`: The plain text of a possible answer to the question.
 -   `CORRECT_ANSWERS`: one or more integers, separated by commas, where the integers reference an `ANSWER_i` column.
@@ -243,26 +258,11 @@ The Stimulus Case Study is comprised of other questions, instead of having answe
 | 1         | Stimulus Case Study   | In this case study we’ll discuss Muppets                                           |         |                 |          |                 |             |                |
 | 2         | Select All That Apply | In the original Muppet Movie which two Muppets first road together in a Studebaker | 1       | 2,3             | Gonzo    | Kermit          | Fozzie Bear | Miss Piggy     |
 | 3         | Scenario              | Later in the movie, the Muppets in the Studebaker continue driving                 | 1       |                 |          |                 |             |                |
-| 4         | Traditional           | In a church they encounter which performer/band?                                   | 1       | 2               | Journey  | Electric Mayhem | John Denver | The Carpenters |
+| 4         | Multiple Choice           | In a church they encounter which performer/band?                                   | 1       | 2               | Journey  | Electric Mayhem | John Denver | The Carpenters |
 
-In the above example, the Select All That Apply question is *part of* the Stimulus Case Study as is the Scenario and Traditional.  All questions that are part of a Stimulus Case Study will not be individually filterable.
+In the above example, the Select All That Apply question is *part of* the Stimulus Case Study as is the Scenario and Multiple Choice.  All questions that are part of a Stimulus Case Study will not be individually filterable.
 
 The Scenario type is a special "question" type available only as *part_of* a Stimulus Case Study.  The Scenario type is provided as a place to insert text between the constituent questions of a Stimulus Case Study.
-
-</details>
-
-<details><summary>Traditional</summary>
-
-Like the Traditional question is similar to the Select All That Apply question, with the primary difference being that the Traditional allows for one and only one correct answer.
-
--   `ANSWER_i`: The plain text of a possible answer to the question.
--   `CORRECT_ANSWERS`: one integer that references an `ANSWER_i` column.
-
-| TEXT                             | CORRECT_ANSWERS | ANSWER_1 | ANSWER_2 | ANSWER_3 |
-|----------------------------------|-----------------|----------|----------|----------|
-| Which color is comprised of Red: | 2               | Green    | Purple   | Blue     |
-
-Purple is comprised of Red (and Blue).
 
 </details>
 

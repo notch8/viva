@@ -1,10 +1,10 @@
 IMPORT_ID, TYPE,TEXT, CORRECT_ANSWERS, ANSWER_1, ANSWER_2
 1, ,Invalid: Missing TYPE,1,A1,A2
-,Traditional,Invalid: Missing IMPORT_ID,1,A1,A2
+,Multiple Choice,Invalid: Missing IMPORT_ID,1,A1,A2
 3,Bogus,Invalid: TYPE unknown,1,A1,A2
-4,Traditional,Invalid: Specified answer column does not exist,300,A1,A2
-5,Traditional,Invalid: Multiple answers when only one allowed,"1,2",A1,A2
-6,Traditional,Valid: Yet won't import because others are invalid,1,A1,A2
-7,Traditional,Invalid: No correct answer given,,A1,A2
-8,Traditional,Invalid: Column name specified,ANSWER_1,A1,A2
+4,Multiple Choice,Invalid: Specified answer column does not exist,300,A1,A2
+5,Multiple Choice,Invalid: Multiple answers when only one allowed,"1,2",A1,A2
+6,Multiple Choice,Valid: Yet won't import because others are invalid,1,A1,A2
+7,Multiple Choice,Invalid: No correct answer given,,A1,A2
+8,Multiple Choice,Invalid: Column name specified,ANSWER_1,A1,A2
 9,Select All That Apply,Invalid: No correct answer given,,A1,A2

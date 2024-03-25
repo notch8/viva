@@ -8,7 +8,7 @@ import Question from '.'
 import QuestionMetadata from './QuestionMetadata'
 
 const QuestionWrapper = ({ question }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
 
   return (
     <Container className='bg-light-1 rounded container p-4 mt-3'>

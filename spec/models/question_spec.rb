@@ -189,18 +189,17 @@ RSpec.describe Question, type: :model do
       expect(described_class.filter(keywords: [keyword1.name])).to eq([question1])
       expect(described_class.filter(keywords: [keyword2.name])).to eq([question2])
 
-      # Demonstrating that we "and together" keywords
-      expect(described_class.filter(keywords: [keyword1.name, keyword2.name])).to eq([])
+      # Demonstrating that we "OR together" keywords
+      expect(described_class.filter(keywords: [keyword1.name, keyword2.name])).to match_array([question1, question2])
 
-      expect(described_class.filter(keywords: [keyword2.name, keyword3.name])).to eq([question2])
-
-      expect(described_class.filter(keywords: [keyword1.name, keyword3.name])).to eq([])
+      # Demonstrating that we "OR together" subjects
+      expect(described_class.filter(subjects: [subject1.name, subject2.name])).to match_array([question1, question2])
 
       # When we mix a subject in with a keyword
-      expect(described_class.filter(keywords: [keyword1.name, subject1.name])).to eq([])
+      expect(described_class.filter(keywords: [keyword1.name, subject1.name])).to eq([question1])
 
       # When we mix a keyword with a subject
-      expect(described_class.filter(subjects: [keyword1.name, subject1.name])).to eq([])
+      expect(described_class.filter(subjects: [keyword1.name, subject1.name])).to eq([question1])
 
       # When we query only the subject
       expect(described_class.filter(subjects: [subject1.name])).to eq([question1])
@@ -208,7 +207,7 @@ RSpec.describe Question, type: :model do
       # When we provide both subject and keyword
       expect(described_class.filter(subjects: [subject1.name], keywords: [keyword1.name])).to eq([question1])
 
-      # When nothing meets the criteria
+      # When we provide a subject for one question and a keyword for another
       expect(described_class.filter(subjects: [subject1.name], keywords: [keyword2.name])).to eq([])
 
       # When given a type it filters to only that type

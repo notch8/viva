@@ -429,24 +429,18 @@ class Question < ApplicationRecord
     questions = questions.where(child_of_aggregation: false)
 
     if keywords.present?
-      # NOTE: This assumes that we don't persist duplicate pairings of question/keyword; this is
-      # enforced in the database schema via a unique index.
       keywords_subquery = Keyword.select(:question_id)
                                  .joins(:keywords_questions)
                                  .where(name: keywords)
                                  .group(:question_id)
-                                 .having('count(question_id) = ?', keywords.size)
       # We sanitize the subquery via Arel.  The above construction is adequate.
       questions = questions.where(Arel.sql("id IN (#{keywords_subquery.to_sql})"))
     end
 
     if subjects.present?
-      # NOTE: This assumes that we don't persist duplicate pairings of question/cateogry; this is
-      # enforced in the database schema via a unique index.
       subjects_subquery = Subject.select('question_id')
                                  .joins(:questions_subjects)
                                  .where(name: subjects)
-                                 .having('count(question_id) = ?', subjects.size)
                                  .group('question_id')
       # We sanitize the subquery via Arel.  The above construction is adequate.
       questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
@@ -456,9 +450,12 @@ class Question < ApplicationRecord
 
     # The following for subject_names and keyword_names is to reduce the number of queries we send
     # to the database.  By favoring this mechanism we create the virtual attributes of
-    # :subject_names and :keyword_names.
+    # :subject_names and :keyword_names to each of the returned values.  Thus those values are
+    # available in the JSON representation of each of these questions.
     #
-    # We duplicate this as that results in an unfrozen array which we then proceed to modify
+    # We duplicate this as that results in an unfrozen array which we then proceed to modify.  We
+    # need to modify this because the provided "subject_names" and "keyword_names" are not actual
+    # fields but instead derived.
     select_statement = select.dup
 
     if select.include?(:subject_names)
@@ -467,7 +464,8 @@ class Question < ApplicationRecord
         FROM subjects
         INNER JOIN questions_subjects ON subjects.id = questions_subjects.subject_id
         INNER JOIN questions AS inner_q ON questions_subjects.question_id = questions.id
-        WHERE inner_q.id = questions.id) AS "subject_names")
+        WHERE inner_q.id = questions.id)
+        AS "subject_names") # the virtual field "subject_names"
     end
 
     if select.include?(:keyword_names)
@@ -476,7 +474,8 @@ class Question < ApplicationRecord
         FROM keywords
         INNER JOIN keywords_questions ON keywords.id = keywords_questions.keyword_id
         INNER JOIN questions AS inner_q ON keywords_questions.question_id = questions.id
-        WHERE inner_q.id = questions.id) AS "keyword_names")
+        WHERE inner_q.id = questions.id)
+        AS "keyword_names") # the virtual field "keyword_names"
     end
 
     questions.select(*select_statement)

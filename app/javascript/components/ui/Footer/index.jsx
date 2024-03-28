@@ -3,7 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap'
 
 const Footer = () => {
   return (
-    <Navbar expand='lg' className='bg-light-4 py-1 mt-auto'>
+    <Navbar expand='lg' className='bg-light-2 py-1 mt-auto'>
       <Container fluid>
         <Nav className='me-auto'>
           <Nav.Link href='/'>Home</Nav.Link>

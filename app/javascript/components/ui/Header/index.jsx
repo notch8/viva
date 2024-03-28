@@ -4,7 +4,7 @@ import Logo from '../../../../assets/images/logotransparent.png'
 
 const Header = () => {
   return (
-    <Container fluid className='bg-light-4 py-1'>
+    <Container fluid className='bg-light-2 py-1'>
       <Navbar.Brand href='/'>
         <Image src={Logo} height='60'/>
       </Navbar.Brand>

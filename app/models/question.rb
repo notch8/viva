@@ -20,6 +20,14 @@ class Question < ApplicationRecord
   #   @return [FalseClass] when the model is not one has parts (e.g. {Question::Traditional})
   class_attribute :has_parts, default: false
   class_attribute :included_in_filterable_type, default: true, instance_writer: false
+
+  ##
+  # @!attribute required_csv_headers [r|w]
+  #
+  #   Each question type has different required fields; the class_attribute
+  #   allows us to set those values on a per type basis.
+  #
+  #   @return [Array<String>] the headers required for the question sub-type.
   class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false

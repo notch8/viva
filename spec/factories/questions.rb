@@ -34,6 +34,16 @@ FactoryBot.define do
       end
     end
 
+    trait :with_images do
+      transient do
+        images_count { 3 }
+      end
+
+      after(:create) do |question, evaluator|
+        create_list(:image, evaluator.images_count, question:)
+      end
+    end
+
     factory :question_bow_tie, class: Question::BowTie, parent: :question do
       data do
         {

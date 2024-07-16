@@ -193,4 +193,20 @@ RSpec.describe Question::ImporterCsv do
       expect(json[:questions]).to be_present
     end
   end
+
+  context 'with a zip file' do
+    subject { described_class.from_file(file_fixture(zip_file_with_one_question_with_two_images)) }
+
+    let(:zip_file_with_one_question_with_two_images) { 'test.zip' }
+
+    it 'attaches the image to the question' do
+      expect { subject.save }.to change(Image, :count).by(2).and change(Question, :count).by(1)
+
+      question = subject.instance_variable_get(:@questions)["1"].question
+      expect(question.images.first.file.filename).to eq('test_image.jpg')
+      expect(question.images.first.alt_text).to eq('Test JPG')
+      expect(question.images.last.file.filename).to eq('test_image.png')
+      expect(question.images.last.alt_text).to eq('Test PNG')
+    end
+  end
 end

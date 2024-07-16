@@ -126,7 +126,9 @@ RSpec.describe Question, type: :model do
               level: question1.level,
               data: question1.data,
               keyword_names: question1.keywords.names,
-              subject_names: question1.subjects.names }.stringify_keys])
+              subject_names: question1.subjects.names,
+              images: [],
+              alt_texts: [] }.stringify_keys])
       )
     end
     # rubocop:enable RSpec/ExampleLength

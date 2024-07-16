@@ -90,14 +90,16 @@ All question types support the following CSV headers:
 -   `KEYWORD` (Recommended): One or more phrases that describe the question; separate each phrase with a comma
 -   `SUBJECT` (Recommended): One or more subjects that are topical for this question; separate each phrase with a comma
 -   `LEVEL` (Recommended):
+-   `IMAGE_PATH` (Optional): One or more image file paths, separated by semicolons
+-   `ALT_TEXT` (Optional): One or more alt texts corresponding to the images, separated by semicolons
 
 A reminder, when you want to have a comma (e.g. `,`) in a cell, you must wrap the cell in double quotes (e.g. `"`).
 
-Below is an example in which the question will have the "Introspection" and "Group Feedback" keywords and the "History" and "Literature" subjects.
+Below is an example in which the question will have the "Introspection" and "Group Feedback" keywords, the "History" and "Literature" subjects, an image path, and alt text.
 
-| IMPORT_ID | TYPE            | KEYWORD                         | SUBJECT               |
-|-----------|-----------------|---------------------------------|-----------------------|
-| 1         | Multiple Choice | "Introspection, Group Feedback" | "History, Literature" |
+| IMPORT_ID | TYPE            | KEYWORD                         | SUBJECT               | IMAGE_PATH                        | ALT_TEXT              |
+|-----------|-----------------|---------------------------------|-----------------------|-----------------------------------|-----------------------|
+| 1         | Multiple Choice | "Introspection, Group Feedback" | "History, Literature" | image.jpg;image2.png              | "Image 1;Image 2"     |
 
 #### Indexed Columns
 

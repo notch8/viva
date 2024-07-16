@@ -96,6 +96,14 @@ class Question < ApplicationRecord
   end
   private :type_must_be_for_descendant
 
+  def image_urls
+    images.map(&:url)
+  end
+
+  def alt_texts
+    images.pluck(:alt_text)
+  end
+
   ##
   # {Question#type} is a partially reserved value; used for the Single Table Inheritance.  It is not
   # human friendly.  The {.type_names} is an effort to be more friendly.
@@ -307,7 +315,27 @@ class Question < ApplicationRecord
     #
     # Hence we want to :select that data for querying, but rely instead on the :method.
     only = select - methods
-    filter(select:, **kwargs).as_json(only:, methods:)
+
+    # Ensure 'data' is included in the select attributes
+    only << :data unless only.include?(:data)
+
+    # Ensure the `filter` method is called with eager loading for associations
+    questions = filter(select: only, **kwargs)
+
+    # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
+    questions.map do |question|
+      question_json = question.as_json(only:, methods:)
+
+      if question.images.present?
+        question_json['images'] = question.image_urls
+        question_json['alt_texts'] = question.alt_texts
+      else
+        question_json['images'] = []
+        question_json['alt_texts'] = []
+      end
+
+      question_json
+    end
   end
 
   ##
@@ -411,6 +439,8 @@ class Question < ApplicationRecord
   # @see .filter_as_json
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
@@ -420,7 +450,7 @@ class Question < ApplicationRecord
     levels = Array.wrap(levels)
 
     # Specifying a very arbitrary order
-    questions = Question.order(:id)
+    questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
 
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
@@ -491,6 +521,7 @@ class Question < ApplicationRecord
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 end
-
 # rubocop:enable Metrics/ClassLength

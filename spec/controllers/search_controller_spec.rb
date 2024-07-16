@@ -49,7 +49,9 @@ RSpec.describe SearchController do
                  "type_label" => question.type_label,
                  "level" => question.level,
                  "keyword_names" => question.keywords.names,
-                 "subject_names" => question.subjects.names
+                 "subject_names" => question.subjects.names,
+                 "alt_texts" => [],
+                 "images" => []
                }
              ])
         )
@@ -73,7 +75,9 @@ RSpec.describe SearchController do
                  "type_label" => question1.type_label,
                  "level" => question1.level,
                  "keyword_names" => question1.keywords.names,
-                 "subject_names" => question1.subjects.names
+                 "subject_names" => question1.subjects.names,
+                 "alt_texts" => [],
+                 "images" => []
                },
                {
                  "id" => question2.id,
@@ -84,7 +88,9 @@ RSpec.describe SearchController do
                  "type_label" => question2.type_label,
                  "level" => question2.level,
                  "keyword_names" => question2.keywords.names,
-                 "subject_names" => question2.subjects.names
+                 "subject_names" => question2.subjects.names,
+                 "alt_texts" => [],
+                 "images" => []
                }
              ])
         )
@@ -115,7 +121,9 @@ RSpec.describe SearchController do
                  "type_label" => question1.type_label,
                  "level" => question1.level,
                  "keyword_names" => question1.keywords.names,
-                 "subject_names" => question1.subjects.names
+                 "subject_names" => question1.subjects.names,
+                 "alt_texts" => [],
+                 "images" => []
                }
              ])
         )

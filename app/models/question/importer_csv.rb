@@ -128,5 +128,7 @@ class Question::ImporterCsv
       image.alt_text = alt_texts.split(';')[index].strip if alt_texts.present?
       image.save!
     end
+
+    FileUtils.rm_rf(File.dirname(extracted_files.first)) # Clean up extracted files
   end
 end

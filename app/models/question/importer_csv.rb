@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'csv'
+require 'zip'
+
 ##
 # The {Question::ImporterCsv} is responsible for:
 #
@@ -10,20 +13,43 @@
 # 2. Negotiating the parent/child relationship of {Question::StimulusCaseStudy} and it's
 #    {Question::Scenario} children as well as other children {Question} objects.
 class Question::ImporterCsv
-  require 'csv'
   ##
   # @todo Maybe we don't want to read the given CSV and pass the text into the object.  However,
   #       that is a later concern refactor that should be relatively easy given these various
   #       inflection points.
-  def self.from_file(csv)
-    new(csv.read)
+  def self.from_file(file)
+    case File.extname(file)
+    when '.csv'
+      new(file.read)
+    when '.zip'
+      extracted_files = handle_zip(file)
+      csv_file = extracted_files.find { |file| file.ends_with? ".csv" }
+      new(File.read(csv_file), extracted_files)
+    end
   end
 
-  def initialize(text)
+  def self.handle_zip(file, destination = Rails.root.join('tmp', 'unzipped', Time.zone.now.strftime("%Y%m%d%H%M%S")))
+    extracted_files = []
+
+    ::Zip::File.open(file) do |zip_file|
+      zip_file.each do |f|
+        f_path = File.join(destination, f.name)
+        FileUtils.mkdir_p(File.dirname(f_path))
+        zip_file.extract(f, f_path) unless File.exist?(f_path)
+        extracted_files << f_path
+      end
+    end
+
+    extracted_files
+  end
+  private_class_method :handle_zip
+
+  def initialize(text, extracted_files = [])
     @errors = []
     @text = text
+    @extracted_files = extracted_files
   end
-  attr_reader :errors
+  attr_reader :errors, :extracted_files
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -52,6 +78,7 @@ class Question::ImporterCsv
       import_id = row['IMPORT_ID'].to_s.strip
       question = Question.build_from_csv_row(row:, questions: @questions)
       if question.valid? && !@questions.key?(import_id)
+        attach_images_to_question(question, row['IMAGE_PATH'], row['ALT_TEXT'])
         @questions[import_id] = question
       else
         @errors[:rows] ||= []
@@ -84,5 +111,22 @@ class Question::ImporterCsv
 
   def as_json(*args)
     { questions: @questions.values.as_json(*args), errors: @errors.as_json(*args) }
+  end
+
+  private
+
+  def attach_images_to_question(question, image_paths, alt_texts)
+    return if image_paths.blank?
+
+    image_paths.split(';').each_with_index do |image_path, index|
+      image_path = extracted_files.find { |file| file.ends_with?("/#{image_path}") }
+      # Ensure `question` is an instance of `Question`, not `Question::ImportCsvRow`
+      question = question.question
+
+      image = question.images.build
+      image.file.attach(io: File.open(image_path.strip), filename: File.basename(image_path.strip))
+      image.alt_text = alt_texts.split(';')[index].strip if alt_texts.present?
+      image.save!
+    end
   end
 end

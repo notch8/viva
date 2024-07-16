@@ -28,5 +28,7 @@ module Viva
       system("bundle exec rubocop -a --fail-level=E #{parsable_files.shelljoin}", exception: true)
     end
     # :nocov:
+
+    config.active_storage.analyzers = []
   end
 end

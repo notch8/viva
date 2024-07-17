@@ -20,7 +20,7 @@ RSpec.describe BookmarksController do
   describe '#destroy' do
     it 'deletes a bookmark for the current user' do
       question = FactoryBot.create(:question_traditional)
-      question.bookmarks.create(user: user)
+      question.bookmarks.create(user:)
 
       expect { delete :destroy, params: { id: question.id } }.to change { Bookmark.count }.from(1).to(0)
     end
@@ -29,9 +29,9 @@ RSpec.describe BookmarksController do
   describe '#destroy_all' do
     it 'deletes all bookmarks for the current user' do
       question1 = FactoryBot.create(:question_traditional)
-      question1.bookmarks.create(user: user)
+      question1.bookmarks.create(user:)
       question2 = FactoryBot.create(:question_traditional)
-      question2.bookmarks.create(user: user)
+      question2.bookmarks.create(user:)
 
       expect { delete :destroy_all }.to change { Bookmark.count }.from(2).to(0)
     end

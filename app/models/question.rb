@@ -443,6 +443,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/ParameterLists
   def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil, bookmarked: nil, user: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
@@ -530,5 +531,6 @@ class Question < ApplicationRecord
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/ParameterLists
 end
 # rubocop:enable Metrics/ClassLength

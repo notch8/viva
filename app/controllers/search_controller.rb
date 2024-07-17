@@ -31,8 +31,7 @@ class SearchController < ApplicationController
         serve_xml_file(filename)
       end
     else
-      bookmarked_question_ids = current_user.bookmarks.pluck(:question_id) if user_signed_in?
-      render inertia: 'Search', props: shared_props.merge(bookmarkedQuestionIds: bookmarked_question_ids)
+      render inertia: 'Search', props: shared_props
     end
   end
 
@@ -48,6 +47,7 @@ class SearchController < ApplicationController
     zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
     temp_file = zip_file_service.generate_zip
     zip_filename = xml_filename.gsub('.xml', '.zip')
+
     send_file(temp_file.path, filename: zip_filename)
   end
 
@@ -71,7 +71,8 @@ class SearchController < ApplicationController
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
       filteredQuestions: Question.filter_as_json(**filter_values, user: current_user),
-      exportHrefs: export_hrefs
+      exportHrefs: export_hrefs,
+      bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
     }
   end
   # rubocop:enable Metrics/MethodLength
@@ -93,7 +94,7 @@ class SearchController < ApplicationController
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
       levels: params[:selected_levels],
-      bookmarked: params[:bookmarked]
+      bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked])
     }
   end
 end

@@ -17,6 +17,7 @@
   </itemmetadata>
   <presentation>
     <material>
+      <%= image_tags_for(select_all_that_apply) %>
       <mattext texttype="text/plain"><%= select_all_that_apply.text %></mattext>
     </material>
     <response_lid ident="response_<%= select_all_that_apply.item_ident %>" rcardinality="Multiple">

@@ -15,6 +15,7 @@
   </itemmetadata>
   <presentation>
     <material>
+      <%= image_tags_for(essay) %>
       <mattext texttype="text/html"><%= essay.html %></mattext>
     </material>
     <response_str ident="<%= essay.item_ident %>_response" rcardinality="Single" rce="Yes" word_count="No" spell_check="No" word_limit_enabled="No">

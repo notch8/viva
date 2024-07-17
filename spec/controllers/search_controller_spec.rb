@@ -132,7 +132,7 @@ RSpec.describe SearchController do
 
     context 'when a question has images' do
       it 'send a zip file with the images' do
-        question = FactoryBot.create(:question_traditional, :with_images)
+        FactoryBot.create(:question_traditional, :with_images)
         get :index, format: :xml
 
         expect(response.content_type).to eq('application/zip')

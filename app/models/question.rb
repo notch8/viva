@@ -12,7 +12,6 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
-  has_many :bookmarked_by_users, through: :bookmarks, source: :user
 
   ##
   # @!group Class Attributes
@@ -488,10 +487,7 @@ class Question < ApplicationRecord
       questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
     end
 
-    if ActiveModel::Type::Boolean.new.cast(bookmarked)
-      bookmark_ids = Bookmark.where(user_id: user.id).pluck(:question_id)
-      questions = questions.where(id: bookmark_ids)
-    end
+    questions = user.bookmarked_questions if bookmarked
 
     return questions if select.blank?
 

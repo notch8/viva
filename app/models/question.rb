@@ -443,7 +443,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
-  def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil)
+  def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil, bookmarked: nil, user: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -485,6 +485,11 @@ class Question < ApplicationRecord
                                  .group('question_id')
       # We sanitize the subquery via Arel.  The above construction is adequate.
       questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
+    end
+
+    if ActiveModel::Type::Boolean.new.cast(bookmarked)
+      bookmark_ids = Bookmark.where(user_id: user.id).pluck(:question_id)
+      questions = questions.where(id: bookmark_ids)
     end
 
     return questions if select.blank?

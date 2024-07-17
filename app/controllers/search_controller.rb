@@ -23,14 +23,15 @@ class SearchController < ApplicationController
       # classic question to new format).  This filename is another "helpful clue" and introduces
       # later considerations for what the file format might be.
       filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
-      @questions = Question.filter(**filter_values)
+      @questions = Question.filter(**filter_values, user: current_user)
 
       # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the
       # browser, we instead tell the browser to automatically download this file.
       response.headers['Content-Disposition'] = %(attachment; filename="#{filename}")
       render format: :xml
     else
-      render inertia: 'Search', props: shared_props
+      bookmarked_question_ids = current_user.bookmarks.pluck(:question_id) if user_signed_in?
+      render inertia: 'Search', props: shared_props.merge(bookmarkedQuestionIds: bookmarked_question_ids)
     end
   end
 
@@ -48,7 +49,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: Question.filter_as_json(**filter_values),
+      filteredQuestions: Question.filter_as_json(**filter_values, user: current_user),
       exportHrefs: export_hrefs
     }
   end
@@ -70,7 +71,8 @@ class SearchController < ApplicationController
       keywords: params[:selected_keywords],
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
-      levels: params[:selected_levels]
+      levels: params[:selected_levels],
+      bookmarked: params[:bookmarked]
     }
   end
 end

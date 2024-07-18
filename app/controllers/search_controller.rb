@@ -23,18 +23,40 @@ class SearchController < ApplicationController
       # classic question to new format).  This filename is another "helpful clue" and introduces
       # later considerations for what the file format might be.
       filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
-      @questions = Question.filter(**filter_values)
+      @questions = Question.filter(**filter_values, user: current_user)
 
-      # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the
-      # browser, we instead tell the browser to automatically download this file.
-      response.headers['Content-Disposition'] = %(attachment; filename="#{filename}")
-      render format: :xml
+      if any_question_has_images?
+        serve_zip_file(filename)
+      else
+        serve_xml_file(filename)
+      end
     else
       render inertia: 'Search', props: shared_props
     end
   end
 
   private
+
+  def any_question_has_images?
+    @questions.any? { |question| question.images.any? }
+  end
+
+  def serve_zip_file(xml_filename)
+    xml_content = render_to_string(format: :xml)
+    images = @questions.flat_map(&:images)
+    zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+    temp_file = zip_file_service.generate_zip
+    zip_filename = xml_filename.gsub('.xml', '.zip')
+
+    send_file(temp_file.path, filename: zip_filename)
+  end
+
+  def serve_xml_file(filename)
+    # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the
+    # browser, we instead tell the browser to automatically download this file.
+    response.headers['Content-Disposition'] = %(attachment; filename="#{filename}")
+    render format: :xml
+  end
 
   # rubocop:disable Metrics/MethodLength
   def shared_props
@@ -48,8 +70,9 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: Question.filter_as_json(**filter_values),
-      exportHrefs: export_hrefs
+      filteredQuestions: Question.filter_as_json(**filter_values, user: current_user),
+      exportHrefs: export_hrefs,
+      bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
     }
   end
   # rubocop:enable Metrics/MethodLength
@@ -70,7 +93,8 @@ class SearchController < ApplicationController
       keywords: params[:selected_keywords],
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
-      levels: params[:selected_levels]
+      levels: params[:selected_levels],
+      bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked])
     }
   end
 end

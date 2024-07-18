@@ -20,6 +20,10 @@ Rails.application.routes.draw do
       # uploads page routes
       get '/uploads', to: 'uploads#index', as: 'uploads'
       post '/uploads', to: 'uploads#create'
+      # bookmarks page routes
+      delete 'bookmarks/destroy_all', to: 'bookmarks#destroy_all' # has to come before bookmarks#destroy
+      post 'bookmarks', to: 'bookmarks#create'
+      delete 'bookmarks/:id', to: 'bookmarks#destroy', as: 'bookmark'
     end
 
     unauthenticated do

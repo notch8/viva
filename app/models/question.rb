@@ -11,6 +11,7 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
+  has_many :bookmarks, dependent: :destroy
 
   ##
   # @!group Class Attributes
@@ -441,7 +442,8 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/AbcSize
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
-  def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil)
+  # rubocop:disable Metrics/ParameterLists
+  def self.filter(keywords: [], subjects: [], levels: [], type_name: nil, select: nil, bookmarked: nil, user: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -485,6 +487,8 @@ class Question < ApplicationRecord
       questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
     end
 
+    questions = user.bookmarked_questions if bookmarked
+
     return questions if select.blank?
 
     # The following for subject_names and keyword_names is to reduce the number of queries we send
@@ -523,5 +527,6 @@ class Question < ApplicationRecord
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/ParameterLists
 end
 # rubocop:enable Metrics/ClassLength

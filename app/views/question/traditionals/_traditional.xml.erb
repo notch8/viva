@@ -15,6 +15,7 @@
   </itemmetadata>
   <presentation>
     <material>
+      <%= image_tags_for(traditional) %>
       <mattext texttype="text/plain"><%= traditional.text %></mattext>
     </material>
     <response_lid ident="response_<%= traditional.item_ident %>" rcardinality="Single">

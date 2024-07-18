@@ -15,6 +15,7 @@
   </itemmetadata>
   <presentation>
     <material>
+      <%= image_tags_for(upload) %>
       <mattext texttype="text/html"><%= upload.html %></mattext>
     </material>
     <response_str ident="<%= upload.item_ident %>_response" rcardinality="Single" rce="Yes" word_count="No" spell_check="No" word_limit_enabled="No">

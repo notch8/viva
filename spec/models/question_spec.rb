@@ -12,6 +12,7 @@ RSpec.describe Question, type: :model do
   its(:required_csv_headers) { is_expected.to eq(%w[IMPORT_ID TEXT TYPE]) }
   its(:export_as_xml) { is_expected.to eq(false) }
   it { is_expected.not_to have_parts }
+  it { should have_many(:bookmarks).dependent(:destroy) }
 
   describe '.descendants' do
     subject { described_class.descendants }

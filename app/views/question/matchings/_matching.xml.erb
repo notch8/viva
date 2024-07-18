@@ -21,6 +21,7 @@
   </itemmetadata>
   <presentation>
     <material>
+      <%= image_tags_for(matching) %>
       <mattext texttype="text/plain"><%= matching.text %></mattext>
     </material>
     <% matching.qti_responses.each do |response| %>

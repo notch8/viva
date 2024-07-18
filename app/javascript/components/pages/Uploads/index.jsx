@@ -20,12 +20,12 @@ const Uploads = (props) => {
     let fileName = data.csv && data.csv[0].name
     e.preventDefault()
     if (fileName.length === 0) {
-      setError('csv', 'Please select a CSV to upload.')
+      setError('csv', 'Please select a CSV or ZIP to upload.')
       setTimeout(() => {
         clearErrors()
       }, 3000)
-    } else if (fileName.slice(-3) !== 'csv') {
-      setError('csv', 'Please select a file with a CSV extension.')
+    } else if (fileName.slice(-3) !== 'csv' && fileName.slice(-3) !== 'zip') {
+      setError('csv', 'Please select a file with a CSV or ZIP extension.')
       setTimeout(() => {
         clearErrors()
       }, 3000)
@@ -64,7 +64,7 @@ const Uploads = (props) => {
         <UploadForm submit={submit} setData={setData} processing={processing} />
         {recentlySuccessful &&
           <div className='alert alert-success'>
-            Your CSV has been uploaded successfully!
+            Your file has been uploaded successfully!
           </div>
         }
         {(errors.csv || (responseErrors && Object.keys(responseErrors).length > 0)) &&

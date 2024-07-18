@@ -7,7 +7,7 @@ import Answers from '../Answers'
 import Question from '.'
 import QuestionMetadata from './QuestionMetadata'
 
-const QuestionWrapper = ({ question }) => {
+const QuestionWrapper = ({ question, bookmarkedQuestionIds }) => {
   const [open, setOpen] = useState(true)
 
   return (
@@ -35,7 +35,7 @@ const QuestionWrapper = ({ question }) => {
           </Collapse>
         </Col>
         <Col md={4} className='px-0'>
-          <QuestionMetadata question={question} />
+          <QuestionMetadata question={question} bookmarkedQuestionIds={bookmarkedQuestionIds} />
         </Col>
         <Col
           sm={1}

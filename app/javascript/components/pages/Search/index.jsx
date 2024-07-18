@@ -7,7 +7,7 @@ import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
 
 const Search = (props) => {
-  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels, exportHrefs } = props
+  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels, exportHrefs, bookmarkedQuestionIds } = props
   const { setData, get, processing, clearErrors } = useForm({
     selected_keywords: selectedKeywords || [],
     selected_subjects: selectedSubjects || [],
@@ -73,6 +73,7 @@ const Search = (props) => {
             <QuestionWrapper
               key={question.id}
               question={question}
+              bookmarkedQuestionIds={bookmarkedQuestionIds}
             />
           )
         })) : (

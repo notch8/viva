@@ -23,7 +23,7 @@ class SearchController < ApplicationController
       # classic question to new format).  This filename is another "helpful clue" and introduces
       # later considerations for what the file format might be.
       filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
-      @questions = Question.filter(**filter_values, user: current_user)
+      @questions = Question.filter(**filter_values)
 
       if any_question_has_images?
         serve_zip_file(filename)
@@ -70,7 +70,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: Question.filter_as_json(**filter_values, user: current_user),
+      filteredQuestions: Question.filter_as_json(**filter_values),
       exportHrefs: export_hrefs,
       bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
     }
@@ -94,7 +94,7 @@ class SearchController < ApplicationController
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
       levels: params[:selected_levels],
-      bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked])
+      bookmarked_question_ids: params[:bookmarked_question_ids]
     }
   end
 end

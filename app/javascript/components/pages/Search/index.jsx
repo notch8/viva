@@ -57,6 +57,7 @@ const Search = (props) => {
         selectedKeywords={selectedKeywords || []}
         selectedTypes={selectedTypes || []}
         selectedLevels={selectedLevels || []}
+        bookmarkedQuestionIds={bookmarkedQuestionIds || []}
       />
       <SearchFilters
         selectedSubjects={selectedSubjects || []}

@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
 
 const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
   const [isBookmarked, setIsBookmarked] = useState(bookmarkedQuestionIds.includes(question.id))
+
+  useEffect(() => {
+    setIsBookmarked(bookmarkedQuestionIds.includes(question.id))
+  }, [bookmarkedQuestionIds])
 
   const handleBookmarkToggle = () => {
     if (isBookmarked) {

@@ -21,7 +21,7 @@ class BookmarksController < ApplicationController
   end
 
   def destroy_all
-    current_user.bookmarks.destroy_all
+    current_user.bookmarks.destroy_all if current_user.bookmarks.present?
     redirect_back(fallback_location: authenticated_root_path, notice: 'All bookmarks cleared successfully.')
   end
 end

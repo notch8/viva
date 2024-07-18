@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import CustomDropdown from '../../ui/CustomDropdown'
+import { Inertia } from '@inertiajs/inertia'
 
 const SearchBar = (props) => {
   const {
@@ -17,9 +18,26 @@ const SearchBar = (props) => {
     selectedKeywords,
     selectedTypes,
     selectedSubjects,
-    selectedLevels
+    selectedLevels,
+    bookmarkedQuestionIds
   } = props
   const filters = { subjects, keywords, types, levels }
+  const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
+
+  useEffect(() => {
+    setHasBookmarks(bookmarkedQuestionIds.length > 0)
+  }, [bookmarkedQuestionIds])
+
+  const handleDeleteAllBookmarks = () => {
+    Inertia.delete('/bookmarks/destroy_all', {
+      onSuccess: () => {
+        setHasBookmarks(false)
+      },
+      onError: () => {
+        console.error('Failed to clear all bookmarks')
+      },
+    })
+  }
 
   return (
     <Form onSubmit={submit}>
@@ -54,6 +72,24 @@ const SearchBar = (props) => {
               </DropdownButton>
             </CustomDropdown>
           ))}
+          <CustomDropdown key='bookmark' dropdownSelector='.dropdown-toggle'>
+            <DropdownButton
+              variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
+              title='Bookmarks'
+              id='input-group-dropdown-bookmark'
+              size='lg'
+              autoClose='outside'
+            >
+              <Button
+                variant='danger'
+                className='p-2 m-2 mb-3'
+                onClick={handleDeleteAllBookmarks}
+                disabled={!hasBookmarks}
+              >
+                Clear Bookmarks
+              </Button>
+            </DropdownButton>
+          </CustomDropdown>
           <Button
             className='d-flex align-items-center fs-6 justify-content-center'
             id='button-addon2'

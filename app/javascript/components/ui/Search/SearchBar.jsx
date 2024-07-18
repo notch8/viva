@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
-  InputGroup, DropdownButton, Button, Container, Form
+  InputGroup, DropdownButton, Button, Container, Form, Dropdown
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import CustomDropdown from '../../ui/CustomDropdown'
@@ -37,6 +37,12 @@ const SearchBar = (props) => {
         console.error('Failed to clear all bookmarks')
       },
     })
+  }
+
+  const handleExportBookmarks = () => {
+    const queryString = bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')
+    const url = `/.xml?${queryString}`
+    window.location.href = url
   }
 
   return (
@@ -80,6 +86,15 @@ const SearchBar = (props) => {
               size='lg'
               autoClose='outside'
             >
+              <Button
+                variant='primary'
+                className='p-2 m-2 mt-3'
+                onClick={handleExportBookmarks}
+                disabled={!hasBookmarks}
+              >
+                Export {bookmarkedQuestionIds.length > 0 ? bookmarkedQuestionIds.length : ''} Bookmark{bookmarkedQuestionIds.length > 1 || bookmarkedQuestionIds.length === 0 ? 's' : ''}
+              </Button>
+              <Dropdown.Divider />
               <Button
                 variant='danger'
                 className='p-2 m-2 mb-3'

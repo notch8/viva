@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import {
-  InputGroup, DropdownButton, Button, Container, Form, Dropdown
+  InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import CustomDropdown from '../../ui/CustomDropdown'
@@ -39,12 +39,6 @@ const SearchBar = (props) => {
     })
   }
 
-  const handleExportBookmarks = () => {
-    const queryString = bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')
-    const url = `/.xml?${queryString}`
-    window.location.href = url
-  }
-
   return (
     <Form onSubmit={submit}>
       <Container className='p-0 mt-2 search-bar'>
@@ -81,28 +75,37 @@ const SearchBar = (props) => {
           <CustomDropdown key='bookmark' dropdownSelector='.dropdown-toggle'>
             <DropdownButton
               variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
-              title='Bookmarks'
+              title={`Bookmarks (${bookmarkedQuestionIds.length})`}
               id='input-group-dropdown-bookmark'
               size='lg'
               autoClose='outside'
             >
-              <Button
-                variant='primary'
-                className='p-2 m-2 mt-3'
-                onClick={handleExportBookmarks}
-                disabled={!hasBookmarks}
-              >
-                Export {bookmarkedQuestionIds.length > 0 ? bookmarkedQuestionIds.length : ''} Bookmark{bookmarkedQuestionIds.length > 1 || bookmarkedQuestionIds.length === 0 ? 's' : ''}
-              </Button>
-              <Dropdown.Divider />
-              <Button
-                variant='danger'
-                className='p-2 m-2 mb-3'
-                onClick={handleDeleteAllBookmarks}
-                disabled={!hasBookmarks}
-              >
-                Clear Bookmarks
-              </Button>
+              <div className='d-flex flex-column align-items-start'>
+                <a
+                  href='?bookmarked=true'
+                  className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
+                  role='button'
+                  aria-disabled={!hasBookmarks}
+                >
+                  View Bookmarks
+                </a>
+                <a
+                  href={`/.xml?${bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')}`}
+                  className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
+                  role='button'
+                  aria-disabled={!hasBookmarks}
+                >
+                  Export Bookmarks
+                </a>
+                <Button
+                  variant='danger'
+                  className='p-2 m-2'
+                  onClick={handleDeleteAllBookmarks}
+                  disabled={!hasBookmarks}
+                >
+                  Clear Bookmarks
+                </Button>
+              </div>
             </DropdownButton>
           </CustomDropdown>
           <Button

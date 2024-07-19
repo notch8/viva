@@ -21,6 +21,7 @@ const QuestionWrapper = ({ question, bookmarkedQuestionIds }) => {
                 ? 'Case Study'
                 : 'Question'
             }
+            images={question.images}
           />
           <Collapse in={open}>
             {/* The div id that corresponds to the "aria-controls" value on the Button must be in this same file.

@@ -308,6 +308,7 @@ class Question < ApplicationRecord
   #         :select parameter.
   #
   # @see .filter
+  # rubocop:disable Metrics/MethodLength
   def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, **kwargs)
     ##
     # The :data method/field is an interesting creature; we want to "select" it in queries because
@@ -328,8 +329,9 @@ class Question < ApplicationRecord
       question_json = question.as_json(only:, methods:)
 
       if question.images.present?
-        question_json['images'] = question.image_urls
-        question_json['alt_texts'] = question.alt_texts
+        question_json['images'] = question.images.map do |image|
+          { url: image.url, alt_text: image.alt_text }
+        end
       else
         question_json['images'] = []
         question_json['alt_texts'] = []
@@ -338,6 +340,7 @@ class Question < ApplicationRecord
       question_json
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
   # @api private

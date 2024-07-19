@@ -443,7 +443,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], type_name: nil, select: nil)
+  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -488,6 +488,8 @@ class Question < ApplicationRecord
     end
 
     questions = Question.where(id: bookmarked_question_ids) if bookmarked_question_ids.present?
+
+    questions = user.bookmarked_questions if bookmarked
 
     return questions if select.blank?
 

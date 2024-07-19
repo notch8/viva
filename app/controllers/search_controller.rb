@@ -94,7 +94,9 @@ class SearchController < ApplicationController
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
       levels: params[:selected_levels],
-      bookmarked_question_ids: params[:bookmarked_question_ids]
+      bookmarked_question_ids: params[:bookmarked_question_ids],
+      bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked]),
+      user: current_user
     }
   end
 end

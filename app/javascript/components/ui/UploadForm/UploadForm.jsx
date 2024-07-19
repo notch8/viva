@@ -7,7 +7,7 @@ const UploadForm = ({ submit, setData, processing }) => {
     <Form onSubmit={submit} className='csv-upload-form text-uppercase'>
       <InputGroup className='mb-3'>
         <InputGroup.Text className='strait py-3'>
-              Select a CSV to Upload
+              Select a CSV or ZIP to Upload
         </InputGroup.Text>
         <Form.Group controlId='upload-csv'>
           <Form.Control
@@ -16,7 +16,7 @@ const UploadForm = ({ submit, setData, processing }) => {
             onChange={e => setData('csv', e.target.files)}
             className='rounded-0 py-3'
             multiple={false}
-            accept='.csv'
+            accept='.csv, .zip'
           />
         </Form.Group>
         <Button

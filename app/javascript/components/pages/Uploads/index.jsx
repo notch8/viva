@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
-  Container, Button, Alert, Dropdown, ButtonGroup, SplitButton
+  Container, Button, Alert, Dropdown, ButtonGroup, SplitButton, Form
 } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
 import CustomDropdown from '../../ui/CustomDropdown'
-
+import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 
 const Uploads = (props) => {
   let responseErrors = props.errors
@@ -14,6 +14,12 @@ const Uploads = (props) => {
   const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })
+
+  const [selectedType, setSelectedType] = useState('Bow Tie')
+
+  const handleTypeSelect = (type) => {
+    setSelectedType(type)
+  }
 
   const submit = (e) => {
     clearErrors()
@@ -37,6 +43,7 @@ const Uploads = (props) => {
   return (
     <Layout>
       <Container className='bg-light-1 rounded p-5'>
+        {/* Upload Questions Section */}
         <h2 className='h5 fw-bold'>Upload Questions</h2>
         <span className='d-block'>Upload a CSV here using the following format:</span>
         <ButtonGroup className='my-4'>
@@ -74,8 +81,8 @@ const Uploads = (props) => {
             {errors?.csv && <span>{errors?.csv}</span>}
             {(responseErrors && Object.keys(responseErrors).length > 0) &&
               <>
-                <p>The following errors occured during your import. Please correct them and try again.</p>
-                {/* errors on on the csv level (checks for headers) */}
+                <p>The following errors occurred during your import. Please correct them and try again.</p>
+                {/* errors on the csv level (checks for headers) */}
                 {responseErrors?.csv?.missing &&
                   <>
                     <p className='small'>
@@ -97,6 +104,26 @@ const Uploads = (props) => {
             }
           </Alert>
         }
+
+        {/* Create a Question Section */}
+        <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
+        <Form>
+          <Form.Group controlId='questionType'>
+            <Form.Label>Select Question Type</Form.Label>
+            <CustomDropdown dropdownSelector='.question-type-dropdown'>
+              <Dropdown onSelect={handleTypeSelect} className='question-type-dropdown'>
+                <Dropdown.Toggle variant='secondary'>{selectedType}</Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {QUESTION_TYPE_NAMES.map(({ key, value }) => (
+                    <Dropdown.Item key={key} eventKey={value}>
+                      {value}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </CustomDropdown>
+          </Form.Group>
+        </Form>
       </Container>
     </Layout>
   )

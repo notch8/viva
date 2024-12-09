@@ -17,24 +17,27 @@ on:
 
 jobs:
   build:
-    uses: scientist-softserv/actions/.github/workflows/build.yaml@v0.0.13
+    uses: scientist-softserv/actions/.github/workflows/build.yaml@v0.0.23
     secrets: inherit
     with:
       platforms: 'linux/amd64'
-      target: viva-base
+      webTarget: viva-base
   rspec-tests:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.13
+    uses: scientist-softserv/actions/.github/workflows/test.yaml@v0.0.23
+  reports:
+    needs: rspec-tests
+    uses: scientist-softserv/actions/.github/workflows/report.yaml@v0.0.23
   cypress-tests:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0.0.13
+    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@update-cypress-yaml
     with:
       cypress-container-name: cypress-tests
   rubocop:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.23
   eslint:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.13
+    uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.23
     with:
-      lint_cmd: docker-compose run web -- bash -c 'yarn && yarn lint:all'
+      rubocop_cmd: yarn && yarn lint:all

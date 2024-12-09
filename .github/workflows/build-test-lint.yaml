@@ -30,7 +30,7 @@ jobs:
     uses: scientist-softserv/actions/.github/workflows/report.yaml@v0.0.23
   cypress-tests:
     needs: build
-    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@v0.0.23
+    uses: scientist-softserv/actions/.github/workflows/cypress.yaml@update-cypress-yaml
     with:
       cypress-container-name: cypress-tests
   rubocop:
@@ -40,4 +40,4 @@ jobs:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.23
     with:
-      rubocop_cmd: docker-compose run web -- bash -c 'yarn && yarn lint:all'
+      rubocop_cmd: docker compose run web -- bash -c 'yarn && yarn lint:all'

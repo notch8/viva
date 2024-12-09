@@ -373,8 +373,21 @@ As you work on questions, you'll also be looking at writing views that represent
 #### RSpec
 RSpec is used to test the Rails code.
 
+To set up the test database for the first time, first enter the container:
+
 ```bash
 docker compose exec web bash
+```
+
+Then, run the following command to create the database and apply migrations:
+
+```bash
+RAILS_ENV=test rails db:create db:migrate
+```
+
+After setting up the database, you can run the tests inside the container with:
+
+```bash
 bundle exec rspec
 ```
 
@@ -398,7 +411,7 @@ For this to work, there are a few steps to take:
 - Install Cypress (e.g. `yarn install`)
 - Update [./cypress.config.js](./cypress.config.js); replacing `baseUrl: 'http://web:3000'` with `baseUrl: 'http://viva.test'`.  (This is done because you'll be running Cypress against your machines environment instead of within the docker ecosystem)
 - `yarn cypress:run` to run the e2e tests.
-- `yarn cypress:run --components` to run the component tests.
+- `yarn cypress:run --component` to run the component tests.
 
 _Note: You cannot run the Cypress tests within the `web` container because it does not, by design and intention, have the development dependencies necessary for Cypress._
 

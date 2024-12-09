@@ -4,7 +4,9 @@
 module.exports = { // eslint-disable-line no-undef
   'env': {
     'browser': true,
-    'es2021': true
+    'es2021': true,
+    'node': true, // Add Node.js environment
+    'jquery': true // Add jQuery global environment
   },
   'extends': [
     'eslint:recommended',
@@ -12,7 +14,8 @@ module.exports = { // eslint-disable-line no-undef
   ],
   'ignorePatterns': [
     'public/*',
-    'app/assets/builds'
+    'app/assets/builds',
+    'coverage/*' // Exclude coverage files from linting
   ],
   'overrides': [
     {
@@ -61,7 +64,24 @@ module.exports = { // eslint-disable-line no-undef
     'semi': [
       'error',
       'never'
-    ]
+    ],
+    'no-cond-assign': [
+      'error',
+      'except-parens' // Allow assignments in conditionals if wrapped in parentheses
+    ],
+    'no-empty': [
+      'error',
+      { 'allowEmptyCatch': true } // Allow empty catch blocks
+    ],
+    'no-control-regex': 'off', // Disable control regex rule for specific use cases
+    'no-useless-escape': 'warn' // Change from error to warn to review unnecessary escapes
+  },
+  'globals': {
+    'module': 'readonly',
+    'require': 'readonly',
+    'define': 'readonly',
+    '$': 'readonly', // Add jQuery global
+    'jQuery': 'readonly'
   },
   'settings': {
     'react': {

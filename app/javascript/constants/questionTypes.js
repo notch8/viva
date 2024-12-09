@@ -8,4 +8,4 @@ export const QUESTION_TYPE_NAMES = [
   { key: 'Select All That Apply', value: 'Select All That Apply' },
   { key: 'Case Study', value: 'Stimulus Case Study' },
   // { key: 'Upload', value: 'Upload' },
-];
+]

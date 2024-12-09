@@ -40,4 +40,4 @@ jobs:
     needs: build
     uses: scientist-softserv/actions/.github/workflows/lint.yaml@v0.0.23
     with:
-      rubocop_cmd: docker compose run web -- bash -c 'yarn && yarn lint:all'
+      rubocop_cmd: yarn && yarn lint:all

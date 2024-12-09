@@ -31,7 +31,7 @@ rails:
   shared:
     storage:
       size: 1Gi
-      className: nfs
+      className: ebs
 
 ingress:
   enabled: true

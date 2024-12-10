@@ -11,7 +11,7 @@ class Keyword < ApplicationRecord
   ##
   # @return [Array<String>] an alphabetized list of keyword names.
   def self.names
-    all.order(name: :asc).pluck(:name)
+    order(name: :asc).pluck(:name)
   end
 
   before_save :downcase_name

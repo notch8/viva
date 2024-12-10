@@ -5,7 +5,7 @@ FactoryBot.define do
     question
     after(:build) do |image|
       image.file.attach(
-        io: File.open(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png')),
+        io: Rails.root.join('spec', 'fixtures', 'files', 'test_image.png').open,
         filename: 'test_image.png',
         content_type: 'image/png'
       )

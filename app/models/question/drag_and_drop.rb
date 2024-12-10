@@ -64,7 +64,7 @@ class Question::DragAndDrop < Question
         next unless header.start_with?("ANSWER_")
 
         slot_number = header.split(/_+/).last.to_i
-        next if row[header].blank? && !@answers.include?(slot_number)
+        next if row[header].blank? && @answers.exclude?(slot_number)
         array << { 'answer' => row[header], 'correct' => (@answers.include?(slot_number) ? slot_number : false) }
       end
     end
@@ -82,7 +82,7 @@ class Question::DragAndDrop < Question
         next unless header.start_with?("ANSWER_")
 
         index = header.split(/_+/).last.to_i
-        next if row[header].blank? && !answers.include?(index)
+        next if row[header].blank? && answers.exclude?(index)
         array << { 'answer' => row[header], 'correct' => answers.include?(index) }
       end
     end
@@ -137,7 +137,7 @@ class Question::DragAndDrop < Question
       return false
     end
 
-    candidates = data.map { |datum| datum['correct'] }
+    candidates = data.pluck('correct')
 
     if sub_type == SUB_TYPE_SLOTTED
       if candidates.all? { |candidate| candidate.is_a?(Integer) || candidate.is_a?(FalseClass) }

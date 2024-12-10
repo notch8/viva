@@ -11,7 +11,7 @@ class Subject < ApplicationRecord
   ##
   # @return [Array<String>] an alphabetized list of subject names.
   def self.names
-    all.order(name: :asc).pluck(:name)
+    order(name: :asc).pluck(:name)
   end
 
   before_save :downcase_name

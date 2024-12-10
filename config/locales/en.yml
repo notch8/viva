@@ -34,3 +34,18 @@ en:
     errors:
       messages:
         record_invalid: "Validation failed: %{errors}"
+  controllers:
+    bookmarks:
+      create:
+        success: "Question bookmarked successfully."
+        failure: "Unable to bookmark the question."
+      destroy:
+        success: "Question unbookmarked successfully."
+        failure: "Unable to unbookmark the question."
+      destroy_all:
+        success: "All bookmarks cleared successfully."
+    settings:
+      update:
+        success: "Settings updated successfully."
+      update_password:
+        success: "Password updated successfully."

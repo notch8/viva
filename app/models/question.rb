@@ -268,7 +268,7 @@ class Question < ApplicationRecord
 
     return Question::InvalidType.new(row) unless klass
 
-    return Question::InvalidLevel.new(row) if row['LEVEL'] && !Level.names.include?(row['LEVEL'])
+    return Question::InvalidLevel.new(row) if row['LEVEL'] && Level.names.exclude?(row['LEVEL'])
 
     klass.build_row(row:, questions:)
   end

@@ -3,7 +3,7 @@ import {
   Container, Button, Alert, Dropdown, ButtonGroup, SplitButton
 } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
-import UploadForm from '../../ui/UploadForm/UploadForm'
+import UploadForm from '../../ui/UploadForm'
 import Layout from '../../App'
 import CustomDropdown from '../../ui/CustomDropdown'
 import CreateQuestionForm from '../../ui/CreateQuestionForm'

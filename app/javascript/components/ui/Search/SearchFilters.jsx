@@ -2,7 +2,7 @@ import React from 'react'
 import {
   Container, Row, Col, DropdownButton, Dropdown, CloseButton, Alert
 } from 'react-bootstrap'
-import CustomDropdown from '../../ui/CustomDropdown'
+import CustomDropdown from '../CustomDropdown'
 
 const SearchFilters = (props) => {
   const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props

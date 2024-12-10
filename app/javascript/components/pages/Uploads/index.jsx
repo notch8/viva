@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Container, Button, Alert, Dropdown, ButtonGroup, SplitButton
 } from 'react-bootstrap'
@@ -6,7 +6,7 @@ import { useForm } from '@inertiajs/inertia-react'
 import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
 import CustomDropdown from '../../ui/CustomDropdown'
-import CreateQuestion from './components/CreateQuestion'
+import CreateQuestionForm from '../../ui/CreateQuestionForm'
 
 const Uploads = (props) => {
   let responseErrors = props.errors
@@ -14,11 +14,6 @@ const Uploads = (props) => {
   const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })
-  const [selectedType, setSelectedType] = useState('Bow Tie')
-
-  const handleTypeSelect = (type) => {
-    setSelectedType(type)
-  }
 
   const submit = (e) => {
     clearErrors()
@@ -103,8 +98,7 @@ const Uploads = (props) => {
             }
           </Alert>
         }
-        {/* Create a Question Section */}
-        <CreateQuestion selectedType={selectedType} onTypeSelect={handleTypeSelect} />
+        <CreateQuestionForm />
       </Container>
     </Layout>
   )

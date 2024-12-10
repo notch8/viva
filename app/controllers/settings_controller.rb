@@ -11,7 +11,7 @@ class SettingsController < ApplicationController
 
   def update
     if current_user.update(user_params)
-      redirect_to settings_path, notice: 'Settings updated successfully'
+      redirect_to settings_path, notice: t('.success')
     else
       render inertia: 'Settings', props: {
         currentUser: current_user,
@@ -23,7 +23,7 @@ class SettingsController < ApplicationController
   def update_password
     if current_user.update_with_password(password_params)
       bypass_sign_in(current_user)
-      redirect_to settings_path, notice: 'Password updated successfully'
+      redirect_to settings_path, notice: t('.success')
     else
       render inertia: 'Settings', props: {
         currentUser: current_user,

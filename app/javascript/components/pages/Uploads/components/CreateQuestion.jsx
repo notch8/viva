@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Dropdown, Form } from 'react-bootstrap';
-import CustomDropdown from '../../../ui/CustomDropdown';
-import { QUESTION_TYPE_NAMES } from '../../../../constants/questionTypes';
+import React from 'react'
+import { Dropdown, Form } from 'react-bootstrap'
+import CustomDropdown from '../../../ui/CustomDropdown'
+import { QUESTION_TYPE_NAMES } from '../../../../constants/questionTypes'
 
 const CreateQuestion = ({ selectedType, onTypeSelect }) => {
   return (
@@ -25,7 +25,7 @@ const CreateQuestion = ({ selectedType, onTypeSelect }) => {
         </Form.Group>
       </Form>
     </div>
-  );
-};
+  )
+}
 
-export default CreateQuestion;
+export default CreateQuestion

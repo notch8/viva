@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import {
-  Container, Button, Alert, Dropdown, ButtonGroup, SplitButton, Form
+  Container, Button, Alert, Dropdown, ButtonGroup, SplitButton
 } from 'react-bootstrap'
 import { useForm } from '@inertiajs/inertia-react'
 import UploadForm from '../../ui/UploadForm/UploadForm'
 import Layout from '../../App'
 import CustomDropdown from '../../ui/CustomDropdown'
-import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
+import CreateQuestion from './components/CreateQuestion'
 
 const Uploads = (props) => {
   let responseErrors = props.errors
@@ -14,7 +14,6 @@ const Uploads = (props) => {
   const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })
-
   const [selectedType, setSelectedType] = useState('Bow Tie')
 
   const handleTypeSelect = (type) => {
@@ -104,26 +103,8 @@ const Uploads = (props) => {
             }
           </Alert>
         }
-
         {/* Create a Question Section */}
-        <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-        <Form>
-          <Form.Group controlId='questionType'>
-            <Form.Label>Select Question Type</Form.Label>
-            <CustomDropdown dropdownSelector='.question-type-dropdown'>
-              <Dropdown onSelect={handleTypeSelect} className='question-type-dropdown'>
-                <Dropdown.Toggle variant='secondary'>{selectedType}</Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {QUESTION_TYPE_NAMES.map(({ key, value }) => (
-                    <Dropdown.Item key={key} eventKey={value}>
-                      {value}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </CustomDropdown>
-          </Form.Group>
-        </Form>
+        <CreateQuestion selectedType={selectedType} onTypeSelect={handleTypeSelect} />
       </Container>
     </Layout>
   )

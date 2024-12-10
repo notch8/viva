@@ -25,7 +25,7 @@ class Question::SelectAllThatApply < Question
       @answer_columns = row.headers.select { |header| header.present? && header.start_with?("ANSWER_") }
       @data = answer_columns.each_with_object([]) do |col, array|
         index = col.split(/_+/).last.to_i
-        next if row[col].blank? && !answers.include?(index)
+        next if row[col].blank? && answers.exclude?(index)
         array << { 'answer' => row[col], 'correct' => answers.include?(index) }
       end
     end

@@ -26,8 +26,8 @@ class Question::Scenario < Question
   end
   private :must_have_a_parent_question
 
-  before_save :coerce_attributes_to_expected_state
   after_initialize :coerce_attributes_to_expected_state
+  before_save :coerce_attributes_to_expected_state
 
   def coerce_attributes_to_expected_state
     self.data = nil

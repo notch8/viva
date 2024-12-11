@@ -1,7 +1,7 @@
 import React from 'react'
 import QuestionText from './QuestionText'
 
-const Essay = ({ handleSubmit, questionText, handleTextChange }) => {
+const Bowtie = ({ handleSubmit, questionText, handleTextChange }) => {
   return (
     <>
       <QuestionText handleSubmit={ handleSubmit } questionText={ questionText } handleTextChange={ handleTextChange } />
@@ -9,4 +9,4 @@ const Essay = ({ handleSubmit, questionText, handleTextChange }) => {
   )
 }
 
-export default Essay
+export default Bowtie

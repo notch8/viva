@@ -15,11 +15,11 @@ const Uploads = (props) => {
     csv: ''
   })
 
-  const submit = (e) => {
+  const submit = (e, resetFormCallback) => {
     clearErrors()
     let fileName = data.csv && data.csv[0].name
     e.preventDefault()
-    if (fileName.length === 0) {
+    if (!fileName) {
       setError('csv', 'Please select a CSV or ZIP to upload.')
       setTimeout(() => {
         clearErrors()
@@ -30,9 +30,14 @@ const Uploads = (props) => {
         clearErrors()
       }, 3000)
     } else {
-      post('/uploads')
+      post('/uploads', {
+        onSuccess: () => {
+          if (resetFormCallback) resetFormCallback() // Call the callback to reset the form
+        }
+      })
     }
   }
+  
 
   return (
     <Layout>

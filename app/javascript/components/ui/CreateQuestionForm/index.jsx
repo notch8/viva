@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
@@ -9,6 +9,7 @@ const CreateQuestionForm = () => {
   const [images, setImages] = useState([])
   const [keywords, setKeywords] = useState([])
   const [newKeyword, setNewKeyword] = useState('')
+  const fileInputRef = useRef(null) // Add a ref for the file input
 
   const COMPONENT_MAP = {
     'Essay': Essay,
@@ -25,7 +26,24 @@ const CreateQuestionForm = () => {
   }
 
   const handleImageChange = (e) => {
-    setImages([...e.target.files]) // Store the uploaded files
+    const files = Array.from(e.target.files)
+    const newImages = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }))
+    setImages((prevImages) => [...prevImages, ...newImages])
+  }
+
+  const handleRemoveImage = (index) => {
+    setImages((prevImages) => {
+      URL.revokeObjectURL(prevImages[index].preview)
+      return prevImages.filter((_, i) => i !== index)
+    })
+
+    // Clear the file input value to reset its state
+    if (images.length === 1) {
+      fileInputRef.current.value = null
+    }
   }
 
   const handleAddKeyword = () => {
@@ -53,8 +71,8 @@ const CreateQuestionForm = () => {
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
 
-    images.forEach((image, index) => {
-      formData.append(`question[images][]`, image)
+    images.forEach(({ file }, index) => {
+      formData.append(`question[images][]`, file)
     })
 
     keywords.forEach((keyword, index) => {
@@ -72,6 +90,7 @@ const CreateQuestionForm = () => {
         setQuestionText('')
         setImages([])
         setKeywords([])
+        fileInputRef.current.value = null // Clear the file input after successful submission
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -101,7 +120,27 @@ const CreateQuestionForm = () => {
               multiple
               accept="image/*"
               onChange={handleImageChange}
+              ref={fileInputRef} // Attach the ref to the input
             />
+            <div className="mt-3">
+              {images.map((image, index) => (
+                <div key={index} className="d-flex align-items-center mt-2">
+                  <img
+                    src={image.preview}
+                    alt="Preview"
+                    style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
+                  />
+                  <span>{image.file.name}</span>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm ms-3"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Keywords Block */}

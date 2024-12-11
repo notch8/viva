@@ -5,9 +5,14 @@ import { QUESTION_TYPE_NAMES } from '../../../../constants/questionTypes'
 
 const CreateQuestion = ({ selectedType, onTypeSelect }) => {
   const [questionText, setQuestionText] = useState('')
+  const [selectedFiles, setSelectedFiles] = useState([])
 
   const handleTextChange = (e) => {
     setQuestionText(e.target.value)
+  }
+
+  const handleFileChange = (e) => {
+    setSelectedFiles(e.target.files)
   }
 
   const formatTextToParagraph = (text) => {
@@ -18,24 +23,24 @@ const CreateQuestion = ({ selectedType, onTypeSelect }) => {
     e.preventDefault()
     const formattedText = formatTextToParagraph(questionText)
 
+    const formData = new FormData()
+    formData.append('question[type]', 'Question::Essay')
+    formData.append('question[text]', questionText)
+    formData.append('question[data][html]', formattedText)
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append('question[images][]', selectedFiles[i])
+    }
+
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: {
-            type: 'Question::Essay',
-            text: questionText,
-            data: { html: formattedText },
-          },
-        }),
+        body: formData,
       })
 
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
+        setSelectedFiles([])
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -74,6 +79,10 @@ const CreateQuestion = ({ selectedType, onTypeSelect }) => {
             onChange={handleTextChange}
             placeholder='Enter your question text here...'
           />
+        </Form.Group>
+        <Form.Group controlId='questionImages'>
+          <Form.Label>Upload Images</Form.Label>
+          <Form.Control type='file' multiple onChange={handleFileChange} />
         </Form.Group>
         <Button variant='primary' type='submit'>
           Submit

@@ -3,12 +3,14 @@ import { Form, Button } from 'react-bootstrap'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
+import LevelDropdown from './LevelDropdown'
 
 const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
   const [questionType, setQuestionType] = useState('')
   const [selectedFiles, setSelectedFiles] = useState([])
   const [isValidFile, setIsValidFile] = useState(true)
+  const [level, setLevel] = useState('')
 
   const COMPONENT_MAP = {
     'Essay': Essay,
@@ -22,6 +24,12 @@ const CreateQuestionForm = () => {
 
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
+  }
+
+  const handleLevelSelection = (level) => { 
+    console.log(level); // TODO: add level to the form
+    
+    setLevel(level)
   }
 
   const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png']
@@ -113,7 +121,15 @@ const CreateQuestionForm = () => {
             Submit
           </Button>
           </div>
-      </Form>
+          <div className='bg-white mt-4 p-4'>
+            <QuestionComponent
+              handleSubmit={ handleSubmit }
+              questionText={ questionText }
+              handleTextChange={ handleTextChange }
+            />
+            <LevelDropdown handleLevelSelection={ handleLevelSelection } />
+          </div>
+        </Form>
       )}
     </>
   )

@@ -9,7 +9,8 @@ const CreateQuestionForm = () => {
   const [images, setImages] = useState([])
   const [keywords, setKeywords] = useState([])
   const [newKeyword, setNewKeyword] = useState('')
-  const fileInputRef = useRef(null) // Add a ref for the file input
+  const [imageErrors, setImageErrors] = useState([]) // Track errors for specific files
+  const fileInputRef = useRef(null)
 
   const COMPONENT_MAP = {
     'Essay': Essay,
@@ -26,12 +27,31 @@ const CreateQuestionForm = () => {
   }
 
   const handleImageChange = (e) => {
+    const validExtensions = ['jpg', 'jpeg', 'png']
     const files = Array.from(e.target.files)
-    const newImages = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }))
+    const newImages = []
+    const newErrors = []
+
+    files.forEach((file) => {
+      const extension = file.name.split('.').pop().toLowerCase()
+      if (validExtensions.includes(extension)) {
+        newImages.push({
+          file,
+          preview: URL.createObjectURL(file),
+          isValid: true, // Mark valid files
+        })
+      } else {
+        newImages.push({
+          file,
+          preview: URL.createObjectURL(file),
+          isValid: false, // Mark invalid files
+        })
+        newErrors.push(`"${file.name}" is not a valid file type. Only JPG, JPEG, and PNG are allowed.`)
+      }
+    })
+
     setImages((prevImages) => [...prevImages, ...newImages])
+    setImageErrors(newErrors)
   }
 
   const handleRemoveImage = (index) => {
@@ -39,8 +59,7 @@ const CreateQuestionForm = () => {
       URL.revokeObjectURL(prevImages[index].preview)
       return prevImages.filter((_, i) => i !== index)
     })
-
-    // Clear the file input value to reset its state
+    setImageErrors((prevErrors) => prevErrors.filter((_, i) => i !== index))
     if (images.length === 1) {
       fileInputRef.current.value = null
     }
@@ -65,15 +84,16 @@ const CreateQuestionForm = () => {
     e.preventDefault()
     const formattedText = formatTextToParagraph(questionText)
 
-    // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
 
-    images.forEach(({ file }, index) => {
-      formData.append(`question[images][]`, file)
-    })
+    images
+      .filter((image) => image.isValid) // Only send valid images
+      .forEach(({ file }, index) => {
+        formData.append(`question[images][]`, file)
+      })
 
     keywords.forEach((keyword, index) => {
       formData.append(`question[keywords][]`, keyword)
@@ -82,7 +102,7 @@ const CreateQuestionForm = () => {
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formData, // Send as multipart form data
+        body: formData,
       })
 
       if (response.ok) {
@@ -90,7 +110,7 @@ const CreateQuestionForm = () => {
         setQuestionText('')
         setImages([])
         setKeywords([])
-        fileInputRef.current.value = null // Clear the file input after successful submission
+        fileInputRef.current.value = null
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -100,6 +120,8 @@ const CreateQuestionForm = () => {
       alert('An error occurred while saving the question.')
     }
   }
+
+  const isSubmitDisabled = !questionText || images.some(image => !image.isValid)
 
   return (
     <>
@@ -120,8 +142,17 @@ const CreateQuestionForm = () => {
               multiple
               accept="image/*"
               onChange={handleImageChange}
-              ref={fileInputRef} // Attach the ref to the input
+              ref={fileInputRef}
             />
+            {imageErrors.length > 0 && (
+              <div className="mt-2">
+                {imageErrors.map((error, index) => (
+                  <p key={index} className="text-danger">
+                    {error}
+                  </p>
+                ))}
+              </div>
+            )}
             <div className="mt-3">
               {images.map((image, index) => (
                 <div key={index} className="d-flex align-items-center mt-2">
@@ -130,7 +161,9 @@ const CreateQuestionForm = () => {
                     alt="Preview"
                     style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
                   />
-                  <span>{image.file.name}</span>
+                  <span className={`me-3 ${!image.isValid ? 'text-danger' : ''}`}>
+                    {image.file.name} {!image.isValid && '(Invalid)'}
+                  </span>
                   <button
                     type="button"
                     className="btn btn-danger btn-sm ms-3"
@@ -180,6 +213,7 @@ const CreateQuestionForm = () => {
           <button
             type="submit"
             className="btn btn-primary mt-3"
+            disabled={isSubmitDisabled}
           >
             Submit
           </button>

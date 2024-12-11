@@ -1,10 +1,9 @@
 import React from 'react'
-import { Form, Button } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 
-const QuestionText = ({ handleSubmit, questionText, handleTextChange }) => {
+const QuestionText = ({ questionText, handleTextChange }) => {
 
   return (
-    <Form onSubmit={handleSubmit}>
       <Form.Group controlId='questionText'>
         <Form.Label>Enter Question Text</Form.Label>
         <Form.Control
@@ -16,10 +15,6 @@ const QuestionText = ({ handleSubmit, questionText, handleTextChange }) => {
           className='p-2'
         />
       </Form.Group>
-      <Button variant='primary' type='submit' className='mt-4'>
-        Submit
-      </Button>
-    </Form>
   )
 }
 

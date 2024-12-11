@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
@@ -62,13 +63,17 @@ const CreateQuestionForm = () => {
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={ handleQuestionTypeSelection } />
       { QuestionComponent && (
-        <div className='bg-white mt-4 p-4'>
-          <QuestionComponent
-            handleSubmit={ handleSubmit }
-            questionText={ questionText }
-            handleTextChange={ handleTextChange }
-          />
-        </div>
+        <Form onSubmit={handleSubmit}>
+          <div className='bg-white mt-4 p-4'>
+            <QuestionComponent
+              questionText={ questionText }
+              handleTextChange={ handleTextChange }
+            />
+          </div>
+          <Button variant='primary' type='submit' className='mt-4'>
+            Submit
+          </Button>
+      </Form>
       )}
     </>
   )

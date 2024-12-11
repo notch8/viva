@@ -7,6 +7,8 @@ import QuestionTypeDropdown from './QuestionTypeDropdown'
 const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
   const [questionType, setQuestionType] = useState('')
+  const [selectedFiles, setSelectedFiles] = useState([])
+  const [isValidFile, setIsValidFile] = useState(true)
 
   const COMPONENT_MAP = {
     'Essay': Essay,
@@ -22,32 +24,56 @@ const CreateQuestionForm = () => {
     setQuestionType(type)
   }
 
+  const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png']
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      if (allowedTypes.includes(file.type)) {
+        setSelectedFiles([file])
+        setIsValidFile(true)
+      } else {
+        alert('Please select a valid image file (jpg, jpeg, png)')
+        setSelectedFiles([])
+        setIsValidFile(false)
+      }
+    } else {
+      setSelectedFiles([])
+      setIsValidFile(true)
+    }
+  }
+
   const formatTextToParagraph = (text) => {
     return text.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!isValidFile) { 
+      alert('Please select a valid image file (jpg, jpeg, png)')
+      return
+    }
+
     const formattedText = formatTextToParagraph(questionText)
+
+    const formData = new FormData()
+    formData.append('question[type]', `Question::${questionType}`)
+    formData.append('question[text]', questionText)
+    formData.append('question[data][html]', formattedText)
+    for (let i = 0; i < selectedFiles.length; i++) {
+      formData.append('question[images][]', selectedFiles[i])
+    }
 
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: {
-            type: `Question::${questionType}`,
-            text: questionText,
-            data: { html: formattedText },
-          },
-        }),
+        body: formData,
       })
 
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
+        setSelectedFiles([])
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -69,10 +95,24 @@ const CreateQuestionForm = () => {
               questionText={ questionText }
               handleTextChange={ handleTextChange }
             />
-          </div>
-          <Button variant='primary' type='submit' className='mt-4'>
+          { !isValidFile && <p className='text-danger'>Please select a valid image file (jpg, jpeg, png)</p> }
+          <Form.Group controlId='questionImages'>
+            <Form.Label>Upload Images</Form.Label>
+            <Form.Control 
+              type='file'
+              multiple={false}
+              accept='.jpg, .jpeg, .png'
+              onChange={handleFileChange}
+            />
+          </Form.Group>
+          <Button 
+            variant='primary'
+            type='submit'
+            disabled={!isValidFile}
+            className='mt-4'>
             Submit
           </Button>
+          </div>
       </Form>
       )}
     </>

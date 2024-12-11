@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Form, Button } from 'react-bootstrap'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
@@ -7,8 +6,9 @@ import QuestionTypeDropdown from './QuestionTypeDropdown'
 const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
   const [questionType, setQuestionType] = useState('')
-  const [selectedFiles, setSelectedFiles] = useState([])
-  const [isValidFile, setIsValidFile] = useState(true)
+  const [images, setImages] = useState([])
+  const [keywords, setKeywords] = useState([])
+  const [newKeyword, setNewKeyword] = useState('')
 
   const COMPONENT_MAP = {
     'Essay': Essay,
@@ -24,23 +24,19 @@ const CreateQuestionForm = () => {
     setQuestionType(type)
   }
 
-  const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png']
+  const handleImageChange = (e) => {
+    setImages([...e.target.files]) // Store the uploaded files
+  }
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      if (allowedTypes.includes(file.type)) {
-        setSelectedFiles([file])
-        setIsValidFile(true)
-      } else {
-        alert('Please select a valid image file (jpg, jpeg, png)')
-        setSelectedFiles([])
-        setIsValidFile(false)
-      }
-    } else {
-      setSelectedFiles([])
-      setIsValidFile(true)
+  const handleAddKeyword = () => {
+    if (newKeyword.trim() && !keywords.includes(newKeyword)) {
+      setKeywords([...keywords, newKeyword.trim()])
+      setNewKeyword('') // Clear input after adding
     }
+  }
+
+  const handleRemoveKeyword = (keywordToRemove) => {
+    setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
   }
 
   const formatTextToParagraph = (text) => {
@@ -49,31 +45,33 @@ const CreateQuestionForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isValidFile) { 
-      alert('Please select a valid image file (jpg, jpeg, png)')
-      return
-    }
-
     const formattedText = formatTextToParagraph(questionText)
 
+    // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append('question[images][]', selectedFiles[i])
-    }
+
+    images.forEach((image, index) => {
+      formData.append(`question[images][]`, image)
+    })
+
+    keywords.forEach((keyword, index) => {
+      formData.append(`question[keywords][]`, keyword)
+    })
 
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formData,
+        body: formData, // Send as multipart form data
       })
 
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
-        setSelectedFiles([])
+        setImages([])
+        setKeywords([])
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -87,33 +85,66 @@ const CreateQuestionForm = () => {
   return (
     <>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-      <QuestionTypeDropdown handleQuestionTypeSelection={ handleQuestionTypeSelection } />
-      { QuestionComponent && (
-        <Form onSubmit={handleSubmit}>
-          <div className='bg-white mt-4 p-4'>
-            <QuestionComponent
-              questionText={ questionText }
-              handleTextChange={ handleTextChange }
+      <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
+      {QuestionComponent && (
+        <form className='bg-white mt-4 p-4' onSubmit={handleSubmit}>
+          <QuestionComponent
+            questionText={questionText}
+            handleTextChange={handleTextChange}
+          />
+          <div className="mt-3">
+            <label htmlFor="file-upload" className="form-label">Upload Images</label>
+            <input
+              type="file"
+              id="file-upload"
+              className="form-control"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
             />
-          { !isValidFile && <p className='text-danger'>Please select a valid image file (jpg, jpeg, png)</p> }
-          <Form.Group controlId='questionImages'>
-            <Form.Label>Upload Images</Form.Label>
-            <Form.Control 
-              type='file'
-              multiple={false}
-              accept='.jpg, .jpeg, .png'
-              onChange={handleFileChange}
-            />
-          </Form.Group>
-          <Button 
-            variant='primary'
-            type='submit'
-            disabled={!isValidFile}
-            className='mt-4'>
-            Submit
-          </Button>
           </div>
-      </Form>
+
+          {/* Keywords Block */}
+          <div className="mt-4">
+            <label className="form-label">Keywords</label>
+            <div className="d-flex flex-wrap mb-2">
+              {keywords.map((keyword, index) => (
+                <span key={index} className="badge bg-secondary me-2">
+                  {keyword}
+                  <button
+                    type="button"
+                    className="btn-close ms-2"
+                    aria-label="Remove"
+                    onClick={() => handleRemoveKeyword(keyword)}
+                  />
+                </span>
+              ))}
+            </div>
+            <div className="input-group">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Add a keyword"
+                value={newKeyword}
+                onChange={(e) => setNewKeyword(e.target.value)}
+              />
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddKeyword}
+              >
+                Add
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-primary mt-3"
+          >
+            Submit
+          </button>
+        </form>
       )}
     </>
   )

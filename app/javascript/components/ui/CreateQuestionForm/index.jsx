@@ -4,6 +4,7 @@ import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
+import Keyword from './Keyword'
 
 const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
@@ -27,7 +28,6 @@ const CreateQuestionForm = () => {
   }
 
   const handleLevelSelection = (level) => { 
-    console.log(level); // TODO: add level to the form
     
     setLevel(level)
   }
@@ -66,6 +66,7 @@ const CreateQuestionForm = () => {
 
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
+    formData.append('question[level]', level)
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
     for (let i = 0; i < selectedFiles.length; i++) {
@@ -113,6 +114,9 @@ const CreateQuestionForm = () => {
               onChange={handleFileChange}
             />
           </Form.Group>
+          <div className='mt-4'>
+            <LevelDropdown handleLevelSelection={ handleLevelSelection } />
+          </div>
           <Button 
             variant='primary'
             type='submit'
@@ -121,16 +125,9 @@ const CreateQuestionForm = () => {
             Submit
           </Button>
           </div>
-          <div className='bg-white mt-4 p-4'>
-            <QuestionComponent
-              handleSubmit={ handleSubmit }
-              questionText={ questionText }
-              handleTextChange={ handleTextChange }
-            />
-            <LevelDropdown handleLevelSelection={ handleLevelSelection } />
-          </div>
         </Form>
       )}
+      <Keyword />
     </>
   )
 }

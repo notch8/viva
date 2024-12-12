@@ -5,12 +5,20 @@ class Api::QuestionsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    question = Question.new(question_params)
+    question = Question.new(question_params.except(:keywords, :images))
 
     # Handle image uploads
     if params[:question][:images].present?
       params[:question][:images].each do |uploaded_file|
         question.images.build(file: uploaded_file)
+      end
+    end
+
+    # Handle keywords
+    if params[:question][:keywords].present?
+      params[:question][:keywords].each do |keyword_name|
+        keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
+        question.keywords << keyword unless question.keywords.include?(keyword)
       end
     end
 
@@ -24,6 +32,6 @@ class Api::QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:type, :text, data: [:html])
+    params.require(:question).permit(:type, :level, :text, { data: [:html] }, { images: [] }, { keywords: [] })
   end
 end

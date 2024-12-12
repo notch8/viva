@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Form, Button } from 'react-bootstrap'
+import { Form, Button, InputGroup } from 'react-bootstrap'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
@@ -7,82 +7,85 @@ import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
 
 const CreateQuestionForm = () => {
-  const [questionText, setQuestionText] = useState('')
   const [questionType, setQuestionType] = useState('')
-  const [selectedFiles, setSelectedFiles] = useState([])
-  const [isValidFile, setIsValidFile] = useState(true)
+  const [questionText, setQuestionText] = useState('')
+  const [images, setImages] = useState([])
   const [level, setLevel] = useState('')
+  const [keywords, setKeywords] = useState([]) 
 
+  // Conditional form rendering based on question type
   const COMPONENT_MAP = {
     'Essay': Essay,
     'Bow Tie': Bowtie
   }
   const QuestionComponent = COMPONENT_MAP[questionType] || null
 
-  const handleTextChange = (e) => {
-    setQuestionText(e.target.value)
-  }
-
+  // Select the question type to render the appropriate form
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
   }
 
-  const handleLevelSelection = (level) => { 
-    
-    setLevel(level)
+  // Enter the text content for the question
+  const handleTextChange = (e) => {
+    setQuestionText(e.target.value)
   }
 
-  const allowedTypes = ['image/jpg', 'image/jpeg', 'image/png']
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      if (allowedTypes.includes(file.type)) {
-        setSelectedFiles([file])
-        setIsValidFile(true)
-      } else {
-        alert('Please select a valid image file (jpg, jpeg, png)')
-        setSelectedFiles([])
-        setIsValidFile(false)
-      }
-    } else {
-      setSelectedFiles([])
-      setIsValidFile(true)
-    }
+  // Upload images associated with the question (jpg, jpeg, png)
+  // ******TO DO: can we upload multiple images at once?
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files)
+    const newImages = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }))
+    setImages((prevImages) => [...prevImages, ...newImages])
   }
 
-  const formatTextToParagraph = (text) => {
-    return text.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
+  // Select the level (1-6) of the question
+  const handleLevelSelection = (levelData) => { 
+    setLevel(levelData)
   }
 
+  // Add new keyword to the list of keywords
+  const handleAddKeyword = (keyword) => {
+    setKeywords([...keywords, keyword])
+  }
+
+  // Remove a keyword from the list of keywords
+  const handleRemoveKeyword = (keywordToRemove) => {
+    setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
+  }
+
+  // Submits the form data to the Rails API
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!isValidFile) { 
-      alert('Please select a valid image file (jpg, jpeg, png)')
-      return
-    }
-
-    const formattedText = formatTextToParagraph(questionText)
-
+    const formattedText = questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
+   
+    // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
     formData.append('question[level]', level)
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
-    for (let i = 0; i < selectedFiles.length; i++) {
-      formData.append('question[images][]', selectedFiles[i])
-    }
+
+    images.forEach(({ file }, index) => {
+      formData.append(`question[images][]`, file)
+    })
+
+    keywords.forEach((keyword, index) => {
+      formData.append(`question[keywords][]`, keyword)
+    })
 
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formData,
+        body: formData, // Send as multipart form data
       })
-
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
-        setSelectedFiles([])
+        setImages([])
+        setKeywords([])
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -96,38 +99,44 @@ const CreateQuestionForm = () => {
   return (
     <>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-      <QuestionTypeDropdown handleQuestionTypeSelection={ handleQuestionTypeSelection } />
+
+      <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
+      
       { QuestionComponent && (
-        <Form onSubmit={handleSubmit}>
-          <div className='bg-white mt-4 p-4'>
+        <div className='bg-white mt-4 p-4 d-flex'>
+          <Form onSubmit={handleSubmit} className='mx-4 flex-fill'>
             <QuestionComponent
-              questionText={ questionText }
-              handleTextChange={ handleTextChange }
+              questionText={questionText}
+              handleTextChange={handleTextChange}
             />
-          { !isValidFile && <p className='text-danger'>Please select a valid image file (jpg, jpeg, png)</p> }
-          <Form.Group controlId='questionImages'>
-            <Form.Label>Upload Images</Form.Label>
-            <Form.Control 
-              type='file'
-              multiple={false}
-              accept='.jpg, .jpeg, .png'
-              onChange={handleFileChange}
-            />
-          </Form.Group>
-          <div className='mt-4'>
-            <LevelDropdown handleLevelSelection={ handleLevelSelection } />
+            <InputGroup className='my-4 text-uppercase csv-upload-form'>
+              <InputGroup.Text className='strait py-3' htmlFor="file-upload">
+                Upload Image
+              </InputGroup.Text>
+              <Form.Group>
+                <Form.Control
+                  type='file'
+                  id='file-upload'
+                  aria-label='Upload an image here'
+                  onChange={handleImageChange}
+                  className='rounded-0 py-3'
+                />
+              </Form.Group>
+            </InputGroup>
+
+            <Button
+              type="submit"
+              className="btn btn-primary mt-3"
+            >
+              Submit
+            </Button>
+          </Form>
+          <div className='m-4'>
+            <Keyword keywords={keywords} handleAddKeyword={handleAddKeyword} handleRemoveKeyword={handleRemoveKeyword} />
+            <LevelDropdown handleLevelSelection={handleLevelSelection} />
           </div>
-          <Button 
-            variant='primary'
-            type='submit'
-            disabled={!isValidFile}
-            className='mt-4'>
-            Submit
-          </Button>
-          </div>
-        </Form>
+        </div>
       )}
-      <Keyword />
     </>
   )
 }

@@ -1,4 +1,5 @@
 export const LEVELS = [
+  {key: 'No Level', value: null},
   {key: 'Level 1', value: '1'}, 
   {key: 'Level 2', value: '2'}, 
   {key: 'Level 3', value: '3'},

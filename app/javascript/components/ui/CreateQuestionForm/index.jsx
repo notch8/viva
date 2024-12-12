@@ -5,6 +5,7 @@ import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
+import Subject from './Subject'
 import ImageUploader from './ImageUploader'
 
 const CreateQuestionForm = () => {
@@ -14,8 +15,8 @@ const CreateQuestionForm = () => {
   const [imageErrors, setImageErrors] = useState([]) // Track errors for each image
   const [level, setLevel] = useState('')
   const [keywords, setKeywords] = useState([])
+  const [subjects, setSubjects] = useState([])
 
-  // Conditional form rendering based on question type
   const COMPONENT_MAP = {
     'Essay': Essay,
     'Bow Tie': Bowtie
@@ -64,6 +65,8 @@ const CreateQuestionForm = () => {
   const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
   const handleRemoveKeyword = (keywordToRemove) => setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
   const handleLevelSelection = (levelData) => setLevel(levelData)
+  const handleAddSubject = (subject) => setSubjects([...subjects, subject])
+  const handleRemoveSubject = (subjectToRemove) => setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -72,7 +75,6 @@ const CreateQuestionForm = () => {
       .map((line, index) => `<p key=${index}>${line}</p>`)
       .join('')
 
-    // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
     formData.append('question[level]', level)
@@ -80,14 +82,11 @@ const CreateQuestionForm = () => {
     formData.append('question[data][html]', formattedText)
 
     images
-      .filter((image) => image.isValid) // Only include valid images
-      .forEach(({ file }) => {
-        formData.append('question[images][]', file)
-      })
+      .filter((image) => image.isValid)
+      .forEach(({ file }) => formData.append('question[images][]', file))
 
-    keywords.forEach((keyword) => {
-      formData.append('question[keywords][]', keyword)
-    })
+    keywords.forEach((keyword) => formData.append('question[keywords][]', keyword))
+    subjects.forEach((subject) => formData.append('question[subjects][]', subject))
 
     try {
       const response = await fetch('/api/questions', {
@@ -98,7 +97,9 @@ const CreateQuestionForm = () => {
         alert('Question saved successfully!')
         setQuestionText('')
         setImages([])
+        setLevel('')
         setKeywords([])
+        setSubjects([])
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -117,7 +118,7 @@ const CreateQuestionForm = () => {
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
 
       {QuestionComponent && (
-        <div className='bg-white mt-4 p-4 d-flex'>
+        <div className='bg-white mt-4 p-4 d-flex flex-wrap'>
           <Form onSubmit={handleSubmit} className='mx-4 flex-fill'>
             <QuestionComponent
               questionText={questionText}
@@ -138,11 +139,8 @@ const CreateQuestionForm = () => {
             </Button>
           </Form>
           <div className='m-4'>
-            <Keyword
-              keywords={keywords}
-              handleAddKeyword={handleAddKeyword}
-              handleRemoveKeyword={handleRemoveKeyword}
-            />
+            <Keyword keywords={keywords} handleAddKeyword={handleAddKeyword} handleRemoveKeyword={handleRemoveKeyword} />
+            <Subject subjects={subjects} handleAddSubject={handleAddSubject} handleRemoveSubject={handleRemoveSubject} />
             <LevelDropdown handleLevelSelection={handleLevelSelection} />
           </div>
         </div>

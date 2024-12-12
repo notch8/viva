@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Form, Button, InputGroup } from 'react-bootstrap'
 import Bowtie from './Bowtie'
 import Essay from './Essay'
@@ -10,8 +10,10 @@ const CreateQuestionForm = () => {
   const [questionType, setQuestionType] = useState('')
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
+  const [imageErrors, setImageErrors] = useState([]) // Track errors for each image
   const [level, setLevel] = useState('')
-  const [keywords, setKeywords] = useState([]) 
+  const [keywords, setKeywords] = useState([])
+  const fileInputRef = useRef(null) // Ref for the file input field
 
   // Conditional form rendering based on question type
   const COMPONENT_MAP = {
@@ -32,18 +34,45 @@ const CreateQuestionForm = () => {
 
   // Upload images associated with the question (jpg, jpeg, png)
   // ******TO DO: can we upload multiple images at once?
+  // Instantly flags invalid file types and shows an error
   const handleImageChange = (e) => {
+    const validExtensions = ['jpg', 'jpeg', 'png']
     const files = Array.from(e.target.files)
-    const newImages = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }))
+    const newImages = []
+    const newErrors = []
+
+    files.forEach((file) => {
+      const extension = file.name.split('.').pop().toLowerCase()
+      if (validExtensions.includes(extension)) {
+        newImages.push({
+          file,
+          preview: URL.createObjectURL(file),
+          isValid: true,
+        })
+      } else {
+        newImages.push({
+          file,
+          preview: URL.createObjectURL(file),
+          isValid: false,
+        })
+        newErrors.push(`"${file.name}" is not a valid file type. Only JPG, JPEG, and PNG are allowed.`)
+      }
+    })
+
     setImages((prevImages) => [...prevImages, ...newImages])
+    setImageErrors((prevErrors) => [...prevErrors, ...newErrors])
   }
 
-  // Select the level (1-6) of the question
-  const handleLevelSelection = (levelData) => { 
-    setLevel(levelData)
+  // Remove a selected image from the list and reset the file input field
+  const handleRemoveImage = (index) => {
+    setImages((prevImages) => {
+      URL.revokeObjectURL(prevImages[index].preview)
+      return prevImages.filter((_, i) => i !== index)
+    })
+    setImageErrors((prevErrors) => prevErrors.filter((_, i) => i !== index))
+    if (images.length === 1) {
+      fileInputRef.current.value = null // Reset file input
+    }
   }
 
   // Add new keyword to the list of keywords
@@ -56,11 +85,16 @@ const CreateQuestionForm = () => {
     setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
   }
 
+  // Select the level (1-6) of the question
+  const handleLevelSelection = (levelData) => {
+    setLevel(levelData)
+  }
+
   // Submits the form data to the Rails API
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formattedText = questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
-   
+    
     // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
@@ -68,9 +102,11 @@ const CreateQuestionForm = () => {
     formData.append('question[text]', questionText)
     formData.append('question[data][html]', formattedText)
 
-    images.forEach(({ file }, index) => {
-      formData.append(`question[images][]`, file)
-    })
+    images
+      .filter((image) => image.isValid) // Only include valid images
+      .forEach(({ file }, index) => {
+        formData.append(`question[images][]`, file)
+      })
 
     keywords.forEach((keyword, index) => {
       formData.append(`question[keywords][]`, keyword)
@@ -79,13 +115,14 @@ const CreateQuestionForm = () => {
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formData, // Send as multipart form data
+        body: formData,
       })
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
         setImages([])
         setKeywords([])
+        fileInputRef.current.value = null // Clear file input
       } else {
         const errorData = await response.json()
         alert(`Failed to save the question: ${errorData.errors.join(', ')}`)
@@ -96,10 +133,12 @@ const CreateQuestionForm = () => {
     }
   }
 
+  // Disable submit button if question text is empty or there are invalid files
+  const isSubmitDisabled = !questionText || images.some((image) => !image.isValid)
+
   return (
     <>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
       
       { QuestionComponent && (
@@ -120,13 +159,45 @@ const CreateQuestionForm = () => {
                   aria-label='Upload an image here'
                   onChange={handleImageChange}
                   className='rounded-0 py-3'
+                  ref={fileInputRef} // Attach ref for resetting
                 />
               </Form.Group>
             </InputGroup>
 
+            {imageErrors.length > 0 && (
+              <div className="mt-2">
+                {imageErrors.map((error, index) => (
+                  <p key={index} className="text-danger">{error}</p>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-3">
+              {images.map((image, index) => (
+                <div key={index} className="d-flex align-items-center mt-2">
+                  <img
+                    src={image.preview}
+                    alt="Preview"
+                    style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
+                  />
+                  <span className={`me-3 ${!image.isValid ? 'text-danger' : ''}`}>
+                    {image.file.name} {!image.isValid && '(Invalid)'}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm ms-3"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
             <Button
               type="submit"
               className="btn btn-primary mt-3"
+              disabled={isSubmitDisabled}
             >
               Submit
             </Button>

@@ -4,10 +4,11 @@ import { Plus, X } from '@phosphor-icons/react'
 
 const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
   const [keyword, setKeyword] = useState('')
-  
-  const submitKeyword = () => {    
-    if (!keywords.includes(keyword)) {      
-      handleAddKeyword(keyword.trim())
+
+  const submitKeyword = () => {
+    const trimmedKeyword = keyword.trim()
+    if (trimmedKeyword && !keywords.includes(trimmedKeyword)) {
+      handleAddKeyword(trimmedKeyword)
       setKeyword('') // Clear input after adding
     }
   }
@@ -30,7 +31,6 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
           >
             <X size={20} />
           </button>
-          
         </div>
       ))}
       <InputGroup className='mb-3 text-uppercase'>
@@ -51,8 +51,9 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
           variant='light-4'
           id='add-keyword'
           size='lg'
-          type='submit'
+          type='button' // Changed to 'button' to avoid unintended form submission
           onClick={submitKeyword}
+          disabled={!keyword.trim()} // Disable button for empty or whitespace-only input
         >
           <Plus size={20} weight='bold' />
         </Button>

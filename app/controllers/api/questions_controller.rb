@@ -6,6 +6,7 @@ class Api::QuestionsController < ApplicationController
 
   def create
     question = Question.new(question_params.except(:keywords, :subjects, :images))
+    question.level = nil if question.level.blank?
 
     handle_image_uploads(question)
     handle_keywords(question)

@@ -51,7 +51,7 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
           variant='light-4'
           id='add-keyword'
           size='lg'
-          type='button' // Changed to 'button' to avoid unintended form submission
+          type='submit'
           onClick={submitKeyword}
           disabled={!keyword.trim()} // Disable button for empty or whitespace-only input
         >

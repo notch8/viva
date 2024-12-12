@@ -2,12 +2,19 @@ import React, { useRef } from 'react'
 import { Form, InputGroup } from 'react-bootstrap'
 
 const ImageUploader = ({ images, imageErrors, handleImageChange, handleRemoveImage }) => {
-  const fileInputRef = useRef(null) // Ref for the file input field
+  const fileInputRef = useRef(null)
+
+  const handleChange = (e) => {
+    handleImageChange(e)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '' // Reset the file input
+    }
+  }
 
   const handleRemoveImageWrapper = (index) => {
     handleRemoveImage(index)
-    if (images.length === 1) {
-      fileInputRef.current.value = null // Reset file input
+    if (images.length === 1 && fileInputRef.current) {
+      fileInputRef.current.value = '' // Reset file input if last image is removed
     }
   }
 
@@ -22,7 +29,7 @@ const ImageUploader = ({ images, imageErrors, handleImageChange, handleRemoveIma
             type='file'
             id='file-upload'
             aria-label='Upload an image here'
-            onChange={handleImageChange}
+            onChange={handleChange}
             className='rounded-0 py-3'
             ref={fileInputRef} // Attach ref for resetting
           />

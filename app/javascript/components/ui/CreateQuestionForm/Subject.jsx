@@ -6,8 +6,9 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
   const [subject, setSubject] = useState('')
 
   const submitSubject = () => {
-    if (!subjects.includes(subject)) {
-      handleAddSubject(subject.trim())
+    const trimmedSubject = subject.trim()
+    if (trimmedSubject && !subjects.includes(trimmedSubject)) {
+      handleAddSubject(trimmedSubject)
       setSubject('') // Clear input after adding
     }
   }
@@ -30,7 +31,6 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
           >
             <X size={20} />
           </button>
-
         </div>
       ))}
       <InputGroup className='mb-3 text-uppercase'>
@@ -53,6 +53,7 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
           size='lg'
           type='submit'
           onClick={submitSubject}
+          disabled={!subject.trim()} // Disable button for empty or whitespace-only input
         >
           <Plus size={20} weight='bold' />
         </Button>

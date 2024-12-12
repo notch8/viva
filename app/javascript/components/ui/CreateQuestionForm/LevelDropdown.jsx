@@ -6,7 +6,7 @@ import { LEVELS } from '../../../constants/levels.js'
 const LevelDropdown = ({ handleLevelSelection }) => {
   const [selectedLevel, setSelectedLevel] = useState('Level')
 
-  const levelDropdown = (level) => {    
+  const levelDropdown = (level) => {
     const levelData = LEVELS.find(({ key }) => key === level).value
     handleLevelSelection(levelData)
     setSelectedLevel(level)

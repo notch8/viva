@@ -5,7 +5,7 @@ class Api::QuestionsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    question = Question.new(question_params.except(:keywords, :images))
+    question = Question.new(question_params.except(:keywords, :subjects, :images))
 
     # Handle image uploads
     if params[:question][:images].present?
@@ -22,6 +22,14 @@ class Api::QuestionsController < ApplicationController
       end
     end
 
+    # Handle subjects
+    if params[:question][:subjects].present?
+      params[:question][:subjects].each do |subject_name|
+        subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
+        question.subjects << subject unless question.subjects.include?(subject)
+      end
+    end
+
     if question.save
       render json: { message: 'Question saved successfully!' }, status: :created
     else
@@ -32,6 +40,6 @@ class Api::QuestionsController < ApplicationController
   private
 
   def question_params
-    params.require(:question).permit(:type, :level, :text, { data: [:html] }, { images: [] }, { keywords: [] })
+    params.require(:question).permit(:type, :level, :text, { data: [:html] }, { images: [] }, { keywords: [] }, { subjects: [] })
   end
 end

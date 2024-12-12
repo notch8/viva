@@ -5,6 +5,7 @@ import Essay from './Essay'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
+import Subject from './Subject'
 
 const CreateQuestionForm = () => {
   const [questionType, setQuestionType] = useState('')
@@ -12,8 +13,9 @@ const CreateQuestionForm = () => {
   const [images, setImages] = useState([])
   const [imageErrors, setImageErrors] = useState([]) // Track errors for each image
   const [level, setLevel] = useState('')
-  const [keywords, setKeywords] = useState([])
   const fileInputRef = useRef(null) // Ref for the file input field
+  const [keywords, setKeywords] = useState([])
+  const [subjects, setSubjects] = useState([])
 
   // Conditional form rendering based on question type
   const COMPONENT_MAP = {
@@ -90,11 +92,21 @@ const CreateQuestionForm = () => {
     setLevel(levelData)
   }
 
+  // Add new subject to the list of subjects
+  const handleAddSubject = (subject) => {
+    setSubjects([...subjects, subject])
+  }
+
+  // Remove a subject from the list of subjects
+  const handleRemoveSubject = (subjectToRemove) => {
+    setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
+  }
+
   // Submits the form data to the Rails API
   const handleSubmit = async (e) => {
     e.preventDefault()
     const formattedText = questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
-    
+
     // Prepare the form data
     const formData = new FormData()
     formData.append('question[type]', `Question::${questionType}`)
@@ -104,12 +116,16 @@ const CreateQuestionForm = () => {
 
     images
       .filter((image) => image.isValid) // Only include valid images
-      .forEach(({ file }, index) => {
-        formData.append(`question[images][]`, file)
+      .forEach(({ file }) => {
+        formData.append('question[images][]', file)
       })
 
-    keywords.forEach((keyword, index) => {
-      formData.append(`question[keywords][]`, keyword)
+    keywords.forEach((keyword) => {
+      formData.append('question[keywords][]', keyword)
+    })
+
+    subjects.forEach((subject) => {
+      formData.append('question[subjects][]', subject)
     })
 
     try {
@@ -117,11 +133,14 @@ const CreateQuestionForm = () => {
         method: 'POST',
         body: formData,
       })
+      console.log(response)
       if (response.ok) {
         alert('Question saved successfully!')
         setQuestionText('')
         setImages([])
+        setLevel('')
         setKeywords([])
+        setSubjects([])
         fileInputRef.current.value = null // Clear file input
       } else {
         const errorData = await response.json()
@@ -140,16 +159,16 @@ const CreateQuestionForm = () => {
     <>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
-      
+
       { QuestionComponent && (
-        <div className='bg-white mt-4 p-4 d-flex'>
+        <div className='bg-white mt-4 p-4 d-flex flex-wrap'>
           <Form onSubmit={handleSubmit} className='mx-4 flex-fill'>
             <QuestionComponent
               questionText={questionText}
               handleTextChange={handleTextChange}
             />
             <InputGroup className='my-4 text-uppercase csv-upload-form'>
-              <InputGroup.Text className='strait py-3' htmlFor="file-upload">
+              <InputGroup.Text className='strait py-3' htmlFor='file-upload'>
                 Upload Image
               </InputGroup.Text>
               <Form.Group>
@@ -165,27 +184,27 @@ const CreateQuestionForm = () => {
             </InputGroup>
 
             {imageErrors.length > 0 && (
-              <div className="mt-2">
+              <div className='mt-2'>
                 {imageErrors.map((error, index) => (
-                  <p key={index} className="text-danger">{error}</p>
+                  <p key={index} className='text-danger'>{error}</p>
                 ))}
               </div>
             )}
 
-            <div className="mt-3">
+            <div className='mt-3'>
               {images.map((image, index) => (
-                <div key={index} className="d-flex align-items-center mt-2">
+                <div key={index} className='d-flex align-items-center mt-2'>
                   <img
                     src={image.preview}
-                    alt="Preview"
+                    alt='Preview'
                     style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
                   />
                   <span className={`me-3 ${!image.isValid ? 'text-danger' : ''}`}>
                     {image.file.name} {!image.isValid && '(Invalid)'}
                   </span>
                   <button
-                    type="button"
-                    className="btn btn-danger btn-sm ms-3"
+                    type='button'
+                    className='btn btn-danger btn-sm ms-3'
                     onClick={() => handleRemoveImage(index)}
                   >
                     Remove
@@ -195,8 +214,8 @@ const CreateQuestionForm = () => {
             </div>
 
             <Button
-              type="submit"
-              className="btn btn-primary mt-3"
+              type='submit'
+              className='btn btn-primary mt-3'
               disabled={isSubmitDisabled}
             >
               Submit
@@ -204,6 +223,7 @@ const CreateQuestionForm = () => {
           </Form>
           <div className='m-4'>
             <Keyword keywords={keywords} handleAddKeyword={handleAddKeyword} handleRemoveKeyword={handleRemoveKeyword} />
+            <Subject subjects={subjects} handleAddSubject={handleAddSubject} handleRemoveSubject={handleRemoveSubject} />
             <LevelDropdown handleLevelSelection={handleLevelSelection} />
           </div>
         </div>

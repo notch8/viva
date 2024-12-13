@@ -1,0 +1,18 @@
+@import '../../../node_modules/bootstrap/scss/functions';
+@import '../../../node_modules/bootstrap/scss/variables';
+@import '../../../node_modules/bootstrap/scss/mixins';
+
+.create-question-form {
+  @include media-breakpoint-down(md) {
+    .question-body {
+      margin-top: .5rem !important;
+      padding: .5rem !important;
+    }
+    .question-form {
+      margin: 0 !important;
+    }
+    .tag-section {
+      margin: 0 !important;
+    }
+  }
+}

@@ -6,6 +6,7 @@ const QuestionText = ({ questionText, handleTextChange }) => {
   return (
     <Form.Group controlId='questionText' className='pr-4'>
       <Form.Label className='h6 fw-bold'>Enter Question Text</Form.Label>
+      <p className=''>*Required Field</p>
       <Form.Control
         as='textarea'
         rows={5}

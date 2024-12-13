@@ -12,7 +12,6 @@ const CreateQuestionForm = () => {
   const [questionType, setQuestionType] = useState('')
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
-  const [imageErrors, setImageErrors] = useState([]) // Track errors for each image
   const [level, setLevel] = useState('')
   const [keywords, setKeywords] = useState([])
   const [subjects, setSubjects] = useState([])
@@ -25,43 +24,6 @@ const CreateQuestionForm = () => {
 
   const handleQuestionTypeSelection = (type) => setQuestionType(type)
   const handleTextChange = (e) => setQuestionText(e.target.value)
-
-  const handleImageChange = (e) => {
-    const validExtensions = ['jpg', 'jpeg', 'png']
-    const files = Array.from(e.target.files)
-    const newImages = []
-    const newErrors = []
-
-    files.forEach((file) => {
-      const extension = file.name.split('.').pop().toLowerCase()
-      if (validExtensions.includes(extension)) {
-        newImages.push({
-          file,
-          preview: URL.createObjectURL(file),
-          isValid: true,
-        })
-      } else {
-        newImages.push({
-          file,
-          preview: URL.createObjectURL(file),
-          isValid: false,
-        })
-        newErrors.push(`"${file.name}" is not a valid file type. Only JPG, JPEG, and PNG are allowed.`)
-      }
-    })
-
-    setImages((prevImages) => [...prevImages, ...newImages])
-    setImageErrors((prevErrors) => [...prevErrors, ...newErrors])
-  }
-
-  const handleRemoveImage = (index) => {
-    setImages((prevImages) => {
-      URL.revokeObjectURL(prevImages[index].preview)
-      return prevImages.filter((_, i) => i !== index)
-    })
-    setImageErrors((prevErrors) => prevErrors.filter((_, i) => i !== index))
-  }
-
   const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
   const handleRemoveKeyword = (keywordToRemove) => setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
   const handleLevelSelection = (levelData) => setLevel(levelData)
@@ -113,23 +75,38 @@ const CreateQuestionForm = () => {
   const isSubmitDisabled = !questionText || images.some((image) => !image.isValid)
 
   return (
-    <>
+    <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
 
       {QuestionComponent && (
-        <div className='bg-white mt-4 p-4 d-flex flex-wrap'>
-          <Form onSubmit={handleSubmit} className='mx-4 flex-fill'>
-            <QuestionComponent
-              questionText={questionText}
-              handleTextChange={handleTextChange}
-            />
-            <ImageUploader
-              images={images}
-              imageErrors={imageErrors}
-              handleImageChange={handleImageChange}
-              handleRemoveImage={handleRemoveImage}
-            />
+        <div className='question-body bg-white mt-4 p-4'>
+          <Form onSubmit={handleSubmit} className='question-form mx-4'>
+            <div className='d-flex flex-wrap'>
+              <div className='flex-fill'>
+                <QuestionComponent
+                  questionText={questionText}
+                  handleTextChange={handleTextChange}
+                />
+                <ImageUploader
+                  images={images}
+                  setImages={setImages}
+                />
+              </div>
+              <div className='tag-section m-4'>
+                <Keyword
+                  keywords={keywords}
+                  handleAddKeyword={handleAddKeyword}
+                  handleRemoveKeyword={handleRemoveKeyword}
+                />
+                <Subject
+                  subjects={subjects}
+                  handleAddSubject={handleAddSubject}
+                  handleRemoveSubject={handleRemoveSubject}
+                />
+                <LevelDropdown handleLevelSelection={handleLevelSelection} />
+              </div>
+            </div>
             <Button
               type='submit'
               className='btn btn-primary mt-3'
@@ -138,14 +115,9 @@ const CreateQuestionForm = () => {
               Submit
             </Button>
           </Form>
-          <div className='m-4'>
-            <Keyword keywords={keywords} handleAddKeyword={handleAddKeyword} handleRemoveKeyword={handleRemoveKeyword} />
-            <Subject subjects={subjects} handleAddSubject={handleAddSubject} handleRemoveSubject={handleRemoveSubject} />
-            <LevelDropdown handleLevelSelection={handleLevelSelection} />
-          </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

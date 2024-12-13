@@ -9,6 +9,7 @@ class Api::QuestionsController < ApplicationController
 
     # Initialize the question with processed params
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
+    question.level = nil if question.level.blank?
 
     handle_image_uploads(question)
     handle_keywords(question)

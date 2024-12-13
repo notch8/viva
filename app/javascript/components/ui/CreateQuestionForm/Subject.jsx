@@ -1,15 +1,25 @@
 import React, { useState } from 'react'
-import { Form, InputGroup, Button } from 'react-bootstrap'
+import {
+  Alert, Button, Form, InputGroup
+} from 'react-bootstrap'
 import { Plus, X } from '@phosphor-icons/react'
+import { useForm } from '@inertiajs/inertia-react'
 
 const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
   const [subject, setSubject] = useState('')
+  const { clearErrors, setError, errors } = useForm({ subject: '' })
 
   const submitSubject = () => {
     const trimmedSubject = subject.trim()
-    if (trimmedSubject && !subjects.includes(trimmedSubject)) {
+    if (trimmedSubject.toLowerCase() && !subjects.includes(trimmedSubject.toLowerCase())) {
       handleAddSubject(trimmedSubject)
       setSubject('') // Clear input after adding
+    } else {
+      setError('subject', 'Subject already exists.')
+      setTimeout(() => {
+        clearErrors()
+      }, 3000)
+      setSubject('')
     }
   }
 
@@ -58,6 +68,7 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
           <Plus size={20} weight='bold' />
         </Button>
       </InputGroup>
+      {errors.subject && <Alert variant='danger' dismissible>{errors.subject}</Alert>}
     </div>
   )
 }

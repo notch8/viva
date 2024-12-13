@@ -1,15 +1,25 @@
 import React, { useState } from 'react'
-import { Form, InputGroup, Button } from 'react-bootstrap'
+import {
+  Alert, Button, Form, InputGroup
+} from 'react-bootstrap'
 import { Plus, X } from '@phosphor-icons/react'
+import { useForm } from '@inertiajs/inertia-react'
 
 const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
   const [keyword, setKeyword] = useState('')
+  const { clearErrors, setError, errors } = useForm({ keyword: '' })
 
   const submitKeyword = () => {
     const trimmedKeyword = keyword.trim()
-    if (trimmedKeyword && !keywords.includes(trimmedKeyword)) {
+    if (trimmedKeyword.toLowerCase() && !keywords.includes(trimmedKeyword.toLowerCase())) {
       handleAddKeyword(trimmedKeyword)
       setKeyword('') // Clear input after adding
+    } else {
+      setError('keyword', 'Keyword already exists.')
+      setTimeout(() => {
+        clearErrors()
+      }, 3000)
+      setKeyword('')
     }
   }
 
@@ -58,6 +68,7 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
           <Plus size={20} weight='bold' />
         </Button>
       </InputGroup>
+      {errors.keyword && <Alert variant='danger' dismissible>{errors.keyword}</Alert>}
     </div>
   )
 }

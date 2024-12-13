@@ -43,37 +43,37 @@ const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields
 
   return (
     <div>
-      <Form.Group className="mb-3">
-        <Form.Label className="h6">Question</Form.Label>
+      <Form.Group className='mb-3'>
+        <Form.Label className='h6'>Question</Form.Label>
         <Form.Control
-          type="text"
+          type='text'
           value={questionText}
           onChange={handleTextChange}
-          placeholder="Enter your question"
+          placeholder='Enter your question'
         />
       </Form.Group>
 
-      <Form.Group className="mb-3">
-        <Form.Label className="h6">Answers</Form.Label>
+      <Form.Group className='mb-3'>
+        <Form.Label className='h6'>Answers</Form.Label>
         {answers.map((answer, index) => (
-          <div key={index} className="d-flex align-items-center mb-2">
+          <div key={index} className='d-flex align-items-center mb-2'>
             <Form.Control
-              type="text"
+              type='text'
               value={answer.answer}
               onChange={(e) => updateAnswer(index, 'answer', e.target.value)}
               placeholder={`Answer ${index + 1}`}
-              className="me-2"
+              className='me-2'
             />
             <Form.Check
-              type="checkbox"
+              type='checkbox'
               checked={answer.correct}
               onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
-              label="Correct"
+              label='Correct'
             />
             <Button
-              variant="danger"
-              size="sm"
-              className="ms-2"
+              variant='danger'
+              size='sm'
+              className='ms-2'
               onClick={() => removeAnswer(index)}
               disabled={answers.length === 1}
             >
@@ -84,15 +84,15 @@ const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields
       </Form.Group>
 
       <Button
-        variant="secondary"
+        variant='secondary'
         onClick={addAnswer}
-        className="d-flex align-items-center"
+        className='d-flex align-items-center'
       >
-        <Plus className="me-2" /> Add Answer
+        <Plus className='me-2' /> Add Answer
       </Button>
 
       {!hasAtLeastOneCorrectAnswer && answers.some(answer => answer.answer.trim() !== '') && (
-        <div className="text-danger mt-2">
+        <div className='text-danger mt-2'>
           Please mark at least one non-empty answer as correct.
         </div>
       )}

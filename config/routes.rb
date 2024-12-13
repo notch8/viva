@@ -24,6 +24,10 @@ Rails.application.routes.draw do
       delete 'bookmarks/destroy_all', to: 'bookmarks#destroy_all' # has to come before bookmarks#destroy
       post 'bookmarks', to: 'bookmarks#create'
       delete 'bookmarks/:id', to: 'bookmarks#destroy', as: 'bookmark'
+      # create a question
+      namespace :api do
+        resources :questions, only: [:create]
+      end
     end
 
     unauthenticated do

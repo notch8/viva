@@ -4,10 +4,10 @@ import { UploadSimple } from '@phosphor-icons/react'
 
 const UploadForm = ({ submit, setData, processing }) => {
   return (
-    <Form onSubmit={submit} className='csv-upload-form text-uppercase'>
+    <Form onSubmit={submit} className='upload-form text-uppercase'>
       <InputGroup className='mb-3'>
         <InputGroup.Text className='strait py-3'>
-              Select a CSV or ZIP to Upload
+          Select a CSV or ZIP to Upload
         </InputGroup.Text>
         <Form.Group controlId='upload-csv'>
           <Form.Control

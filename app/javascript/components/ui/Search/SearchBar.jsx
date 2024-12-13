@@ -3,7 +3,7 @@ import {
   InputGroup, DropdownButton, Button, Container, Form
 } from 'react-bootstrap'
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import CustomDropdown from '../../ui/CustomDropdown'
+import CustomDropdown from '../CustomDropdown'
 import { Inertia } from '@inertiajs/inertia'
 
 const SearchBar = (props) => {

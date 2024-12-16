@@ -83,12 +83,14 @@ class Api::QuestionsController < ApplicationController
   # @raise [ArgumentError] If data is blank.
   # @return [Array<Hash>] Formatted array of matching pairs.
   def process_matching_data(data)
-    if data.blank?
-      raise ArgumentError, 'Data for Matching question is required to be a non-empty array.'
-    end
+    raise ArgumentError, 'Data for Matching question is required to be a non-empty array.' if data.blank?
 
     parsed_data = if data.is_a?(String)
-                    JSON.parse(data) rescue []
+                    begin
+                      JSON.parse(data)
+                    rescue
+                      []
+                    end
                   elsif data.is_a?(Array)
                     data
                   else
@@ -132,7 +134,11 @@ class Api::QuestionsController < ApplicationController
     return nil if data.blank?
 
     if data.is_a?(String)
-      JSON.parse(data) rescue nil
+      begin
+        JSON.parse(data)
+      rescue
+        nil
+      end
     else
       data
     end

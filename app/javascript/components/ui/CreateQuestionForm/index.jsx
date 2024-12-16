@@ -24,7 +24,7 @@ const CreateQuestionForm = () => {
     'Essay': Essay,
     'Bow Tie': Bowtie,
     'Drag and Drop': DragAndDrop,
-    'Matching': Matching,
+    'Matching': Matching
   }
   const QuestionComponent = COMPONENT_MAP[questionType] || null
 
@@ -54,7 +54,7 @@ const CreateQuestionForm = () => {
 
     // Handle data based on question type
     if (questionType === 'Matching') {
-      formData.append('question[data]', JSON.stringify(data));
+      formData.append('question[data]', JSON.stringify(data))
     } else if (questionType === 'Essay') {
       const formattedData = {
         html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
@@ -78,7 +78,7 @@ const CreateQuestionForm = () => {
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formatFormData(),
+        body: formatFormData()
       })
 
       if (response.ok) {
@@ -106,25 +106,25 @@ const CreateQuestionForm = () => {
   }
 
   const isSubmitDisabled = () => {
-    if (!questionText || images.some((image) => !image.isValid)) return true;
-  
+    if (!questionText || images.some((image) => !image.isValid)) return true
+
     if (questionType === 'Matching') {
       // Check if data is valid for Matching type
-      if (!data || !Array.isArray(data)) return true;
+      if (!data || !Array.isArray(data)) return true
       const isInvalid = data.some(
         (item) => !item.answer.trim() || !item.correct.trim()
-      );
-      if (isInvalid) return true;
+      )
+      if (isInvalid) return true
     }
-  
+
     if (questionType === 'Drag and Drop') {
       if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
-        return true;
+        return true
       }
     }
-  
-    return false;
-  };
+
+    return false
+  }
 
   return (
     <>

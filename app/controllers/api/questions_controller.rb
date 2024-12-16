@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Controller for managing the creation of questions in different formats (Essay, Drag and Drop, Matching).
+# rubocop:disable Metrics/ClassLength
 class Api::QuestionsController < ApplicationController
   protect_from_forgery with: :null_session
   skip_before_action :verify_authenticity_token
@@ -85,24 +86,45 @@ class Api::QuestionsController < ApplicationController
   def process_matching_data(data)
     raise ArgumentError, 'Data for Matching question is required to be a non-empty array.' if data.blank?
 
-    parsed_data = if data.is_a?(String)
-                    begin
-                      JSON.parse(data)
-                    rescue
-                      []
-                    end
-                  elsif data.is_a?(Array)
-                    data
-                  else
-                    []
-                  end
+    parsed_data = parse_matching_data(data)
+    clean_matching_data(parsed_data)
+  end
 
-    parsed_data.map do |pair|
+  ##
+  # Parses raw data for Matching questions.
+  #
+  # @param [String, Array] data The input data.
+  # @return [Array<Hash>] Parsed data.
+  def parse_matching_data(data)
+    if data.is_a?(String)
+      begin
+        JSON.parse(data)
+      rescue JSON::ParserError
+        []
+      end
+    elsif data.is_a?(Array)
+      data
+    else
+      []
+    end
+  end
+
+  ##
+  # Cleans up parsed Matching question data.
+  #
+  # @param [Array<Hash>] data The input array of pairs.
+  # @return [Array<Hash>] Cleaned and valid matching pairs.
+  def clean_matching_data(data)
+    formatted_data = data.map do |pair|
       {
         'answer' => pair['answer'].to_s.strip,
         'correct' => Array(pair['correct']).map(&:strip)
       }
-    end.reject { |pair| pair['answer'].blank? || pair['correct'].empty? }
+    end
+
+    formatted_data.reject do |pair|
+      pair['answer'].blank? || pair['correct'].empty?
+    end
   end
 
   ##
@@ -136,7 +158,7 @@ class Api::QuestionsController < ApplicationController
     if data.is_a?(String)
       begin
         JSON.parse(data)
-      rescue
+      rescue JSON::ParserError
         nil
       end
     else
@@ -214,3 +236,4 @@ class Api::QuestionsController < ApplicationController
     )
   end
 end
+# rubocop:enable Metrics/ClassLength

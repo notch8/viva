@@ -44,9 +44,7 @@ const CreateQuestionForm = () => {
   const handleRemoveSubject = (subjectToRemove) =>
     setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
+  const formatFormData = () => {
     const formData = new FormData()
     formData.append('question[type]', questionType)
     formData.append('question[level]', level)
@@ -67,10 +65,16 @@ const CreateQuestionForm = () => {
     keywords.forEach((keyword) => formData.append('question[keywords][]', keyword))
     subjects.forEach((subject) => formData.append('question[subjects][]', subject))
 
+    return formData
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formData,
+        body: formatFormData(),
       })
 
       if (response.ok) {

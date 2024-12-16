@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Form, Button } from 'react-bootstrap'
+import QuestionText from './QuestionText'
+import AnswerField from './AnswerField'
+import { Button } from 'react-bootstrap'
 import { Plus } from '@phosphor-icons/react'
 
 const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
@@ -43,45 +45,8 @@ const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields
 
   return (
     <div>
-      <Form.Group className='mb-3'>
-        <Form.Label className='h6'>Question</Form.Label>
-        <Form.Control
-          type='text'
-          value={questionText}
-          onChange={handleTextChange}
-          placeholder='Enter your question'
-        />
-      </Form.Group>
-
-      <Form.Group className='mb-3'>
-        <Form.Label className='h6'>Answers</Form.Label>
-        {answers.map((answer, index) => (
-          <div key={index} className='d-flex align-items-center mb-2'>
-            <Form.Control
-              type='text'
-              value={answer.answer}
-              onChange={(e) => updateAnswer(index, 'answer', e.target.value)}
-              placeholder={`Answer ${index + 1}`}
-              className='me-2'
-            />
-            <Form.Check
-              type='checkbox'
-              checked={answer.correct}
-              onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
-              label='Correct'
-            />
-            <Button
-              variant='danger'
-              size='sm'
-              className='ms-2'
-              onClick={() => removeAnswer(index)}
-              disabled={answers.length === 1}
-            >
-              Remove
-            </Button>
-          </div>
-        ))}
-      </Form.Group>
+      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
+      <AnswerField answers={answers} updateAnswer={updateAnswer} removeAnswer={removeAnswer} />
 
       <Button
         variant='secondary'

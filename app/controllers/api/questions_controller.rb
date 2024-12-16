@@ -24,17 +24,20 @@ class Api::QuestionsController < ApplicationController
 
   private
 
+  # Process the question parameters, normalizing and cleaning data
   def process_question_params(params)
     processed = params.to_h
 
-    # Normalize the type
+    # Normalize type to the correct class
     processed[:type] = normalize_type(processed[:type])
 
-    # Handle data based on type
-    if processed[:type] == 'Question::DragAndDrop'
+    case processed[:type]
+    when 'Question::DragAndDrop'
       processed[:data] = process_drag_and_drop_data(processed[:data])
-    elsif processed[:type] == 'Question::Essay'
+    when 'Question::Essay'
       processed[:data] = process_essay_data(processed[:data])
+    when 'Question::Matching'
+      processed[:data] = process_matching_data(processed[:data])
     end
 
     processed
@@ -42,6 +45,7 @@ class Api::QuestionsController < ApplicationController
 
   def normalize_type(type)
     type_mapping = {
+      'Matching' => 'Question::Matching',
       'Drag and Drop' => 'Question::DragAndDrop',
       'Bow Tie' => 'Question::BowTie',
       'Essay' => 'Question::Essay'
@@ -49,10 +53,42 @@ class Api::QuestionsController < ApplicationController
     type_mapping[type] || type
   end
 
+  def process_matching_data(data)
+    if data.blank?
+      raise ArgumentError, "Data for Matching question is required to be a non-empty array."
+    end
+  
+    if data.is_a?(String)
+      parsed_data = JSON.parse(data) rescue []
+    elsif data.is_a?(Array)
+      parsed_data = data
+    else
+      return []
+    end
+  
+    formatted_data = parsed_data.map do |pair|
+      {
+        'answer' => pair['answer'].to_s.strip,
+        'correct' => Array(pair['correct']).map(&:strip)
+      }
+    end
+  
+    formatted_data.reject { |pair| pair['answer'].blank? || pair['correct'].empty? }
+  end
+  
+
+  def format_matching_data(data)
+    data.map do |pair|
+      {
+        'answer' => pair['answer'].to_s.strip,
+        'correct' => Array(pair['correct']).map(&:strip)
+      }
+    end.reject { |pair| pair['answer'].blank? || pair['correct'].empty? }
+  end
+
   def process_drag_and_drop_data(data)
     return nil if data.blank?
 
-    # If data is a string, parse it
     if data.is_a?(String)
       begin
         parsed_data = JSON.parse(data)
@@ -62,21 +98,14 @@ class Api::QuestionsController < ApplicationController
       end
     end
 
-    # If data is already an array, validate it
-    return data if data.is_a?(Array) && valid_drag_and_drop_data?(data)
-
-    nil
+    data.is_a?(Array) && valid_drag_and_drop_data?(data) ? data : nil
   end
 
   def process_essay_data(data)
     return nil if data.blank?
 
     if data.is_a?(String)
-      begin
-        JSON.parse(data)
-      rescue JSON::ParserError
-        nil
-      end
+      JSON.parse(data) rescue nil
     else
       data
     end

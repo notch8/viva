@@ -127,23 +127,40 @@ const CreateQuestionForm = () => {
   }
 
   return (
-    <>
+    <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
 
       {QuestionComponent && (
-        <div className='bg-white mt-4 p-4 d-flex flex-wrap'>
-          <Form onSubmit={handleSubmit} className='mx-4 flex-fill'>
-            <QuestionComponent
-              questionText={questionText}
-              handleTextChange={handleTextChange}
-              onDataChange={setData}
-              resetFields={resetFields}
-            />
-            <ImageUploader
-              images={images}
-              setImages={setImages}
-            />
+        <div className='question-body bg-white mt-4 p-4'>
+          <Form onSubmit={handleSubmit} className='question-form mx-4'>
+            <div className='d-flex flex-wrap'>
+              <div className='flex-fill'>
+                <QuestionComponent
+                  questionText={questionText}
+                  handleTextChange={handleTextChange}
+                  onDataChange={setData}
+                  resetFields={resetFields}
+                />
+                <ImageUploader
+                  images={images}
+                  setImages={setImages}
+                />
+              </div>
+              <div className='tag-section m-4'>
+                <Keyword
+                  keywords={keywords}
+                  handleAddKeyword={handleAddKeyword}
+                  handleRemoveKeyword={handleRemoveKeyword}
+                />
+                <Subject
+                  subjects={subjects}
+                  handleAddSubject={handleAddSubject}
+                  handleRemoveSubject={handleRemoveSubject}
+                />
+                <LevelDropdown handleLevelSelection={handleLevelSelection} />
+              </div>
+            </div>
             <Button
               type='submit'
               className='btn btn-primary mt-3'
@@ -152,22 +169,9 @@ const CreateQuestionForm = () => {
               Submit
             </Button>
           </Form>
-          <div className='m-4'>
-            <Keyword
-              keywords={keywords}
-              handleAddKeyword={handleAddKeyword}
-              handleRemoveKeyword={handleRemoveKeyword}
-            />
-            <Subject
-              subjects={subjects}
-              handleAddSubject={handleAddSubject}
-              handleRemoveSubject={handleRemoveSubject}
-            />
-            <LevelDropdown handleLevelSelection={handleLevelSelection} />
-          </div>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

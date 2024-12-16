@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
+import QuestionText from './QuestionText'
 
 const Matching = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
   const [pairs, setPairs] = useState([{ answer: '', correct: '' }])
@@ -43,16 +44,7 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
 
   return (
     <>
-      <Form.Group>
-        <Form.Label>Question</Form.Label>
-        <Form.Control
-          as='textarea'
-          rows={3}
-          value={questionText}
-          onChange={handleTextChange}
-        />
-      </Form.Group>
-
+      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <h6>Matching Pairs</h6>
       {pairs.map((pair, index) => (
         <div key={index} className='d-flex mb-2 align-items-center'>

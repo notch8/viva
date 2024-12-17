@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import Bowtie from './Bowtie'
-import Essay from './Essay'
+import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
+import Essay from './Essay'
 import Matching from './Matching'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
@@ -21,9 +22,10 @@ const CreateQuestionForm = () => {
   const [resetFields, setResetFields] = useState(false)
 
   const COMPONENT_MAP = {
-    'Essay': Essay,
     'Bow Tie': Bowtie,
+    'Categorization': Categorization,
     'Drag and Drop': DragAndDrop,
+    'Essay': Essay,
     'Matching': Matching
   }
   const QuestionComponent = COMPONENT_MAP[questionType] || null

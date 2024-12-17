@@ -49,7 +49,7 @@ class Api::QuestionsController < ApplicationController
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
-
+  
     case processed[:type]
     when 'Question::DragAndDrop'
       processed[:data] = process_drag_and_drop_data(processed[:data])
@@ -57,10 +57,13 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_essay_data(processed[:data])
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
+    when 'Question::Categorization'
+      processed[:data] = process_categorization_data(processed[:data])
     end
-
+  
     processed
   end
+  
 
   ##
   # Maps user-friendly question types to their full class names.
@@ -76,6 +79,26 @@ class Api::QuestionsController < ApplicationController
     }
     type_mapping[type] || type
   end
+
+##
+# Processes data for a Categorization question type.
+#
+# @param [String, Array] data The input data in JSON or Array format.
+# @raise [ArgumentError] If data is blank or invalid.
+# @return [Array<Hash>] Validated and cleaned categorization data.
+def process_categorization_data(data)
+  raise ArgumentError, 'Data for Categorization question is required.' if data.blank?
+
+  parsed_data = parse_matching_data(data) # Reuse matching data parser
+  cleaned_data = clean_matching_data(parsed_data)
+
+  if cleaned_data.empty?
+    raise ArgumentError, 'Categorization data must have valid groups with answers and correct items.'
+  end
+
+  cleaned_data
+end
+
 
   ##
   # Processes data for a Matching question type.

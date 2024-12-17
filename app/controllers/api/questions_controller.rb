@@ -49,7 +49,7 @@ class Api::QuestionsController < ApplicationController
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
-  
+
     case processed[:type]
     when 'Question::Categorization'
       processed[:data] = process_categorization_data(processed[:data])
@@ -60,11 +60,9 @@ class Api::QuestionsController < ApplicationController
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
     end
-  
+
     processed
   end
-  
-  
 
   ##
   # Maps user-friendly question types to their full class names.
@@ -79,38 +77,37 @@ class Api::QuestionsController < ApplicationController
       'Essay' => 'Question::Essay',
       'Matching' => 'Question::Matching'
     }
-    
+
     type_mapping[type] || type
   end
 
-##
-# Processes data for a Categorization question.
-#
-# @param [String, Array<Hash>] data The input data, either a JSON string or an array of hashes.
-# @raise [ArgumentError] If the data is blank.
-# @return [Array<Hash>] An array of cleaned category pairs with 'answer' and 'correct' fields.
-def process_categorization_data(data)
-  raise ArgumentError, 'Data for Categorization question is required to be a non-empty array.' if data.blank?
+  ##
+  # Processes data for a Categorization question.
+  #
+  # @param [String, Array<Hash>] data The input data, either a JSON string or an array of hashes.
+  # @raise [ArgumentError] If the data is blank.
+  # @return [Array<Hash>] An array of cleaned category pairs with 'answer' and 'correct' fields.
+  def process_categorization_data(data)
+    raise ArgumentError, 'Data for Categorization question is required to be a non-empty array.' if data.blank?
 
-  parsed_data = parse_matching_data(data)
-  clean_categorization_data(parsed_data)
-end
-
-##
-# Cleans the input data by trimming whitespace and ensuring 'correct' is an array.
-#
-# @param [Array<Hash>] data An array of hashes with 'answer' and 'correct' fields.
-# @return [Array<Hash>] Cleaned data with normalized 'answer' and 'correct' values.
-def clean_categorization_data(data)
-  formatted_data = data.map do |pair|
-    {
-      'answer' => pair['answer'].to_s.strip,
-      'correct' => Array(pair['correct']).map(&:strip)
-    }
+    parsed_data = parse_matching_data(data)
+    clean_categorization_data(parsed_data)
   end
-end
 
-  
+  ##
+  # Cleans the input data by trimming whitespace and ensuring 'correct' is an array.
+  #
+  # @param [Array<Hash>] data An array of hashes with 'answer' and 'correct' fields.
+  # @return [Array<Hash>] Cleaned data with normalized 'answer' and 'correct' values.
+  def clean_categorization_data(data)
+    data.map do |pair|
+      {
+        'answer' => pair['answer'].to_s.strip,
+        'correct' => Array(pair['correct']).map(&:strip)
+      }
+    end
+  end
+
   ##
   # Processes data for a Matching question type.
   #

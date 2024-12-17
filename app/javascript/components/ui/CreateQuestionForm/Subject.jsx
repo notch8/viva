@@ -44,16 +44,14 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
         </div>
       ))}
       <InputGroup className='mb-3 text-uppercase'>
-        <InputGroup.Text className='strait py-3'>
-          Add a Subject
-        </InputGroup.Text>
         <Form.Group controlId='add-subject'>
           <Form.Control
             type='text'
             aria-label='Upload a Subject here'
+            placeholder='Add a Subject' // Placeholder text here
             onChange={(e) => setSubject(e.target.value)}
             value={subject}
-            className='rounded-0 py-3'
+            className='rounded-0 py-3 form-control'
           />
         </Form.Group>
         <Button

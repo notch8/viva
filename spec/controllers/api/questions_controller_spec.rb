@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require 'rails_helper'
+
 RSpec.describe Api::QuestionsController, type: :controller do
   describe 'POST #create' do
     let(:essay_params) do
@@ -8,7 +9,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
           type: 'Question::Essay',
           level: '2',
           text: 'What is the capital of France?',
-          data: { html: '<p>What is the capital of France?</p>' }.to_json, # Convert to JSON
+          data: { html: '<p>What is the capital of France?</p>' }.to_json,
           images: [
             fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png'),
             fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
@@ -35,6 +36,25 @@ RSpec.describe Api::QuestionsController, type: :controller do
           ],
           keywords: ['Ordering', 'DragDrop'],
           subjects: ['Logic']
+        }
+      }
+    end
+
+    let(:matching_params) do
+      {
+        question: {
+          type: 'Question::Matching',
+          level: '1',
+          text: 'Match the inhibitors with their respective drug names.',
+          data: [
+            { "answer" => "Selective Serotonin Reuptake Inhibitors", "correct" => ["Citalopram"] },
+            { "answer" => "Serotonin-norepinephrine Reuptake Inhibitors", "correct" => ["Desvenlafaxine"] }
+          ].to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['SSRIs', 'SNRIs'],
+          subjects: ['Pharmacology']
         }
       }
     end
@@ -108,21 +128,46 @@ RSpec.describe Api::QuestionsController, type: :controller do
             ]
           )
         end
+      end
+    end
 
-        it 'associates the provided keywords with the Drag and Drop question' do
-          post :create, params: drag_and_drop_params
+    context 'when creating a Matching question' do
+      context 'with valid parameters' do
+        it 'creates a new Matching question' do
+          expect { post :create, params: matching_params }.to change(Question, :count).by(1)
           question = Question.last
 
           expect(question).not_to be_nil
-          expect(question.keywords.map(&:name)).to contain_exactly('ordering', 'dragdrop')
+          expect(question.text).to eq('Match the inhibitors with their respective drug names.')
+          expect(question.level).to eq('1')
+          expect(question.data).to eq(
+            [
+              { "answer" => "Selective Serotonin Reuptake Inhibitors", "correct" => ["Citalopram"] },
+              { "answer" => "Serotonin-norepinephrine Reuptake Inhibitors", "correct" => ["Desvenlafaxine"] }
+            ]
+          )
+        end
+      end
+
+      context 'with invalid parameters' do
+        it 'does not create a new Matching question without pairs' do
+          invalid_matching_params = matching_params.deep_merge(
+            question: { data: [].to_json }
+          )
+
+          expect { post :create, params: invalid_matching_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors'].first).to include('expected to be a non-empty array')
         end
 
-        it 'associates the provided subjects with the Drag and Drop question' do
-          post :create, params: drag_and_drop_params
-          question = Question.last
+        it 'does not create a new Matching question without text' do
+          invalid_matching_params = matching_params.deep_merge(
+            question: { text: '' }
+          )
 
-          expect(question).not_to be_nil
-          expect(question.subjects.map(&:name)).to contain_exactly('logic')
+          expect { post :create, params: invalid_matching_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors']).to be_present
         end
       end
     end

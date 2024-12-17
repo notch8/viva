@@ -80,7 +80,6 @@ RSpec.describe Api::QuestionsController, type: :controller do
       { question: { text: '' } }
     end
 
-    # Essay Tests
     context 'when creating an essay question' do
       it 'creates an essay question with all parameters' do
         expect { post :create, params: essay_params }.to change(Question, :count).by(1)
@@ -95,7 +94,6 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
 
-    # Drag and Drop Tests
     context 'when creating a Drag and Drop question' do
       it 'creates a Drag and Drop question with all parameters' do
         expect { post :create, params: drag_and_drop_params }.to change(Question, :count).by(1)
@@ -115,7 +113,6 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
 
-    # Matching Tests
     context 'when creating a Matching question' do
       it 'creates a Matching question with all parameters' do
         expect { post :create, params: matching_params }.to change(Question, :count).by(1)
@@ -135,7 +132,6 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
 
-    # Categorization Tests
     context 'when creating a Categorization question' do
       it 'creates a Categorization question with all parameters' do
         expect { post :create, params: categorization_params }.to change(Question, :count).by(1)
@@ -163,7 +159,6 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
 
-    # Invalid General Tests
     context 'when the request is invalid' do
       it 'does not create a new question' do
         expect { post :create, params: invalid_params }.not_to change(Question, :count)

@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+
+# rubocop:disable Metrics/ClassLength
 class Api::QuestionsController < ApplicationController
   protect_from_forgery with: :null_session
   skip_before_action :verify_authenticity_token
@@ -51,6 +53,25 @@ class Api::QuestionsController < ApplicationController
     type_mapping[type] || type
   end
 
+  def process_drag_and_drop_data(data)
+    return nil if data.blank?
+
+    # If data is a string, parse it
+    if data.is_a?(String)
+      begin
+        parsed_data = JSON.parse(data)
+        return parsed_data if valid_drag_and_drop_data?(parsed_data)
+      rescue JSON::ParserError
+        return nil
+      end
+    end
+
+    # If data is already an array, validate it
+    return data if data.is_a?(Array) && valid_drag_and_drop_data?(data)
+
+    nil
+  end
+
   def process_bow_tie_data(data)
     return nil if data.blank?
 
@@ -65,27 +86,7 @@ class Api::QuestionsController < ApplicationController
     end
 
     # If data is already a hash, validate it
-    # return data if data.is_a?(Hash) && valid_bow_tie_data?(data)
-
-    nil
-  end
-
-  def process_drag_and_drop_data(data)
-    return nil if data.blank?
-
-    # If data is a string, parse it
-    if data.is_a?(String)
-      begin
-        parsed_data = JSON.parse(data)
-p '---------yo-----------', parsed_data
-        return parsed_data if valid_drag_and_drop_data?(parsed_data)
-      rescue JSON::ParserError
-        return nil
-      end
-    end
-
-    # If data is already an array, validate it
-    return data if data.is_a?(Array) && valid_drag_and_drop_data?(data)
+    return data if data.is_a?(Hash) && valid_bow_tie_data?(data)
 
     nil
   end
@@ -118,15 +119,13 @@ p '---------yo-----------', parsed_data
   def valid_bow_tie_data?(data)
     return false unless data.is_a?(Hash)
 
-    data.key?('question') &&
-      data.key?('left') &&
+    data.key?('left') &&
       data.key?('right') &&
       data.key?('center') &&
       data['left']['answers'].is_a?(Array) &&
       data['right']['answers'].is_a?(Array) &&
       data['center']['answers'].is_a?(Array)
   end
-
 
   def handle_image_uploads(question)
     return if params[:question][:images].blank?
@@ -166,3 +165,4 @@ p '---------yo-----------', parsed_data
     )
   end
 end
+# rubocop:enable Metrics/ClassLength

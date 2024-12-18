@@ -12,8 +12,8 @@ const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) =
     Object.assign(formattedAnswers,
       {
         center: { label: 'Center Label', answers: centerAnswers },
-        left: { label: 'Left Label', answers: rightAnswers },
-        right: { label: 'Right Label', answers: leftAnswers }
+        left: { label: 'Left Label', answers: leftAnswers },
+        right: { label: 'Right Label', answers: rightAnswers }
       }
     )
     onDataChange(formattedAnswers)
@@ -50,7 +50,6 @@ const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) =
         getColumnAnswers={rightColumnAnswers}
         title='Right Label'
       />
-
     </>
   )
 }

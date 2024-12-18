@@ -61,7 +61,6 @@ const CreateQuestionForm = () => {
       formData.append('question[data]', JSON.stringify(validData))
     } else if (questionType === 'Bow Tie' && data) {
       const jsonData = JSON.stringify(data)
-      console.log('data', jsonData)
       formData.append('question[data]', jsonData)
     }
 

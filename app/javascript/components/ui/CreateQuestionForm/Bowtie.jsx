@@ -1,60 +1,56 @@
 import React, { useState, useEffect } from 'react'
 import QuestionText from './QuestionText'
-import { Button } from 'react-bootstrap'
-import AnswerField from './AnswerField'
-import { Plus } from '@phosphor-icons/react'
+import AnswerSet from './AnswerSet'
 
 const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  const [answers, setAnswers] = useState([{ answer: '', correct: false }])
+  const [centerAnswers, setCenterAnswers] = useState({})
+  const [rightAnswers, setRightAnswers] = useState({})
+  const [leftAnswers, setLeftAnswers] = useState({})
 
   useEffect(() => {
-    if (resetFields) {
-      setAnswers([{ answer: '', correct: false }])
-    }
-  }, [resetFields])
-
-  useEffect(() => {
-    // Ensure data is properly formatted for the backend
-    const formattedAnswers = answers.map(answer => ({
-      answer: answer.answer,
-      correct: answer.correct
-    }))
-    onDataChange(formattedAnswers)
-  }, [answers, onDataChange])
-
-  const addAnswer = () => {
-    setAnswers([...answers, { answer: '', correct: false }])
-  }
-
-  const updateAnswer = (index, field, value) => {
-    const updatedAnswers = answers.map((answer, i) => {
-      if (i === index) {
-        return { ...answer, [field]: value }
+    const formattedAnswers = {center: {}, left: {}, right: {}}
+    Object.assign(formattedAnswers,
+      {
+        center: { label: 'Center Label', answers: centerAnswers },
+        left: { label: 'Left Label', answers: rightAnswers },
+        right: { label: 'Right Label', answers: leftAnswers }
       }
-      return answer
-    })
-    setAnswers(updatedAnswers)
+    )
+    onDataChange(formattedAnswers)
+  }, [centerAnswers, rightAnswers, leftAnswers, onDataChange])
+
+  const centerColumnAnswers = (answersArray) => {
+    setCenterAnswers(answersArray)
   }
 
-  const removeAnswer = (index) => {
-    const updatedAnswers = answers.filter((_, i) => i !== index)
-    setAnswers(updatedAnswers)
+  const leftColumnAnswers = (answersArray) => {
+    setLeftAnswers(answersArray)
   }
 
-  const hasAtLeastOneCorrectAnswer = answers.some(answer => answer.correct && answer.answer.trim() !== '')
+  const rightColumnAnswers = (answersArray) => {
+    setRightAnswers(answersArray)
+  }
 
   return (
     <>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
-      <AnswerField answers={answers} updateAnswer={updateAnswer} removeAnswer={removeAnswer} />
 
-      <Button
-        variant='secondary'
-        onClick={addAnswer}
-        className='d-flex align-items-center'
-      >
-        <Plus className='me-2' /> Add Answer
-      </Button>
+      <AnswerSet
+        resetFields={resetFields}
+        getColumnAnswers={centerColumnAnswers}
+        title='Central Theme'
+      />
+      <AnswerSet
+        resetFields={resetFields}
+        getColumnAnswers={leftColumnAnswers}
+        title='Left Label'
+      />
+      <AnswerSet
+        resetFields={resetFields}
+        getColumnAnswers={rightColumnAnswers}
+        title='Right Label'
+      />
+
     </>
   )
 }

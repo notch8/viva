@@ -35,6 +35,8 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_drag_and_drop_data(processed[:data])
     elsif processed[:type] == 'Question::Essay'
       processed[:data] = process_essay_data(processed[:data])
+    elsif processed[:type] == 'Question::BowTie'
+      processed[:data] = process_bow_tie_data(processed[:data])
     end
 
     processed
@@ -49,6 +51,25 @@ class Api::QuestionsController < ApplicationController
     type_mapping[type] || type
   end
 
+  def process_bow_tie_data(data)
+    return nil if data.blank?
+
+    # If data is a string, parse it
+    if data.is_a?(String)
+      begin
+        parsed_data = JSON.parse(data)
+        return parsed_data if valid_bow_tie_data?(parsed_data)
+      rescue JSON::ParserError
+        return nil
+      end
+    end
+
+    # If data is already a hash, validate it
+    # return data if data.is_a?(Hash) && valid_bow_tie_data?(data)
+
+    nil
+  end
+
   def process_drag_and_drop_data(data)
     return nil if data.blank?
 
@@ -56,6 +77,7 @@ class Api::QuestionsController < ApplicationController
     if data.is_a?(String)
       begin
         parsed_data = JSON.parse(data)
+p '---------yo-----------', parsed_data
         return parsed_data if valid_drag_and_drop_data?(parsed_data)
       rescue JSON::ParserError
         return nil
@@ -92,6 +114,19 @@ class Api::QuestionsController < ApplicationController
         [true, false].include?(item['correct'])
     end
   end
+
+  def valid_bow_tie_data?(data)
+    return false unless data.is_a?(Hash)
+
+    data.key?('question') &&
+      data.key?('left') &&
+      data.key?('right') &&
+      data.key?('center') &&
+      data['left']['answers'].is_a?(Array) &&
+      data['right']['answers'].is_a?(Array) &&
+      data['center']['answers'].is_a?(Array)
+  end
+
 
   def handle_image_uploads(question)
     return if params[:question][:images].blank?

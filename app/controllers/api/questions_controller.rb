@@ -47,6 +47,7 @@ class Api::QuestionsController < ApplicationController
   #
   # @param [ActionController::Parameters] params The raw parameters passed in the request.
   # @return [Hash] Processed parameters with normalized data.
+  # rubocop:disable Metrics/MethodLength
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
@@ -66,6 +67,7 @@ class Api::QuestionsController < ApplicationController
 
     processed
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
   # Maps user-friendly question types to their full class names.

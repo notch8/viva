@@ -13,7 +13,7 @@ const QuestionText = ({ questionText, handleTextChange }) => {
         value={questionText}
         onChange={handleTextChange}
         placeholder='Enter your question text here'
-        className='mr-4 p-2'
+        className='mr-4 p-2 mb-4'
       />
     </Form.Group>
   )

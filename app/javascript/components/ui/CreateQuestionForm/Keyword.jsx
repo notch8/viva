@@ -44,16 +44,14 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
         </div>
       ))}
       <InputGroup className='mb-3 text-uppercase'>
-        <InputGroup.Text className='strait py-3'>
-          Add a Keyword
-        </InputGroup.Text>
         <Form.Group controlId='add-keyword'>
           <Form.Control
             type='text'
             aria-label='Upload a Keyword here'
+            placeholder='Add a Keyword' // Placeholder text here
             onChange={(e) => setKeyword(e.target.value)}
             value={keyword}
-            className='rounded-0 py-3'
+            className='rounded-0 py-3 form-control'
           />
         </Form.Group>
         <Button

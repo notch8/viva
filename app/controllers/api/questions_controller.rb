@@ -1,15 +1,31 @@
 # frozen_string_literal: true
 
+# Controller for managing the creation of questions in different formats (Essay, Drag and Drop, Matching, Bow Tie).
+
 # rubocop:disable Metrics/ClassLength
 class Api::QuestionsController < ApplicationController
   protect_from_forgery with: :null_session
   skip_before_action :verify_authenticity_token
 
+  ##
+  # Creates a new question.
+  #
+  # @note Handles question creation for various types (Essay, Matching, Drag and Drop, Bow Tie, etc).
+  # @return [JSON] Success message or error messages.
+  #
+  # @example Request Payload
+  #   {
+  #     "question": {
+  #       "type": "Question::Matching",
+  #       "text": "Match the items",
+  #       "data": [{"answer": "A", "correct": ["B"]}],
+  #       "keywords": ["example"],
+  #       "subjects": ["test"]
+  #     }
+  #   }
   def create
-    # Parse and structure the data first
     processed_params = process_question_params(question_params)
 
-    # Initialize the question with processed params
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
     question.level = nil if question.level.blank?
 
@@ -26,37 +42,133 @@ class Api::QuestionsController < ApplicationController
 
   private
 
+  ##
+  # Processes and normalizes the question parameters.
+  #
+  # @param [ActionController::Parameters] params The raw parameters passed in the request.
+  # @return [Hash] Processed parameters with normalized data.
   def process_question_params(params)
     processed = params.to_h
-
-    # Normalize the type
     processed[:type] = normalize_type(processed[:type])
 
-    # Handle data based on type
-    if processed[:type] == 'Question::DragAndDrop'
+    case processed[:type]
+    when 'Question::Categorization'
+      processed[:data] = process_categorization_data(processed[:data])
+    when 'Question::DragAndDrop'
       processed[:data] = process_drag_and_drop_data(processed[:data])
-    elsif processed[:type] == 'Question::Essay'
+    when 'Question::Essay'
       processed[:data] = process_essay_data(processed[:data])
-    elsif processed[:type] == 'Question::BowTie'
+    when 'Question::BowTie'
       processed[:data] = process_bow_tie_data(processed[:data])
+    when 'Question::Matching'
+      processed[:data] = process_matching_data(processed[:data])
     end
 
     processed
   end
 
+  ##
+  # Maps user-friendly question types to their full class names.
+  #
+  # @param [String] type The type of question in user-friendly form.
+  # @return [String] The full class name of the question type.
   def normalize_type(type)
     type_mapping = {
-      'Drag and Drop' => 'Question::DragAndDrop',
       'Bow Tie' => 'Question::BowTie',
-      'Essay' => 'Question::Essay'
+      'Categorization' => 'Question::Categorization',
+      'Drag and Drop' => 'Question::DragAndDrop',
+      'Essay' => 'Question::Essay',
+      'Matching' => 'Question::Matching'
     }
+
     type_mapping[type] || type
   end
 
+  ##
+  # Processes data for a Categorization question.
+  #
+  # @param [String, Array<Hash>] data The input data, either a JSON string or an array of hashes.
+  # @raise [ArgumentError] If the data is blank.
+  # @return [Array<Hash>] An array of cleaned category pairs with 'answer' and 'correct' fields.
+  def process_categorization_data(data)
+    raise ArgumentError, 'Data for Categorization question is required to be a non-empty array.' if data.blank?
+
+    parsed_data = parse_matching_data(data)
+    clean_categorization_data(parsed_data)
+  end
+
+  ##
+  # Cleans the input data by trimming whitespace and ensuring 'correct' is an array.
+  #
+  # @param [Array<Hash>] data An array of hashes with 'answer' and 'correct' fields.
+  # @return [Array<Hash>] Cleaned data with normalized 'answer' and 'correct' values.
+  def clean_categorization_data(data)
+    data.map do |pair|
+      {
+        'answer' => pair['answer'].to_s.strip,
+        'correct' => Array(pair['correct']).map(&:strip)
+      }
+    end
+  end
+
+  ##
+  # Processes data for a Matching question type.
+  #
+  # @param [String, Array] data The input data in JSON or Array format.
+  # @raise [ArgumentError] If data is blank.
+  # @return [Array<Hash>] Formatted array of matching pairs.
+  def process_matching_data(data)
+    raise ArgumentError, 'Data for Matching question is required to be a non-empty array.' if data.blank?
+
+    parsed_data = parse_matching_data(data)
+    clean_matching_data(parsed_data)
+  end
+
+  ##
+  # Parses raw data for Matching questions.
+  #
+  # @param [String, Array] data The input data.
+  # @return [Array<Hash>] Parsed data.
+  def parse_matching_data(data)
+    if data.is_a?(String)
+      begin
+        JSON.parse(data)
+      rescue JSON::ParserError
+        []
+      end
+    elsif data.is_a?(Array)
+      data
+    else
+      []
+    end
+  end
+
+  ##
+  # Cleans up parsed Matching question data.
+  #
+  # @param [Array<Hash>] data The input array of pairs.
+  # @return [Array<Hash>] Cleaned and valid matching pairs.
+  def clean_matching_data(data)
+    formatted_data = data.map do |pair|
+      {
+        'answer' => pair['answer'].to_s.strip,
+        'correct' => Array(pair['correct']).map(&:strip)
+      }
+    end
+
+    formatted_data.reject do |pair|
+      pair['answer'].blank? || pair['correct'].empty?
+    end
+  end
+
+  ##
+  # Processes data for a Drag and Drop question type.
+  #
+  # @param [String, Array] data The input data in JSON or Array format.
+  # @return [Array, nil] Validated and parsed data, or nil if invalid.
   def process_drag_and_drop_data(data)
     return nil if data.blank?
 
-    # If data is a string, parse it
     if data.is_a?(String)
       begin
         parsed_data = JSON.parse(data)
@@ -66,12 +178,14 @@ class Api::QuestionsController < ApplicationController
       end
     end
 
-    # If data is already an array, validate it
-    return data if data.is_a?(Array) && valid_drag_and_drop_data?(data)
-
-    nil
+    data.is_a?(Array) && valid_drag_and_drop_data?(data) ? data : nil
   end
 
+  ##
+  # Processes data for a Bow Tie question type.
+  #
+  # @param [String, Hash] data The input data in JSON or Hash format.
+  # @return [Hash, nil] Validated and parsed data, or nil if invalid.
   def process_bow_tie_data(data)
     return nil if data.blank?
 
@@ -91,6 +205,11 @@ class Api::QuestionsController < ApplicationController
     nil
   end
 
+  ##
+  # Processes data for an Essay question type.
+  #
+  # @param [String, Hash] data The input data in JSON or Hash format.
+  # @return [Hash, nil] Parsed essay data or nil if invalid.
   def process_essay_data(data)
     return nil if data.blank?
 
@@ -105,6 +224,11 @@ class Api::QuestionsController < ApplicationController
     end
   end
 
+  ##
+  # Validates Drag and Drop data.
+  #
+  # @param [Array] data The input data to validate.
+  # @return [Boolean] Whether the data is valid.
   def valid_drag_and_drop_data?(data)
     return false unless data.is_a?(Array)
 
@@ -116,6 +240,11 @@ class Api::QuestionsController < ApplicationController
     end
   end
 
+  ##
+  # Validates Bow Tie data.
+  #
+  # @param [Hash] data The input data to validate.
+  # @return [Boolean] Whether the data is valid.
   def valid_bow_tie_data?(data)
     return false unless data.is_a?(Hash)
 
@@ -127,6 +256,10 @@ class Api::QuestionsController < ApplicationController
       data['center']['answers'].is_a?(Array)
   end
 
+  ##
+  # Handles image uploads and attaches them to the question.
+  #
+  # @param [Question] question The question object to associate images with.
   def handle_image_uploads(question)
     return if params[:question][:images].blank?
 
@@ -135,6 +268,10 @@ class Api::QuestionsController < ApplicationController
     end
   end
 
+  ##
+  # Handles keyword associations for a question.
+  #
+  # @param [Question] question The question object to associate keywords with.
   def handle_keywords(question)
     return if params[:question][:keywords].blank?
 
@@ -144,6 +281,10 @@ class Api::QuestionsController < ApplicationController
     end
   end
 
+  ##
+  # Handles subject associations for a question.
+  #
+  # @param [Question] question The question object to associate subjects with.
   def handle_subjects(question)
     return if params[:question][:subjects].blank?
 
@@ -153,6 +294,10 @@ class Api::QuestionsController < ApplicationController
     end
   end
 
+  ##
+  # Permits and requires the necessary question parameters.
+  #
+  # @return [ActionController::Parameters] The permitted parameters for a question.
   def question_params
     params.require(:question).permit(
       :type,

@@ -68,6 +68,9 @@ const CreateQuestionForm = () => {
     } else if (questionType === 'Drag and Drop' && Array.isArray(data)) {
       const validData = data.filter((item) => item.answer.trim() !== '')
       formData.append('question[data]', JSON.stringify(validData))
+    } else if (questionType === 'Bow Tie' && data) {
+      const jsonData = JSON.stringify(data)
+      formData.append('question[data]', jsonData)
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
@@ -85,7 +88,6 @@ const CreateQuestionForm = () => {
         method: 'POST',
         body: formatFormData()
       })
-
       if (response.ok) {
         alert('Question saved successfully!')
         resetForm()

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-# Controller for managing the creation of questions in different formats (Essay, Drag and Drop, Matching).
+# Controller for managing the creation of questions in different formats (Essay, Drag and Drop, Matching, Bow Tie).
+
 # rubocop:disable Metrics/ClassLength
 class Api::QuestionsController < ApplicationController
   protect_from_forgery with: :null_session
@@ -9,7 +10,7 @@ class Api::QuestionsController < ApplicationController
   ##
   # Creates a new question.
   #
-  # @note Handles question creation for various types (Essay, Matching, Drag and Drop, etc).
+  # @note Handles question creation for various types (Essay, Matching, Drag and Drop, Bow Tie, etc).
   # @return [JSON] Success message or error messages.
   #
   # @example Request Payload
@@ -46,6 +47,7 @@ class Api::QuestionsController < ApplicationController
   #
   # @param [ActionController::Parameters] params The raw parameters passed in the request.
   # @return [Hash] Processed parameters with normalized data.
+  # rubocop:disable Metrics/MethodLength
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
@@ -57,12 +59,15 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_drag_and_drop_data(processed[:data])
     when 'Question::Essay'
       processed[:data] = process_essay_data(processed[:data])
+    when 'Question::BowTie'
+      processed[:data] = process_bow_tie_data(processed[:data])
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
     end
 
     processed
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
   # Maps user-friendly question types to their full class names.
@@ -179,6 +184,30 @@ class Api::QuestionsController < ApplicationController
   end
 
   ##
+  # Processes data for a Bow Tie question type.
+  #
+  # @param [String, Hash] data The input data in JSON or Hash format.
+  # @return [Hash, nil] Validated and parsed data, or nil if invalid.
+  def process_bow_tie_data(data)
+    return nil if data.blank?
+
+    # If data is a string, parse it
+    if data.is_a?(String)
+      begin
+        parsed_data = JSON.parse(data)
+        return parsed_data if valid_bow_tie_data?(parsed_data)
+      rescue JSON::ParserError
+        return nil
+      end
+    end
+
+    # If data is already a hash, validate it
+    return data if data.is_a?(Hash) && valid_bow_tie_data?(data)
+
+    nil
+  end
+
+  ##
   # Processes data for an Essay question type.
   #
   # @param [String, Hash] data The input data in JSON or Hash format.
@@ -211,6 +240,22 @@ class Api::QuestionsController < ApplicationController
         item.key?('correct') &&
         [true, false].include?(item['correct'])
     end
+  end
+
+  ##
+  # Validates Bow Tie data.
+  #
+  # @param [Hash] data The input data to validate.
+  # @return [Boolean] Whether the data is valid.
+  def valid_bow_tie_data?(data)
+    return false unless data.is_a?(Hash)
+
+    data.key?('left') &&
+      data.key?('right') &&
+      data.key?('center') &&
+      data['left']['answers'].is_a?(Array) &&
+      data['right']['answers'].is_a?(Array) &&
+      data['center']['answers'].is_a?(Array)
   end
 
   ##

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import Bowtie from './Bowtie'
-import Essay from './Essay'
+import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
+import Essay from './Essay'
 import Matching from './Matching'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
@@ -21,9 +22,10 @@ const CreateQuestionForm = () => {
   const [resetFields, setResetFields] = useState(false)
 
   const COMPONENT_MAP = {
-    'Essay': Essay,
     'Bow Tie': Bowtie,
+    'Categorization': Categorization,
     'Drag and Drop': DragAndDrop,
+    'Essay': Essay,
     'Matching': Matching
   }
   const QuestionComponent = COMPONENT_MAP[questionType] || null
@@ -53,7 +55,7 @@ const CreateQuestionForm = () => {
     formData.append('question[text]', questionText)
 
     // Handle data based on question type
-    if (questionType === 'Matching') {
+    if (questionType === 'Matching' || questionType === 'Categorization') {
       formData.append('question[data]', JSON.stringify(data))
     } else if (questionType === 'Essay') {
       const formattedData = {
@@ -108,11 +110,14 @@ const CreateQuestionForm = () => {
   const isSubmitDisabled = () => {
     if (!questionText || images.some((image) => !image.isValid)) return true
 
-    if (questionType === 'Matching') {
-      // Check if data is valid for Matching type
+    if (questionType === 'Matching' || questionType === 'Categorization') {
       if (!data || !Array.isArray(data)) return true
       const isInvalid = data.some(
-        (item) => !item.answer.trim() || !item.correct.trim()
+        (item) =>
+          !item.answer.trim() || // Ensure category/answer has text
+          !item.correct || // Ensure 'correct' exists
+          !Array.isArray(item.correct) || // Ensure 'correct' is an array
+          item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
       )
       if (isInvalid) return true
     }

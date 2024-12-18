@@ -5,6 +5,7 @@ import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
 import Essay from './Essay'
 import Matching from './Matching'
+import MultiChoiceSata from './MultiChoiceSata'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
@@ -26,7 +27,9 @@ const CreateQuestionForm = () => {
     'Categorization': Categorization,
     'Drag and Drop': DragAndDrop,
     'Essay': Essay,
-    'Matching': Matching
+    'Matching': Matching,
+    'Multiple Choice': MultiChoiceSata,
+    'Select All That Apply': MultiChoiceSata
   }
   const QuestionComponent = COMPONENT_MAP[questionType] || null
 

@@ -117,6 +117,48 @@ RSpec.describe Api::QuestionsController, type: :controller do
       }
     end
 
+    let(:multiple_choice_params) do
+      {
+        question: {
+          type: 'Question::Traditional',
+          level: '2',
+          text: 'Which of the following is a fruit?',
+          data: [
+            { "answer" => "Apple", "correct" => true },
+            { "answer" => "Carrot", "correct" => false },
+            { "answer" => "Broccoli", "correct" => false },
+            { "answer" => "Celery", "correct" => false }
+          ].to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['Fruits', 'Food Groups'],
+          subjects: ['Biology']
+        }
+      }
+    end
+
+    let(:select_all_params) do
+      {
+        question: {
+          type: 'Question::SelectAllThatApply',
+          level: '3',
+          text: 'Select all the fruits from the following options:',
+          data: [
+            { "answer" => "Apple", "correct" => true },
+            { "answer" => "Banana", "correct" => true },
+            { "answer" => "Carrot", "correct" => false },
+            { "answer" => "Orange", "correct" => true }
+          ].to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['Fruits', 'Food Groups'],
+          subjects: ['Biology']
+        }
+      }
+    end
+
     let(:invalid_params) do
       { question: { text: '' } }
     end
@@ -244,6 +286,103 @@ RSpec.describe Api::QuestionsController, type: :controller do
             }
           )
         end
+      end
+    end
+
+    context 'when creating a Multiple Choice question' do
+      it 'creates a Multiple Choice question with all parameters' do
+        expect { post :create, params: multiple_choice_params }.to change(Question, :count).by(1)
+        question = Question.last
+
+        expect(question.text).to eq('Which of the following is a fruit?')
+        expect(question.level).to eq('2')
+        expect(question.data).to eq([
+                                      { "answer" => "Apple", "correct" => true },
+                                      { "answer" => "Carrot", "correct" => false },
+                                      { "answer" => "Broccoli", "correct" => false },
+                                      { "answer" => "Celery", "correct" => false }
+                                    ])
+        expect(question.images.count).to eq(1)
+        expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
+        expect(question.subjects.map(&:name)).to contain_exactly('biology')
+      end
+
+      it 'does not create a Multiple Choice question with multiple correct answers' do
+        invalid_data_params = multiple_choice_params.deep_merge(
+          question: {
+            data: [
+              { "answer" => "Apple", "correct" => true },
+              { "answer" => "Banana", "correct" => true }
+            ].to_json
+          }
+        )
+
+        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
+      end
+
+      it 'does not create a Multiple Choice question with no correct answers' do
+        invalid_data_params = multiple_choice_params.deep_merge(
+          question: {
+            data: [
+              { "answer" => "Apple", "correct" => false },
+              { "answer" => "Banana", "correct" => false }
+            ].to_json
+          }
+        )
+
+        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
+      end
+    end
+
+    context 'when creating a Select All That Apply question' do
+      it 'creates a Select All That Apply question with all parameters' do
+        expect { post :create, params: select_all_params }.to change(Question, :count).by(1)
+        question = Question.last
+
+        expect(question.text).to eq('Select all the fruits from the following options:')
+        expect(question.level).to eq('3')
+        expect(question.data).to eq([
+                                      { "answer" => "Apple", "correct" => true },
+                                      { "answer" => "Banana", "correct" => true },
+                                      { "answer" => "Carrot", "correct" => false },
+                                      { "answer" => "Orange", "correct" => true }
+                                    ])
+        expect(question.images.count).to eq(1)
+        expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
+        expect(question.subjects.map(&:name)).to contain_exactly('biology')
+      end
+
+      it 'does not create a Select All That Apply question with no correct answers' do
+        invalid_data_params = select_all_params.deep_merge(
+          question: {
+            data: [
+              { "answer" => "Apple", "correct" => false },
+              { "answer" => "Banana", "correct" => false }
+            ].to_json
+          }
+        )
+
+        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.parsed_body['errors']).to include('Select All That Apply questions must have at least one correct answer.')
+      end
+
+      it 'validates that answers are not blank' do
+        invalid_data_params = select_all_params.deep_merge(
+          question: {
+            data: [
+              { "answer" => "", "correct" => true },
+              { "answer" => "  ", "correct" => true }
+            ].to_json
+          }
+        )
+
+        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
 

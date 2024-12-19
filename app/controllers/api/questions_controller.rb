@@ -38,6 +38,8 @@ class Api::QuestionsController < ApplicationController
     else
       render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
     end
+  rescue ArgumentError => e
+    render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
   private
@@ -154,7 +156,7 @@ class Api::QuestionsController < ApplicationController
     data.map do |item|
       {
         'answer' => item['answer'].to_s.strip,
-        'correct' => !item['correct'].nil?
+        'correct' => item['correct']
       }
     end
   end

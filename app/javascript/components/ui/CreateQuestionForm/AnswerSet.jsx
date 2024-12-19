@@ -3,9 +3,10 @@ import { Button } from 'react-bootstrap'
 import { Plus } from '@phosphor-icons/react'
 import AnswerField from './AnswerField'
 
-const AnswerSet = ({ resetFields, getColumnAnswers, title }) => {
+const AnswerSet = ({ resetFields, getColumnAnswers, title, multipleCorrectAnswers }) => {
   const [answers, setAnswers] = useState([{answer: '', correct: false}])
   const hasAtLeastOneCorrectAnswer = answers.some(answer => answer.correct && answer.answer.trim() !== '')
+  const hasExactlyOneCorrectAnswer = answers.filter(answer => answer.correct && answer.answer.trim() !== '').length === 1
 
   useEffect(() => {
     if (resetFields) {
@@ -49,7 +50,13 @@ const AnswerSet = ({ resetFields, getColumnAnswers, title }) => {
         <Plus className='me-2' /> Add Answer
       </Button>
 
-      {!hasAtLeastOneCorrectAnswer && answers.some(answer => answer.answer.trim() !== '') && (
+      {!hasExactlyOneCorrectAnswer && !multipleCorrectAnswers && answers.some(answer => answer.answer.trim() !== '') && (
+        <div className='text-danger mt-2'>
+          Please mark exactly one answer as correct.
+        </div>
+      )}
+
+      {!hasAtLeastOneCorrectAnswer && multipleCorrectAnswers && answers.some(answer => answer.answer.trim() !== '') && (
         <div className='text-danger mt-2'>
           Please mark at least one non-empty answer as correct.
         </div>

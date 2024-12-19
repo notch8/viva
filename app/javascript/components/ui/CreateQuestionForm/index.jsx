@@ -154,8 +154,25 @@ const CreateQuestionForm = () => {
       if (correctCount < 1) return true; // Must have at least 1 correct answer
     }
   
-    return false;
-  };
+    if(questionType === 'Bow Tie') {
+      const oneCenterAnswerSelected = data.center.answers.filter((answer) => answer.correct === true)
+      const oneOrMoreLeftAnswersSelected = data.left.answers.filter((answer) => answer.correct === true)
+      const oneOrMoreRightAnswersSelected = data.right.answers.filter((answer) => answer.correct === true)
+
+      if (
+        !data.center.answers[0].answer ||
+        !data.left.answers[0].answer ||
+        !data.right.answers[0].answer ||
+        oneCenterAnswerSelected.length !== 1 ||
+        !(oneOrMoreLeftAnswersSelected.length >= 1) ||
+        !(oneOrMoreRightAnswersSelected.length >= 1)
+      ) {
+        return true
+      }
+    }
+
+    return false
+  }
 
   return (
     <div className='create-question-form'>

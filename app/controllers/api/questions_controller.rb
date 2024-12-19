@@ -48,10 +48,11 @@ class Api::QuestionsController < ApplicationController
   # @param [ActionController::Parameters] params The raw parameters passed in the request.
   # @return [Hash] Processed parameters with normalized data.
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
-  
+
     case processed[:type]
     when 'Question::Traditional'
       processed[:data] = process_multiple_choice_data(processed[:data]) if processed[:data].present?
@@ -68,10 +69,11 @@ class Api::QuestionsController < ApplicationController
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
     end
-  
+
     processed
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   ##
   # Maps user-friendly question types to their full class names.
@@ -88,7 +90,7 @@ class Api::QuestionsController < ApplicationController
       'Multiple Choice' => 'Question::Traditional',
       'Select All That Apply' => 'Question::SelectAllThatApply'
     }
-  
+
     type_mapping[type] || type
   end
 
@@ -100,15 +102,11 @@ class Api::QuestionsController < ApplicationController
   # @return [Array<Hash>] Cleaned data with answers and correctness flags.
   def process_multiple_choice_data(data)
     parsed_data = parse_answer_data(data)
-  
-    if parsed_data.blank?
-      raise ArgumentError, 'Multiple Choice questions require at least one answer.'
-    end
 
-    if parsed_data.count { |item| item['correct'] } != 1
-      raise ArgumentError, 'Multiple Choice questions must have exactly one correct answer.'
-    end
-  
+    raise ArgumentError, 'Multiple Choice questions require at least one answer.' if parsed_data.blank?
+
+    raise ArgumentError, 'Multiple Choice questions must have exactly one correct answer.' if parsed_data.count { |item| item['correct'] } != 1
+
     clean_answer_data(parsed_data)
   end
 
@@ -120,15 +118,11 @@ class Api::QuestionsController < ApplicationController
   # @return [Array<Hash>] Cleaned data with answers and correctness flags.
   def process_select_all_data(data)
     parsed_data = parse_answer_data(data)
-  
-    if parsed_data.blank?
-      raise ArgumentError, 'Select All That Apply questions require at least one answer.'
-    end
 
-    if parsed_data.none? { |item| item['correct'] }
-      raise ArgumentError, 'Select All That Apply questions must have at least one correct answer.'
-    end
-  
+    raise ArgumentError, 'Select All That Apply questions require at least one answer.' if parsed_data.blank?
+
+    raise ArgumentError, 'Select All That Apply questions must have at least one correct answer.' if parsed_data.none? { |item| item['correct'] }
+
     clean_answer_data(parsed_data)
   end
 
@@ -139,7 +133,11 @@ class Api::QuestionsController < ApplicationController
   # @return [Array<Hash>] Parsed data as an array of hashes.
   def parse_answer_data(data)
     if data.is_a?(String)
-      JSON.parse(data) rescue []
+      begin
+        JSON.parse(data)
+      rescue
+        []
+      end
     elsif data.is_a?(Array)
       data
     else
@@ -156,7 +154,7 @@ class Api::QuestionsController < ApplicationController
     data.map do |item|
       {
         'answer' => item['answer'].to_s.strip,
-        'correct' => !!item['correct']
+        'correct' => !item['correct'].nil?
       }
     end
   end

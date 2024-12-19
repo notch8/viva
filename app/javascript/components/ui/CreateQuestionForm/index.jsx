@@ -54,40 +54,40 @@ const CreateQuestionForm = () => {
     setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
 
   const formatFormData = () => {
-    const formData = new FormData();
-    formData.append('question[type]', questionType);
-    formData.append('question[level]', level);
-    formData.append('question[text]', questionText);
-  
+    const formData = new FormData()
+    formData.append('question[type]', questionType)
+    formData.append('question[level]', level)
+    formData.append('question[text]', questionText)
+
     // Handle data based on question type
     if (questionType === 'Matching' || questionType === 'Categorization') {
-      formData.append('question[data]', JSON.stringify(data));
+      formData.append('question[data]', JSON.stringify(data))
     } else if (questionType === 'Essay') {
       const formattedData = {
         html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join(''),
-      };
-      formData.append('question[data]', JSON.stringify(formattedData));
+      }
+      formData.append('question[data]', JSON.stringify(formattedData))
     } else if (questionType === 'Drag and Drop' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '');
-      formData.append('question[data]', JSON.stringify(validData));
+      const validData = data.filter((item) => item.answer.trim() !== '')
+      formData.append('question[data]', JSON.stringify(validData))
     } else if (questionType === 'Bow Tie' && data) {
-      const jsonData = JSON.stringify(data);
-      formData.append('question[data]', jsonData);
+      const jsonData = JSON.stringify(data)
+      formData.append('question[data]', jsonData)
     } else if (questionType === 'Multiple Choice' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '');
-      formData.append('question[data]', JSON.stringify(validData));
+      const validData = data.filter((item) => item.answer.trim() !== '')
+      formData.append('question[data]', JSON.stringify(validData))
     } else if (questionType === 'Select All That Apply' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '');
-      formData.append('question[data]', JSON.stringify(validData));
+      const validData = data.filter((item) => item.answer.trim() !== '')
+      formData.append('question[data]', JSON.stringify(validData))
     }
-  
-    images.forEach(({ file }) => formData.append('question[images][]', file));
-    keywords.forEach((keyword) => formData.append('question[keywords][]', keyword));
-    subjects.forEach((subject) => formData.append('question[subjects][]', subject));
-  
-    return formData;
-  };
-  
+
+    images.forEach(({ file }) => formData.append('question[images][]', file))
+    keywords.forEach((keyword) => formData.append('question[keywords][]', keyword))
+    subjects.forEach((subject) => formData.append('question[subjects][]', subject))
+
+    return formData
+  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -122,38 +122,38 @@ const CreateQuestionForm = () => {
   }
 
   const isSubmitDisabled = () => {
-    if (!questionText || images.some((image) => !image.isValid)) return true;
-  
+    if (!questionText || images.some((image) => !image.isValid)) return true
+
     if (questionType === 'Matching' || questionType === 'Categorization') {
-      if (!data || !Array.isArray(data)) return true;
+      if (!data || !Array.isArray(data)) return true
       const isInvalid = data.some(
         (item) =>
           !item.answer.trim() || // Ensure category/answer has text
           !item.correct || // Ensure 'correct' exists
           !Array.isArray(item.correct) || // Ensure 'correct' is an array
           item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
-      );
-      if (isInvalid) return true;
+      )
+      if (isInvalid) return true
     }
-  
+
     if (questionType === 'Drag and Drop') {
       if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
-        return true;
+        return true
       }
     }
-  
+
     if (questionType === 'Multiple Choice') {
-      if (!data || !Array.isArray(data)) return true;
-      const correctCount = data.filter((item) => item.correct).length;
-      if (correctCount !== 1) return true; // Must have exactly 1 correct answer
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount !== 1) return true // Must have exactly 1 correct answer
     }
-  
+
     if (questionType === 'Select All That Apply') {
-      if (!data || !Array.isArray(data)) return true;
-      const correctCount = data.filter((item) => item.correct).length;
-      if (correctCount < 1) return true; // Must have at least 1 correct answer
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount < 1) return true // Must have at least 1 correct answer
     }
-  
+
     if(questionType === 'Bow Tie') {
       const oneCenterAnswerSelected = data.center.answers.filter((answer) => answer.correct === true)
       const oneOrMoreLeftAnswersSelected = data.left.answers.filter((answer) => answer.correct === true)
@@ -209,7 +209,7 @@ const CreateQuestionForm = () => {
                 <LevelDropdown handleLevelSelection={handleLevelSelection} />
               </div>
             </div>
-            
+
             <Button
               type='submit'
               className='btn btn-primary mt-3'

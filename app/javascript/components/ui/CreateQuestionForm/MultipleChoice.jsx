@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import AnswerField from './AnswerField';
 
-const MultiChoiceSata = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  // Initialize with 4 answer objects
+const MultipleChoice = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
   const [answers, setAnswers] = useState([
     { answer: '', correct: false },
     { answer: '', correct: false },
@@ -25,18 +23,17 @@ const MultiChoiceSata = ({ questionText, handleTextChange, onDataChange, resetFi
   const updateAnswer = (index, field, value) => {
     const updatedAnswers = [...answers];
     updatedAnswers[index][field] = value;
-  
-    // For Multiple Choice, ensure only one correct answer
-    if (field === 'correct' && value && questionType === 'Multiple Choice') {
+
+    // Ensure only one correct answer is selected
+    if (field === 'correct' && value) {
       updatedAnswers.forEach((answer, i) => {
         if (i !== index) answer.correct = false;
       });
     }
-  
+
     setAnswers(updatedAnswers);
     onDataChange(updatedAnswers);
   };
-  
 
   const addAnswer = () => {
     setAnswers([...answers, { answer: '', correct: false }]);
@@ -60,12 +57,26 @@ const MultiChoiceSata = ({ questionText, handleTextChange, onDataChange, resetFi
           onChange={handleTextChange}
         ></textarea>
       </div>
-      <AnswerField
-        answers={answers}
-        updateAnswer={updateAnswer}
-        removeAnswer={removeAnswer}
-        title="Answers"
-      />
+      {answers.map((answer, index) => (
+        <div key={index} className="d-flex align-items-center mb-2">
+          <input
+            type="text"
+            className="form-control me-2"
+            placeholder={`Answer ${index + 1}`}
+            value={answer.answer}
+            onChange={(e) => updateAnswer(index, 'answer', e.target.value)}
+          />
+          <input
+            type="radio"
+            name="correct"
+            checked={answer.correct}
+            onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
+          />
+          <Button variant="danger" size="sm" className="ms-2" onClick={() => removeAnswer(index)}>
+            Remove
+          </Button>
+        </div>
+      ))}
       <Button variant="secondary" size="sm" onClick={addAnswer}>
         Add Answer
       </Button>
@@ -73,4 +84,4 @@ const MultiChoiceSata = ({ questionText, handleTextChange, onDataChange, resetFi
   );
 };
 
-export default MultiChoiceSata;
+export default MultipleChoice;

@@ -39,16 +39,19 @@ const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) =
         resetFields={resetFields}
         getColumnAnswers={centerColumnAnswers}
         title='Central Theme'
+        multipleCorrectAnswers={false}
       />
       <AnswerSet
         resetFields={resetFields}
         getColumnAnswers={leftColumnAnswers}
         title='Left Label'
+        multipleCorrectAnswers={true}
       />
       <AnswerSet
         resetFields={resetFields}
         getColumnAnswers={rightColumnAnswers}
         title='Right Label'
+        multipleCorrectAnswers={true}
       />
     </>
   )

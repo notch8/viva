@@ -3,14 +3,23 @@ import { Form, Button } from 'react-bootstrap'
 import QuestionText from './QuestionText'
 
 const Matching = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  const [pairs, setPairs] = useState([{ answer: '', correct: '' }])
-  const [errors, setErrors] = useState({})
+  const [pairs, setPairs] = useState([
+    { answer: '', correct: '' },
+    { answer: '', correct: '' },
+    { answer: '', correct: '' },
+    { answer: '', correct: '' },
+  ])
 
   useEffect(() => {
     if (resetFields) {
-      setPairs([{ answer: '', correct: '' }])
-      onDataChange([{ answer: '', correct: '' }])
-      setErrors({})
+      const initialPairs = [
+        { answer: '', correct: '' },
+        { answer: '', correct: '' },
+        { answer: '', correct: '' },
+        { answer: '', correct: '' },
+      ]
+      setPairs(initialPairs)
+      onDataChange(initialPairs)
     }
   }, [resetFields])
 
@@ -24,11 +33,6 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
     const updatedPairs = pairs.filter((_, index) => index !== indexToRemove)
     setPairs(updatedPairs)
     onDataChange(updatedPairs)
-
-    // Reset errors
-    const updatedErrors = { ...errors }
-    delete updatedErrors[indexToRemove]
-    setErrors(updatedErrors)
   }
 
   const updatePair = (index, field, value) => {
@@ -37,9 +41,6 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
     )
     setPairs(updatedPairs)
     onDataChange(updatedPairs)
-
-    // Reset errors for this pair
-    setErrors({ ...errors, [index]: { ...errors[index], [field]: !value.trim() } })
   }
 
   return (
@@ -52,14 +53,12 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
             placeholder='Answer'
             value={pair.answer}
             onChange={(e) => updatePair(index, 'answer', e.target.value)}
-            isInvalid={errors[index]?.answer}
             className='me-2'
           />
           <Form.Control
             placeholder='Correct Match'
             value={pair.correct}
             onChange={(e) => updatePair(index, 'correct', e.target.value)}
-            isInvalid={errors[index]?.correct}
             className='me-2'
           />
           <Button

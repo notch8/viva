@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap'
 import { Plus } from '@phosphor-icons/react'
 import AnswerField from './AnswerField'
 
-const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, numberOfDisplayedAnswers }) => {
+const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, numberOfDisplayedAnswers = 1 }) => {
   const numberOfDisplayedAnswersArray = Array.from({ length: numberOfDisplayedAnswers }, () => ({ ...[{answer: '', correct: false}][0] }))
   const [answers, setAnswers] = useState(numberOfDisplayedAnswersArray)
   const hasAtLeastOneCorrectAnswer = answers.some(answer => answer.correct && answer.answer.trim() !== '')
@@ -34,7 +34,7 @@ const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, n
     setAnswers(updatedAnswers)
   }
 
-  const removeCenterAnswer = (index) => {
+  const removeAnswer = (index) => {
     const updatedAnswers = answers.filter((_, i) => i !== index)
     setAnswers(updatedAnswers)
   }
@@ -44,8 +44,9 @@ const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, n
       <AnswerField
         answers={answers}
         updateAnswer={updateAnswer}
-        removeAnswer={removeCenterAnswer}
+        removeAnswer={removeAnswer}
         title={title}
+        buttonType={multipleCorrectAnswers ? 'checkbox' : 'radio'}
       />
       <Button
         variant='secondary'

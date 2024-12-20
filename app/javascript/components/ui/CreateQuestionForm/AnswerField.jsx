@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
 
-const AnswerField = ({ answers, updateAnswer, removeAnswer, title }) => {
+const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 'checkbox' }) => {
   return (
     <Form.Group className='my-3'>
       <Form.Label className='h6'>{title}</Form.Label>
@@ -15,7 +15,7 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title }) => {
             className='me-2'
           />
           <Form.Check
-            type='checkbox'
+            type={buttonType}
             checked={answer.correct}
             onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
             label='Correct'

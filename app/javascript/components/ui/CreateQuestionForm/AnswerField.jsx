@@ -1,12 +1,12 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
 
-const AnswerField = ({ answers, updateAnswer, removeAnswer, title }) => {
+const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 'checkbox' }) => {
   return (
-    <Form.Group className='mb-3'>
+    <Form.Group className='my-3'>
       <Form.Label className='h6'>{title}</Form.Label>
       {answers.map((answer, index) => (
-        <div key={index} className='d-flex align-items-center mb-2'>
+        <div key={index} className='d-flex align-items-center my-2'>
           <Form.Control
             type='text'
             value={answer.answer}
@@ -15,7 +15,7 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title }) => {
             className='me-2'
           />
           <Form.Check
-            type='checkbox'
+            type={buttonType}
             checked={answer.correct}
             onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
             label='Correct'

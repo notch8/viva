@@ -5,6 +5,8 @@ import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
 import Essay from './Essay'
 import Matching from './Matching'
+import MultipleChoice from './MultipleChoice'
+import SelectAllThatApply from './SelectAllThatApply'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
@@ -26,8 +28,11 @@ const CreateQuestionForm = () => {
     'Categorization': Categorization,
     'Drag and Drop': DragAndDrop,
     'Essay': Essay,
-    'Matching': Matching
+    'Matching': Matching,
+    'Multiple Choice': MultipleChoice,
+    'Select All That Apply': SelectAllThatApply
   }
+
   const QuestionComponent = COMPONENT_MAP[questionType] || null
 
   const handleQuestionTypeSelection = (type) => {
@@ -59,7 +64,7 @@ const CreateQuestionForm = () => {
       formData.append('question[data]', JSON.stringify(data))
     } else if (questionType === 'Essay') {
       const formattedData = {
-        html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join('')
+        html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join(''),
       }
       formData.append('question[data]', JSON.stringify(formattedData))
     } else if (questionType === 'Drag and Drop' && Array.isArray(data)) {
@@ -68,6 +73,12 @@ const CreateQuestionForm = () => {
     } else if (questionType === 'Bow Tie' && data) {
       const jsonData = JSON.stringify(data)
       formData.append('question[data]', jsonData)
+    } else if (questionType === 'Multiple Choice' && Array.isArray(data)) {
+      const validData = data.filter((item) => item.answer.trim() !== '')
+      formData.append('question[data]', JSON.stringify(validData))
+    } else if (questionType === 'Select All That Apply' && Array.isArray(data)) {
+      const validData = data.filter((item) => item.answer.trim() !== '')
+      formData.append('question[data]', JSON.stringify(validData))
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
@@ -76,6 +87,7 @@ const CreateQuestionForm = () => {
 
     return formData
   }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -128,6 +140,18 @@ const CreateQuestionForm = () => {
       if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
         return true
       }
+    }
+
+    if (questionType === 'Multiple Choice') {
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount !== 1) return true // Must have exactly 1 correct answer
+    }
+
+    if (questionType === 'Select All That Apply') {
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount < 1) return true // Must have at least 1 correct answer
     }
 
     if(questionType === 'Bow Tie') {
@@ -185,6 +209,7 @@ const CreateQuestionForm = () => {
                 <LevelDropdown handleLevelSelection={handleLevelSelection} />
               </div>
             </div>
+
             <Button
               type='submit'
               className='btn btn-primary mt-3'

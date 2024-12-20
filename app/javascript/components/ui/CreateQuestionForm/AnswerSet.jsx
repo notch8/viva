@@ -3,20 +3,21 @@ import { Button } from 'react-bootstrap'
 import { Plus } from '@phosphor-icons/react'
 import AnswerField from './AnswerField'
 
-const AnswerSet = ({ resetFields, getColumnAnswers, title, multipleCorrectAnswers }) => {
-  const [answers, setAnswers] = useState([{answer: '', correct: false}])
+const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, numberOfDisplayedAnswers = 1 }) => {
+  const numberOfDisplayedAnswersArray = Array.from({ length: numberOfDisplayedAnswers }, () => ({ ...[{answer: '', correct: false}][0] }))
+  const [answers, setAnswers] = useState(numberOfDisplayedAnswersArray)
   const hasAtLeastOneCorrectAnswer = answers.some(answer => answer.correct && answer.answer.trim() !== '')
   const hasExactlyOneCorrectAnswer = answers.filter(answer => answer.correct && answer.answer.trim() !== '').length === 1
 
   useEffect(() => {
     if (resetFields) {
-      setAnswers([{answer: '', correct: false}])
+      setAnswers(numberOfDisplayedAnswersArray)
     }
   }, [resetFields])
 
   useEffect(() => {
-    getColumnAnswers(answers)
-  }, [answers, getColumnAnswers])
+    getAnswerSet(answers)
+  }, [answers, getAnswerSet])
 
   const addAnswerField = () => {
     setAnswers([...answers, { answer: '', correct: false }])
@@ -33,15 +34,20 @@ const AnswerSet = ({ resetFields, getColumnAnswers, title, multipleCorrectAnswer
     setAnswers(updatedAnswers)
   }
 
-  const removeCenterAnswer = (index) => {
+  const removeAnswer = (index) => {
     const updatedAnswers = answers.filter((_, i) => i !== index)
     setAnswers(updatedAnswers)
   }
 
   return (
     <>
-      <AnswerField answers={answers} updateAnswer={updateAnswer} removeAnswer={removeCenterAnswer} title={title} />
-
+      <AnswerField
+        answers={answers}
+        updateAnswer={updateAnswer}
+        removeAnswer={removeAnswer}
+        title={title}
+        buttonType={multipleCorrectAnswers ? 'checkbox' : 'radio'}
+      />
       <Button
         variant='secondary'
         onClick={addAnswerField}

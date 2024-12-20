@@ -38,6 +38,8 @@ class Api::QuestionsController < ApplicationController
     else
       render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
     end
+  rescue ArgumentError => e
+    render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
   private
@@ -48,11 +50,16 @@ class Api::QuestionsController < ApplicationController
   # @param [ActionController::Parameters] params The raw parameters passed in the request.
   # @return [Hash] Processed parameters with normalized data.
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def process_question_params(params)
     processed = params.to_h
     processed[:type] = normalize_type(processed[:type])
 
     case processed[:type]
+    when 'Question::Traditional'
+      processed[:data] = process_multiple_choice_data(processed[:data]) if processed[:data].present?
+    when 'Question::SelectAllThatApply'
+      processed[:data] = process_select_all_data(processed[:data]) if processed[:data].present?
     when 'Question::Categorization'
       processed[:data] = process_categorization_data(processed[:data])
     when 'Question::DragAndDrop'
@@ -68,6 +75,7 @@ class Api::QuestionsController < ApplicationController
     processed
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   ##
   # Maps user-friendly question types to their full class names.
@@ -80,10 +88,77 @@ class Api::QuestionsController < ApplicationController
       'Categorization' => 'Question::Categorization',
       'Drag and Drop' => 'Question::DragAndDrop',
       'Essay' => 'Question::Essay',
-      'Matching' => 'Question::Matching'
+      'Matching' => 'Question::Matching',
+      'Multiple Choice' => 'Question::Traditional',
+      'Select All That Apply' => 'Question::SelectAllThatApply'
     }
 
     type_mapping[type] || type
+  end
+
+  ##
+  # Processes data for Multiple Choice questions.
+  #
+  # @param [String, Array<Hash>] data The input data, either a JSON string or an array of hashes.
+  # @raise [ArgumentError] If the data is invalid.
+  # @return [Array<Hash>] Cleaned data with answers and correctness flags.
+  def process_multiple_choice_data(data)
+    parsed_data = parse_answer_data(data)
+
+    raise ArgumentError, 'Multiple Choice questions require at least one answer.' if parsed_data.blank?
+
+    raise ArgumentError, 'Multiple Choice questions must have exactly one correct answer.' if parsed_data.count { |item| item['correct'] } != 1
+
+    clean_answer_data(parsed_data)
+  end
+
+  ##
+  # Processes data for Select All That Apply questions.
+  #
+  # @param [String, Array<Hash>] data The input data, either a JSON string or an array of hashes.
+  # @raise [ArgumentError] If the data is invalid.
+  # @return [Array<Hash>] Cleaned data with answers and correctness flags.
+  def process_select_all_data(data)
+    parsed_data = parse_answer_data(data)
+
+    raise ArgumentError, 'Select All That Apply questions require at least one answer.' if parsed_data.blank?
+
+    raise ArgumentError, 'Select All That Apply questions must have at least one correct answer.' if parsed_data.none? { |item| item['correct'] }
+
+    clean_answer_data(parsed_data)
+  end
+
+  ##
+  # Parses answer data from a JSON string or array.
+  #
+  # @param [String, Array] data The input data.
+  # @return [Array<Hash>] Parsed data as an array of hashes.
+  def parse_answer_data(data)
+    if data.is_a?(String)
+      begin
+        JSON.parse(data)
+      rescue
+        []
+      end
+    elsif data.is_a?(Array)
+      data
+    else
+      []
+    end
+  end
+
+  ##
+  # Cleans up answer data by trimming whitespace and normalizing correctness flags.
+  #
+  # @param [Array<Hash>] data The input data.
+  # @return [Array<Hash>] Cleaned data.
+  def clean_answer_data(data)
+    data.map do |item|
+      {
+        'answer' => item['answer'].to_s.strip,
+        'correct' => item['correct']
+      }
+    end
   end
 
   ##

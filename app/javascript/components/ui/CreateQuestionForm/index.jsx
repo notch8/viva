@@ -124,16 +124,26 @@ const CreateQuestionForm = () => {
   const isSubmitDisabled = () => {
     if (!questionText || images.some((image) => !image.isValid)) return true
 
-    if (questionType === 'Matching' || questionType === 'Categorization') {
+    if (questionType === 'Matching') {
+      if (!data || !Array.isArray(data)) return true
+
+      // Ensure all pairs have both "answer" and "correct" fields populated
+      const isInvalid = data.some(
+        (pair) => !pair.answer.trim() || !pair.correct.trim()
+      )
+      return isInvalid
+    }
+
+    if (questionType === 'Categorization') {
       if (!data || !Array.isArray(data)) return true
       const isInvalid = data.some(
         (item) =>
-          !item.answer.trim() || // Ensure category/answer has text
-          !item.correct || // Ensure 'correct' exists
-          !Array.isArray(item.correct) || // Ensure 'correct' is an array
-          item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
+          !item.answer.trim() ||
+          !item.correct ||
+          !Array.isArray(item.correct) ||
+          item.correct.some((match) => !match.trim())
       )
-      if (isInvalid) return true
+      return isInvalid
     }
 
     if (questionType === 'Drag and Drop') {

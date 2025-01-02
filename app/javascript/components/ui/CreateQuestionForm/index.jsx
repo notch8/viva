@@ -59,26 +59,24 @@ const CreateQuestionForm = () => {
     formData.append('question[level]', level)
     formData.append('question[text]', questionText)
 
-    // Handle data based on question type
-    if (questionType === 'Matching' || questionType === 'Categorization') {
-      formData.append('question[data]', JSON.stringify(data))
-    } else if (questionType === 'Essay') {
-      const formattedData = {
+    const appendData = (dataToAppend) => formData.append('question[data]', JSON.stringify(dataToAppend))
+
+    const filterValidData = (data) => Array.isArray(data) ? data.filter((item) => item.answer.trim() !== '') : []
+
+    const handlers = {
+      'Matching': () => appendData(data),
+      'Categorization': () => appendData(data),
+      'Essay': () => appendData({
         html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join(''),
-      }
-      formData.append('question[data]', JSON.stringify(formattedData))
-    } else if (questionType === 'Drag and Drop' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '')
-      formData.append('question[data]', JSON.stringify(validData))
-    } else if (questionType === 'Bow Tie' && data) {
-      const jsonData = JSON.stringify(data)
-      formData.append('question[data]', jsonData)
-    } else if (questionType === 'Multiple Choice' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '')
-      formData.append('question[data]', JSON.stringify(validData))
-    } else if (questionType === 'Select All That Apply' && Array.isArray(data)) {
-      const validData = data.filter((item) => item.answer.trim() !== '')
-      formData.append('question[data]', JSON.stringify(validData))
+      }),
+      'Drag and Drop': () => appendData(filterValidData(data)),
+      'Bow Tie': () => data && appendData(data),
+      'Multiple Choice': () => appendData(filterValidData(data)),
+      'Select All That Apply': () => appendData(filterValidData(data))
+    }
+
+    if (handlers[questionType]) {
+      handlers[questionType]()
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
@@ -87,7 +85,6 @@ const CreateQuestionForm = () => {
 
     return formData
   }
-
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -124,46 +121,6 @@ const CreateQuestionForm = () => {
   const isSubmitDisabled = () => {
     if (!questionText || images.some((image) => !image.isValid)) return true
 
-    if (questionType === 'Matching') {
-      if (!data || !Array.isArray(data)) return true
-
-      // Ensure all pairs have both "answer" and "correct" fields populated
-      const isInvalid = data.some(
-        (pair) => !pair.answer.trim() || !pair.correct.trim()
-      )
-      return isInvalid
-    }
-
-    if (questionType === 'Categorization') {
-      if (!data || !Array.isArray(data)) return true
-      const isInvalid = data.some(
-        (item) =>
-          !item.answer.trim() ||
-          !item.correct ||
-          !Array.isArray(item.correct) ||
-          item.correct.some((match) => !match.trim())
-      )
-      return isInvalid
-    }
-
-    if (questionType === 'Drag and Drop') {
-      if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
-        return true
-      }
-    }
-
-    if (questionType === 'Multiple Choice') {
-      if (!data || !Array.isArray(data)) return true
-      const correctCount = data.filter((item) => item.correct).length
-      if (correctCount !== 1) return true // Must have exactly 1 correct answer
-    }
-
-    if (questionType === 'Select All That Apply') {
-      if (!data || !Array.isArray(data)) return true
-      const correctCount = data.filter((item) => item.correct).length
-      if (correctCount < 1) return true // Must have at least 1 correct answer
-    }
-
     if(questionType === 'Bow Tie') {
       const oneCenterAnswerSelected = data.center.answers.filter((answer) => answer.correct === true)
       const oneOrMoreLeftAnswersSelected = data.left.answers.filter((answer) => answer.correct === true)
@@ -179,6 +136,40 @@ const CreateQuestionForm = () => {
       ) {
         return true
       }
+    }
+
+    if (questionType === 'Categorization') {
+      if (!data || !Array.isArray(data)) return true
+      const isInvalid = data.some(
+        (item) =>
+          !item.answer.trim() || // Ensure category/answer has text
+          !item.correct || // Ensure 'correct' exists
+          !Array.isArray(item.correct) || // Ensure 'correct' is an array
+          item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
+      )
+      if (isInvalid) return true
+    }
+
+    if (questionType === 'Drag and Drop') {
+      if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
+        return true
+      }
+    }
+
+    if (questionType === 'Matching') {
+      console.log(data)
+    }
+
+    if (questionType === 'Multiple Choice') {
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount !== 1) return true // Must have exactly 1 correct answer
+    }
+
+    if (questionType === 'Select All That Apply') {
+      if (!data || !Array.isArray(data)) return true
+      const correctCount = data.filter((item) => item.correct).length
+      if (correctCount < 1) return true // Must have at least 1 correct answer
     }
 
     return false

@@ -157,7 +157,12 @@ const CreateQuestionForm = () => {
     }
 
     if (questionType === 'Matching') {
-      console.log(data)
+      if (!data || !Array.isArray(data)) return true
+      // Ensure all pairs have both "answer" and "correct" fields populated
+      const isInvalid = data.some(
+        (pair) => !pair.answer.trim() || !pair.correct.trim()
+      )
+      return isInvalid
     }
 
     if (questionType === 'Multiple Choice') {

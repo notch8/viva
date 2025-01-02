@@ -7,6 +7,7 @@ import Essay from './Essay'
 import Matching from './Matching'
 import MultipleChoice from './MultipleChoice'
 import SelectAllThatApply from './SelectAllThatApply'
+import StimulusCaseStudy from './StimulusCaseStudy'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
@@ -30,7 +31,8 @@ const CreateQuestionForm = () => {
     'Essay': Essay,
     'Matching': Matching,
     'Multiple Choice': MultipleChoice,
-    'Select All That Apply': SelectAllThatApply
+    'Select All That Apply': SelectAllThatApply,
+    'Stimulus Case Study': StimulusCaseStudy,
   }
 
   const QuestionComponent = COMPONENT_MAP[questionType] || null
@@ -59,20 +61,34 @@ const CreateQuestionForm = () => {
     formData.append('question[level]', level)
     formData.append('question[text]', questionText)
 
-    const appendData = (dataToAppend) => formData.append('question[data]', JSON.stringify(dataToAppend))
+    const appendData = (dataToAppend) =>
+      formData.append('question[data]', JSON.stringify(dataToAppend))
 
-    const filterValidData = (data) => Array.isArray(data) ? data.filter((item) => item.answer.trim() !== '') : []
+    const filterValidData = (data) =>
+      Array.isArray(data) ? data.filter((item) => item.answer.trim() !== '') : []
 
     const handlers = {
-      'Matching': () => appendData(data),
-      'Categorization': () => appendData(data),
-      'Essay': () => appendData({
-        html: questionText.split('\n').map((line, index) => `<p key=${index}>${line}</p>`).join(''),
-      }),
+      Matching: () => appendData(data),
+      Categorization: () => appendData(data),
+      Essay: () =>
+        appendData({
+          html: questionText
+            .split('\n')
+            .map((line, index) => `<p key=${index}>${line}</p>`)
+            .join(''),
+        }),
       'Drag and Drop': () => appendData(filterValidData(data)),
       'Bow Tie': () => data && appendData(data),
       'Multiple Choice': () => appendData(filterValidData(data)),
-      'Select All That Apply': () => appendData(filterValidData(data))
+      'Select All That Apply': () => appendData(filterValidData(data)),
+      'Stimulus Case Study': () => {
+        // Assuming `data` includes subquestions and parent question data
+        const stimulusData = {
+          text: questionText,
+          subQuestions: data.subQuestions || [], // Example structure
+        }
+        appendData(stimulusData)
+      }
     }
 
     if (handlers[questionType]) {
@@ -80,8 +96,12 @@ const CreateQuestionForm = () => {
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
-    keywords.forEach((keyword) => formData.append('question[keywords][]', keyword))
-    subjects.forEach((subject) => formData.append('question[subjects][]', subject))
+    keywords.forEach((keyword) =>
+      formData.append('question[keywords][]', keyword)
+    )
+    subjects.forEach((subject) =>
+      formData.append('question[subjects][]', subject)
+    )
 
     return formData
   }
@@ -92,7 +112,7 @@ const CreateQuestionForm = () => {
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formatFormData()
+        body: formatFormData(),
       })
       if (response.ok) {
         alert('Question saved successfully!')
@@ -121,10 +141,16 @@ const CreateQuestionForm = () => {
   const isSubmitDisabled = () => {
     if (!questionText || images.some((image) => !image.isValid)) return true
 
-    if(questionType === 'Bow Tie') {
-      const oneCenterAnswerSelected = data.center.answers.filter((answer) => answer.correct === true)
-      const oneOrMoreLeftAnswersSelected = data.left.answers.filter((answer) => answer.correct === true)
-      const oneOrMoreRightAnswersSelected = data.right.answers.filter((answer) => answer.correct === true)
+    if (questionType === 'Bow Tie') {
+      const oneCenterAnswerSelected = data.center.answers.filter(
+        (answer) => answer.correct === true
+      )
+      const oneOrMoreLeftAnswersSelected = data.left.answers.filter(
+        (answer) => answer.correct === true
+      )
+      const oneOrMoreRightAnswersSelected = data.right.answers.filter(
+        (answer) => answer.correct === true
+      )
 
       if (
         !data.center.answers[0].answer ||
@@ -151,7 +177,11 @@ const CreateQuestionForm = () => {
     }
 
     if (questionType === 'Drag and Drop') {
-      if (!data || !Array.isArray(data) || !data.some((item) => item.correct && item.answer.trim())) {
+      if (
+        !data ||
+        !Array.isArray(data) ||
+        !data.some((item) => item.correct && item.answer.trim())
+      ) {
         return true
       }
     }
@@ -185,7 +215,9 @@ const CreateQuestionForm = () => {
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
 
-      {QuestionComponent && (
+      {questionType === 'StimulusCaseStudy' ? (
+        <StimulusCaseStudy onSubmit={handleSubmit} />
+      ) : QuestionComponent ? (
         <div className='question-body bg-white mt-4 p-4'>
           <Form onSubmit={handleSubmit} className='question-form mx-4'>
             <div className='d-flex flex-wrap'>
@@ -196,10 +228,7 @@ const CreateQuestionForm = () => {
                   onDataChange={setData}
                   resetFields={resetFields}
                 />
-                <ImageUploader
-                  images={images}
-                  setImages={setImages}
-                />
+                <ImageUploader images={images} setImages={setImages} />
               </div>
               <div className='tag-section m-4'>
                 <Keyword
@@ -225,7 +254,7 @@ const CreateQuestionForm = () => {
             </Button>
           </Form>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

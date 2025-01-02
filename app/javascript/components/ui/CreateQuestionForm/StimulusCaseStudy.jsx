@@ -115,14 +115,6 @@ const StimulusCaseStudy = ({ onSubmit }) => {
         >
           Add Subquestion
         </Button>
-
-        <Button
-          type='submit'
-          className='btn btn-primary mt-4'
-          disabled={isSubmitDisabled()}
-        >
-          Submit
-        </Button>
       </Form>
     </div>
   )

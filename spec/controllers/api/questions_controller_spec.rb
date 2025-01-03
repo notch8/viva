@@ -159,6 +159,38 @@ RSpec.describe Api::QuestionsController, type: :controller do
       }
     end
 
+    let(:stimulus_case_study_params) do
+      {
+        question: {
+          type: 'Question::StimulusCaseStudy',
+          level: '4',
+          text: 'Analyze the impact of climate change on polar regions.',
+          data: {
+            subQuestions: [
+              {
+                type: 'Question::Essay',
+                text: 'What are the primary causes of climate change?',
+                data: { html: '<p>Discuss the primary causes of climate change.</p>' }
+              },
+              {
+                type: 'Question::Matching',
+                text: 'Match the effects with their corresponding causes.',
+                data: [
+                  { answer: 'Melting glaciers', correct: ['Rising temperatures'] },
+                  { answer: 'Droughts', correct: ['Deforestation'] }
+                ]
+              }
+            ]
+          }.to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['Climate Change', 'Polar Regions'],
+          subjects: ['Environment']
+        }
+      }
+    end
+
     let(:invalid_params) do
       { question: { text: '' } }
     end
@@ -383,6 +415,48 @@ RSpec.describe Api::QuestionsController, type: :controller do
 
         expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'when creating a Stimulus Case Study question' do
+      it 'creates a Stimulus Case Study question with subquestions' do
+        expect { post :create, params: stimulus_case_study_params }.to change(Question, :count).by(3) # 1 parent  2 subquestions
+        question = Question.find_by(type: 'Question::StimulusCaseStudy')
+        sub_questions = question.child_questions
+
+        expect(question.text).to eq('Analyze the impact of climate change on polar regions.')
+        expect(question.level).to eq('4')
+        expect(sub_questions.count).to eq(2)
+
+        first_sub_question = sub_questions.find_by(type: 'Question::Essay')
+        expect(first_sub_question.text).to eq('What are the primary causes of climate change?')
+        expect(first_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+
+        second_sub_question = sub_questions.find_by(type: 'Question::Matching')
+        expect(second_sub_question.text).to eq('Match the effects with their corresponding causes.')
+        expect(second_sub_question.data).to eq(
+          [
+            { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
+            { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
+          ]
+        )
+      end
+
+      it 'does not create a Stimulus Case Study question with invalid subquestions' do
+        invalid_params = stimulus_case_study_params.deep_merge(
+          question: {
+            data: {
+              subQuestions: [
+                { type: 'Question::Essay', text: '' }, # Invalid subquestion with missing text
+                { type: 'Question::Matching', text: 'Invalid', data: nil } # Invalid subquestion with missing data
+              ]
+            }.to_json
+          }
+        )
+
+        expect { post :create, params: invalid_params }.not_to change(Question, :count)
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.parsed_body['errors']).to include('Subquestions must have valid text and data.')
       end
     end
 

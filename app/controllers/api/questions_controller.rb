@@ -71,13 +71,13 @@ class Api::QuestionsController < ApplicationController
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
     when 'Question::StimulusCaseStudy'
-      prorcess_stimulus_case_study_data(processed[:data])
+      process_stimulus_case_study_data(processed[:data])
     end
 
     processed
   end
 
-  def prorcess_stimulus_case_study_data(data)
+  def process_stimulus_case_study_data(data)
 
     # TODO:
     # 1. Create StimulusCaseStudy instance => q

@@ -8,8 +8,9 @@ import Matching from './Matching'
 import MultipleChoice from './MultipleChoice'
 import SelectAllThatApply from './SelectAllThatApply'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
+import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ onSubmit }) => {
+const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
   const [subQuestions, setSubQuestions] = useState([])
   const [caseStudyText, setCaseStudyText] = useState('')
 
@@ -63,17 +64,9 @@ const StimulusCaseStudy = ({ onSubmit }) => {
 
   return (
     <div className='stimulus-case-study-form'>
+      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <h3>Stimulus Case Study</h3>
       <Form onSubmit={handleSubmit}>
-        <Form.Group className='mb-3'>
-          <Form.Label>Case Study Text</Form.Label>
-          <Form.Control
-            as='textarea'
-            rows={3}
-            value={caseStudyText}
-            onChange={(e) => setCaseStudyText(e.target.value)}
-          />
-        </Form.Group>
 
         <h4>Subquestions</h4>
         {subQuestions.map((sq) => {

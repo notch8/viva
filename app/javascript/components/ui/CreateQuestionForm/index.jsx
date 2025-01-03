@@ -23,6 +23,7 @@ const CreateQuestionForm = () => {
   const [subjects, setSubjects] = useState([])
   const [data, setData] = useState(null)
   const [resetFields, setResetFields] = useState(false)
+  const [stimulusData, setStimulusData] = useState(null)
 
   const COMPONENT_MAP = {
     'Bow Tie': Bowtie,
@@ -41,6 +42,7 @@ const CreateQuestionForm = () => {
     setQuestionType(type)
     setData(null)
     setResetFields(true)
+    setStimulusData(null)
   }
 
   const handleTextChange = (e) => setQuestionText(e.target.value)
@@ -135,6 +137,7 @@ const CreateQuestionForm = () => {
     setKeywords([])
     setSubjects([])
     setData(null)
+    setStimulusData(null)
     setResetFields(true)
   }
 
@@ -207,6 +210,10 @@ const CreateQuestionForm = () => {
       if (correctCount < 1) return true // Must have at least 1 correct answer
     }
 
+    if (questionType === 'Stimulus Case Study') {
+      // return !stimulusData || !stimulusData.text?.trim() || stimulusData.subQuestions.length === 0
+    }
+
     return false
   }
 
@@ -215,9 +222,7 @@ const CreateQuestionForm = () => {
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
       <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
 
-      {questionType === 'StimulusCaseStudy' ? (
-        <StimulusCaseStudy onSubmit={handleSubmit} />
-      ) : QuestionComponent ? (
+      {QuestionComponent && (
         <div className='question-body bg-white mt-4 p-4'>
           <Form onSubmit={handleSubmit} className='question-form mx-4'>
             <div className='d-flex flex-wrap'>
@@ -254,7 +259,7 @@ const CreateQuestionForm = () => {
             </Button>
           </Form>
         </div>
-      ) : null}
+      )}
     </div>
   )
 }

@@ -70,10 +70,22 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_bow_tie_data(processed[:data])
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
+    when 'Question::StimulusCaseStudy'
+      prorcess_stimulus_case_study_data(processed[:data])
     end
 
     processed
   end
+
+  def prorcess_stimulus_case_study_data(data)
+
+    # TODO:
+    # 1. Create StimulusCaseStudy instance => q
+    # 2. Create subquestions
+    # 3. Associate the Subquestions with StimulusCaseStudy instance => q.child_quetions << subquestions
+    processed[:data] = nil
+  end
+
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
 
@@ -90,7 +102,8 @@ class Api::QuestionsController < ApplicationController
       'Essay' => 'Question::Essay',
       'Matching' => 'Question::Matching',
       'Multiple Choice' => 'Question::Traditional',
-      'Select All That Apply' => 'Question::SelectAllThatApply'
+      'Select All That Apply' => 'Question::SelectAllThatApply',
+      'Stimulus Case Study' => 'Question::StimulusCaseStudy'
     }
 
     type_mapping[type] || type

@@ -32,6 +32,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
     case 'Bow Tie':
       return { center: { answers: [] }, left: { answers: [] }, right: { answers: [] } }
     case 'Matching':
+      return [{ answer: '', correct: '' }]
     case 'Categorization':
       return [{ answer: '', correct: [] }] // Default structure for pairings
     case 'Essay':
@@ -59,6 +60,14 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
         ? data.filter((item) => item.answer.trim() !== '')
         : []
     case 'Matching':
+      return Array.isArray(data)
+        ? data.map((pair) => ({
+          answer: pair.answer?.trim() || '',
+          correct: Array.isArray(pair.correct)
+            ? pair.correct.map((item) => item.trim())
+            : pair.correct?.trim() || '',
+        }))
+        : []
     case 'Categorization':
       return Array.isArray(data)
         ? data.map((pair) => ({

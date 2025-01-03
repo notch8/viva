@@ -120,10 +120,12 @@ class Api::QuestionsController < ApplicationController
       type = normalize_type(subquestion_data['type'])
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
 
+      data = process_matching_data(subquestion_data['data']) if type == 'Question::Matching'
+
       Question.new(
         type:,
         text: subquestion_data['text'],
-        data: subquestion_data['data'].presence || {},
+        data: data.presence || subquestion_data['data'].presence || {},
         child_of_aggregation: true
       )
     end
@@ -259,7 +261,14 @@ class Api::QuestionsController < ApplicationController
     raise ArgumentError, 'Data for Matching question is required to be a non-empty array.' if data.blank?
 
     parsed_data = parse_matching_data(data)
-    clean_matching_data(parsed_data)
+    parsed_data.map do |pair|
+      answer = pair['answer'].to_s.strip
+      correct = Array(pair['correct']).map(&:to_s).map(&:strip)
+
+      raise ArgumentError, 'Matching pairs must have both an answer and at least one correct match.' if answer.blank? || correct.empty?
+
+      { 'answer' => answer, 'correct' => correct }
+    end
   end
 
   ##

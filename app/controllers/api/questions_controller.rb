@@ -25,7 +25,7 @@ class Api::QuestionsController < ApplicationController
   #   }
   def create
     processed_params = process_question_params(question_params)
-  
+
     if processed_params[:type] == 'Question::StimulusCaseStudy'
       begin
         stimulus_case_study = process_stimulus_case_study_data(processed_params[:data], processed_params)
@@ -35,15 +35,15 @@ class Api::QuestionsController < ApplicationController
       end
       return
     end
-  
+
     # For all other question types
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
     question.level = nil if question.level.blank?
-  
+
     handle_image_uploads(question)
     handle_keywords(question)
     handle_subjects(question)
-  
+
     if question.save
       render json: { message: 'Question saved successfully!', id: question.id }, status: :created
     else
@@ -90,51 +90,48 @@ class Api::QuestionsController < ApplicationController
     # Ensure data is parsed
     data = JSON.parse(data) if data.is_a?(String)
     raise ArgumentError, 'Stimulus Case Study data is required.' if data.blank?
-  
+
     # Create Stimulus Case Study instance
     stimulus_case_study = Question::StimulusCaseStudy.new(
       text: data['text'],
       child_of_aggregation: false,
       level: params[:level]
     )
-  
+
     # Attach images
     params[:images]&.each do |uploaded_file|
       stimulus_case_study.images.build(file: uploaded_file)
     end
-  
+
     # Associate keywords
     params[:keywords]&.each do |keyword_name|
       keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
       stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
     end
-  
+
     # Associate subjects
     params[:subjects]&.each do |subject_name|
       subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
       stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject)
     end
-  
+
     # Map subquestions and validate data
     subquestions = data['subQuestions']&.map do |subquestion_data|
       type = normalize_type(subquestion_data['type'])
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
-  
+
       Question.new(
-        type: type,
+        type:,
         text: subquestion_data['text'],
         data: subquestion_data['data'].presence || {},
         child_of_aggregation: true
       )
     end
-  
+
     stimulus_case_study.child_questions = subquestions if subquestions.present?
-  
-    if stimulus_case_study.save
-      stimulus_case_study
-    else
-      raise ArgumentError, "Error saving Stimulus Case Study: #{stimulus_case_study.errors.full_messages.join(', ')}"
-    end
+
+    raise ArgumentError, "Error saving Stimulus Case Study: #{stimulus_case_study.errors.full_messages.join(', ')}" unless stimulus_case_study.save
+    stimulus_case_study
   end
 
   # rubocop:enable Metrics/MethodLength

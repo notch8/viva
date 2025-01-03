@@ -81,7 +81,7 @@ class Api::QuestionsController < ApplicationController
 
     # TODO:
     # 1. Create StimulusCaseStudy instance => q
-    # 2. Create subquestions
+    # 2. Create subquestions with child_of_aggregation: true
     # 3. Associate the Subquestions with StimulusCaseStudy instance => q.child_quetions << subquestions
     processed[:data] = nil
   end

@@ -2,7 +2,7 @@ x-app: &app
   build:
     context: .
     target: viva-base
-  image: ghcr.io/scientist-softserv/viva:${TAG:-latest}
+  image: ghcr.io/notch8/viva:${TAG:-latest}
   volumes:
     - .:/app
   env_file:

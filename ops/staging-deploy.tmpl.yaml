@@ -22,7 +22,7 @@ web:
 
 rails:
   image:
-    repository: ghcr.io/scientist-softserv/viva
+    repository: ghcr.io/notch8/viva
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
   imagepullPolicy: IfNotPresent

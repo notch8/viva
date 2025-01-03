@@ -8,7 +8,7 @@ class Question::Traditional < Question
   # maintain the "type" value of Traditional; as that is how we handle Single
   # Table Inheritance (STI).
   #
-  # @see https://github.com/scientist-softserv/viva/issues/261
+  # @see https://github.com/notch8/viva/issues/261
   self.type_name = "Multiple Choice"
 
   ##

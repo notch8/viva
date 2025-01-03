@@ -25,22 +25,35 @@ class Api::QuestionsController < ApplicationController
   #   }
   def create
     processed_params = process_question_params(question_params)
-
+  
+    # Special case handling for Stimulus Case Study
+    if processed_params[:type] == 'Question::StimulusCaseStudy'
+      begin
+        stimulus_case_study = process_stimulus_case_study_data(processed_params[:data])
+        render json: { message: 'Stimulus Case Study saved successfully!', id: stimulus_case_study.id }, status: :created
+      rescue ArgumentError => e
+        render json: { errors: [e.message] }, status: :unprocessable_entity
+      end
+      return
+    end
+  
+    # For all other question types
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
     question.level = nil if question.level.blank?
-
+  
     handle_image_uploads(question)
     handle_keywords(question)
     handle_subjects(question)
-
+  
     if question.save
-      render json: { message: 'Question saved successfully!' }, status: :created
+      render json: { message: 'Question saved successfully!', id: question.id }, status: :created
     else
       render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
     end
   rescue ArgumentError => e
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
+  
 
   private
 
@@ -70,21 +83,47 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_bow_tie_data(processed[:data])
     when 'Question::Matching'
       processed[:data] = process_matching_data(processed[:data])
-    when 'Question::StimulusCaseStudy'
-      process_stimulus_case_study_data(processed[:data])
     end
 
     processed
   end
 
   def process_stimulus_case_study_data(data)
-
-    # TODO:
-    # 1. Create StimulusCaseStudy instance => q
-    # 2. Create subquestions with child_of_aggregation: true
-    # 3. Associate the Subquestions with StimulusCaseStudy instance => q.child_quetions << subquestions
-    processed[:data] = nil
+    # Ensure data is parsed
+    data = JSON.parse(data) if data.is_a?(String)
+  
+    raise ArgumentError, 'Stimulus Case Study data is required.' if data.blank?
+  
+    # Create Stimulus Case Study instance
+    stimulus_case_study = Question::StimulusCaseStudy.new(
+      text: data['text'],
+      child_of_aggregation: false
+    )
+  
+    # Map subquestions and validate data
+    subquestions = data['subQuestions']&.map do |subquestion_data|
+      type = normalize_type(subquestion_data['type'])
+      raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
+  
+      Question.new(
+        type: type,
+        text: subquestion_data['text'],
+        data: subquestion_data['data'].presence || {},
+        child_of_aggregation: true
+      )
+    end
+  
+    stimulus_case_study.child_questions = subquestions if subquestions.present?
+  
+    if stimulus_case_study.save
+      stimulus_case_study
+    else
+      raise ArgumentError, "Error saving Stimulus Case Study: #{stimulus_case_study.errors.full_messages.join(', ')}"
+    end
   end
+  
+  
+  
 
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize

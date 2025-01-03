@@ -21,9 +21,8 @@ const CreateQuestionForm = () => {
   const [level, setLevel] = useState('')
   const [keywords, setKeywords] = useState([])
   const [subjects, setSubjects] = useState([])
-  const [data, setData] = useState(null)
+  const [data, setData] = useState({ text: '', subQuestions: [] })
   const [resetFields, setResetFields] = useState(false)
-  const [stimulusData, setStimulusData] = useState(null)
 
   const COMPONENT_MAP = {
     'Bow Tie': Bowtie,
@@ -40,9 +39,8 @@ const CreateQuestionForm = () => {
 
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
-    setData(null)
+    setData({ text: '', subQuestions: [] }) // Reset data
     setResetFields(true)
-    setStimulusData(null)
   }
 
   const handleTextChange = (e) => setQuestionText(e.target.value)
@@ -83,14 +81,7 @@ const CreateQuestionForm = () => {
       'Bow Tie': () => data && appendData(data),
       'Multiple Choice': () => appendData(filterValidData(data)),
       'Select All That Apply': () => appendData(filterValidData(data)),
-      'Stimulus Case Study': () => {
-        // Assuming `data` includes subquestions and parent question data
-        const stimulusData = {
-          text: questionText,
-          subQuestions: data.subQuestions || [], // Example structure
-        }
-        appendData(stimulusData)
-      }
+      'Stimulus Case Study': () => appendData(data)
     }
 
     if (handlers[questionType]) {
@@ -137,12 +128,18 @@ const CreateQuestionForm = () => {
     setKeywords([])
     setSubjects([])
     setData(null)
-    setStimulusData(null)
     setResetFields(true)
   }
 
   const isSubmitDisabled = () => {
-    if (!questionText || images.some((image) => !image.isValid)) return true
+   if (!questionText || images.some((image) => !image.isValid)) return true
+
+    if (questionType === 'Stimulus Case Study') {
+      const isDisabled =
+          !data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0
+      console.log('Stimulus Case Study validation:', { isDisabled })
+      return isDisabled
+    } 
 
     if (questionType === 'Bow Tie') {
       const oneCenterAnswerSelected = data.center.answers.filter(
@@ -191,7 +188,6 @@ const CreateQuestionForm = () => {
 
     if (questionType === 'Matching') {
       if (!data || !Array.isArray(data)) return true
-      // Ensure all pairs have both "answer" and "correct" fields populated
       const isInvalid = data.some(
         (pair) => !pair.answer.trim() || !pair.correct.trim()
       )
@@ -210,12 +206,9 @@ const CreateQuestionForm = () => {
       if (correctCount < 1) return true // Must have at least 1 correct answer
     }
 
-    if (questionType === 'Stimulus Case Study') {
-      // return !stimulusData || !stimulusData.text?.trim() || stimulusData.subQuestions.length === 0
-    }
-
     return false
   }
+
 
   return (
     <div className='create-question-form'>

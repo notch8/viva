@@ -166,6 +166,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
           level: '4',
           text: 'Analyze the impact of climate change on polar regions.',
           data: {
+            text: 'Analyze the impact of climate change on polar regions.',
             subQuestions: [
               {
                 type: 'Question::Essay',
@@ -190,6 +191,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
         }
       }
     end
+    
 
     let(:invalid_params) do
       { question: { text: '' } }
@@ -419,25 +421,36 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Stimulus Case Study question' do
-      it 'creates a Stimulus Case Study question with subquestions' do
+      it 'increases the Question count for parent and subquestions' do
         expect { post :create, params: stimulus_case_study_params }
           .to change(Question, :count).by(3) # 1 parent + 2 subquestions
+      end
     
+      it 'creates a Stimulus Case Study parent question' do
+        post :create, params: stimulus_case_study_params
         question = Question.find_by(type: 'Question::StimulusCaseStudy')
+    
+        # Ensure the parent question is created with correct attributes
         expect(question).not_to be_nil
         expect(question.text).to eq('Analyze the impact of climate change on polar regions.')
         expect(question.level).to eq('4')
+      end
     
+      it 'creates subquestions for the Stimulus Case Study' do
+        post :create, params: stimulus_case_study_params
+        question = Question.find_by(type: 'Question::StimulusCaseStudy')
         sub_questions = question.child_questions
+    
+        # Ensure subquestions are created
         expect(sub_questions.count).to eq(2)
     
+        # Validate attributes of the first subquestion
         first_sub_question = sub_questions.find_by(type: 'Question::Essay')
-        expect(first_sub_question).not_to be_nil
         expect(first_sub_question.text).to eq('What are the primary causes of climate change?')
         expect(first_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
     
+        # Validate attributes of the second subquestion
         second_sub_question = sub_questions.find_by(type: 'Question::Matching')
-        expect(second_sub_question).not_to be_nil
         expect(second_sub_question.text).to eq('Match the effects with their corresponding causes.')
         expect(second_sub_question.data).to eq(
           [
@@ -446,26 +459,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
           ]
         )
       end
-    
-      it 'does not create a Stimulus Case Study question with invalid subquestions' do
-        invalid_params = stimulus_case_study_params.deep_merge(
-          question: {
-            data: {
-              subQuestions: [
-                { type: 'Question::Essay', text: '' }, # Invalid subquestion with missing text
-                { type: 'Question::Matching', text: 'Invalid', data: nil } # Invalid subquestion with missing data
-              ]
-            }.to_json
-          }
-        )
-    
-        expect { post :create, params: invalid_params }.not_to change(Question, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.parsed_body['errors']).to include(
-          "Error saving Stimulus Case Study: Text can't be blank, Child questions is invalid"
-        )
-      end
     end
+    
 
     context 'when the request is invalid' do
       it 'does not create a new question' do

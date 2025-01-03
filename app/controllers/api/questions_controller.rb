@@ -26,10 +26,9 @@ class Api::QuestionsController < ApplicationController
   def create
     processed_params = process_question_params(question_params)
   
-    # Special case handling for Stimulus Case Study
     if processed_params[:type] == 'Question::StimulusCaseStudy'
       begin
-        stimulus_case_study = process_stimulus_case_study_data(processed_params[:data])
+        stimulus_case_study = process_stimulus_case_study_data(processed_params[:data], processed_params)
         render json: { message: 'Stimulus Case Study saved successfully!', id: stimulus_case_study.id }, status: :created
       rescue ArgumentError => e
         render json: { errors: [e.message] }, status: :unprocessable_entity
@@ -53,7 +52,6 @@ class Api::QuestionsController < ApplicationController
   rescue ArgumentError => e
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
-  
 
   private
 
@@ -88,17 +86,34 @@ class Api::QuestionsController < ApplicationController
     processed
   end
 
-  def process_stimulus_case_study_data(data)
+  def process_stimulus_case_study_data(data, params)
     # Ensure data is parsed
     data = JSON.parse(data) if data.is_a?(String)
-  
     raise ArgumentError, 'Stimulus Case Study data is required.' if data.blank?
   
     # Create Stimulus Case Study instance
     stimulus_case_study = Question::StimulusCaseStudy.new(
       text: data['text'],
-      child_of_aggregation: false
+      child_of_aggregation: false,
+      level: params[:level]
     )
+  
+    # Attach images
+    params[:images]&.each do |uploaded_file|
+      stimulus_case_study.images.build(file: uploaded_file)
+    end
+  
+    # Associate keywords
+    params[:keywords]&.each do |keyword_name|
+      keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
+      stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
+    end
+  
+    # Associate subjects
+    params[:subjects]&.each do |subject_name|
+      subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
+      stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject)
+    end
   
     # Map subquestions and validate data
     subquestions = data['subQuestions']&.map do |subquestion_data|
@@ -121,9 +136,6 @@ class Api::QuestionsController < ApplicationController
       raise ArgumentError, "Error saving Stimulus Case Study: #{stimulus_case_study.errors.full_messages.join(', ')}"
     end
   end
-  
-  
-  
 
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize

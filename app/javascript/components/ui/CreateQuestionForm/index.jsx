@@ -137,7 +137,6 @@ const CreateQuestionForm = () => {
     if (questionType === 'Stimulus Case Study') {
       const isDisabled =
           !data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0
-      console.log('Stimulus Case Study validation:', { isDisabled })
       return isDisabled
     }
 

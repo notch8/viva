@@ -98,18 +98,16 @@ class Api::QuestionsController < ApplicationController
       level: params[:level]
     )
 
-    # Attach images
+    # Handle attachments (images, keywords, subjects)
     params[:images]&.each do |uploaded_file|
       stimulus_case_study.images.build(file: uploaded_file)
     end
 
-    # Associate keywords
     params[:keywords]&.each do |keyword_name|
       keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
       stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
     end
 
-    # Associate subjects
     params[:subjects]&.each do |subject_name|
       subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
       stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject)
@@ -120,12 +118,25 @@ class Api::QuestionsController < ApplicationController
       type = normalize_type(subquestion_data['type'])
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
 
-      data = process_matching_data(subquestion_data['data']) if type == 'Question::Matching'
+      processed_data = case type
+                       when 'Question::Matching'
+                         process_matching_data(subquestion_data['data'])
+                       when 'Question::BowTie'
+                         # Initialize default Bow Tie structure if empty
+                         default_bow_tie_data = {
+                           'left' => { 'answers' => [] },
+                           'right' => { 'answers' => [] },
+                           'center' => { 'answers' => [] }
+                         }
+                         process_bow_tie_data(subquestion_data['data']) || default_bow_tie_data
+                       else
+                         subquestion_data['data']
+                       end
 
       Question.new(
         type:,
         text: subquestion_data['text'],
-        data: data.presence || subquestion_data['data'].presence || {},
+        data: processed_data,
         child_of_aggregation: true
       )
     end

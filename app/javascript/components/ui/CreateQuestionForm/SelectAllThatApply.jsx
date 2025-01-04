@@ -1,9 +1,8 @@
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
 const SelectAllThatApply = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  const [answers, setAnswers] = useState([])
   const updateTimeout = useRef(null)
 
   const updateParent = useCallback((updatedAnswers) => {
@@ -15,11 +14,6 @@ const SelectAllThatApply = ({ questionText, handleTextChange, onDataChange, rese
       onDataChange(updatedAnswers)
     }, 300)
   }, [onDataChange])
-
-  const getAnswers = useCallback((answersArray) => {
-    setAnswers(answersArray)
-    updateParent(answersArray)
-  }, [updateParent])
 
   // Cleanup timeout on unmount
   React.useEffect(() => {
@@ -35,7 +29,7 @@ const SelectAllThatApply = ({ questionText, handleTextChange, onDataChange, rese
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <AnswerSet
         resetFields={resetFields}
-        getAnswerSet={getAnswers}
+        getAnswerSet={updateParent}
         title='Answers'
         multipleCorrectAnswers={true}
         numberOfDisplayedAnswers={4}

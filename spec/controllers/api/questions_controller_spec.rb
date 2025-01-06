@@ -159,6 +159,91 @@ RSpec.describe Api::QuestionsController, type: :controller do
       }
     end
 
+    let(:stimulus_case_study_params) do
+      {
+        question: {
+          type: 'Question::StimulusCaseStudy',
+          level: '4',
+          text: 'Analyze the impact of climate change on polar regions.',
+          data: {
+            text: 'Analyze the impact of climate change on polar regions.',
+            subQuestions: [
+              {
+                type: 'Question::BowTie',
+                text: 'bow tie sub question',
+                data: {
+                  center: {
+                    label: "Center Label",
+                    answers: [{ answer: "a", correct: true }]
+                  },
+                  left: {
+                    label: "Left Label",
+                    answers: [{ answer: "v", correct: true }]
+                  },
+                  right: {
+                    label: "Right Label",
+                    answers: [{ answer: "v", correct: true }]
+                  }
+                }
+              },
+              {
+                type: 'Question::Categorization',
+                text: 'Categorize climate effects.',
+                data: [
+                  { answer: 'Rising temperatures', correct: ['Global warming'] },
+                  { answer: 'Severe weather', correct: ['Climate change'] }
+                ]
+              },
+              {
+                type: 'Question::DragAndDrop',
+                text: 'Drag the effects to their causes.',
+                data: [
+                  { answer: 'Glacial melting', correct: true },
+                  { answer: 'Wildfires', correct: true }
+                ]
+              },
+              {
+                type: 'Question::Essay',
+                text: 'What are the primary causes of climate change?',
+                data: { html: '<p>Discuss the primary causes of climate change.</p>' }
+              },
+              {
+                type: 'Question::Matching',
+                text: 'Match the effects with their corresponding causes.',
+                data: [
+                  { answer: 'Melting glaciers', correct: ['Rising temperatures'] },
+                  { answer: 'Droughts', correct: ['Deforestation'] }
+                ]
+              },
+              {
+                type: 'Question::SelectAllThatApply',
+                text: 'Select all the impacts of deforestation.',
+                data: [
+                  { answer: 'Loss of biodiversity', correct: true },
+                  { answer: 'Increased CO2 levels', correct: true },
+                  { answer: 'Ozone depletion', correct: false }
+                ]
+              },
+              {
+                type: 'Question::Traditional',
+                text: 'What is the most significant contributor to climate change?',
+                data: [
+                  { answer: 'Burning fossil fuels', correct: true },
+                  { answer: 'Planting trees', correct: false },
+                  { answer: 'Recycling waste', correct: false }
+                ]
+              }
+            ]
+          }.to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['Climate Change', 'Polar Regions'],
+          subjects: ['Environment']
+        }
+      }
+    end
+
     let(:invalid_params) do
       { question: { text: '' } }
     end
@@ -383,6 +468,113 @@ RSpec.describe Api::QuestionsController, type: :controller do
 
         expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+    end
+
+    context 'when creating a Stimulus Case Study question' do
+      it 'increases the Question count for parent and subquestions' do
+        expect { post :create, params: stimulus_case_study_params }
+          .to change(Question, :count).by(8) # 1 parent + 3 subquestions
+      end
+
+      it 'creates a Stimulus Case Study parent question' do
+        post :create, params: stimulus_case_study_params
+        question = Question.find_by(type: 'Question::StimulusCaseStudy')
+
+        # Ensure the parent question is created with correct attributes
+        expect(question).not_to be_nil
+        expect(question.text).to eq('Analyze the impact of climate change on polar regions.')
+        expect(question.level).to eq('4')
+      end
+
+      context 'creates subquestions for the Stimulus Case Study' do
+        let(:question) { Question.find_by(type: 'Question::StimulusCaseStudy') }
+        let(:sub_questions) { question.child_questions }
+
+        before do
+          post :create, params: stimulus_case_study_params
+        end
+
+        it 'creates subquestions' do
+          expect(sub_questions.count).to eq(7)
+        end
+
+        context 'when subquestion type is BowTie' do
+          it 'creates a BowTie subquestion for the Stimulus Case Study' do
+            bow_tie_sub_question = sub_questions.find_by(type: 'Question::BowTie')
+            expect(bow_tie_sub_question.text).to eq('bow tie sub question')
+            expect(bow_tie_sub_question.data).to eq({
+                                                      "center" => { "answers" => [{ "answer" => "a", "correct" => true }], "label" => "Center Label" },
+                                                      "left" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Left Label" },
+                                                      "right" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Right Label" }
+                                                    })
+          end
+        end
+
+        context 'when subquestion type is Categorization' do
+          it 'creates a Categorization subquestion for the Stimulus Case Study' do
+            categorization_sub_question = sub_questions.find_by(type: 'Question::Categorization')
+            expect(categorization_sub_question.text).to eq('Categorize climate effects.')
+            expect(categorization_sub_question.data).to eq([
+                                                             { 'answer' => 'Rising temperatures', 'correct' => ['Global warming'] },
+                                                             { 'answer' => 'Severe weather', 'correct' => ['Climate change'] }
+                                                           ])
+          end
+        end
+
+        context 'when subquestion type is DragAndDrop' do
+          it 'creates a Drag and Drop subquestion for the Stimulus Case Study' do
+            drag_and_drop_sub_question = sub_questions.find_by(type: 'Question::DragAndDrop')
+            expect(drag_and_drop_sub_question.text).to eq('Drag the effects to their causes.')
+            expect(drag_and_drop_sub_question.data).to eq([
+                                                            { 'answer' => 'Glacial melting', 'correct' => true },
+                                                            { 'answer' => 'Wildfires', 'correct' => true }
+                                                          ])
+          end
+        end
+
+        context 'when subquestion type is Essay' do
+          it 'creates an Essay subquestion for the Stimulus Case Study' do
+            essay_sub_question = sub_questions.find_by(type: 'Question::Essay')
+            expect(essay_sub_question.text).to eq('What are the primary causes of climate change?')
+            expect(essay_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+          end
+        end
+
+        context 'when subquestion type is Matching' do
+          it 'creates a Matching subquestion for the Stimulus Case Study' do
+            matching_sub_question = sub_questions.find_by(type: 'Question::Matching')
+            expect(matching_sub_question.text).to eq('Match the effects with their corresponding causes.')
+            expect(matching_sub_question.data).to eq([
+                                                       { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
+                                                       { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
+                                                     ])
+          end
+        end
+
+        context 'when subquestion type is SelectAllThatApply' do
+          it 'creates a Select All That Apply subquestion for the Stimulus Case Study' do
+            select_all_sub_question = sub_questions.find_by(type: 'Question::SelectAllThatApply')
+            expect(select_all_sub_question.text).to eq('Select all the impacts of deforestation.')
+            expect(select_all_sub_question.data).to eq([
+                                                         { 'answer' => 'Loss of biodiversity', 'correct' => true },
+                                                         { 'answer' => 'Increased CO2 levels', 'correct' => true },
+                                                         { 'answer' => 'Ozone depletion', 'correct' => false }
+                                                       ])
+          end
+        end
+
+        context 'when subquestion type is Traditional' do
+          it 'creates a Traditional subquestion for the Stimulus Case Study' do
+            traditional_sub_question = sub_questions.find_by(type: 'Question::Traditional')
+            expect(traditional_sub_question.text).to eq('What is the most significant contributor to climate change?')
+            expect(traditional_sub_question.data).to eq([
+                                                          { 'answer' => 'Burning fossil fuels', 'correct' => true },
+                                                          { 'answer' => 'Planting trees', 'correct' => false },
+                                                          { 'answer' => 'Recycling waste', 'correct' => false }
+                                                        ])
+          end
+        end
       end
     end
 

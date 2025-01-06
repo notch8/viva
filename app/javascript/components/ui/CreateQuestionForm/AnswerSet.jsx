@@ -1,43 +1,72 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+  useState, useEffect, useMemo, useCallback, useRef
+} from 'react'
 import { Button } from 'react-bootstrap'
 import { Plus } from '@phosphor-icons/react'
 import AnswerField from './AnswerField'
 
 const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, numberOfDisplayedAnswers = 1 }) => {
-  const numberOfDisplayedAnswersArray = Array.from({ length: numberOfDisplayedAnswers }, () => ({ ...[{answer: '', correct: false}][0] }))
-  const [answers, setAnswers] = useState(numberOfDisplayedAnswersArray)
-  const hasAtLeastOneCorrectAnswer = answers.some(answer => answer.correct && answer.answer.trim() !== '')
-  const hasExactlyOneCorrectAnswer = answers.filter(answer => answer.correct && answer.answer.trim() !== '').length === 1
+  const initialAnswers = useMemo(
+    () => Array.from({ length: numberOfDisplayedAnswers }, () => ({ answer: '', correct: false })),
+    [numberOfDisplayedAnswers]
+  )
+
+  const [answers, setAnswers] = useState(initialAnswers)
+  const debounceTimeout = useRef(null)
 
   useEffect(() => {
     if (resetFields) {
-      setAnswers(numberOfDisplayedAnswersArray)
+      setAnswers(initialAnswers)
     }
-  }, [resetFields])
+  }, [resetFields, initialAnswers])
 
-  useEffect(() => {
-    getAnswerSet(answers)
-  }, [answers, getAnswerSet])
+  const notifyParent = useCallback((updatedAnswers) => {
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current)
+    }
 
-  const addAnswerField = () => {
-    setAnswers([...answers, { answer: '', correct: false }])
-  }
-
-  const updateAnswer = (index, field, value) => {
-    const updatedAnswers = answers.map((answer, i) => {
-      if (i === index) {
-        return { ...answer, [field]: value }
+    debounceTimeout.current = setTimeout(() => {
+      if (updatedAnswers.some(answer => answer.answer || answer.correct)) {
+        getAnswerSet(updatedAnswers)
       }
-      return answer
-    })
+    }, 300)
+  }, [getAnswerSet])
 
+  const addAnswerField = useCallback(() => {
+    const updatedAnswers = [...answers, { answer: '', correct: false }]
     setAnswers(updatedAnswers)
-  }
+    notifyParent(updatedAnswers)
+  }, [answers, notifyParent])
 
-  const removeAnswer = (index) => {
+  const updateAnswer = useCallback((index, field, value) => {
+    const updatedAnswers = answers.map((answer, i) =>
+      i === index ? { ...answer, [field]: value } : answer
+    )
+    setAnswers(updatedAnswers)
+    notifyParent(updatedAnswers)
+  }, [answers, notifyParent])
+
+  const removeAnswer = useCallback((index) => {
     const updatedAnswers = answers.filter((_, i) => i !== index)
     setAnswers(updatedAnswers)
-  }
+    notifyParent(updatedAnswers)
+  }, [answers, notifyParent])
+
+  const hasAtLeastOneCorrectAnswer = answers.some(answer =>
+    answer.correct && answer.answer.trim() !== ''
+  )
+
+  const hasExactlyOneCorrectAnswer = answers.filter(answer =>
+    answer.correct && answer.answer.trim() !== ''
+  ).length === 1
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimeout.current) {
+        clearTimeout(debounceTimeout.current)
+      }
+    }
+  }, [])
 
   return (
     <>
@@ -51,17 +80,15 @@ const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, n
       <Button
         variant='secondary'
         onClick={addAnswerField}
-        className='d-flex align-items-center'
+        className='d-flex align-items-center mt-2'
       >
         <Plus className='me-2' /> Add Answer
       </Button>
-
       {!hasExactlyOneCorrectAnswer && !multipleCorrectAnswers && answers.some(answer => answer.answer.trim() !== '') && (
         <div className='text-danger mt-2'>
           Please mark exactly one answer as correct.
         </div>
       )}
-
       {!hasAtLeastOneCorrectAnswer && multipleCorrectAnswers && answers.some(answer => answer.answer.trim() !== '') && (
         <div className='text-danger mt-2'>
           Please mark at least one non-empty answer as correct.
@@ -71,4 +98,4 @@ const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, n
   )
 }
 
-export default AnswerSet
+export default React.memo(AnswerSet)

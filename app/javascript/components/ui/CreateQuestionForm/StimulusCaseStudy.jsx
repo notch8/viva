@@ -43,7 +43,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
     case 'Categorization':
       return [{ answer: '', correct: [] }]
     case 'Essay':
-      return { html: '' }
+      return { html: '<p></p>' }
     default:
       return null
     }
@@ -77,7 +77,21 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
 
   const handleSubQuestionChange = useCallback((id, key, value) => {
     setSubQuestions(prev => {
-      const updated = prev.map(sq => (sq.id === id ? { ...sq, [key]: value } : sq))
+      const updated = prev.map(sq => {
+        if (sq.id === id) {
+          const updatedSq = { ...sq, [key]: value }
+          if (sq.type === 'Essay' && key === 'text') {
+            updatedSq.data = {
+              html: value
+                .split('\n')
+                .map((line, index) => `<p key=${index}>${line}</p>`)
+                .join(''),
+            }
+          }
+          return updatedSq
+        }
+        return sq
+      })
       updateParent(updated)
       return updated
     })

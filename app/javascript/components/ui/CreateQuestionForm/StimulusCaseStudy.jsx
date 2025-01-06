@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
+import { SUBQUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 import Bowtie from './Bowtie'
 import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
@@ -120,6 +121,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
               handleQuestionTypeSelection={(type) =>
                 handleSubQuestionTypeSelection(sq.id, type)
               }
+              QUESTION_TYPE_NAMES={SUBQUESTION_TYPE_NAMES}
             />
             {QuestionComponent && (
               <QuestionComponent
@@ -132,13 +134,15 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
                 }
               />
             )}
-            <Button
-              variant='danger'
-              className='mt-2'
-              onClick={() => removeSubQuestion(sq.id)}
-            >
-              Remove Subquestion
-            </Button>
+            <div>
+              <Button
+                variant='danger'
+                className='mt-2'
+                onClick={() => removeSubQuestion(sq.id)}
+              >
+                Remove Subquestion
+              </Button>
+            </div>
           </div>
         )
       })}

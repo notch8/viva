@@ -13,6 +13,7 @@ import LevelDropdown from './LevelDropdown'
 import Keyword from './Keyword'
 import Subject from './Subject'
 import ImageUploader from './ImageUploader'
+import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 
 const CreateQuestionForm = () => {
   const [questionType, setQuestionType] = useState('')
@@ -213,7 +214,7 @@ const CreateQuestionForm = () => {
   return (
     <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-      <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} />
+      <QuestionTypeDropdown handleQuestionTypeSelection={handleQuestionTypeSelection} QUESTION_TYPE_NAMES={QUESTION_TYPE_NAMES} />
 
       {QuestionComponent && (
         <div className='question-body bg-white mt-4 p-4'>

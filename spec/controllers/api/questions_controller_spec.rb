@@ -435,28 +435,38 @@ RSpec.describe Api::QuestionsController, type: :controller do
         expect(question.level).to eq('4')
       end
 
-      it 'creates subquestions for the Stimulus Case Study' do
-        post :create, params: stimulus_case_study_params
-        question = Question.find_by(type: 'Question::StimulusCaseStudy')
-        sub_questions = question.child_questions
+      context 'creates subquestions for the Stimulus Case Study' do
+        let(:question) { Question.find_by(type: 'Question::StimulusCaseStudy') }
+        let (:sub_questions) { question.child_questions }
 
-        # Ensure subquestions are created
-        expect(sub_questions.count).to eq(2)
+        before do 
+          post :create, params: stimulus_case_study_params
+        end
 
-        # Validate attributes of the first subquestion
-        first_sub_question = sub_questions.find_by(type: 'Question::Essay')
-        expect(first_sub_question.text).to eq('What are the primary causes of climate change?')
-        expect(first_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+        it 'creates sub questions' do
+          expect(sub_questions.count).to eq(2)
+        end
 
-        # Validate attributes of the second subquestion
-        second_sub_question = sub_questions.find_by(type: 'Question::Matching')
-        expect(second_sub_question.text).to eq('Match the effects with their corresponding causes.')
-        expect(second_sub_question.data).to eq(
-          [
-            { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
-            { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
-          ]
-        )
+        context 'when sub question type is Essay' do
+          it 'creates an Essay sub question for the Stimulus Case Study' do
+            essay_sub_question = sub_questions.find_by(type: 'Question::Essay')
+            expect(essay_sub_question.text).to eq('What are the primary causes of climate change?')
+            expect(essay_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+          end
+        end
+
+        context 'when sub question type is Matching' do
+          it 'creates a Matching sub question for the Stimulus Case Study' do
+            matching_sub_question = sub_questions.find_by(type: 'Question::Matching')
+            expect(matching_sub_question.text).to eq('Match the effects with their corresponding causes.')
+            expect(matching_sub_question.data).to eq(
+              [
+                { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
+                { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
+              ]
+            )
+          end
+        end
       end
     end
 

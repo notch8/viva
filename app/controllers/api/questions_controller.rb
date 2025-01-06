@@ -27,22 +27,12 @@ class Api::QuestionsController < ApplicationController
     processed_params = process_question_params(question_params)
 
     if processed_params[:type] == 'Question::StimulusCaseStudy'
-      begin
-        stimulus_case_study = process_stimulus_case_study_data(processed_params[:data], processed_params)
-        render json: { message: 'Stimulus Case Study saved successfully!', id: stimulus_case_study.id }, status: :created
-      rescue ArgumentError => e
-        render json: { errors: [e.message] }, status: :unprocessable_entity
-      end
+      handle_stimulus_case_study(processed_params)
       return
     end
 
-    # For all other question types
-    question = Question.new(processed_params.except(:keywords, :subjects, :images))
-    question.level = nil if question.level.blank?
-
-    handle_image_uploads(question)
-    handle_keywords(question)
-    handle_subjects(question)
+    question = build_question(processed_params)
+    handle_question_associations(question)
 
     if question.save
       render json: { message: 'Question saved successfully!', id: question.id }, status: :created
@@ -54,6 +44,27 @@ class Api::QuestionsController < ApplicationController
   end
 
   private
+
+  ##
+  # Creates an new instance of a regular question (non-case study question type).
+  #
+  # @param [Hash] data The processed parameters.
+  # @return [Question] New question object.
+  def build_question(processed_params)
+    question = Question.new(processed_params.except(:keywords, :subjects, :images))
+    question.level = nil if question.level.blank?
+    question
+  end
+
+  ##
+  # Passes the new Question to helper methods that handle the attachments (images, keywords, and subjects).
+  #
+  # @param [Question] data The new question object.
+  def handle_question_associations(question)
+    handle_image_uploads(question)
+    handle_keywords(question)
+    handle_subjects(question)
+  end
 
   ##
   # Processes and normalizes the question parameters.
@@ -85,54 +96,108 @@ class Api::QuestionsController < ApplicationController
 
     processed
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
+  ##
+  # Processes and normalizes the stimulus case study data and parameters.
+  #
+  # @param [String, Hash] data The raw stimulus case study data, either as a JSON string or a Hash.
+  # @param [ActionController::Parameters] params The parameters passed in the request.
+  # @return [Question] The saved stimulus case study object.
   def process_stimulus_case_study_data(data, params)
-    # Ensure data is parsed
+    data = parse_and_validate_data(data)
+    stimulus_case_study = create_stimulus_case_study(data, params)
+    handle_attachments(stimulus_case_study, params)
+    subquestions = map_and_validate_subquestions(data['subQuestions'])
+    stimulus_case_study.child_questions = subquestions if subquestions.present?
+    save_stimulus_case_study(stimulus_case_study)
+  end
+
+  ##
+  # Parses and validates the stimulus case study data.
+  #
+  # @param [String, Hash] data The raw stimulus case study data, either as a JSON string or a Hash.
+  # @return [Hash] The parsed and validated data.
+  # @raise [ArgumentError] If the data is blank.
+  def parse_and_validate_data(data)
     data = JSON.parse(data) if data.is_a?(String)
     raise ArgumentError, 'Stimulus Case Study data is required.' if data.blank?
+    data
+  end
 
-    # Create Stimulus Case Study instance
-    stimulus_case_study = Question::StimulusCaseStudy.new(
+  ##
+  # Creates a new StimulusCaseStudy object with the provided data and parameters.
+  #
+  # @param [Hash] data The parsed stimulus case study data.
+  # @param [ActionController::Parameters] params The parameters passed in the request.
+  # @return [Question] The newly created question object.
+  def create_stimulus_case_study(data, params)
+    Question::StimulusCaseStudy.new(
       text: data['text'],
       child_of_aggregation: false,
       level: params[:level]
     )
+  end
 
-    # Handle attachments (images, keywords, subjects)
-    params[:images]&.each do |uploaded_file|
+  ##
+  # Handles the attachments (images, keywords, and subjects) for the stimulus case study.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @param [ActionController::Parameters] params The parameters passed in the request.
+  def handle_attachments(stimulus_case_study, params)
+    handle_image_uploads_case_study(stimulus_case_study, params[:images])
+    handle_keywords_case_study(stimulus_case_study, params[:keywords])
+    handle_subjects_case_study(stimulus_case_study, params[:subjects])
+  end
+
+  ##
+  # Handles the image uploads for the stimulus case study.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @param [Array<UploadedFile>] images The array of uploaded image files.
+  def handle_image_uploads_case_study(stimulus_case_study, images)
+    images&.each do |uploaded_file|
       stimulus_case_study.images.build(file: uploaded_file)
     end
+  end
 
-    params[:keywords]&.each do |keyword_name|
+  ##
+  # Handles the keywords for the stimulus case study.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @param [Array<String>] keywords The array of keyword names.
+  def handle_keywords_case_study(stimulus_case_study, keywords)
+    keywords&.each do |keyword_name|
       keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
       stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
     end
+  end
 
-    params[:subjects]&.each do |subject_name|
+  ##
+  # Handles the subjects for the stimulus case study.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @param [Array<String>] subjects The array of subject names.
+  def handle_subjects_case_study(stimulus_case_study, subjects)
+    subjects&.each do |subject_name|
       subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
       stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject)
     end
+  end
 
-    # Map subquestions and validate data
-    subquestions = data['subQuestions']&.map do |subquestion_data|
+  ##
+  # Maps and validates the subquestions for the stimulus case study.
+  #
+  # @param [Array<Hash>] subquestions_data The array of subquestion data.
+  # @return [Array<Question>] The array of validated subquestion objects.
+  # @raise [ArgumentError] If a subquestion type is invalid.
+  def map_and_validate_subquestions(subquestions_data)
+    subquestions_data&.map do |subquestion_data|
       type = normalize_type(subquestion_data['type'])
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
 
-      processed_data = case type
-                       when 'Question::Matching'
-                         process_matching_data(subquestion_data['data'])
-                       when 'Question::BowTie'
-                         # Initialize default Bow Tie structure if empty
-                         default_bow_tie_data = {
-                           'left' => { 'answers' => [] },
-                           'right' => { 'answers' => [] },
-                           'center' => { 'answers' => [] }
-                         }
-                         process_bow_tie_data(subquestion_data['data']) || default_bow_tie_data
-                       else
-                         subquestion_data['data']
-                       end
-
+      process_subquestion_data(type, subquestion_data['data'])
       Question.new(
         type:,
         text: subquestion_data['text'],
@@ -140,15 +205,53 @@ class Api::QuestionsController < ApplicationController
         child_of_aggregation: true
       )
     end
+  end
 
-    stimulus_case_study.child_questions = subquestions if subquestions.present?
+  ##
+  # Processes the data for a subquestion based on its type.
+  #
+  # @param [String] type The type of the subquestion.
+  # @param [Hash] data The raw data for the subquestion.
+  # @return [Hash] The processed data for the subquestion.
+  def process_subquestion_data(type, data)
+    case type
+    when 'Question::Matching'
+      process_matching_data(data)
+    when 'Question::BowTie'
+      default_bow_tie_data = {
+        'left' => { 'answers' => [] },
+        'right' => { 'answers' => [] },
+        'center' => { 'answers' => [] }
+      }
+      process_bow_tie_data(data) || default_bow_tie_data
+    else
+      data
+    end
+  end
 
+  ##
+  # Saves the stimulus case study object.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @return [Question] The saved stimulus case study object.
+  # @raise [ArgumentError] If there is an error saving the stimulus case study.
+  def save_stimulus_case_study(stimulus_case_study)
     raise ArgumentError, "Error saving Stimulus Case Study: #{stimulus_case_study.errors.full_messages.join(', ')}" unless stimulus_case_study.save
     stimulus_case_study
   end
 
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
+  ##
+  # Handles creation of Stimulus Case Study type questions.
+  #
+  # @param [Hash] data The input data.
+  # @raise [ArgumentError] If the data is invalid.
+  # @return [Hash] Correctness flags.
+  def handle_stimulus_case_study(processed_params)
+    stimulus_case_study = process_stimulus_case_study_data(processed_params[:data], processed_params)
+    render json: { message: 'Stimulus Case Study saved successfully!', id: stimulus_case_study.id }, status: :created
+  rescue ArgumentError => e
+    render json: { errors: [e.message] }, status: :unprocessable_entity
+  end
 
   ##
   # Maps user-friendly question types to their full class names.

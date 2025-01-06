@@ -2,6 +2,7 @@ import React, {
   useState, useEffect, useCallback, useMemo, useRef
 } from 'react'
 import { Button } from 'react-bootstrap'
+import { SUBQUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 import Bowtie from './Bowtie'
 import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
@@ -12,7 +13,7 @@ import SelectAllThatApply from './SelectAllThatApply'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => {
   const [subQuestions, setSubQuestions] = useState([])
   const updateTimeout = useRef(null)
 
@@ -135,6 +136,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
               handleQuestionTypeSelection={(type) =>
                 handleSubQuestionTypeSelection(sq.id, type)
               }
+              QUESTION_TYPE_NAMES={SUBQUESTION_TYPE_NAMES}
             />
             {QuestionComponent && (
               <QuestionComponent
@@ -148,13 +150,15 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
                 resetFields={resetFields}
               />
             )}
-            <Button
-              variant='danger'
-              className='mt-2'
-              onClick={() => removeSubQuestion(sq.id)}
-            >
-              Remove Subquestion
-            </Button>
+            <div>
+              <Button
+                variant='danger'
+                className='mt-2'
+                onClick={() => removeSubQuestion(sq.id)}
+              >
+                Remove Subquestion
+              </Button>
+            </div>
           </div>
         )
       })}

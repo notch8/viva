@@ -475,7 +475,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
             bow_tie_sub_question = sub_questions.find_by(type: 'Question::BowTie')
             expect(bow_tie_sub_question.text).to eq('bow tie sub question')
             expect(bow_tie_sub_question.data).to eq({ "center" => { "answers" => [{ "answer" => "a", "correct" => true }], "label" => "Center Label" },
-                                                      "left" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Left Label" }, "right" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Right Label" } })
+                                                      "left" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Left Label" },
+                                                      "right" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Right Label" } })
           end
         end
 

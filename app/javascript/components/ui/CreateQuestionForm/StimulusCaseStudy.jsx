@@ -11,7 +11,7 @@ import SelectAllThatApply from './SelectAllThatApply'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => {
   const [subQuestions, setSubQuestions] = useState([])
 
   const COMPONENT_MAP = {

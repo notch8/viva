@@ -197,7 +197,7 @@ class Api::QuestionsController < ApplicationController
       type = normalize_type(subquestion_data['type'])
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
 
-      process_subquestion_data(type, subquestion_data['data'])
+      processed_data = process_subquestion_data(type, subquestion_data['data'])
       Question.new(
         type:,
         text: subquestion_data['text'],

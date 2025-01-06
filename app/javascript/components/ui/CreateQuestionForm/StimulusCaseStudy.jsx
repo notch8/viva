@@ -13,7 +13,7 @@ import SelectAllThatApply from './SelectAllThatApply'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => {
+const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
   const [subQuestions, setSubQuestions] = useState([])
   const updateTimeout = useRef(null)
 

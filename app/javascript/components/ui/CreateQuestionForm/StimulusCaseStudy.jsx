@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, {
+  useState, useEffect, useCallback, useMemo, useRef
+} from 'react'
 import { Button } from 'react-bootstrap'
 import { SUBQUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 import Bowtie from './Bowtie'
@@ -13,8 +15,9 @@ import QuestionText from './QuestionText'
 
 const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => {
   const [subQuestions, setSubQuestions] = useState([])
+  const updateTimeout = useRef(null)
 
-  const COMPONENT_MAP = {
+  const COMPONENT_MAP = useMemo(() => ({
     'Bow Tie': Bowtie,
     'Categorization': Categorization,
     'Drag and Drop': DragAndDrop,
@@ -22,90 +25,102 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => 
     'Matching': Matching,
     'Multiple Choice': MultipleChoice,
     'Select All That Apply': SelectAllThatApply,
-  }
+  }), [])
 
-  const initializeDataForType = (type) => {
+  const initializeDataForType = useCallback((type) => {
     switch (type) {
     case 'Multiple Choice':
     case 'Select All That Apply':
     case 'Drag and Drop':
-      return [{ answer: '', correct: false }] // Default answer structure
+      return [{ answer: '', correct: false }]
     case 'Bow Tie':
-      return { center: { answers: [] }, left: { answers: [] }, right: { answers: [] } }
-    case 'Matching':
-    case 'Categorization':
-      return [{ answer: '', correct: [] }] // Default structure for pairings
-    case 'Essay':
-      return { html: '' } // Default structure for essays
-    default:
-      return null // Default for unsupported types
-    }
-  }
-
-  const formatDataForType = (subQuestion) => {
-    const { type, data, text } = subQuestion
-
-    switch (type) {
-    case 'Essay':
       return {
-        html: text
-          .split('\n')
-          .map((line) => `<p>${line}</p>`)
-          .join(''),
+        center: { label: 'Center Label', answers: [] },
+        left: { label: 'Left Label', answers: [] },
+        right: { label: 'Right Label', answers: [] }
       }
-    case 'Multiple Choice':
-    case 'Select All That Apply':
-    case 'Drag and Drop':
-      return Array.isArray(data)
-        ? data.filter((item) => item.answer.trim() !== '')
-        : []
     case 'Matching':
+      return [{ answer: '', correct: '' }]
     case 'Categorization':
-      return Array.isArray(data)
-        ? data.map((pair) => ({
-          answer: pair.answer.trim(),
-          correct: Array.isArray(pair.correct) ? pair.correct.map((item) => item.trim()) : [],
-        }))
-        : []
-    case 'Bow Tie':
-      return data
+      return [{ answer: '', correct: [] }]
+    case 'Essay':
+      return { html: '<p></p>' }
     default:
-      return data
+      return null
     }
-  }
+  }, [])
 
-  const addSubQuestion = () => {
-    setSubQuestions((prev) => [
-      ...prev,
-      { id: Date.now(), type: '', text: '', data: null },
-    ])
-  }
+  const updateParent = useCallback((updatedSubQuestions) => {
+    if (updateTimeout.current) {
+      clearTimeout(updateTimeout.current)
+    }
 
-  const handleSubQuestionTypeSelection = (id, type) => {
-    setSubQuestions((prev) =>
-      prev.map((sq) =>
+    updateTimeout.current = setTimeout(() => {
+      onDataChange({
+        text: questionText,
+        subQuestions: updatedSubQuestions.map(sq => ({
+          ...sq,
+          data: sq.data
+        }))
+      })
+    }, 300)
+  }, [questionText, onDataChange])
+
+  const handleSubQuestionTypeSelection = useCallback((id, type) => {
+    setSubQuestions(prev => {
+      const updated = prev.map((sq) =>
         sq.id === id ? { ...sq, type, data: initializeDataForType(type) } : sq
       )
-    )
-  }
+      updateParent(updated)
+      return updated
+    })
+  }, [initializeDataForType, updateParent])
 
-  const handleSubQuestionChange = (id, key, value) => {
-    setSubQuestions((prev) =>
-      prev.map((sq) => (sq.id === id ? { ...sq, [key]: value } : sq))
-    )
-  }
+  const handleSubQuestionChange = useCallback((id, key, value) => {
+    setSubQuestions(prev => {
+      const updated = prev.map(sq => {
+        if (sq.id === id) {
+          const updatedSq = { ...sq, [key]: value }
+          if (sq.type === 'Essay' && key === 'text') {
+            updatedSq.data = {
+              html: value
+                .split('\n')
+                .map((line, index) => `<p key=${index}>${line}</p>`)
+                .join(''),
+            }
+          }
+          return updatedSq
+        }
+        return sq
+      })
+      updateParent(updated)
+      return updated
+    })
+  }, [updateParent])
 
-  const removeSubQuestion = (id) => {
-    setSubQuestions((prev) => prev.filter((sq) => sq.id !== id))
-  }
+  const addSubQuestion = useCallback(() => {
+    setSubQuestions(prev => {
+      const updated = [...prev, { id: Date.now(), type: '', text: '', data: null }]
+      updateParent(updated)
+      return updated
+    })
+  }, [updateParent])
+
+  const removeSubQuestion = useCallback((id) => {
+    setSubQuestions(prev => {
+      const updated = prev.filter((sq) => sq.id !== id)
+      updateParent(updated)
+      return updated
+    })
+  }, [updateParent])
 
   useEffect(() => {
-    const formattedSubQuestions = subQuestions.map((sq) => ({
-      ...sq,
-      data: formatDataForType(sq),
-    }))
-    onDataChange({ text: questionText, subQuestions: formattedSubQuestions })
-  }, [questionText, subQuestions, onDataChange])
+    return () => {
+      if (updateTimeout.current) {
+        clearTimeout(updateTimeout.current)
+      }
+    }
+  }, [])
 
   return (
     <div className='stimulus-case-study-form'>
@@ -132,6 +147,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => 
                 onDataChange={(data) =>
                   handleSubQuestionChange(sq.id, 'data', data)
                 }
+                resetFields={resetFields}
               />
             )}
             <div>
@@ -159,5 +175,4 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange }) => 
   )
 }
 
-export default StimulusCaseStudy
-
+export default React.memo(StimulusCaseStudy)

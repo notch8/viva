@@ -1,25 +1,35 @@
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
 const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  const [answers, setAnswers] = useState([])
+  const updateTimeout = useRef(null)
 
-  const getAnswers = (answersArray) => {
-    setAnswers(answersArray)
-  }
+  const updateParent = useCallback((updatedAnswers) => {
+    if (updateTimeout.current) {
+      clearTimeout(updateTimeout.current)
+    }
 
-  useEffect(() => {
-    onDataChange(answers)
-  }, [answers, onDataChange])
+    updateTimeout.current = setTimeout(() => {
+      onDataChange(updatedAnswers)
+    }, 300)
+  }, [onDataChange])
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (updateTimeout.current) {
+        clearTimeout(updateTimeout.current)
+      }
+    }
+  }, [])
 
   return (
     <>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
-
       <AnswerSet
         resetFields={resetFields}
-        getAnswerSet={getAnswers}
+        getAnswerSet={updateParent}
         title='Answers'
         multipleCorrectAnswers={true}
         numberOfDisplayedAnswers={1}
@@ -28,4 +38,4 @@ const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields
   )
 }
 
-export default DragAndDrop
+export default React.memo(DragAndDrop)

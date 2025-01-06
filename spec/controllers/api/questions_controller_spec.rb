@@ -169,6 +169,24 @@ RSpec.describe Api::QuestionsController, type: :controller do
             text: 'Analyze the impact of climate change on polar regions.',
             subQuestions: [
               {
+                type: 'Question::BowTie',
+                text: 'bow tie sub question',
+                data: {
+                  center: {
+                    label: "Center Label",
+                    answers: [{ answer: "a", correct: true }]
+                  },
+                  left: {
+                    label: "Left Label",
+                    answers: [{ answer: "v", correct: true }]
+                  },
+                  right: {
+                    label: "Right Label",
+                    answers: [{ answer: "v", correct: true }]
+                  }
+                }
+              },
+              {
                 type: 'Question::Essay',
                 text: 'What are the primary causes of climate change?',
                 data: { html: '<p>Discuss the primary causes of climate change.</p>' }
@@ -422,7 +440,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
     context 'when creating a Stimulus Case Study question' do
       it 'increases the Question count for parent and subquestions' do
         expect { post :create, params: stimulus_case_study_params }
-          .to change(Question, :count).by(3) # 1 parent + 2 subquestions
+          .to change(Question, :count).by(4) # 1 parent + 3 subquestions
       end
 
       it 'creates a Stimulus Case Study parent question' do
@@ -435,28 +453,53 @@ RSpec.describe Api::QuestionsController, type: :controller do
         expect(question.level).to eq('4')
       end
 
-      it 'creates subquestions for the Stimulus Case Study' do
-        post :create, params: stimulus_case_study_params
-        question = Question.find_by(type: 'Question::StimulusCaseStudy')
-        sub_questions = question.child_questions
+      context 'creates subquestions for the Stimulus Case Study' do
+        # { key: 'Categorization', value: 'Categorization' },
+        # { key: 'Drag and Drop', value: 'Drag and Drop' },
+        # { key: 'Traditional', value: 'Multiple Choice' },
+        # { key: 'Select All That Apply', value: 'Select All That Apply' }
 
-        # Ensure subquestions are created
-        expect(sub_questions.count).to eq(2)
+        let(:question) { Question.find_by(type: 'Question::StimulusCaseStudy') }
+        let(:sub_questions) { question.child_questions }
 
-        # Validate attributes of the first subquestion
-        first_sub_question = sub_questions.find_by(type: 'Question::Essay')
-        expect(first_sub_question.text).to eq('What are the primary causes of climate change?')
-        expect(first_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+        before do
+          post :create, params: stimulus_case_study_params
+        end
 
-        # Validate attributes of the second subquestion
-        second_sub_question = sub_questions.find_by(type: 'Question::Matching')
-        expect(second_sub_question.text).to eq('Match the effects with their corresponding causes.')
-        expect(second_sub_question.data).to eq(
-          [
-            { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
-            { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
-          ]
-        )
+        it 'creates sub questions' do
+          expect(sub_questions.count).to eq(3)
+        end
+
+        context 'when sub question type is BowTie' do
+          it 'creates an BowTie sub question for the Stimulus Case Study' do
+            bow_tie_sub_question = sub_questions.find_by(type: 'Question::BowTie')
+            expect(bow_tie_sub_question.text).to eq('bow tie sub question')
+            expect(bow_tie_sub_question.data).to eq({ "center" => { "answers" => [{ "answer" => "a", "correct" => true }], "label" => "Center Label" },
+                                                      "left" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Left Label" },
+                                                      "right" => { "answers" => [{ "answer" => "v", "correct" => true }], "label" => "Right Label" } })
+          end
+        end
+
+        context 'when sub question type is Essay' do
+          it 'creates an Essay sub question for the Stimulus Case Study' do
+            essay_sub_question = sub_questions.find_by(type: 'Question::Essay')
+            expect(essay_sub_question.text).to eq('What are the primary causes of climate change?')
+            expect(essay_sub_question.data).to eq({ 'html' => '<p>Discuss the primary causes of climate change.</p>' })
+          end
+        end
+
+        context 'when sub question type is Matching' do
+          it 'creates a Matching sub question for the Stimulus Case Study' do
+            matching_sub_question = sub_questions.find_by(type: 'Question::Matching')
+            expect(matching_sub_question.text).to eq('Match the effects with their corresponding causes.')
+            expect(matching_sub_question.data).to eq(
+              [
+                { 'answer' => 'Melting glaciers', 'correct' => ['Rising temperatures'] },
+                { 'answer' => 'Droughts', 'correct' => ['Deforestation'] }
+              ]
+            )
+          end
+        end
       end
     end
 

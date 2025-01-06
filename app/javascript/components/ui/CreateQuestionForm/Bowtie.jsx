@@ -1,40 +1,54 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
 const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
-  const [centerAnswers, setCenterAnswers] = useState({})
-  const [rightAnswers, setRightAnswers] = useState({})
-  const [leftAnswers, setLeftAnswers] = useState({})
+  const [centerAnswers, setCenterAnswers] = useState([])
+  const [rightAnswers, setRightAnswers] = useState([])
+  const [leftAnswers, setLeftAnswers] = useState([])
+  const updateTimeout = useRef(null)
 
-  useEffect(() => {
-    const formattedAnswers = {center: {}, left: {}, right: {}}
-    Object.assign(formattedAnswers,
-      {
-        center: { label: 'Center Label', answers: centerAnswers },
-        left: { label: 'Left Label', answers: leftAnswers },
-        right: { label: 'Right Label', answers: rightAnswers }
+  const updateParent = useCallback((center, left, right) => {
+    if (updateTimeout.current) {
+      clearTimeout(updateTimeout.current)
+    }
+
+    updateTimeout.current = setTimeout(() => {
+      const formattedAnswers = {
+        center: { label: 'Center Label', answers: center },
+        left: { label: 'Left Label', answers: left },
+        right: { label: 'Right Label', answers: right }
       }
-    )
-    onDataChange(formattedAnswers)
-  }, [centerAnswers, rightAnswers, leftAnswers, onDataChange])
+      onDataChange(formattedAnswers)
+    }, 300)
+  }, [onDataChange])
 
-  const centerColumnAnswers = (answersArray) => {
+  const centerColumnAnswers = useCallback((answersArray) => {
     setCenterAnswers(answersArray)
-  }
+    updateParent(answersArray, leftAnswers, rightAnswers)
+  }, [leftAnswers, rightAnswers, updateParent])
 
-  const leftColumnAnswers = (answersArray) => {
+  const leftColumnAnswers = useCallback((answersArray) => {
     setLeftAnswers(answersArray)
-  }
+    updateParent(centerAnswers, answersArray, rightAnswers)
+  }, [centerAnswers, rightAnswers, updateParent])
 
-  const rightColumnAnswers = (answersArray) => {
+  const rightColumnAnswers = useCallback((answersArray) => {
     setRightAnswers(answersArray)
-  }
+    updateParent(centerAnswers, leftAnswers, answersArray)
+  }, [centerAnswers, leftAnswers, updateParent])
+
+  React.useEffect(() => {
+    return () => {
+      if (updateTimeout.current) {
+        clearTimeout(updateTimeout.current)
+      }
+    }
+  }, [])
 
   return (
     <>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
-
       <AnswerSet
         resetFields={resetFields}
         getAnswerSet={centerColumnAnswers}
@@ -60,4 +74,4 @@ const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) =
   )
 }
 
-export default Bowtie
+export default React.memo(Bowtie)

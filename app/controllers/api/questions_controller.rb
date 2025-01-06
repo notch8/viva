@@ -201,7 +201,7 @@ class Api::QuestionsController < ApplicationController
       Question.new(
         type:,
         text: subquestion_data['text'],
-        data: subquestion_data['data'].presence || {},
+        data: processed_data,
         child_of_aggregation: true
       )
     end
@@ -375,7 +375,14 @@ class Api::QuestionsController < ApplicationController
     raise ArgumentError, 'Data for Matching question is required to be a non-empty array.' if data.blank?
 
     parsed_data = parse_matching_data(data)
-    clean_matching_data(parsed_data)
+    parsed_data.map do |pair|
+      answer = pair['answer'].to_s.strip
+      correct = Array(pair['correct']).map(&:to_s).map(&:strip)
+
+      raise ArgumentError, 'Matching pairs must have both an answer and at least one correct match.' if answer.blank? || correct.empty?
+
+      { 'answer' => answer, 'correct' => correct }
+    end
   end
 
   ##

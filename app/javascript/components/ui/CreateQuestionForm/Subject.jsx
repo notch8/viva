@@ -11,7 +11,8 @@ const Subject = ({ subjects, handleAddSubject, handleRemoveSubject }) => {
 
   const submitSubject = () => {
     const trimmedSubject = subject.trim()
-    if (trimmedSubject.toLowerCase() && !subjects.includes(trimmedSubject.toLowerCase())) {
+    const normalizedSubject = subjects.map(sub => sub.toLowerCase())
+    if (trimmedSubject.toLowerCase() && !normalizedSubject.includes(trimmedSubject.toLowerCase())) {
       handleAddSubject(trimmedSubject)
       setSubject('') // Clear input after adding
     } else {

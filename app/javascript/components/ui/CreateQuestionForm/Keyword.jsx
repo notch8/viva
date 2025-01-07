@@ -11,7 +11,8 @@ const Keyword = ({ keywords, handleAddKeyword, handleRemoveKeyword }) => {
 
   const submitKeyword = () => {
     const trimmedKeyword = keyword.trim()
-    if (trimmedKeyword.toLowerCase() && !keywords.includes(trimmedKeyword.toLowerCase())) {
+    const normalizedKeyword = keywords.map(key => key.toLowerCase())
+    if (trimmedKeyword.toLowerCase() && !normalizedKeyword.includes(trimmedKeyword.toLowerCase())) {
       handleAddKeyword(trimmedKeyword)
       setKeyword('') // Clear input after adding
     } else {

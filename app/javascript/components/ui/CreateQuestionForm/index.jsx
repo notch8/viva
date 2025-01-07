@@ -40,7 +40,15 @@ const CreateQuestionForm = () => {
 
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
-    setData({ text: '', subQuestions: [] }) // Reset data
+    const defaultData = {
+      'Bow Tie': {
+        center: { label: '', answers: [{ answer: '', correct: false }] },
+        left: { label: '', answers: [{ answer: '', correct: false }] },
+        right: { label: '', answers: [{ answer: '', correct: false }] }
+      }
+    }
+
+    setData(defaultData[type] || { text: '', subQuestions: [] }) // Reset data
     setResetFields(true)
   }
 
@@ -128,9 +136,10 @@ const CreateQuestionForm = () => {
     setLevel('')
     setKeywords([])
     setSubjects([])
-    setData(null)
+    setData(null) // Reset data to null or empty
     setResetFields(true)
   }
+
 
   const isSubmitDisabled = () => {
     if (!questionText || images.some((image) => !image.isValid)) return true
@@ -142,27 +151,40 @@ const CreateQuestionForm = () => {
     }
 
     if (questionType === 'Bow Tie') {
+      // Ensure data structure exists and has valid labels and answers
+      if (
+        !data?.center?.label?.trim() || // Center label must be a non-blank string
+        !data?.left?.label?.trim() || // Left label must be a non-blank string
+        !data?.right?.label?.trim() || // Right label must be a non-blank string
+        !data?.center?.answers || // Center answers must exist
+        !data?.left?.answers || // Left answers must exist
+        !data?.right?.answers // Right answers must exist
+      ) {
+        return true // Disable submit if structure is invalid
+      }
+
+      // Check that answers meet requirements
       const oneCenterAnswerSelected = data.center.answers.filter(
-        (answer) => answer.correct === true
+        (answer) => answer.correct === true && answer.answer.trim()
       )
       const oneOrMoreLeftAnswersSelected = data.left.answers.filter(
-        (answer) => answer.correct === true
+        (answer) => answer.correct === true && answer.answer.trim()
       )
       const oneOrMoreRightAnswersSelected = data.right.answers.filter(
-        (answer) => answer.correct === true
+        (answer) => answer.correct === true && answer.answer.trim()
       )
 
+      // Ensure there is one correct answer in center and at least one in left and right
       if (
-        !data.center.answers[0].answer ||
-        !data.left.answers[0].answer ||
-        !data.right.answers[0].answer ||
-        oneCenterAnswerSelected.length !== 1 ||
-        !(oneOrMoreLeftAnswersSelected.length >= 1) ||
-        !(oneOrMoreRightAnswersSelected.length >= 1)
+        oneCenterAnswerSelected.length !== 1 || // Exactly one correct answer in center
+        oneOrMoreLeftAnswersSelected.length < 1 || // At least one correct answer in left
+        oneOrMoreRightAnswersSelected.length < 1 // At least one correct answer in right
       ) {
-        return true
+        return true // Disable submit if validation fails
       }
     }
+
+
 
     if (questionType === 'Categorization') {
       if (!data || !Array.isArray(data)) return true

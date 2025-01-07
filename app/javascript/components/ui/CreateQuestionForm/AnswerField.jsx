@@ -1,7 +1,7 @@
 import React from 'react'
 import { Form, Button } from 'react-bootstrap'
 
-const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 'checkbox' }) => {
+const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 'radio' }) => {
   return (
     <Form.Group className='my-3'>
       <Form.Label className='h6'>{title}</Form.Label>
@@ -17,7 +17,22 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 
           <Form.Check
             type={buttonType}
             checked={answer.correct}
-            onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
+            onClick={() => {
+              if (buttonType === 'radio') {
+                if (answer.correct) {
+                  // Deselect the current radio button
+                  updateAnswer(index, 'correct', false)
+                } else {
+                  // Ensure no other radio button is selected before selecting this one
+                  if (!answers.some(a => a.correct)) {
+                    updateAnswer(index, 'correct', true)
+                  }
+                }
+              } else if (buttonType === 'checkbox') {
+                // Toggle the checkbox state
+                updateAnswer(index, 'correct', !answer.correct)
+              }
+            }}
             label='Correct'
           />
           <Button

@@ -17,9 +17,27 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 
           <Form.Check
             type={buttonType}
             checked={answer.correct}
-            onChange={(e) => updateAnswer(index, 'correct', e.target.checked)}
+            onChange={(e) => {
+              if (buttonType === 'radio') {
+                // Toggle behavior for radio buttons
+                updateAnswer(index, 'correct', !answer.correct)
+              } else {
+                // Standard checkbox behavior
+                updateAnswer(index, 'correct', e.target.checked)
+              }
+            }}
             label='Correct'
           />
+          {buttonType === 'radio' && answer.correct && (
+            <Button
+              variant='link'
+              size='sm'
+              className='text-danger ms-2 p-0'
+              onClick={() => updateAnswer(index, 'correct', false)}
+            >
+              Unset
+            </Button>
+          )}
           <Button
             variant='danger'
             size='sm'

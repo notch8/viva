@@ -67,6 +67,7 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
               variant='danger'
               size='sm'
               onClick={() => removePair(index)}
+              disabled={pairs.length === 1}
             >
               Remove
             </Button>

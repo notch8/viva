@@ -75,7 +75,12 @@ const Categorization = ({ questionText, handleTextChange, onDataChange, resetFie
               onChange={(e) => updateCategory(index, 'answer', e.target.value)}
               className='me-2'
             />
-            <Button variant='danger' size='sm' onClick={() => removeCategory(index)}>
+            <Button
+              variant='danger'
+              size='sm'
+              onClick={() => removeCategory(index)}
+              disabled={categories.length === 1}
+            >
               Remove Category
             </Button>
           </div>
@@ -94,6 +99,7 @@ const Categorization = ({ questionText, handleTextChange, onDataChange, resetFie
                   variant='danger'
                   size='sm'
                   onClick={() => removeCorrectValue(index, subIndex)}
+                  disabled={category.correct.length === 1}
                 >
                   Remove
                 </Button>

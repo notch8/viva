@@ -142,96 +142,133 @@ const CreateQuestionForm = () => {
 
 
   const isSubmitDisabled = () => {
-    if (!questionText?.trim() || images.some((image) => !image.isValid)) return true
-
+    // Ensure the parent question text box is populated
+    if (!questionText?.trim() || images.some((image) => !image.isValid)) return true;
+  
+    // Main question type validations (when selected as a regular question)
+    const validateQuestionType = (type, questionData) => {
+      switch (type) {
+        case 'Bow Tie': {
+          const { center, left, right } = questionData || {};
+          if (
+            !center?.label?.trim() ||
+            !left?.label?.trim() ||
+            !right?.label?.trim() ||
+            !center?.answers ||
+            !left?.answers ||
+            !right?.answers
+          ) {
+            return true; // Missing required labels or answers
+          }
+    
+          const oneCenterAnswerSelected = center.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          );
+          const oneOrMoreLeftAnswersSelected = left.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          );
+          const oneOrMoreRightAnswersSelected = right.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          );
+    
+          if (
+            oneCenterAnswerSelected.length !== 1 ||
+            oneOrMoreLeftAnswersSelected.length < 1 ||
+            oneOrMoreRightAnswersSelected.length < 1
+          ) {
+            return true; // Bow Tie validation fails
+          }
+          break;
+        }
+    
+        case 'Categorization': {
+          if (!questionData || !Array.isArray(questionData)) return true;
+          const isInvalid = questionData.some(
+            (item) =>
+              !item.answer.trim() || // Ensure category/answer has text
+              !item.correct || // Ensure 'correct' exists
+              !Array.isArray(item.correct) || // Ensure 'correct' is an array
+              item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
+          );
+          return isInvalid;
+        }
+    
+        case 'Matching': {
+          if (!questionData || !Array.isArray(questionData)) return true;
+          const isInvalid = questionData.some(
+            (pair) => !pair.answer.trim() || !pair.correct.trim()
+          );
+          return isInvalid;
+        }
+    
+        case 'Drag and Drop': {
+          if (
+            !questionData ||
+            !Array.isArray(questionData) ||
+            !questionData.some((item) => item.correct && item.answer.trim())
+          ) {
+            return true; // Must have at least one correct answer
+          }
+          break;
+        }
+    
+        case 'Multiple Choice': {
+          if (!Array.isArray(questionData)) return true; // Ensure questionData is an array
+          const correctCount = questionData.filter((item) => item.correct).length;
+          if (correctCount !== 1) return true; // Must have exactly 1 correct answer
+          break;
+        }
+    
+        case 'Select All That Apply': {
+          if (!Array.isArray(questionData)) return true; // Ensure questionData is an array
+          const correctCount = questionData.filter((item) => item.correct).length;
+          if (correctCount < 1) return true; // Must have at least 1 correct answer
+          break;
+        }
+    
+        case 'Essay': {
+          if (!questionData || !questionData.html?.trim()) {
+            return true; // Essay must have valid content
+          }
+          break;
+        }
+    
+        default:
+          return false; // Assume other types are valid
+      }
+    
+      return false; // All validations passed
+    };
+    
+  
+    // Validate the main question type (if it's not Stimulus Case Study)
+    if (questionType !== 'Stimulus Case Study') {
+      return validateQuestionType(questionType, data);
+    }
+  
+    // Stimulus Case Study validations (parent and subquestions)
     if (questionType === 'Stimulus Case Study') {
+      // Check parent question text
       if (!data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0) {
-        return true
+        return true;
       }
-
-      // Validate each subquestion
+  
+      // Validate each subquestion dynamically based on its type
       const invalidSubQuestions = data.subQuestions.some((sq) => {
-        return !sq.type || !sq.text?.trim() // Ensure each subquestion has a type and non-empty text
-      })
-
-      return invalidSubQuestions
+        if (!sq.type || !sq.text?.trim()) {
+          return true; // Each subquestion must have a type and non-empty text
+        }
+  
+        // Type-specific validation for each subquestion
+        return validateQuestionType(sq.type, sq.data);
+      });
+  
+      return invalidSubQuestions; // Return true if any subquestions are invalid
     }
-
-    if (questionType === 'Bow Tie') {
-      if (
-        !data?.center?.label?.trim() || // Center label must be a non-blank string
-        !data?.left?.label?.trim() || // Left label must be a non-blank string
-        !data?.right?.label?.trim() || // Right label must be a non-blank string
-        !data?.center?.answers || // Center answers must exist
-        !data?.left?.answers || // Left answers must exist
-        !data?.right?.answers // Right answers must exist
-      ) {
-        return true // Disable submit if structure is invalid
-      }
-
-      const oneCenterAnswerSelected = data.center.answers.filter(
-        (answer) => answer.correct === true && answer.answer.trim()
-      )
-      const oneOrMoreLeftAnswersSelected = data.left.answers.filter(
-        (answer) => answer.correct === true && answer.answer.trim()
-      )
-      const oneOrMoreRightAnswersSelected = data.right.answers.filter(
-        (answer) => answer.correct === true && answer.answer.trim()
-      )
-
-      if (
-        oneCenterAnswerSelected.length !== 1 || // Exactly one correct answer in center
-        oneOrMoreLeftAnswersSelected.length < 1 || // At least one correct answer in left
-        oneOrMoreRightAnswersSelected.length < 1 // At least one correct answer in right
-      ) {
-        return true // Disable submit if validation fails
-      }
-    }
-
-    if (questionType === 'Categorization') {
-      if (!data || !Array.isArray(data)) return true
-      const isInvalid = data.some(
-        (item) =>
-          !item.answer.trim() || // Ensure category/answer has text
-          !item.correct || // Ensure 'correct' exists
-          !Array.isArray(item.correct) || // Ensure 'correct' is an array
-          item.correct.some((match) => !match.trim()) // Ensure all correct matches are non-empty
-      )
-      if (isInvalid) return true
-    }
-
-    if (questionType === 'Drag and Drop') {
-      if (
-        !data ||
-        !Array.isArray(data) ||
-        !data.some((item) => item.correct && item.answer.trim())
-      ) {
-        return true
-      }
-    }
-
-    if (questionType === 'Matching') {
-      if (!data || !Array.isArray(data)) return true
-      const isInvalid = data.some(
-        (pair) => !pair.answer.trim() || !pair.correct.trim()
-      )
-      return isInvalid
-    }
-
-    if (questionType === 'Multiple Choice') {
-      if (!data || !Array.isArray(data)) return true
-      const correctCount = data.filter((item) => item.correct).length
-      if (correctCount !== 1) return true // Must have exactly 1 correct answer
-    }
-
-    if (questionType === 'Select All That Apply') {
-      if (!data || !Array.isArray(data)) return true
-      const correctCount = data.filter((item) => item.correct).length
-      if (correctCount < 1) return true // Must have at least 1 correct answer
-    }
-
-    return false
-  }
+  
+    return false; // Enable the submit button if all validations pass
+  };
+  
 
 
 

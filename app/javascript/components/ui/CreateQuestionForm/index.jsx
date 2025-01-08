@@ -154,7 +154,7 @@ const CreateQuestionForm = () => {
         return !sq.type || !sq.text?.trim() // Ensure each subquestion has a type and non-empty text
       })
 
-      if (invalidSubQuestions) return true
+      return invalidSubQuestions
     }
 
     if (questionType === 'Bow Tie') {

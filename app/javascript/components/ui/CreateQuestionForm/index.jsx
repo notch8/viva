@@ -142,16 +142,22 @@ const CreateQuestionForm = () => {
 
 
   const isSubmitDisabled = () => {
-    if (!questionText || images.some((image) => !image.isValid)) return true
+    if (!questionText?.trim() || images.some((image) => !image.isValid)) return true
 
     if (questionType === 'Stimulus Case Study') {
-      const isDisabled =
-          !data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0
-      return isDisabled
+      if (!data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0) {
+        return true
+      }
+
+      // Validate each subquestion
+      const invalidSubQuestions = data.subQuestions.some((sq) => {
+        return !sq.type || !sq.text?.trim() // Ensure each subquestion has a type and non-empty text
+      })
+
+      if (invalidSubQuestions) return true
     }
 
     if (questionType === 'Bow Tie') {
-      // Ensure data structure exists and has valid labels and answers
       if (
         !data?.center?.label?.trim() || // Center label must be a non-blank string
         !data?.left?.label?.trim() || // Left label must be a non-blank string
@@ -163,7 +169,6 @@ const CreateQuestionForm = () => {
         return true // Disable submit if structure is invalid
       }
 
-      // Check that answers meet requirements
       const oneCenterAnswerSelected = data.center.answers.filter(
         (answer) => answer.correct === true && answer.answer.trim()
       )
@@ -174,7 +179,6 @@ const CreateQuestionForm = () => {
         (answer) => answer.correct === true && answer.answer.trim()
       )
 
-      // Ensure there is one correct answer in center and at least one in left and right
       if (
         oneCenterAnswerSelected.length !== 1 || // Exactly one correct answer in center
         oneOrMoreLeftAnswersSelected.length < 1 || // At least one correct answer in left
@@ -183,8 +187,6 @@ const CreateQuestionForm = () => {
         return true // Disable submit if validation fails
       }
     }
-
-
 
     if (questionType === 'Categorization') {
       if (!data || !Array.isArray(data)) return true
@@ -230,6 +232,8 @@ const CreateQuestionForm = () => {
 
     return false
   }
+
+
 
 
   return (

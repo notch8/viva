@@ -16,7 +16,7 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 
           />
           <Form.Check
             type={buttonType}
-            checked={answer.correct}
+            defaultChecked={answer.correct}
             onClick={() => {
               if (buttonType === 'radio') {
                 if (answer.correct) {

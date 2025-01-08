@@ -269,10 +269,6 @@ const CreateQuestionForm = () => {
   }
 
 
-
-
-
-
   return (
     <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>

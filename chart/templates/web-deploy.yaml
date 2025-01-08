@@ -57,6 +57,9 @@ spec:
             - mountPath: /app/system
               name: shared
               subPath: system
+            - mountPath: /app/storage
+              name: shared
+              subPath: storage
           command: ["/bin/bash", "./ops/entrypoint.sh"]
           args: ["bundle", "exec", "puma", "-p", "3000"]
           readinessProbe:

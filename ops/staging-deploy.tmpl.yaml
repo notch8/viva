@@ -14,11 +14,10 @@ web:
   replicaCount: 1
   resources:
     limits:
-      memory: "3Gi"
-      cpu: "400m"
+      memory: 8Gi
     requests:
-      memory: "1.5Gi"
-      cpu: "200m"
+      cpu: 250m
+      memory: 4Gi
 
 rails:
   image:

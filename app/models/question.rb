@@ -8,6 +8,7 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
+  before_save :update_tsv
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
@@ -528,6 +529,19 @@ class Question < ApplicationRecord
 
     questions.select(*select_statement)
   end
+
+  private
+
+  def update_tsv
+    escaped_text = ActiveRecord::Base.connection.quote(text.to_s)
+    escaped_data = ActiveRecord::Base.connection.quote(data.to_s)
+  
+    self.tsv = ActiveRecord::Base.connection.execute(
+      "SELECT setweight(to_tsvector('english', #{escaped_text}), 'A') ||
+              setweight(to_tsvector('english', #{escaped_data}), 'B')"
+    ).values.flatten.first
+  end
+  
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/PerceivedComplexity

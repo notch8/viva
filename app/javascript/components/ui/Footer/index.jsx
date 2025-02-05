@@ -11,7 +11,7 @@ const Footer = () => {
           <Nav.Link href='/settings'>Settings</Nav.Link>
         </Nav>
         <Nav className=''>
-          © 2023 VIVA
+          © { new Date().getFullYear() } VIVA
         </Nav>
       </Container>
     </Navbar>

@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+include ActionView::Helpers::SanitizeHelper
+require 'nokogiri'
 
 ##
 # The controller to handle methods related to the search page.
@@ -35,7 +37,69 @@ class SearchController < ApplicationController
     end
   end
 
+  def download_as_plain_text
+    questions = Bookmark.pluck(:question_id).map{|q| Question.where(id: q)}.flatten
+    content = questions.map do |q| 
+      question_type = q.type.slice(10..-1).titleize
+      if q.type == "Question::Essay" || q.type == "Question::Upload"
+        "Question Type: #{question_type}\nQuestion Text: #{q.text}\nData: #{essay_type(q)}"
+      elsif q.type == "Question::Traditional" || q.type == "Question::SelectAllThatApply" || q.type == "Question::DragAndDrop"
+        "Question Type: #{question_type}\nQuestion Text: #{q.text}\n#{traditional_type(q)}"
+      elsif q.type == "Question::Matching"
+        "Question Type: #{question_type}\nQuestion Text: #{q.text}\n#{matching_type(q)}"
+      elsif q.type == "Question::Categorization"
+        "Question Type: #{question_type}\nQuestion Text: #{q.text}\n#{categorization_type(q)}"
+      elsif q.type == "Question::BowTie"
+        "Question Type: #{question_type}\nQuestion Text: #{q.text}\n#{bowtie_type(q)}"
+      end
+    end.join("\n\n")
+    send_data content, filename: "questions.txt", type: "text/plain"
+  end
+
   private
+
+  # def essay_type(question)
+  #   strip_tags(question.data['html'])
+  # end
+
+  def essay_type(question)
+    rich_text = Nokogiri::HTML(question.data['html'])
+    rich_text.css('a').each do |link|
+      link.replace("#{link.text} (#{link['href']})")
+    end
+    rich_text.text.strip
+  end
+
+  def traditional_type(question)
+    question.data.map.with_index do |answer_set, index|
+      "#{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
+    end.join('')
+  end
+
+  def matching_type(question)
+    question.data.map.with_index do |answer_set, index|
+      "#{index + 1}) Answer: #{answer_set['answer']} Match: #{answer_set['correct'].first}\n"
+    end.join('')
+  end
+
+  def categorization_type(question)
+    question.data.map do |answer_set|
+      "Catagory: #{answer_set['answer']}\nCorrect: #{answer_set['correct'].map.with_index { |c, index| "#{index + 1}) #{c}" }.join(' ')}\n"
+    end.join('')
+  end
+
+  def bowtie_type(question)
+    center = question.data['center']['answers'].map.with_index do |answer_set, index|
+      "Center: #{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
+    end
+    left = question.data['left']['answers'].map.with_index do |answer_set, index|
+      "Left: #{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
+    end
+    right = question.data['right']['answers'].map.with_index do |answer_set, index|
+      "Right: #{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
+    end
+    center.join('') + left.join('') + right.join('')
+  end
 
   def any_question_has_images?
     @questions.any? { |question| question.images.any? }

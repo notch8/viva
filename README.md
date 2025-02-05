@@ -284,7 +284,7 @@ The Search Filters section shows your chosen search criteria.
 
 -   Click “Export Questions” and select “XML”
 
-This will download an `.xml` file (e.g. `questions-2023-12-13_15_38_01_508.classic-question-canvas.qti.xml`).  To upload that file into Canvass you will need to convert the downloaded XML file into a `.zip` file.  The way to do this varies by operating system.
+This will download an `.xml` file (e.g. `questions-2023-12-13_15_38_01_508.classic-question-canvas.qti.xml`).  To upload that file into Canvas you will need to convert the downloaded XML file into a `.zip` file.  The way to do this varies by operating system.
 
 As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-13 Wed&gt; </span></span> we export into a “classic question” format; the rationalization being two fold:
 
@@ -305,7 +305,7 @@ In the `Rails` console run the following:
 User.create!(email: "<EMAIL>", password: "<PASSWORD>")
 ```
 
-### Reseting Questions and Data
+### Resetting Questions and Data
 
 Over the course of testing and experimenting, you might want to reset the questions.
 

@@ -13,6 +13,9 @@ Rails.application.routes.draw do
       # Necessary for downloading the XML file from the search result.
       get '/(.:format)', to: 'search#index'
 
+      # download the bookmarked questions in a text file
+      get 'questions/download', to: 'search#download_as_plain_text'
+
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'
       patch '/settings/update', to: 'settings#update'

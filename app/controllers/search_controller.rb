@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-require 'nokogiri'
 
 ##
 # The controller to handle methods related to the search page.
@@ -36,118 +35,7 @@ class SearchController < ApplicationController
     end
   end
 
-  def download_as_plain_text
-    questions = Bookmark.pluck(:question_id).map{|q| Question.where(id: q)}.flatten
-    content = []
-    questions.map do |question|
-      if question.type == 'Question::Essay' || question.type == 'Question::Upload'
-        content << essay_type(question)
-        content << "\n\n**********\n\n"
-      elsif question.type == 'Question::Traditional' || question.type == 'Question::SelectAllThatApply' || question.type == 'Question::DragAndDrop'
-        content << traditional_type(question)
-        content << "\n**********\n\n"
-      elsif question.type == 'Question::Matching'
-        content << matching_type(question)
-        content << "\n**********\n\n"
-      elsif question.type == 'Question::Categorization'
-        content << categorization_type(question)
-        content << "**********\n\n"
-      elsif question.type == 'Question::BowTie'
-        content << bowtie_type(question)
-        content << "\n**********\n\n"
-      elsif question.type == 'Question::StimulusCaseStudy'
-        content << stimulus_type(question)
-        content << "**********\n\n"
-      end
-    end
-    content = content.join('')
-    send_data content, filename: 'questions.txt', type: 'text/plain'
-  end
-
   private
-
-  def essay_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    
-    # Formats HTML into plain text
-    rich_text = Nokogiri::HTML(question.data['html'])
-    rich_text.css('a').each do |link_tag|
-      link_tag.replace("#{link_tag.text} (#{link_tag['href']})")
-    end
-    rich_text.css('p').each do |p_tag|
-      p_tag.replace("#{p_tag.text}\n")
-    end
-    rich_text.css('li').each do |li_tag|
-      li_tag.replace("- #{li_tag.text}\n")
-    end
-    plain_text = rich_text.text.strip
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\nText: #{plain_text}"
-  end
-
-  def traditional_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    # The preferred name for Traditional questions is "Multiple Choice"
-    if question.type == 'Question::Traditional'
-      question_type = 'Multiple Choice'
-    end
-
-    data = question.data.map.with_index do |answer_set, index|
-      "#{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
-    end.join('')
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\n#{data}"
-  end
-
-  def matching_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    data = question.data.map.with_index do |answer_set, index|
-      "#{index + 1}) #{answer_set['answer']}\n   Correct Match: #{answer_set['correct'].first}\n"
-    end.join('')
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\n#{data}"
-  end
-
-  def categorization_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    data = question.data.map do |answer_set|
-      "Catagory: #{answer_set['answer']}\n#{answer_set['correct'].map.with_index { |c, index| "#{index + 1}) #{c}\n" }.join('')}\n"
-    end.join('')
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\n#{data}"
-  end
-
-  def bowtie_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    center = question.data['center']['answers'].map.with_index do |answer_set, index|
-      "#{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
-    end
-    left = question.data['left']['answers'].map.with_index do |answer_set, index|
-      "#{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
-    end
-    right = question.data['right']['answers'].map.with_index do |answer_set, index|
-      "#{index + 1}) #{if answer_set['correct'] then 'Correct' else 'Incorrect' end}: #{answer_set['answer']}\n"
-    end
-    data = "Center\n#{center.join('')}\nLeft\n#{left.join('')}\nRight\n#{right.join('')}"
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\n#{data}"
-  end
-
-  def stimulus_type(question)
-    question_type = question.type.slice(10..-1).titleize
-    output = []
-    question.child_questions.map do |sub_question|
-      if sub_question.type == "Question::Scenario"
-        output << "Scenario: #{sub_question.text}\n\n"
-      elsif sub_question.type == "Question::Essay" || sub_question.type == "Question::Upload"
-        output << "#{essay_type(sub_question)}\n"
-      elsif sub_question.type == "Question::Traditional" || sub_question.type == "Question::SelectAllThatApply" || sub_question.type == "Question::DragAndDrop"
-        output << "#{traditional_type(sub_question)}\n"
-      elsif sub_question.type == "Question::Matching"
-        output << "#{matching_type(sub_question)}\n"
-      elsif sub_question.type == "Question::Categorization"
-        output << "#{categorization_type(sub_question)}\n"
-      elsif sub_question.type == "Question::BowTie"
-        output << "#{bowtie_type(sub_question)}\n"
-      end
-    end
-    "Question Type: #{question_type}\nQuestion: #{question.text}\n\n#{output.join('')}\n"
-  end
 
   def any_question_has_images?
     @questions.any? { |question| question.images.any? }

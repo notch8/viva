@@ -14,7 +14,7 @@ Rails.application.routes.draw do
       get '/(.:format)', to: 'search#index'
 
       # download the bookmarked questions in a text file
-      get 'questions/download', to: 'search#download_as_plain_text'
+      get 'questions/download', to: 'plain_text_downloads#download'
 
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'

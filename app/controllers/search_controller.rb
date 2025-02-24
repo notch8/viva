@@ -35,6 +35,12 @@ class SearchController < ApplicationController
     end
   end
 
+  def text_download
+    questions = Question.where(id: Bookmark.select(:question_id))
+    content = questions.map { |question| QuestionTextFormatterService.new(question).format }.join('')
+    send_data content, filename: 'questions.txt', type: 'text/plain'
+  end
+
   private
 
   def any_question_has_images?

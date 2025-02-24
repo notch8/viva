@@ -90,12 +90,12 @@ const SearchBar = (props) => {
                   View Bookmarks
                 </a>
                 <a
-                  href={'/questions/download?format=txt'}
+                  href={'/questions/text_download?format=txt'}
                   className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
                   role='button'
                   aria-disabled={!hasBookmarks}
                 >
-                  Export as Text
+                  Export as Plain Text
                 </a>
                 <a
                   href={`/.xml?${bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')}`}
@@ -103,7 +103,7 @@ const SearchBar = (props) => {
                   role='button'
                   aria-disabled={!hasBookmarks}
                 >
-                  Export Bookmarks
+                  Export as XML
                 </a>
                 <Button
                   variant='danger'

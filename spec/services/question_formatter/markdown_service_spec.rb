@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe PlainTextFormatterService do
+RSpec.describe QuestionFormatter::MarkdownService do
   let(:service) { described_class.new(question) }
 
   describe '#format' do
-    subject { service.format }
+    subject { service.format_content }
 
     context 'with an essay question' do
       let(:question) do
@@ -17,14 +17,14 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Essay
-          QUESTION: Sample essay question
+          ## QUESTION TYPE: Essay
+          **QUESTION:** Sample essay question
 
-          Text: Essay prompt
+          **Text:** Essay prompt
           - Point 1
           Link (https://example.com)
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -40,14 +40,14 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Upload
-          QUESTION: Sample upload question
+          ## QUESTION TYPE: Upload
+          **QUESTION:** Sample upload question
 
-          Text: Upload instructions
+          **Text:** Upload instructions
           - File type: PDF
           Guidelines (https://example.com)
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -66,13 +66,13 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Multiple Choice
-          QUESTION: Sample multiple choice
+          ## QUESTION TYPE: Multiple Choice
+          **QUESTION:** Sample multiple choice
 
           1) Correct: Option A
           2) Incorrect: Option B
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -92,14 +92,14 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Select All That Apply
-          QUESTION: Sample select all question
+          ## QUESTION TYPE: Select All That Apply
+          **QUESTION:** Sample select all question
 
           1) Correct: Option A
           2) Correct: Option B
           3) Incorrect: Option C
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -119,14 +119,14 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Drag And Drop
-          QUESTION: Sample drag and drop question
+          ## QUESTION TYPE: Drag and Drop
+          **QUESTION:** Sample drag and drop question
 
           1) Correct: Item 1
           2) Incorrect: Item 2
           3) Correct: Item 3
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -155,8 +155,8 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Matching
-          QUESTION: Sample matching question
+          ## QUESTION TYPE: Matching
+          **QUESTION:** Sample matching question
 
           1) Term 1
              Correct Match: Definition 1
@@ -165,7 +165,7 @@ RSpec.describe PlainTextFormatterService do
           3) Term 3
              Correct Match: Definition 3
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -184,17 +184,17 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Categorization
-          QUESTION: Sample categorization
+          ## QUESTION TYPE: Categorization
+          **QUESTION:** Sample categorization
 
-          Category: Category 1
+          **Category:** Category 1
           1) Item 1
           2) Item 2
 
-          Category: Category 2
+          **Category:** Category 2
           1) Item 3
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -232,8 +232,8 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Bow Tie
-          QUESTION: Sample bow tie question
+          ## QUESTION TYPE: Bow Tie
+          **QUESTION:** Sample bow tie question
 
           Center
           1) Correct: Center Answer 1
@@ -247,7 +247,7 @@ RSpec.describe PlainTextFormatterService do
           1) Correct: Right Answer 1
           2) Incorrect: Right Answer 2
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -273,23 +273,23 @@ RSpec.describe PlainTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          QUESTION TYPE: Stimulus Case Study
-          QUESTION: Main question
+          ## QUESTION TYPE: Stimulus Case Study
+          **QUESTION:** Main question
 
-          Scenario: Sample scenario
+          **Scenario:** Sample scenario
 
-          Subquestion Type: Essay
-          Subquestion: Sub question
+          ### Subquestion Type: Essay
+          **Subquestion:** Sub question
 
-          Text: Essay prompt
+          **Text:** Essay prompt
 
-          Subquestion Type: Multiple Choice
-          Subquestion: Multiple choice sub question
+          ### Subquestion Type: Multiple Choice
+          **Subquestion:** Multiple choice sub question
 
           1) Correct: Option A
           2) Incorrect: Option B
 
-          ==========
+          ---
 
         TEXT
         expect(subject).to eq(expected_output)

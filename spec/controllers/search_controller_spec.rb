@@ -142,21 +142,39 @@ RSpec.describe SearchController do
       end
     end
 
-    context 'plain text download' do
+    context 'downloading question text' do
       let(:question) { FactoryBot.create(:question_traditional) }
       let(:user) { FactoryBot.create(:user) }
+      let(:bookmark) { Bookmark.create!(user:, question:) }
 
-      it 'returns a text file' do
-        get :text_download
-        expect(response.content_type).to eq('text/plain')
-        expect(response.headers['Content-Disposition']).to include('questions.txt')
+      before do
+        bookmark
       end
 
-      it 'includes bookmarked questions in the response' do
-        Bookmark.create!(user:, question:)
+      context 'downloading as plain text' do
+        it 'returns a txt file' do
+          get :download, format: :txt
+          expect(response.content_type).to eq('text/plain')
+          expect(response.headers['Content-Disposition']).to match(/questions-.*\.txt/)
+        end
 
-        get :text_download
-        expect(response.body).to include(question.text)
+        it 'includes bookmarked questions in the response' do
+          get :download, format: :txt
+          expect(response.body).to include(question.text)
+        end
+      end
+
+      context 'downloading as markdown' do
+        it 'returns a md file' do
+          get :download, format: :md
+          expect(response.content_type).to eq('text/plain')
+          expect(response.headers['Content-Disposition']).to match(/questions-.*\.md/)
+        end
+
+        it 'includes bookmarked questions in the response' do
+          get :download, format: :md
+          expect(response.body).to include(question.text)
+        end
       end
     end
   end

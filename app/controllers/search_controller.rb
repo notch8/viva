@@ -22,7 +22,7 @@ class SearchController < ApplicationController
       # conversations with the client, we're looking to only export classic (as you can migrate a
       # classic question to new format).  This filename is another "helpful clue" and introduces
       # later considerations for what the file format might be.
-      filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
+      filename = "#{export_filename(now)}.classic-question-canvas.qti.xml"
       @questions = Question.filter(**filter_values)
 
       if any_question_has_images?
@@ -35,13 +35,34 @@ class SearchController < ApplicationController
     end
   end
 
-  def text_download
-    questions = Question.where(id: Bookmark.select(:question_id))
-    content = questions.map { |question| QuestionTextFormatterService.new(question).format }.join('')
-    send_data content, filename: 'questions.txt', type: 'text/plain'
+  # download bookmarked questions
+  def download
+    @questions = Question.where(id: Bookmark.select(:question_id))
+    case params[:format]
+    when 'md'
+      md_download
+    when 'txt'
+      text_download
+    else
+      redirect_to authenticated_root_path, alert: 'Invalid format'
+    end
   end
 
   private
+
+  def export_filename(now=Time.current)
+    "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}"
+  end
+
+  def text_download
+    content = @questions.map { |question| QuestionTextFormatterService.new(question).format }.join('')
+    send_data content, filename: "#{export_filename}.txt", type: 'text/plain'
+  end
+
+  def md_download
+    content = @questions.map { |question| QuestionMarkdownFormatterService.new(question).format }.join('')
+    send_data content, filename: "#{export_filename}.md", type: 'text/plain'
+  end
 
   def any_question_has_images?
     @questions.any? { |question| question.images.any? }

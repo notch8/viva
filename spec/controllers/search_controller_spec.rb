@@ -146,10 +146,6 @@ RSpec.describe SearchController do
       let(:question) { FactoryBot.create(:question_traditional) }
       let(:user) { FactoryBot.create(:user) }
 
-      before do
-        sign_in user
-      end
-
       it 'returns a text file' do
         get :text_download
         expect(response.content_type).to eq('text/plain')
@@ -157,7 +153,6 @@ RSpec.describe SearchController do
       end
 
       it 'includes bookmarked questions in the response' do
-        # Create a bookmark for the question
         Bookmark.create!(user:, question:)
 
         get :text_download

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe QuestionTextFormatterService do
+RSpec.describe PlainTextFormatterService do
   let(:service) { described_class.new(question) }
 
   describe '#format' do
@@ -17,14 +17,14 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Essay
-          Question: Sample essay question
+          QUESTION TYPE: Essay
+          QUESTION: Sample essay question
 
           Text: Essay prompt
           - Point 1
           Link (https://example.com)
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -40,14 +40,14 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Upload
-          Question: Sample upload question
+          QUESTION TYPE: Upload
+          QUESTION: Sample upload question
 
           Text: Upload instructions
           - File type: PDF
           Guidelines (https://example.com)
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -66,13 +66,13 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Multiple Choice
-          Question: Sample multiple choice
+          QUESTION TYPE: Multiple Choice
+          QUESTION: Sample multiple choice
 
           1) Correct: Option A
           2) Incorrect: Option B
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -92,14 +92,14 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Select All That Apply
-          Question: Sample select all question
+          QUESTION TYPE: Select All That Apply
+          QUESTION: Sample select all question
 
           1) Correct: Option A
           2) Correct: Option B
           3) Incorrect: Option C
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -119,14 +119,14 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Drag And Drop
-          Question: Sample drag and drop question
+          QUESTION TYPE: Drag And Drop
+          QUESTION: Sample drag and drop question
 
           1) Correct: Item 1
           2) Incorrect: Item 2
           3) Correct: Item 3
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -155,8 +155,8 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Matching
-          Question: Sample matching question
+          QUESTION TYPE: Matching
+          QUESTION: Sample matching question
 
           1) Term 1
              Correct Match: Definition 1
@@ -165,7 +165,7 @@ RSpec.describe QuestionTextFormatterService do
           3) Term 3
              Correct Match: Definition 3
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -184,8 +184,8 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Categorization
-          Question: Sample categorization
+          QUESTION TYPE: Categorization
+          QUESTION: Sample categorization
 
           Category: Category 1
           1) Item 1
@@ -194,7 +194,7 @@ RSpec.describe QuestionTextFormatterService do
           Category: Category 2
           1) Item 3
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -232,8 +232,8 @@ RSpec.describe QuestionTextFormatterService do
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Bow Tie
-          Question: Sample bow tie question
+          QUESTION TYPE: Bow Tie
+          QUESTION: Sample bow tie question
 
           Center
           1) Correct: Center Answer 1
@@ -247,7 +247,7 @@ RSpec.describe QuestionTextFormatterService do
           1) Correct: Right Answer 1
           2) Incorrect: Right Answer 2
 
-          **********
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)
@@ -256,26 +256,40 @@ RSpec.describe QuestionTextFormatterService do
 
     context 'with a stimulus case study question' do
       let(:scenario) { create(:question_scenario, text: 'Sample scenario') }
-      let(:sub_question) { create(:question_essay, text: 'Sub question', data: { 'html' => '<p>Essay prompt</p>' }) }
+      let(:sub_question_essay) { create(:question_essay, text: 'Sub question', data: { 'html' => '<p>Essay prompt</p>' }) }
+      let(:sub_question_mc) do
+        create(:question_traditional,
+          text: 'Multiple choice sub question',
+          data: [
+            { 'answer' => 'Option A', 'correct' => true },
+            { 'answer' => 'Option B', 'correct' => false }
+          ])
+      end
       let(:question) do
         create(:question_stimulus_case_study,
           text: 'Main question',
-          child_questions: [scenario, sub_question])
+          child_questions: [scenario, sub_question_essay, sub_question_mc])
       end
 
       it 'formats the question correctly' do
         expected_output = <<~TEXT
-          Question Type: Stimulus Case Study
-          Question: Main question
+          QUESTION TYPE: Stimulus Case Study
+          QUESTION: Main question
 
           Scenario: Sample scenario
 
-          Question Type: Essay
-          Question: Sub question
+          Subquestion Type: Essay
+          Subquestion: Sub question
 
           Text: Essay prompt
 
-          **********
+          Subquestion Type: Multiple Choice
+          Subquestion: Multiple choice sub question
+
+          1) Correct: Option A
+          2) Incorrect: Option B
+
+          ==========
 
         TEXT
         expect(subject).to eq(expected_output)

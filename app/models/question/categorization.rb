@@ -8,6 +8,7 @@ class Question::Categorization < Question
   include MatchingQuestionBehavior
 
   self.type_name = "Categorization"
+  self.model_exporter = 'categorization'
   self.export_as_xml = true
   self.choice_cardinality_is_multiple = true
 

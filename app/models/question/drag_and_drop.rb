@@ -21,6 +21,7 @@
 #                data: [{ answer: "Aardvark", correct: true }, { answer: "Blue", correct: false }, { answer: "Yellow", correct:false }, { answer: "Cat", correct: true }])
 class Question::DragAndDrop < Question
   self.type_name = "Drag and Drop"
+  self.model_exporter = 'drag_and_drop'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::DragAndDrop}.

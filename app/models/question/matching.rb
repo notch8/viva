@@ -8,6 +8,7 @@ class Question::Matching < Question
   include MatchingQuestionBehavior
 
   self.type_name = "Matching"
+  self.model_exporter = 'matching'
   self.export_as_xml = true
   self.choice_cardinality_is_multiple = false
 

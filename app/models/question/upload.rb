@@ -10,6 +10,7 @@ class Question::Upload < Question
   include MarkdownQuestionBehavior
 
   self.type_name = "Upload"
+  self.model_exporter = 'upload'
   self.export_as_xml = true
 
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow

@@ -32,6 +32,7 @@
 #   => true
 class Question::BowTie < Question
   self.type_name = "Bow Tie"
+  self.model_exporter = 'bow_tie'
 
   # NOTE: We're not storing this in a JSONB data type, but instead favoring a text field.  The need
   # for the data to be used in the application, beyond export of data, is minimal.

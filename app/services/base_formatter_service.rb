@@ -2,68 +2,84 @@
 require 'nokogiri'
 
 ##
-# Service to handle formatting questions into plain text
-# rubocop:disable Metrics/ClassLength
-class QuestionTextFormatterService
-  def initialize(question)
+# Service to handle formatting questions for downloads
+
+class BaseFormatterService
+  def initialize(question, subq = false)
     @question = question
+    @subq = subq
   end
 
   def format
-    content = format_by_type
-    content + "\n**********\n\n"
+    format_by_type + content_divider
   end
 
-  # These methods are protected instead of private so they can be called by other instances
   protected
 
-  def essay_type
+  def content_divider
+    raise NotImplementedError, "Subclasses must implement content_divider"
+  end
+
+  def format_by_type
+    method = @question.class.model_exporter
+    send(method)
+  end
+
+  def format_question_header
+    raise NotImplementedError, "Subclasses must implement format_question_header"
+  end
+
+  def essay
     format_question_header + format_essay_content
   end
 
-  def traditional_type
+  def upload
+    format_question_header + format_essay_content
+  end
+
+  def multiple_choice
     format_question_header + format_answers(@question.data) { |answer, index| format_traditional_answer(answer, index) }
   end
 
-  def matching_type
+  def select_all_that_apply
+    format_question_header + format_answers(@question.data) { |answer, index| format_traditional_answer(answer, index) }
+  end
+
+  def drag_and_drop
+    format_question_header + format_answers(@question.data) { |answer, index| format_traditional_answer(answer, index) }
+  end
+
+  def matching
     format_question_header + format_answers(@question.data) { |answer, index| format_matching_answer(answer, index) }
   end
 
-  def categorization_type
+  def categorization
     format_question_header + format_categories(@question.data)
   end
 
-  def bowtie_type
-    format_question_header + format_bowtie_sections
+  def bow_tie
+    format_question_header + format_bow_tie_sections
   end
 
-  def stimulus_type
+  def stimulus_case_study
     output = @question.child_questions.map { |sub_question| format_sub_question(sub_question) }
+    # removes additional line breaks from the sub-questions
     output[-1] = output[-1].chomp if output.any?
-    "Question Type: #{question_type}\nQuestion: #{@question.text}\n\n#{output.join('')}"
+    "#{format_question_header}#{output.join('')}"
   end
 
   def format_sub_question(sub_question)
-    case sub_question.type
-    when "Question::Scenario"
+    if sub_question.type == "Question::Scenario"
       "Scenario: #{sub_question.text}\n\n"
-    when "Question::Essay", "Question::Upload"
-      "#{QuestionTextFormatterService.new(sub_question).essay_type.chomp}\n\n"
-    when "Question::Traditional", "Question::SelectAllThatApply", "Question::DragAndDrop"
-      "#{QuestionTextFormatterService.new(sub_question).traditional_type}\n"
-    when "Question::Matching"
-      "#{QuestionTextFormatterService.new(sub_question).matching_type}\n"
-    when "Question::Categorization"
-      "#{QuestionTextFormatterService.new(sub_question).categorization_type}\n"
-    when "Question::BowTie"
-      "#{QuestionTextFormatterService.new(sub_question).bowtie_type}\n"
+    else
+      "#{self.class.new(sub_question, true).format_by_type}\n"
     end
   end
 
   private
 
-  def format_question_header
-    "Question Type: #{question_type}\nQuestion: #{@question.text}\n\n"
+  def question_type
+    @question.class.type_name.titleize
   end
 
   def format_essay_content
@@ -90,7 +106,7 @@ class QuestionTextFormatterService
     end.join("\n")
   end
 
-  def format_bowtie_sections
+  def format_bow_tie_sections
     sections = ['center', 'left', 'right'].map do |section|
       answers = @question.data[section]['answers'].map.with_index do |answer, index|
         format_traditional_answer(answer, index)
@@ -100,12 +116,6 @@ class QuestionTextFormatterService
     sections.join("\n")
   end
 
-  def question_type
-    type_name = @question.type.slice(10..-1).titleize
-    return 'Multiple Choice' if @question.type == 'Question::Traditional'
-    type_name
-  end
-
   def format_html(html)
     rich_text = Nokogiri::HTML(html)
     rich_text.css('a').each { |link| link.replace("#{link.text} (#{link['href']})") }
@@ -113,22 +123,4 @@ class QuestionTextFormatterService
     rich_text.css('li').each { |li| li.replace("- #{li.text}\n") }
     rich_text.text.strip
   end
-
-  def format_by_type
-    case @question.type
-    when 'Question::Essay', 'Question::Upload'
-      essay_type
-    when 'Question::Traditional', 'Question::SelectAllThatApply', 'Question::DragAndDrop'
-      traditional_type
-    when 'Question::Matching'
-      matching_type
-    when 'Question::Categorization'
-      categorization_type
-    when 'Question::BowTie'
-      bowtie_type
-    when 'Question::StimulusCaseStudy'
-      stimulus_type
-    end
-  end
 end
-# rubocop:enable Metrics/ClassLength

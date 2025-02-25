@@ -5,6 +5,7 @@
 class Question::StimulusCaseStudy < Question
   self.type_label = "Case Study"
   self.type_name = "Stimulus Case Study"
+  self.model_exporter = 'stimulus_case_study'
   self.has_parts = true
 
   has_many :as_parent_question_aggregations,

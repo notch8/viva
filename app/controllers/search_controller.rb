@@ -37,7 +37,7 @@ class SearchController < ApplicationController
 
   def text_download
     questions = Question.where(id: Bookmark.select(:question_id))
-    content = questions.map { |question| QuestionTextFormatterService.new(question).format }.join('')
+    content = questions.map { |question| PlainTextFormatterService.new(question).format }.join('')
     send_data content, filename: 'questions.txt', type: 'text/plain'
   end
 

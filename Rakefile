@@ -16,7 +16,6 @@ namespace :data do
     desc "Clear all existing metadata related to questions"
     task metadata: :environment do
       Subject.destroy_all
-      Keyword.destroy_all
     end
 
     desc "Clear all existing orphaned metadata related to questions"
@@ -28,19 +27,14 @@ namespace :data do
         next unless s.questions.count.zero?
         s.destroy
       end
-
-      Keyword.all.each do |kw|
-        next unless kw.questions.count.zero?
-        kw.destroy
-      end
     end
   end
   desc "Reset all question related information"
   task cleanup: ["data:cleanup:prompts", "data:cleanup:metadata"]
 
-  desc "Normalize existing keywords and subject"
+  desc "Normalize existing subjects"
   task normalize: :environment do
-    [Subject, Keyword].each do |model|
+    [Subject].each do |model|
       model.all.each do |record|
         next if record.name.downcase == record.name
         other = model.where(name: record.name.downcase).where.not(id: record.id).first

@@ -61,12 +61,10 @@ class SearchController < ApplicationController
   # rubocop:disable Metrics/MethodLength
   def shared_props
     {
-      keywords: Keyword.names,
       subjects: Subject.names,
       types: Question.type_names, # Deprecated Favor :type_names
       type_names: Question.type_names,
       levels: Level.names,
-      selectedKeywords: params[:selected_keywords],
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
@@ -90,7 +88,6 @@ class SearchController < ApplicationController
 
   def filter_values
     {
-      keywords: params[:selected_keywords],
       subjects: params[:selected_subjects],
       type_name: params[:selected_types],
       levels: params[:selected_levels],

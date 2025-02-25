@@ -9,7 +9,6 @@
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
-  has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
 
@@ -149,14 +148,13 @@ class Question < ApplicationRecord
   # @see {#validate_well_formed_row}
   class ImportCsvRow
     delegate :persisted?,
-             :keywords,
              :reload,
              :type_name,
              :has_parts?,
              :as_json, # When we ask self for as_json we'd get a stack level too deep error
              :to_json, # as :as_json
              to: :question
-    attr_reader :text, :level, :subject_names, :keyword_names, :data
+    attr_reader :text, :level, :subject_names, :data
     attr_reader :row, :question_type, :questions
 
     def initialize(row:, question_type:, questions:)
@@ -167,7 +165,6 @@ class Question < ApplicationRecord
       @text = row['TEXT']
       @level = row['LEVEL']
       @subject_names = question_type.extract_subject_names_from(row)
-      @keyword_names = question_type.extract_keyword_names_from(row)
 
       extract_answers_and_data_from(row)
     end
@@ -229,7 +226,7 @@ class Question < ApplicationRecord
       return @question if defined?(@question)
 
       parent_question = questions[row['PART_OF']]&.question
-      attributes = { text:, data:, subject_names:, keyword_names:, level: }
+      attributes = { text:, data:, subject_names:, level: }
       if parent_question&.has_parts?
         attributes[:parent_question] = parent_question
         attributes[:child_of_aggregation] = true
@@ -287,7 +284,7 @@ class Question < ApplicationRecord
     Question::ExpectedColumnMissing.new(expected: required_headers, given: row.headers)
   end
 
-  FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names].freeze
+  FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :subject_names].freeze
   FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data].freeze
 
   ##
@@ -298,10 +295,10 @@ class Question < ApplicationRecord
   #
   # @note Why {.filter} and {.filter_as_json}?  There are two reasons: 1) we are interested in the
   #       STI field of :type and by default that is not something included in the base {#as_json}
-  #       behavior; 2) we want to include keyword_names and subject_names.
+  #       behavior; 2) we want to include subject_names.
   #
-  #       The keyword_names and subject_names are constructed differently so as to minimize
-  #       database queries.  I had tried to use keywords and subjects, but those are relations and
+  #       The subject_names are constructed differently so as to minimize
+  #       database queries.  I had tried to use subjects, but those are relations and
   #       behave a bit differently.  You'll want to look at the specs to see how this resolves.
   #
   # @return [Array<Hash>] A Ruby array of hashes where the hashes have the the keys specified in the
@@ -351,15 +348,6 @@ class Question < ApplicationRecord
     extract_names_from(row, "SUBJECT")
   end
 
-  ##
-  # @api private
-  #
-  # @param row [CsvRow]
-  # @return [Array<String>]
-  def self.extract_keyword_names_from(row)
-    extract_names_from(row, "KEYWORD")
-  end
-
   def self.extract_names_from(row, column)
     row.flat_map do |header, value|
       next if value.blank?
@@ -370,23 +358,6 @@ class Question < ApplicationRecord
   private_class_method :extract_names_from
 
   ##
-  # This method ensures that we will consistently have a Question#keyword_names regardless of
-  # whether the underlying query to reify the Question had a select statement that included the
-  # "keyword_names" query field.
-  #
-  # @return [Array<String>]
-  #
-  # @see .filter_as_json
-  # @see #find_or_create_subjects_and_keywords
-  def keyword_names
-    @keyword_names.presence || attributes.fetch(:keyword_names) { keywords.map(&:name) } || []
-  end
-
-  ##
-  # @see #find_or_create_subjects_and_keywords
-  attr_writer :keyword_names
-
-  ##
   # This method ensures that we will consistently have a Question#subject_names regardless of
   # whether the underlying query to reify the Question had a select statement that included the
   # "subject_names" query field.
@@ -394,39 +365,31 @@ class Question < ApplicationRecord
   # @return [Array<String>]
   #
   # @see .filter_as_json
-  # @see #find_or_create_subjects_and_keywords
   def subject_names
     @subject_names.presence || attributes.fetch(:subject_names) { subjects.map(&:name) } || []
   end
   ##
-  # @see #find_or_create_subjects_and_keywords
   attr_writer :subject_names
 
-  after_save :find_or_create_subjects_and_keywords
+  after_save :find_or_create_subjects
 
   ##
-  # As part of the {.build_from_csv_row}, the subclasses are assigning the `@subject_names' and
-  # `@keyword_names'.  When we save a record being imported, we want to persist those values to the
-  # corresponding relationships (e.g. {#subjects} and {#keywords}).
-  def find_or_create_subjects_and_keywords
+  # As part of the {.build_from_csv_row}, the subclasses are assigning the `@subject_names'.
+  # When we save a record being imported, we want to persist those values to the
+  # corresponding relationships (e.g. {#subjects}).
+  def find_or_create_subjects
     @subject_names&.each do |name|
       subjects << Subject.find_or_create_by(name:)
     end
     @subject_names = nil
-
-    @keyword_names&.each do |name|
-      keywords << Keyword.find_or_create_by(name:)
-    end
-    @keyword_names = nil
   end
 
   ##
-  # Filter questions by keywords and/or subjects.
+  # Filter questions by subjects.
   #
   # We omit questions that are part of a {QuestionAggregation} (e.g. those that are children to a
   # {Question::StimulusCaseStudy}.
   #
-  # @param keywords [Array<String>] when provided, a question must have all of the given keywords.
   # @param subjects [Array<String>] when provided, a question must have all of the provided
   #        subjects.
   # @param type_name [String,NilClass] when present, filter questions to only include the given
@@ -446,16 +409,14 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil)
-    # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
-    # the number of keywords given and not the number of characters in a singular keyword that was
-    # provided.
-    keywords = Array.wrap(keywords)
+  def self.filter(subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil)
+    # By wrapping in an array we ensure that our subjects.size are not counting
+    # the number of characters given
     subjects = Array.wrap(subjects)
     levels = Array.wrap(levels)
 
     # Specifying a very arbitrary order
-    questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
+    questions = Question.includes(:subjects, images: { file_attachment: :blob }).order(:id)
 
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
@@ -472,15 +433,6 @@ class Question < ApplicationRecord
 
     questions = questions.where(child_of_aggregation: false)
 
-    if keywords.present?
-      keywords_subquery = Keyword.select(:question_id)
-                                 .joins(:keywords_questions)
-                                 .where(name: keywords)
-                                 .group(:question_id)
-      # We sanitize the subquery via Arel.  The above construction is adequate.
-      questions = questions.where(Arel.sql("id IN (#{keywords_subquery.to_sql})"))
-    end
-
     if subjects.present?
       subjects_subquery = Subject.select('question_id')
                                  .joins(:questions_subjects)
@@ -496,13 +448,13 @@ class Question < ApplicationRecord
 
     return questions if select.blank?
 
-    # The following for subject_names and keyword_names is to reduce the number of queries we send
-    # to the database.  By favoring this mechanism we create the virtual attributes of
-    # :subject_names and :keyword_names to each of the returned values.  Thus those values are
+    # The following for subject_names is to reduce the number of queries we send
+    # to the database.  By favoring this mechanism we create the virtual attribute of
+    # :subject_names to each of the returned values.  Thus those values are
     # available in the JSON representation of each of these questions.
     #
     # We duplicate this as that results in an unfrozen array which we then proceed to modify.  We
-    # need to modify this because the provided "subject_names" and "keyword_names" are not actual
+    # need to modify this because the provided "subject_names" is not actual
     # fields but instead derived.
     select_statement = select.dup
 
@@ -514,16 +466,6 @@ class Question < ApplicationRecord
         INNER JOIN questions AS inner_q ON questions_subjects.question_id = questions.id
         WHERE inner_q.id = questions.id)
         AS "subject_names") # the virtual field "subject_names"
-    end
-
-    if select.include?(:keyword_names)
-      select_statement.delete(:keyword_names)
-      select_statement << %((SELECT ARRAY_AGG (keywords.name) AS kws
-        FROM keywords
-        INNER JOIN keywords_questions ON keywords.id = keywords_questions.keyword_id
-        INNER JOIN questions AS inner_q ON keywords_questions.question_id = questions.id
-        WHERE inner_q.id = questions.id)
-        AS "keyword_names") # the virtual field "keyword_names"
     end
 
     questions.select(*select_statement)

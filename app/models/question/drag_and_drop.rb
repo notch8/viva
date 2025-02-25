@@ -34,7 +34,7 @@ class Question::DragAndDrop < Question
 
     def extract_answers_and_data_from(row)
       # We need to sniff out the type based on the text.
-      record = question_type.new(text:, keyword_names:, subject_names:, level:)
+      record = question_type.new(text:, subject_names:, level:)
       send("extract_#{record.sub_type}", row:, record:)
     end
 

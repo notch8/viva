@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_type_name_to_class: true, included_in_filterable_type: true, has_parts: false|
-  it { is_expected.to respond_to(:keyword_names) }
   it { is_expected.to respond_to(:subject_names) }
-  its(:keyword_names) { is_expected.to be_a(Array) }
   its(:subject_names) { is_expected.to be_a(Array) }
   its(:type_label) { is_expected.to be_a(String) }
   its(:type_name) { is_expected.to be_a(String) }
@@ -40,7 +38,6 @@ RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_t
   describe 'associations' do
     subject { described_class.new }
     it { is_expected.to have_and_belong_to_many(:subjects) }
-    it { is_expected.to have_and_belong_to_many(:keywords) }
     it { is_expected.to have_one(:as_child_question_aggregations) }
     it { is_expected.to have_one(:parent_question) }
   end
@@ -48,24 +45,11 @@ RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_t
   describe 'factories' do
     subject { FactoryBot.build(described_class.model_name.param_key) }
 
-    describe ":with_keywords trait" do
-      context 'when provided' do
-        subject { FactoryBot.build(described_class.model_name.param_key, :with_keywords) }
-
-        its(:keywords) { is_expected.to be_present }
-      end
-      context 'when not provided' do
-        its(:keywords) { is_expected.not_to be_present }
-      end
-    end
     describe ":with_subjects trait" do
       context 'when provided' do
         subject { FactoryBot.build(described_class.model_name.param_key, :with_subjects) }
 
         its(:subjects) { is_expected.to be_present }
-      end
-      context 'when not provided' do
-        its(:keywords) { is_expected.not_to be_present }
       end
     end
 
@@ -85,7 +69,6 @@ RSpec.shared_examples 'a Matching Question' do
         "TYPE" => described_class.type_name,
         "TEXT" => "#{described_class.type_name} the proper pairings:",
         "LEVEL" => Level.names.first,
-        "KEYWORD" => "One, Two",
         "SUBJECT" => "Big, Little"
       }
     end
@@ -137,7 +120,6 @@ RSpec.shared_examples 'a Matching Question' do
       context 'when saved' do
         before { subject.save }
 
-        its(:keyword_names) { is_expected.to match_array(["one", "two"]) }
         its(:subject_names) { is_expected.to match_array(["big", "little"]) }
         its(:level) { is_expected.to eq(Level.names.first) }
       end
@@ -226,7 +208,6 @@ RSpec.shared_examples 'a Markdown Question' do
     context 'with invalid data due to mismatched columns' do
       let(:row) do
         CsvRow.new("TYPE" => described_class.type_name,
-                   "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end
       it { is_expected.not_to be_valid }
@@ -244,7 +225,6 @@ RSpec.shared_examples 'a Markdown Question' do
                    "TEXT_1" => "* Bullet Point",
                    "TEXT_2" => "* Second Point",
                    "TEXT_3" => "<script>alert('Hello');</script>",
-                   "KEYWORD" => "One, Two",
                    "SUBJECT" => "Big, Little")
       end
 

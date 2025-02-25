@@ -9,19 +9,17 @@ import { Inertia } from '@inertiajs/inertia'
 const SearchBar = (props) => {
   const {
     subjects,
-    keywords,
     types,
     levels,
     submit,
     handleFilters,
     processing,
-    selectedKeywords,
     selectedTypes,
     selectedSubjects,
     selectedLevels,
     bookmarkedQuestionIds
   } = props
-  const filters = { subjects, keywords, types, levels }
+  const filters = { subjects, types, levels }
   const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
 
   useEffect(() => {
@@ -61,7 +59,7 @@ const SearchBar = (props) => {
                       className='mx-0'
                       value={item}
                       onChange={(event) => handleFilters(event, key)}
-                      defaultChecked={selectedSubjects.includes(item) || selectedKeywords.includes(item) || selectedTypes.includes(item) || selectedLevels.includes(item)}
+                      defaultChecked={selectedSubjects.includes(item) || selectedTypes.includes(item) || selectedLevels.includes(item)}
                     />
                     <Form.Check.Label className='ps-2'>
                       {filters[key] === 'types' ? item.substring(10) : item}

@@ -19,7 +19,6 @@ class Api::QuestionsController < ApplicationController
   #       "type": "Question::Matching",
   #       "text": "Match the items",
   #       "data": [{"answer": "A", "correct": ["B"]}],
-  #       "keywords": ["example"],
   #       "subjects": ["test"]
   #     }
   #   }
@@ -51,18 +50,17 @@ class Api::QuestionsController < ApplicationController
   # @param [Hash] data The processed parameters.
   # @return [Question] New question object.
   def build_question(processed_params)
-    question = Question.new(processed_params.except(:keywords, :subjects, :images))
+    question = Question.new(processed_params.except(:subjects, :images))
     question.level = nil if question.level.blank?
     question
   end
 
   ##
-  # Passes the new Question to helper methods that handle the attachments (images, keywords, and subjects).
+  # Passes the new Question to helper methods that handle the attachments (images and subjects).
   #
   # @param [Question] data The new question object.
   def handle_question_associations(question)
     handle_image_uploads(question)
-    handle_keywords(question)
     handle_subjects(question)
   end
 
@@ -141,13 +139,12 @@ class Api::QuestionsController < ApplicationController
   end
 
   ##
-  # Handles the attachments (images, keywords, and subjects) for the stimulus case study.
+  # Handles the attachments (images and subjects) for the stimulus case study.
   #
   # @param [Question] stimulus_case_study The stimulus case study object.
   # @param [ActionController::Parameters] params The parameters passed in the request.
   def handle_attachments(stimulus_case_study, params)
     handle_image_uploads_case_study(stimulus_case_study, params[:images])
-    handle_keywords_case_study(stimulus_case_study, params[:keywords])
     handle_subjects_case_study(stimulus_case_study, params[:subjects])
   end
 
@@ -159,18 +156,6 @@ class Api::QuestionsController < ApplicationController
   def handle_image_uploads_case_study(stimulus_case_study, images)
     images&.each do |uploaded_file|
       stimulus_case_study.images.build(file: uploaded_file)
-    end
-  end
-
-  ##
-  # Handles the keywords for the stimulus case study.
-  #
-  # @param [Question] stimulus_case_study The stimulus case study object.
-  # @param [Array<String>] keywords The array of keyword names.
-  def handle_keywords_case_study(stimulus_case_study, keywords)
-    keywords&.each do |keyword_name|
-      keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
-      stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
     end
   end
 
@@ -530,19 +515,6 @@ class Api::QuestionsController < ApplicationController
   end
 
   ##
-  # Handles keyword associations for a question.
-  #
-  # @param [Question] question The question object to associate keywords with.
-  def handle_keywords(question)
-    return if params[:question][:keywords].blank?
-
-    params[:question][:keywords].each do |keyword_name|
-      keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
-      question.keywords << keyword unless question.keywords.include?(keyword)
-    end
-  end
-
-  ##
   # Handles subject associations for a question.
   #
   # @param [Question] question The question object to associate subjects with.
@@ -566,7 +538,6 @@ class Api::QuestionsController < ApplicationController
       :text,
       :data,
       images: [],
-      keywords: [],
       subjects: []
     )
   end

@@ -5,18 +5,17 @@ import {
 import CustomDropdown from '../CustomDropdown'
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
-  const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
+  const { selectedSubjects, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
+  const filterArray = [selectedSubjects, selectedTypes, selectedLevels]
 
   const arrayHasItems = (array) => array.length > 0
   const hasFilters =
     arrayHasItems(selectedSubjects) ||
-    arrayHasItems(selectedKeywords) ||
     arrayHasItems(selectedTypes) ||
     arrayHasItems(selectedLevels)
 
   const removeFilterAndSearch = (event, item, filter) => {
-    handleFilters({ target: { value: item } }, filter === selectedSubjects ? 'subjects' : filter === selectedKeywords ? 'keywords' : filter === selectedTypes ? 'types' : 'levels')
+    handleFilters({ target: { value: item } }, filter === selectedSubjects ? 'subjects' : filter === selectedTypes ? 'types' : 'levels')
     submit(event)
   }
 
@@ -36,9 +35,8 @@ const SearchFilters = (props) => {
                     <Col key={index} sm={6}>
                       <h3 className='fw-bold h6'>
                         {filter === selectedSubjects ? 'Subjects' :
-                          filter === selectedKeywords ? 'Keywords' :
-                            filter === selectedTypes ? 'Types' :
-                              'Levels'}
+                          filter === selectedTypes ? 'Types' :
+                            'Levels'}
                       </h3>
                       {filter.map((item, itemIndex) => (
                         <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>

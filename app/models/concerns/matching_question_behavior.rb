@@ -160,9 +160,9 @@ module MatchingQuestionBehavior
 
   private
 
-  Choice = Struct.new(:ident, :text, keyword_init: true)
+  Choice = Struct.new(:ident, :text)
   Response = Choice
-  ResponseCondition = Struct.new(:choices, :response, :value, keyword_init: true) do
+  ResponseCondition = Struct.new(:choices, :response, :value) do
     delegate :ident, :text, to: :response, prefix: true
   end
 

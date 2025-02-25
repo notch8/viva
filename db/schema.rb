@@ -59,20 +59,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_16_170855) do
     t.index ["question_id"], name: "index_images_on_question_id"
   end
 
-  create_table "keywords", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_keywords_on_name", unique: true
-  end
-
-  create_table "keywords_questions", id: false, force: :cascade do |t|
-    t.bigint "question_id", null: false
-    t.bigint "keyword_id", null: false
-    t.index ["keyword_id", "question_id"], name: "index_keywords_questions_on_keyword_id_and_question_id"
-    t.index ["question_id", "keyword_id"], name: "index_keywords_questions_on_question_id_and_keyword_id", unique: true
-  end
-
   create_table "question_aggregations", force: :cascade do |t|
     t.integer "parent_question_id", null: false
     t.string "parent_question_type", null: false

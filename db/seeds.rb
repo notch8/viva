@@ -19,13 +19,9 @@ end
 
 
 # This is some very random data to quickly populate a non-production instance.
-[Keyword, Subject, Question].each(&:destroy_all)
+[Subject, Question].each(&:destroy_all)
 
 require File.expand_path('../../spec/support/factory_bot', __FILE__)
-
-keywords = (1..10).map do |i|
-  FactoryBot.create(:keyword)
-end
 
 subjects = (1..10).map do |i|
   FactoryBot.create(:subject)
@@ -34,7 +30,6 @@ end
 Question.descendants.each do |qt|
   (1..2).each do
     question = FactoryBot.create(qt.model_name.param_key)
-    question.keywords = keywords.shuffle[0..rand(4)]
     question.subjects = subjects.shuffle[0..rand(2)]
     question.save!
   end

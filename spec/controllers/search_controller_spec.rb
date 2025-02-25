@@ -11,7 +11,7 @@ RSpec.describe SearchController do
 
     context 'xml format' do
       it 'uses the search parameters to build the data' do
-        FactoryBot.create(:question_traditional, :with_keywords, :with_subjects)
+        FactoryBot.create(:question_traditional, :with_subjects)
         get :index, format: :xml
 
         expect(response.content_type).to eq('application/xml; charset=utf-8')
@@ -27,11 +27,10 @@ RSpec.describe SearchController do
     end
 
     context 'inertia format', inertia: true do
-      it "returns a 'Search' component with properties of :keywords, :types, :subjects, and :filteredQuestions" do
-        question = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
+      it "returns a 'Search' component with properties of :types, :subjects, and :filteredQuestions" do
+        question = FactoryBot.create(:question_matching, :with_subjects)
         get :index
         expect_inertia.to render_component 'Search'
-        expect(inertia.props[:keywords]).to be_a(Array)
         expect(inertia.props[:subjects]).to be_a(Array)
         expect(inertia.props[:types]).to be_a(Array)
         expect(inertia.props[:type_names]).to be_a(Array)
@@ -48,7 +47,6 @@ RSpec.describe SearchController do
                  "type" => question.model_name.name, # Deprecated
                  "type_label" => question.type_label,
                  "level" => question.level,
-                 "keyword_names" => question.keywords.names,
                  "subject_names" => question.subjects.names,
                  "alt_texts" => [],
                  "images" => []
@@ -58,9 +56,9 @@ RSpec.describe SearchController do
       end
 
       # TODO: account for types and levels
-      it 'makes a request using selected_keywords, selected_subjects, and selected_types, and filters the questions based on these selected values.' do
-        question1 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
-        question2 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
+      it 'makes a request using selected_subjects, and selected_types, and filters the questions based on these selected values.' do
+        question1 = FactoryBot.create(:question_matching, :with_subjects)
+        question2 = FactoryBot.create(:question_matching, :with_subjects)
 
         get :index
         # test that we have both question 1 and 2 to start with
@@ -74,7 +72,6 @@ RSpec.describe SearchController do
                  "type" => question1.model_name.name, # Deprecated
                  "type_label" => question1.type_label,
                  "level" => question1.level,
-                 "keyword_names" => question1.keywords.names,
                  "subject_names" => question1.subjects.names,
                  "alt_texts" => [],
                  "images" => []
@@ -87,7 +84,6 @@ RSpec.describe SearchController do
                  "type" => question2.model_name.name, # Deprecated
                  "type_label" => question2.type_label,
                  "level" => question2.level,
-                 "keyword_names" => question2.keywords.names,
                  "subject_names" => question2.subjects.names,
                  "alt_texts" => [],
                  "images" => []
@@ -95,8 +91,7 @@ RSpec.describe SearchController do
              ])
         )
 
-        # set the selected keywords, subjects, and types to the keywords, subjects, and types of question 1
-        selected_keywords = question1.keywords.names
+        # set the selected subjects and types to the subjects and types of question 1
         selected_subjects = question1.subjects.names
 
         given_params = { selected_keywords:, selected_subjects: }

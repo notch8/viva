@@ -143,12 +143,10 @@ RSpec.describe SearchController do
     end
 
     context 'downloading question text' do
-      let(:question) { FactoryBot.create(:question_traditional) }
-      let(:user) { FactoryBot.create(:user) }
-      let(:bookmark) { Bookmark.create!(user:, question:) }
+      let(:question) { FactoryBot.build_stubbed(:question_traditional) }
 
       before do
-        bookmark
+        allow(Question).to receive(:where).and_return([question])
       end
 
       context 'downloading as plain text' do

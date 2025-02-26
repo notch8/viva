@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe QuestionFormatter::BaseService do
   let(:subject) { described_class.new(question) }
   let(:question) do
-    create(:question_essay,
+    build(:question_essay,
       text: 'Sample essay question',
       data: { 'html' => '<p>Essay prompt</p><ul><li>Point 1</li></ul><a href="https://example.com">Link</a>' })
   end

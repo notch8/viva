@@ -10,7 +10,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with an essay question' do
       let(:question) do
-        create(:question_essay,
+        build(:question_essay,
           text: 'Sample essay question',
           data: { 'html' => '<p>Essay prompt</p><ul><li>Point 1</li></ul><a href="https://example.com">Link</a>' })
       end
@@ -33,7 +33,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with an upload question' do
       let(:question) do
-        create(:question_upload,
+        build(:question_upload,
           text: 'Sample upload question',
           data: { 'html' => '<p>Upload instructions</p><ul><li>File type: PDF</li></ul><a href="https://example.com">Guidelines</a>' })
       end
@@ -56,7 +56,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a multiple choice question' do
       let(:question) do
-        create(:question_traditional,
+        build(:question_traditional,
           text: 'Sample multiple choice',
           data: [
             { 'answer' => 'Option A', 'correct' => true },
@@ -81,7 +81,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a select all that apply question' do
       let(:question) do
-        create(:question_select_all_that_apply,
+        build(:question_select_all_that_apply,
           text: 'Sample select all question',
           data: [
             { 'answer' => 'Option A', 'correct' => true },
@@ -108,7 +108,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a drag and drop question' do
       let(:question) do
-        create(:question_drag_and_drop,
+        build(:question_drag_and_drop,
           text: 'Sample drag and drop question',
           data: [
             { 'answer' => 'Item 1', 'correct' => true },
@@ -135,7 +135,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a matching question' do
       let(:question) do
-        create(:question_matching,
+        build(:question_matching,
           text: 'Sample matching question',
           data: [
             {
@@ -174,7 +174,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a categorization question' do
       let(:question) do
-        create(:question_categorization,
+        build(:question_categorization,
           text: 'Sample categorization',
           data: [
             { 'answer' => 'Category 1', 'correct' => ['Item 1', 'Item 2'] },
@@ -203,7 +203,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
 
     context 'with a bow tie question' do
       let(:question) do
-        create(:question_bow_tie,
+        build(:question_bow_tie,
           text: 'Sample bow tie question',
           data: {
             'center' => {
@@ -255,10 +255,10 @@ RSpec.describe QuestionFormatter::MarkdownService do
     end
 
     context 'with a stimulus case study question' do
-      let(:scenario) { create(:question_scenario, text: 'Sample scenario') }
-      let(:sub_question_essay) { create(:question_essay, text: 'Sub question', data: { 'html' => '<p>Essay prompt</p>' }) }
+      let(:scenario) { build(:question_scenario, text: 'Sample scenario') }
+      let(:sub_question_essay) { build(:question_essay, text: 'Sub question', data: { 'html' => '<p>Essay prompt</p>' }) }
       let(:sub_question_mc) do
-        create(:question_traditional,
+        build(:question_traditional,
           text: 'Multiple choice sub question',
           data: [
             { 'answer' => 'Option A', 'correct' => true },
@@ -266,7 +266,7 @@ RSpec.describe QuestionFormatter::MarkdownService do
           ])
       end
       let(:question) do
-        create(:question_stimulus_case_study,
+        build(:question_stimulus_case_study,
           text: 'Main question',
           child_questions: [scenario, sub_question_essay, sub_question_mc])
       end

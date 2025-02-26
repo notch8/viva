@@ -288,11 +288,11 @@ const CreateQuestionForm = () => {
                 <ImageUploader images={images} setImages={setImages} />
               </div>
               <div className='tag-section m-4'>
-                <Keyword
+                {/* <Keyword
                   keywords={keywords}
                   handleAddKeyword={handleAddKeyword}
                   handleRemoveKeyword={handleRemoveKeyword}
-                />
+                /> */}
                 <Subject
                   subjects={subjects}
                   handleAddSubject={handleAddSubject}

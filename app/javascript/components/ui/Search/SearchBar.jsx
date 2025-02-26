@@ -21,7 +21,8 @@ const SearchBar = (props) => {
     selectedLevels,
     bookmarkedQuestionIds
   } = props
-  const filters = { subjects, keywords, types, levels }
+  // const filters = { subjects, keywords, types, levels }
+  const filters = { subjects, types, levels }
   const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
 
   useEffect(() => {

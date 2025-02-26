@@ -8,6 +8,16 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
+  before_save :index_searchable_field
+
+  include PgSearch
+
+  pg_search_scope(
+    :search,
+    against: %i[text searchable],
+    using: { tsearch: { dictionary: "english" } }
+  )
+
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
@@ -527,6 +537,37 @@ class Question < ApplicationRecord
     end
 
     questions.select(*select_statement)
+  end
+
+  private
+
+  def index_searchable_field
+    data_array = Array.wrap(data)
+
+    joined_text = data_array.map do |data|
+      sanitize_data_for_searchable_field(data)
+    end.flatten.join(' ')
+
+    self.searchable = final_scrub(joined_text)
+  end
+
+  def sanitize_data_for_searchable_field(data)
+    data.values.flatten.map do |value|
+      next unless value.is_a?(String) && !value.frozen?
+      # add a space character so we can turn <p>Hello</p><p>there</p>
+      # into 'Hello there' instead of 'Hellothere' after we strip tags
+      v = value.gsub('>', '> ')
+      ActionController::Base.helpers.strip_tags(v).squeeze(' ').strip
+    end.compact
+  end
+
+  # Clean and normalize the text for PostgreSQL tsvector
+  def final_scrub(text)
+    text.gsub(/[^\w\s]/, ' ')
+        .gsub(/\s+/, ' ')
+        .strip
+        .downcase
+        .truncate(1000)
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength

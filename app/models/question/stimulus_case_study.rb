@@ -48,4 +48,18 @@ class Question::StimulusCaseStudy < Question
       hash
     end
   end
+
+  private
+
+  def index_searchable_field
+    return if child_questions.empty?
+
+    texts = child_questions.map(&:text)
+    child_data = child_questions.map do |question|
+      question.send(:index_searchable_field)
+    end
+
+    combined_text = (texts + child_data).join(' ').squeeze(' ')
+    self.searchable = final_scrub(combined_text)
+  end
 end

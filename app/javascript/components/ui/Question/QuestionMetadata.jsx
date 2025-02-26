@@ -36,7 +36,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
       <button className='btn btn-primary mt-1 mb-4' onClick={handleBookmarkToggle}>
         {isBookmarked ? 'Unbookmark' : 'Bookmark'}
       </button>
-      {question.keyword_names &&
+      {/* {question.keyword_names &&
         <>
           <h6 className='fw-bold'>Keywords</h6>
           {question.keyword_names.map((keyword, index) => (
@@ -48,7 +48,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
             </div>
           ))}
         </>
-      }
+      } */}
       {question.subject_names &&
         <>
           <h6 className='fw-bold pt-3'>Subject</h6>

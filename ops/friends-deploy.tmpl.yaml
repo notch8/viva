@@ -12,13 +12,12 @@ externalPostgresql:
 
 web:
   replicaCount: 1
-  # resources:
-  #   limits:
-  #     cpu: 500m
-  #     memory: 8Gi
-  #   requests:
-  #     cpu: 250m
-  #     memory: 4Gi
+  resources:
+    limits:
+      memory: 8Gi
+    requests:
+      cpu: 250m
+      memory: 4Gi
 
 rails:
   image:

@@ -58,7 +58,11 @@ module QuestionFormatter
 
     def format_by_type
       method = @question.class.model_exporter
-      send(method)
+      begin
+        send(method)
+      rescue
+        "Question type: #{question_type} requires a valid export format method"
+      end
     end
 
     private

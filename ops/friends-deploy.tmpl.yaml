@@ -31,7 +31,7 @@ rails:
   shared:
     storage:
       size: 1Gi
-      className: ebs
+      className: aws-efs
 
 ingress:
   enabled: true

@@ -8,7 +8,7 @@ import { Inertia } from '@inertiajs/inertia'
 const SearchBar = (props) => {
   const {
     subjects,
-    keywords,
+    // keywords,
     types,
     levels,
     processing,
@@ -20,7 +20,7 @@ const SearchBar = (props) => {
     searchTerm
   } = props
 
-  const filters = { subjects, keywords, types, levels }
+  // const filters = { subjects, keywords, types, levels }
   const [query, setQuery] = useState(searchTerm || '')
   const [filterState, setFilterState] = useState({
     selectedKeywords: selectedKeywords || [],
@@ -28,6 +28,7 @@ const SearchBar = (props) => {
     selectedSubjects: selectedSubjects || [],
     selectedLevels: selectedLevels || []
   })
+  const filters = { subjects, types, levels }
   const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
 
   useEffect(() => {

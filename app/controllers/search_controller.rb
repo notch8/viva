@@ -70,7 +70,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: Question.filter_as_json(**filter_values),
+      filteredQuestions: Question.filter_as_json(search: params[:search], **filter_values),
       exportHrefs: export_hrefs,
       bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
     }

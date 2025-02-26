@@ -319,7 +319,7 @@ class Question < ApplicationRecord
   #
   # @see .filter
   # rubocop:disable Metrics/MethodLength
-  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, **kwargs)
+  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
     ##
     # The :data method/field is an interesting creature; we want to "select" it in queries because
     # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
@@ -332,7 +332,7 @@ class Question < ApplicationRecord
     only << :data unless only.include?(:data)
 
     # Ensure the `filter` method is called with eager loading for associations
-    questions = filter(select: only, **kwargs)
+    questions = filter(select: only, search: search, **kwargs)
 
     # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
     questions.map do |question|
@@ -456,7 +456,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil)
+  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -466,6 +466,7 @@ class Question < ApplicationRecord
 
     # Specifying a very arbitrary order
     questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
+    questions = questions.search(search) if search.present?
 
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're

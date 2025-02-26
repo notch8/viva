@@ -6,7 +6,7 @@ postgresql:
   enabled: false
 
 externalPostgresql:
-  host: postgres-postgresql.staging-postgres.svc.cluster.local
+  host: postgres-postgresql.postgres.svc.cluster.local
   username: postgres
   password: $DATABASE_PASSWORD
 
@@ -47,7 +47,7 @@ env:
   configmap:
     NAME: viva-friends
     DATABASE_ADAPTER: postgresql
-    DATABASE_HOST: postgres-postgresql.staging-postgres.svc.cluster.local
+    DATABASE_HOST: postgres-postgresql.postgres.svc.cluster.local
     DATABASE_NAME: viva-friends
     DATABASE_PASSWORD: $DATABASE_PASSWORD
     DATABASE_USER: postgres

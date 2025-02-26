@@ -10,7 +10,7 @@ import SelectAllThatApply from './SelectAllThatApply'
 import StimulusCaseStudy from './StimulusCaseStudy'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
-import Keyword from './Keyword'
+// import Keyword from './Keyword'
 import Subject from './Subject'
 import ImageUploader from './ImageUploader'
 import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
@@ -54,9 +54,9 @@ const CreateQuestionForm = () => {
 
   const handleTextChange = (e) => setQuestionText(e.target.value)
 
-  const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
-  const handleRemoveKeyword = (keywordToRemove) =>
-    setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
+  // const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
+  // const handleRemoveKeyword = (keywordToRemove) =>
+  // setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 

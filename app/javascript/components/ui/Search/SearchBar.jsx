@@ -9,7 +9,7 @@ import { Inertia } from '@inertiajs/inertia'
 const SearchBar = (props) => {
   const {
     subjects,
-    keywords,
+    // keywords,
     types,
     levels,
     submit,

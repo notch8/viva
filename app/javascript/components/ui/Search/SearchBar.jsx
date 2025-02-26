@@ -134,7 +134,7 @@ const SearchBar = (props) => {
           {query && (
             <Button
               variant='outline-secondary'
-              className='d-flex align-items-center fs-6 justify-content-center ms-2'
+              className='d-flex align-items-center fs-6 justify-content-center border-light-4'
               size='lg'
               onClick={handleReset}
             >
@@ -170,7 +170,9 @@ const SearchBar = (props) => {
                     onChange={(event) => handleFilterChange(event, `selected${key.charAt(0).toUpperCase() + key.slice(1)}`)}
                     checked={filterState[`selected${key.charAt(0).toUpperCase() + key.slice(1)}`].includes(item)}
                   />
-                  <Form.Check.Label className='ps-2'>{item}</Form.Check.Label>
+                  <Form.Check.Label className='ps-2'>
+                    {key === 'types' && item.startsWith('question_') ? item.substring(9) : item}
+                  </Form.Check.Label>
                 </Form.Check>
               ))}
             </DropdownButton>
@@ -194,12 +196,28 @@ const SearchBar = (props) => {
                 View Bookmarks
               </a>
               <a
-                href={'.xml?bookmarked=true'}
+                href={'/questions/download?format=txt'}
                 className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
                 role='button'
                 aria-disabled={!hasBookmarks}
               >
-                Export Bookmarks
+                Export as Plain Text
+              </a>
+              <a
+                href={'/questions/download?format=md'}
+                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
+                role='button'
+                aria-disabled={!hasBookmarks}
+              >
+                Export as Markdown
+              </a>
+              <a
+                href={`/.xml?${bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')}`}
+                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
+                role='button'
+                aria-disabled={!hasBookmarks}
+              >
+                Export as XML
               </a>
               <Button
                 variant='danger'

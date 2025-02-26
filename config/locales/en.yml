@@ -49,3 +49,6 @@ en:
         success: "Settings updated successfully."
       update_password:
         success: "Password updated successfully."
+    search:
+      download:
+        alert: "Invalid format. Please select a valid format."

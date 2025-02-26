@@ -43,6 +43,9 @@ class Question < ApplicationRecord
   class_attribute :required_csv_headers, default: %w[IMPORT_ID TEXT TYPE].freeze
   class_attribute :type_label, default: "Question", instance_writer: false
   class_attribute :type_name, default: "Question", instance_writer: false
+  # model_exporter is the method name in the formatters used for text downloading
+  # it must be defined in the inheriting classes
+  class_attribute :model_exporter, default: nil, instance_writer: false
 
   ##
   # @!attribute qti_max_value [r|w]
@@ -332,7 +335,7 @@ class Question < ApplicationRecord
     only << :data unless only.include?(:data)
 
     # Ensure the `filter` method is called with eager loading for associations
-    questions = filter(select: only, search: search, **kwargs)
+    questions = filter(select: only, search:, **kwargs)
 
     # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
     questions.map do |question|

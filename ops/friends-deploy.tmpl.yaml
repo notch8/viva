@@ -30,7 +30,7 @@ rails:
   shared:
     storage:
       size: 1Gi
-      className: aws-efs
+      className: efs-sc
 
 ingress:
   enabled: true

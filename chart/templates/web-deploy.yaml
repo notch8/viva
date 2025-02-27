@@ -40,12 +40,24 @@ spec:
           image: {{ .Values.rails.image.repository }}:{{ .Values.rails.image.tag }}
           imagePullPolicy: IfNotPresent
           resources:
+          {{- if .Values.web.resources.requests }}
             requests:
+              {{- if .Values.web.resources.requests.memory }}
               memory: {{ .Values.web.resources.requests.memory }}
+              {{- end }}
+              {{- if .Values.web.resources.requests.cpu }}
               cpu: {{ .Values.web.resources.requests.cpu }}
+              {{- end }}
+          {{- end }}
+          {{- if .Values.web.resources.limits }}
             limits:
+              {{- if .Values.web.resources.limits.memory }}
               memory: {{ .Values.web.resources.limits.memory }}
+              {{- end }}
+              {{- if .Values.web.resources.limits.cpu }}
               cpu: {{ .Values.web.resources.limits.cpu }}
+              {{- end }}
+          {{- end }}
           # Use sub-path for individual folders
           volumeMounts:
             - mountPath: /app/public/assets

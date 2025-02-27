@@ -175,18 +175,6 @@ class Api::QuestionsController < ApplicationController
   end
 
   ##
-  # Handles the subjects for the stimulus case study.
-  #
-  # @param [Question] stimulus_case_study The stimulus case study object.
-  # @param [Array<String>] subjects The array of subject names.
-  def handle_subjects_case_study(stimulus_case_study, subjects)
-    subjects&.each do |subject_name|
-      subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
-      stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject)
-    end
-  end
-
-  ##
   # Maps and validates the subquestions for the stimulus case study.
   #
   # @param [Array<Hash>] subquestions_data The array of subquestion data.
@@ -550,8 +538,20 @@ class Api::QuestionsController < ApplicationController
     return if params[:question][:subjects].blank?
 
     params[:question][:subjects].each do |subject_name|
-      subject = Subject.find_or_initialize_by(name: subject_name.strip.downcase)
-      question.subjects << subject unless question.subjects.include?(subject)
+      subject = Subject.find_by(name: subject_name.strip.downcase)
+      question.subjects << subject unless question.subjects.include?(subject) || subject.nil?
+    end
+  end
+
+  ##
+  # Handles the subjects for the stimulus case study.
+  #
+  # @param [Question] stimulus_case_study The stimulus case study object.
+  # @param [Array<String>] subjects The array of subject names.
+  def handle_subjects_case_study(stimulus_case_study, subjects)
+    subjects&.each do |subject_name|
+      subject = Subject.find_by(name: subject_name.strip.downcase)
+      stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject) || subject.nil?
     end
   end
 

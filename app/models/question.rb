@@ -283,6 +283,8 @@ class Question < ApplicationRecord
 
     return Question::InvalidLevel.new(row) if row['LEVEL'] && Level.names.exclude?(row['LEVEL'])
 
+    return Question::InvalidSubject.new(row) if row['SUBJECT']&.split(',').any? { |subject| Subject.names.exclude?(subject.strip.downcase) }
+
     klass.build_row(row:, questions:)
   end
 

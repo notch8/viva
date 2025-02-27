@@ -72,6 +72,16 @@ RSpec.describe Question, type: :model do
       it { is_expected.to be_a(Question::InvalidType) }
       it { is_expected.not_to be_valid }
     end
+    context "when row's SUBJECT is not in table Subject" do
+      let(:row) { CsvRow.new('IMPORT_ID' => '1', 'SUBJECT' => 'France, Italy') }
+
+      before do
+        allow(Subject).to receive(:find_by_name).and_return(nil)
+      end
+
+      it { is_expected.to be_a(Question::InvalidSubject) }
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe '.invalid_question_due_to_missing_headers' do

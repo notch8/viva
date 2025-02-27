@@ -8,6 +8,16 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
+  before_save :index_searchable_field
+
+  include PgSearch
+
+  pg_search_scope(
+    :search,
+    against: %i[text searchable],
+    using: { tsearch: { dictionary: "english" } }
+  )
+
   has_and_belongs_to_many :subjects, -> { order(name: :asc) }
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
@@ -312,7 +322,7 @@ class Question < ApplicationRecord
   #
   # @see .filter
   # rubocop:disable Metrics/MethodLength
-  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, **kwargs)
+  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
     ##
     # The :data method/field is an interesting creature; we want to "select" it in queries because
     # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
@@ -325,7 +335,7 @@ class Question < ApplicationRecord
     only << :data unless only.include?(:data)
 
     # Ensure the `filter` method is called with eager loading for associations
-    questions = filter(select: only, **kwargs)
+    questions = filter(select: only, search:, **kwargs)
 
     # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
     questions.map do |question|
@@ -449,7 +459,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil)
+  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -459,6 +469,7 @@ class Question < ApplicationRecord
 
     # Specifying a very arbitrary order
     questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
+    questions = questions.search(search) if search.present?
 
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
@@ -530,6 +541,37 @@ class Question < ApplicationRecord
     end
 
     questions.select(*select_statement)
+  end
+
+  private
+
+  def index_searchable_field
+    data_array = Array.wrap(data)
+
+    joined_text = data_array.map do |data|
+      sanitize_data_for_searchable_field(data)
+    end.flatten.join(' ')
+
+    self.searchable = final_scrub(joined_text)
+  end
+
+  def sanitize_data_for_searchable_field(data)
+    data.values.flatten.map do |value|
+      next unless value.is_a?(String) && !value.frozen?
+      # add a space character so we can turn <p>Hello</p><p>there</p>
+      # into 'Hello there' instead of 'Hellothere' after we strip tags
+      v = value.gsub('>', '> ')
+      ActionController::Base.helpers.strip_tags(v).squeeze(' ').strip
+    end.compact
+  end
+
+  # Clean and normalize the text for PostgreSQL tsvector
+  def final_scrub(text)
+    text.gsub(/[^\w\s]/, ' ')
+        .gsub(/\s+/, ' ')
+        .strip
+        .downcase
+        .truncate(1000)
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength

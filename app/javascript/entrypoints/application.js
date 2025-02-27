@@ -23,4 +23,9 @@
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
+
+// Import global stylesheets
+import 'react-bootstrap-typeahead/css/Typeahead.css'
+
+// Import the main application component
 import '../components/Application'

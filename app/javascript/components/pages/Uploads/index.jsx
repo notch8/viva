@@ -98,7 +98,7 @@ const Uploads = (props) => {
             }
           </Alert>
         }
-        <CreateQuestionForm />
+        <CreateQuestionForm subjectOptions={props.subjects} />
       </Container>
     </Layout>
   )

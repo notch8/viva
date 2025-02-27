@@ -233,4 +233,96 @@ RSpec.describe Question, type: :model do
       expect(subject.errors.to_hash[:text]).to be_a(Array)
     end
   end
+
+  describe '#searchable' do
+    context 'when data is a hash with html as the value' do
+      subject do
+        Question::Upload.create(
+          text: 'Describe the impact of Studio Ghibli on anime.',
+          data: { 'html' => '<p>Consider films like Spirited Away and Princess Mononoke.</p><ul><li>Cultural significance</li><li>Link to <a href="https://ghibli.jp">Studio Ghibli</a></li></ul>' }
+        )
+      end
+      it 'indexes the data field onto the searchable field as a string' do
+        expect(subject.searchable).to eq 'consider films like spirited away and princess mononoke cultural significance link to studio ghibli'
+      end
+
+      it 'is searchable with #search' do
+        expect(Question.search('spirited away')).to eq [subject]
+      end
+
+      it 'is stemmed' do
+        expect(Question.search('spirit')).to eq [subject]
+      end
+    end
+
+    context 'when data is an array' do
+      subject do
+        Question::Traditional.create(
+          text: 'Which of these is a famous anime director?',
+          data: [
+            { 'answer' => 'Hayao Miyazaki', 'correct' => true },
+            { 'answer' => 'Christopher Nolan', 'correct' => false },
+            { 'answer' => 'Martin Scorsese', 'correct' => false },
+            { 'answer' => 'Quentin Tarantino', 'correct' => false }
+          ]
+        )
+      end
+      it 'indexes the data field onto the searchable field as a string' do
+        expect(subject.searchable).to eq 'hayao miyazaki christopher nolan martin scorsese quentin tarantino'
+        expect(Question.search('Miyazaki')).to eq [subject]
+      end
+    end
+
+    context 'when the quetion is a stimulus case study' do
+      before do
+        allow(subject).to receive(:child_questions).and_return(child_questions)
+
+        subject.save
+      end
+
+      subject do
+        Question::StimulusCaseStudy.new(
+          text: 'Analysis of Attack on Titan themes and symbolism.'
+        )
+      end
+
+      let(:child_questions) do
+        [
+          Question::Scenario.new(
+            text: 'Read the following excerpt about the walls in Attack on Titan.'
+          ),
+          Question::Categorization.new(
+            text: 'Match the Titan types with their characteristics.',
+            data: [
+              { "answer" => "Founding Titan", "correct" => ["Controls other titans", "Memory manipulation"] },
+              { "answer" => "Armored Titan", "correct" => ["Hardened body", "Enhanced durability"] },
+              { "answer" => "Colossal Titan", "correct" => ["Massive size", "Steam emission"] },
+              { "answer" => "Attack Titan", "correct" => ["Future memory access", "Enhanced strength"] }
+            ]
+          ),
+          Question::DragAndDrop.new(
+            text: 'Order the following events chronologically.',
+            data: [
+              { "answer" => "Fall of Wall Maria", "correct" => true },
+              { "answer" => "Battle of Trost", "correct" => true },
+              { "answer" => "Female Titan arc", "correct" => true },
+              { "answer" => "Return to Shiganshina", "correct" => true }
+            ]
+          ),
+          Question::Essay.new(
+            text: 'Analyze the symbolism of walls in the series.',
+            data: { "html" => "<p>Consider the following aspects:</p><ul><li>Physical protection</li><li>Symbolic imprisonment</li><li>Link to <a href='https://attackontitan.com'>Official Site</a></li></ul>" }
+          )
+        ]
+      end
+
+      it 'indexes the child questions\' data field(s) onto the searchable field of the parent as a string' do
+        # rubocop:disable Layout/LineLength
+        expected_text = 'read the following excerpt about the walls in attack on titan match the titan types with their characteristics order the following events chronologically analyze the symbolism of walls in the series founding titan controls other titans memory manipulation armored titan hardened body enhanced durability colossal titan massive size steam emission attack titan future memory access enhanced strength fall of wall maria battle of trost female titan arc return to shiganshina consider the following aspects physical protection symbolic imprisonment link to official site'
+        # rubocop:enable Layout/LineLength
+        expect(subject.searchable).to eq expected_text
+        expect(Question.search('titan')).to eq [subject]
+      end
+    end
+  end
 end

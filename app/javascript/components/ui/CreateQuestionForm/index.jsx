@@ -10,7 +10,7 @@ import SelectAllThatApply from './SelectAllThatApply'
 import StimulusCaseStudy from './StimulusCaseStudy'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
-import Keyword from './Keyword'
+// import Keyword from './Keyword'
 import Subject from './Subject'
 import ImageUploader from './ImageUploader'
 import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
@@ -20,7 +20,7 @@ const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
   const [level, setLevel] = useState('')
-  const [keywords, setKeywords] = useState([])
+  // const [keywords, setKeywords] = useState([])
   const [subjects, setSubjects] = useState([])
   const [data, setData] = useState({ text: '', subQuestions: [] })
   const [resetFields, setResetFields] = useState(false)
@@ -54,9 +54,9 @@ const CreateQuestionForm = () => {
 
   const handleTextChange = (e) => setQuestionText(e.target.value)
 
-  const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
-  const handleRemoveKeyword = (keywordToRemove) =>
-    setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
+  // const handleAddKeyword = (keyword) => setKeywords([...keywords, keyword])
+  // const handleRemoveKeyword = (keywordToRemove) =>
+  // setKeywords(keywords.filter((keyword) => keyword !== keywordToRemove))
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
@@ -98,9 +98,9 @@ const CreateQuestionForm = () => {
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
-    keywords.forEach((keyword) =>
-      formData.append('question[keywords][]', keyword)
-    )
+    // keywords.forEach((keyword) =>
+    //   formData.append('question[keywords][]', keyword)
+    // )
     subjects.forEach((subject) =>
       formData.append('question[subjects][]', subject)
     )
@@ -134,7 +134,7 @@ const CreateQuestionForm = () => {
     setQuestionText('')
     setImages([])
     setLevel('')
-    setKeywords([])
+    // setKeywords([])
     setSubjects([])
     setData(null) // Reset data to null or empty
     setResetFields(true)
@@ -288,11 +288,11 @@ const CreateQuestionForm = () => {
                 <ImageUploader images={images} setImages={setImages} />
               </div>
               <div className='tag-section m-4'>
-                <Keyword
+                {/* <Keyword
                   keywords={keywords}
                   handleAddKeyword={handleAddKeyword}
                   handleRemoveKeyword={handleRemoveKeyword}
-                />
+                /> */}
                 <Subject
                   subjects={subjects}
                   handleAddSubject={handleAddSubject}

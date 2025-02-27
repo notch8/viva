@@ -22,7 +22,7 @@ class SearchController < ApplicationController
       # conversations with the client, we're looking to only export classic (as you can migrate a
       # classic question to new format).  This filename is another "helpful clue" and introduces
       # later considerations for what the file format might be.
-      filename = "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
+      filename = "#{export_filename(now)}.classic-question-canvas.qti.xml"
       @questions = Question.filter(**filter_values)
 
       if any_question_has_images?
@@ -35,7 +35,34 @@ class SearchController < ApplicationController
     end
   end
 
+  # download bookmarked questions
+  def download
+    @questions = Question.where(id: Bookmark.select(:question_id))
+    case params[:format]
+    when 'md'
+      md_download
+    when 'txt'
+      text_download
+    else
+      redirect_to authenticated_root_path, alert: t('.alert')
+    end
+  end
+
   private
+
+  def export_filename(now = Time.current)
+    "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}"
+  end
+
+  def text_download
+    content = @questions.map { |question| QuestionFormatter::PlainTextService.new(question).format_content }.join('')
+    send_data content, filename: "#{export_filename}.txt", type: 'text/plain'
+  end
+
+  def md_download
+    content = @questions.map { |question| QuestionFormatter::MarkdownService.new(question).format_content }.join('')
+    send_data content, filename: "#{export_filename}.md", type: 'text/plain'
+  end
 
   def any_question_has_images?
     @questions.any? { |question| question.images.any? }
@@ -70,7 +97,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
-      filteredQuestions: Question.filter_as_json(**filter_values),
+      filteredQuestions: Question.filter_as_json(search: params[:search], **filter_values),
       exportHrefs: export_hrefs,
       bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
     }

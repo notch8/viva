@@ -141,5 +141,39 @@ RSpec.describe SearchController do
         expect(response.headers['Content-Disposition']).to match(/.zip/)
       end
     end
+
+    context 'downloading question text' do
+      let(:question) { FactoryBot.build_stubbed(:question_traditional) }
+
+      before do
+        allow(Question).to receive(:where).and_return([question])
+      end
+
+      context 'downloading as plain text' do
+        it 'returns a txt file' do
+          get :download, format: :txt
+          expect(response.content_type).to eq('text/plain')
+          expect(response.headers['Content-Disposition']).to match(/questions-.*\.txt/)
+        end
+
+        it 'includes bookmarked questions in the response' do
+          get :download, format: :txt
+          expect(response.body).to include(question.text)
+        end
+      end
+
+      context 'downloading as markdown' do
+        it 'returns a md file' do
+          get :download, format: :md
+          expect(response.content_type).to eq('text/plain')
+          expect(response.headers['Content-Disposition']).to match(/questions-.*\.md/)
+        end
+
+        it 'includes bookmarked questions in the response' do
+          get :download, format: :md
+          expect(response.body).to include(question.text)
+        end
+      end
+    end
   end
 end

@@ -9,6 +9,7 @@ class Question::Essay < Question
   include MarkdownQuestionBehavior
 
   self.type_name = "Essay"
+  self.model_exporter = 'essay_type'
   self.export_as_xml = true
 
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow

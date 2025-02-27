@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_07_16_170855) do
+ActiveRecord::Schema[7.0].define(version: 2025_02_25_130500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,6 +93,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_07_16_170855) do
     t.datetime "updated_at", null: false
     t.text "data"
     t.string "level"
+    t.tsvector "searchable"
+    t.index ["searchable"], name: "index_questions_on_searchable", using: :gin
     t.index ["type"], name: "index_questions_on_type"
   end
 

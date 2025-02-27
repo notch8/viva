@@ -5,6 +5,7 @@
 class Question::StimulusCaseStudy < Question
   self.type_label = "Case Study"
   self.type_name = "Stimulus Case Study"
+  self.model_exporter = 'stimulus_type'
   self.has_parts = true
 
   has_many :as_parent_question_aggregations,
@@ -47,5 +48,19 @@ class Question::StimulusCaseStudy < Question
       hash["data"] = question.data if question.data.present?
       hash
     end
+  end
+
+  private
+
+  def index_searchable_field
+    return if child_questions.empty?
+
+    texts = child_questions.map(&:text)
+    child_data = child_questions.map do |question|
+      question.send(:index_searchable_field)
+    end
+
+    combined_text = (texts + child_data).join(' ').squeeze(' ')
+    self.searchable = final_scrub(combined_text)
   end
 end

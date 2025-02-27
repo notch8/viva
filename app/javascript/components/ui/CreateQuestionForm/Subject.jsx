@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Form, InputGroup } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
+// https://github.com/ericgio/react-bootstrap-typeahead
 
 const Subject = ({ subjectOptions, handleAddSubject }) => {
   const [subject, setSubject] = useState([])
 
-  const handleSubjectChange = (selected) => {
-    setSubject(selected)
-    handleAddSubject(selected)
+  const handleSubjectChange = (selectedSubject) => {
+    setSubject(selectedSubject)
+    handleAddSubject(selectedSubject)
   }
 
   return (
@@ -16,10 +17,10 @@ const Subject = ({ subjectOptions, handleAddSubject }) => {
       <InputGroup className='mb-3 text-uppercase'>
         <Form.Group controlId='add-subject'>
           <Typeahead
-            id="basic-typeahead"
+            id='basic-typeahead'
             onChange={handleSubjectChange}
             options={subjectOptions}
-            placeholder="Select subjects"
+            placeholder='Select subjects'
             multiple={true}
             selected={subject}
           />

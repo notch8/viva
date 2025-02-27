@@ -24,6 +24,12 @@ RSpec.describe UploadsController do
     context 'with valid data' do
       let(:file) { fixture_file_upload("valid_multiple_choice_question.csv", "text/csv") }
 
+      before do
+        Subject.create(name: 'Science')
+        Subject.create(name: 'Metaphysics')
+        Subject.create(name: 'Civics')
+      end
+
       it "will respond with a :success code (e.g. 200), there won't be any errors, and Question records will be created." do
         expect do
           post :create, params: { csv: { "0" => file } }

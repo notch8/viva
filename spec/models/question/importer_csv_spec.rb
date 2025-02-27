@@ -4,6 +4,14 @@ require 'rails_helper'
 
 RSpec.describe Question::ImporterCsv do
   subject(:instance) { described_class.new(text) }
+  let!(:setting_names_array) do
+    subjects_data = YAML.load_file('spec/fixtures/files/valid_subjects.yaml')
+    subjects_data['subjects']['name']
+  end
+
+  before do
+    allow(Subject).to receive(:names).and_return(setting_names_array)
+  end
 
   describe '.from_file' do
     Rails.root.glob("spec/fixtures/files/valid_*.csv").each do |path|

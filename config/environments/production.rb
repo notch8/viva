@@ -9,7 +9,7 @@ Rails.application.configure do
   config.cache_classes = true
 
   # Define the hosts in Rails 7
-  config.hosts << "viva-staging.notch8.cloud"
+  config.hosts << "viva-friends.notch8.cloud"
 
   # Eager load code on boot. This eager loads most of Rails and
   # your application in memory, allowing both threaded web servers

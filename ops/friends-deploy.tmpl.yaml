@@ -6,7 +6,7 @@ postgresql:
   enabled: false
 
 externalPostgresql:
-  host: pg-postgresql.staging-postgres.svc.cluster.local
+  host: postgres-postgresql.postgres.svc.cluster.local
   username: postgres
   password: $DATABASE_PASSWORD
 
@@ -30,25 +30,25 @@ rails:
   shared:
     storage:
       size: 1Gi
-      className: nfs
+      className: aws-efs
 
 ingress:
   enabled: true
   hosts:
-    - viva-staging.notch8.cloud
+    - viva-friends.notch8.cloud
   annotations: {
     kubernetes.io/ingress.class: "nginx",
     nginx.ingress.kubernetes.io/proxy-body-size: "0",
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   }
-  tlsSecretName: viva-staging-tls
+  tlsSecretName: viva-friends-tls
 
 env:
   configmap:
-    NAME: viva-staging
+    NAME: viva-friends
     DATABASE_ADAPTER: postgresql
-    DATABASE_HOST: pg-postgresql.staging-postgres.svc.cluster.local
-    DATABASE_NAME: viva-staging
+    DATABASE_HOST: postgres-postgresql.postgres.svc.cluster.local
+    DATABASE_NAME: viva-friends
     DATABASE_PASSWORD: $DATABASE_PASSWORD
     DATABASE_USER: postgres
     RAILS_ENV: production

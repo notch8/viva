@@ -20,7 +20,7 @@ const CreateQuestionForm = () => {
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
   const [level, setLevel] = useState('')
-  const [keywords, setKeywords] = useState([])
+  // const [keywords, setKeywords] = useState([])
   const [subjects, setSubjects] = useState([])
   const [data, setData] = useState({ text: '', subQuestions: [] })
   const [resetFields, setResetFields] = useState(false)
@@ -98,9 +98,9 @@ const CreateQuestionForm = () => {
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
-    keywords.forEach((keyword) =>
-      formData.append('question[keywords][]', keyword)
-    )
+    // keywords.forEach((keyword) =>
+    //   formData.append('question[keywords][]', keyword)
+    // )
     subjects.forEach((subject) =>
       formData.append('question[subjects][]', subject)
     )
@@ -134,7 +134,7 @@ const CreateQuestionForm = () => {
     setQuestionText('')
     setImages([])
     setLevel('')
-    setKeywords([])
+    // setKeywords([])
     setSubjects([])
     setData(null) // Reset data to null or empty
     setResetFields(true)

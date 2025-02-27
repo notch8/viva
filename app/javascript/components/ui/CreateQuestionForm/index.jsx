@@ -99,9 +99,9 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     }
 
     images.forEach(({ file }) => formData.append('question[images][]', file))
-    keywords.forEach((keyword) =>
-      formData.append('question[keywords][]', keyword)
-    )
+    // keywords.forEach((keyword) =>
+    //   formData.append('question[keywords][]', keyword)
+    // )
     subjects.forEach((subject) =>
       formData.append('question[subjects][]', subject)
     )
@@ -135,7 +135,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     setQuestionText('')
     setImages([])
     setLevel('')
-    setKeywords([])
+    // setKeywords([])
     setSubjects([])
     setData(null) // Reset data to null or empty
     setResetFields(true)

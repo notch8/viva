@@ -47,20 +47,8 @@ Question.destroy_all
 #   end
 # end
 
-nursing_question_subjects = [
-  "Nursing Process",
-  "Patient Education",
-  "Health Assessment",
-  "Pathophysiology",
-  "Medical Ethics",
-  "Healthcare Informatics",
-  "Cultural Competence"
-]
-
-subjects = nursing_question_subjects.map do |subject_name|
-  Subject.find_or_create_by(name: subject_name)
-end
-
+SubjectImporter.import
+subjects = Subject.all
 questions = []
 
 upload_question_1_data = {

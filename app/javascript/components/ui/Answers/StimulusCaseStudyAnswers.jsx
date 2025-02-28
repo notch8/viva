@@ -8,7 +8,7 @@ const StimulusCaseStudyAnswers = ({ answers }) => {
       {answers.map((answer, index) => {
         return (
           <React.Fragment key={index}>
-            <Question text={answer.text} title={answer.type_label} />
+            <Question text={answer.text} title={answer.type_label} images={answer.images} />
             {answer.data && (
               <Answers
                 question_type_name={answer.type_name}

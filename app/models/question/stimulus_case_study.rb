@@ -34,8 +34,8 @@ class Question::StimulusCaseStudy < Question
   #       be to move the has_many relations to Question but that would expose those methods to other
   #       question types.
   #
-  # @return [Array<Hash<String, Object>>] each element will have "type_label", "type_name", and
-  #         "text".  When the child_question has no {#data} it will be omitted (as in a
+  # @return [Array<Hash<String, Object>>] each element will have "type_label", "type_name", "text", and
+  #         "images".  When the child_question has no {#data} it will be omitted (as in a
   #         {Question::Scenario}).  When the child_question's data is present, it will conform to
   #         that question's {#data} structure (often an Array but could be a Hash).
   def data
@@ -43,7 +43,8 @@ class Question::StimulusCaseStudy < Question
       hash = {
         "type_label" => question.type_label,
         "type_name" => question.type_name,
-        "text" => question.text
+        "text" => question.text,
+        "images" => question.images_as_json
       }
       hash["data"] = question.data if question.data.present?
       hash

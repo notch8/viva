@@ -118,6 +118,12 @@ class Question < ApplicationRecord
     images.pluck(:alt_text)
   end
 
+  def images_as_json
+    images.map do |image|
+      { url: image.url, alt_text: image.alt_text }
+    end
+  end
+
   ##
   # {Question#type} is a partially reserved value; used for the Single Table Inheritance.  It is not
   # human friendly.  The {.type_names} is an effort to be more friendly.
@@ -344,9 +350,7 @@ class Question < ApplicationRecord
       question_json = question.as_json(only:, methods:)
 
       if question.images.present?
-        question_json['images'] = question.images.map do |image|
-          { url: image.url, alt_text: image.alt_text }
-        end
+        question_json['images'] = question.images_as_json
       else
         question_json['images'] = []
         question_json['alt_texts'] = []

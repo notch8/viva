@@ -57,10 +57,10 @@ RSpec.describe Question::StimulusCaseStudy do
       expect(subject.all? { |d| d.is_a?(Hash) }).to eq(true)
 
       # Making an assumption about the factory; namely that the first element is a scenario.
-      expect(subject[0].keys).to match_array(["type_label", "type_name", "text"])
+      expect(subject[0].keys).to match_array(["type_label", "type_name", "text", "images"])
 
       # The second element is a non-scenario Question, and thus has data.
-      expect(subject[1].keys).to match_array(["type_label", "type_name", "text", "data"])
+      expect(subject[1].keys).to match_array(["type_label", "type_name", "text", "data", "images"])
     end
   end
 end

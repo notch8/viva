@@ -15,7 +15,8 @@ import Subject from './Subject'
 import ImageUploader from './ImageUploader'
 import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 
-const CreateQuestionForm = () => {
+const CreateQuestionForm = ({ subjectOptions }) => {
+
   const [questionType, setQuestionType] = useState('')
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
@@ -60,7 +61,7 @@ const CreateQuestionForm = () => {
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
-  const handleAddSubject = (subject) => setSubjects([...subjects, subject])
+  const handleAddSubject = (subject) => setSubjects(subject)
   const handleRemoveSubject = (subjectToRemove) =>
     setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
 
@@ -139,7 +140,6 @@ const CreateQuestionForm = () => {
     setData(null) // Reset data to null or empty
     setResetFields(true)
   }
-
 
   const isSubmitDisabled = () => {
     // Ensure the parent question text box is populated
@@ -268,7 +268,6 @@ const CreateQuestionForm = () => {
     return false // Enable the submit button if all validations pass
   }
 
-
   return (
     <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
@@ -294,7 +293,7 @@ const CreateQuestionForm = () => {
                   handleRemoveKeyword={handleRemoveKeyword}
                 /> */}
                 <Subject
-                  subjects={subjects}
+                  subjectOptions={subjectOptions}
                   handleAddSubject={handleAddSubject}
                   handleRemoveSubject={handleRemoveSubject}
                 />

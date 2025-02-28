@@ -57,4 +57,10 @@ namespace :data do
       end
     end
   end
+
+  desc "Import additional subjects from a specified YAML file"
+  task :import_subjects, [:file_path] => :environment do |t, args|
+    file_path = args[:file_path] || 'config/subjects.yaml'
+    SubjectImporter.import(file_path)
+  end
 end

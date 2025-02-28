@@ -4,7 +4,9 @@
 # The controller to handle methods related to the uploads page.
 class UploadsController < ApplicationController
   def index
-    render inertia: 'Uploads'
+    render inertia: 'Uploads', props: {
+      subjects: Subject.names
+    }
   end
 
   def create

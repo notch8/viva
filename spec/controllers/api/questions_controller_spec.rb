@@ -14,7 +14,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
             fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
           ],
           keywords: ['France', 'Capital Cities'],
-          subjects: ['Geography']
+          subjects: ['Geography', 'Invalid']
         }
       }
     end
@@ -247,8 +247,20 @@ RSpec.describe Api::QuestionsController, type: :controller do
     let(:invalid_params) do
       { question: { text: '' } }
     end
+    let(:subject) { create(:subject, name:) }
+    let(:name) { subject_name }
+    let(:subject_name) { 'something' }
+    let(:invalid_subject_name) { 'invalid' }
+
+    before do
+      allow(Subject).to receive(:find_by).with(name:).and_return(subject)
+      allow(Subject).to receive(:find_by).with(name: invalid_subject_name).and_return(nil)
+      allow(Subject).to receive(:find_by).and_call_original
+    end
 
     context 'when creating an essay question' do
+      let(:subject_name) { 'geography' }
+
       it 'creates an essay question with all parameters' do
         expect { post :create, params: essay_params }.to change(Question, :count).by(1)
         question = Question.last
@@ -259,10 +271,13 @@ RSpec.describe Api::QuestionsController, type: :controller do
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('france', 'capital cities')
         expect(question.subjects.map(&:name)).to contain_exactly('geography')
+        expect(question.subjects.map(&:name)).to_not include('invalid')
       end
     end
 
     context 'when creating a Drag and Drop question' do
+      let(:subject_name) { 'logic' }
+
       it 'creates a Drag and Drop question with all parameters' do
         expect { post :create, params: drag_and_drop_params }.to change(Question, :count).by(1)
         question = Question.last
@@ -282,6 +297,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Matching question' do
+      let(:subject_name) { 'pharmacology' }
+
       it 'creates a Matching question with all parameters' do
         expect { post :create, params: matching_params }.to change(Question, :count).by(1)
         question = Question.last
@@ -301,6 +318,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Categorization question' do
+      let(:subject_name) { 'nutrition' }
+
       it 'creates a Categorization question with all parameters' do
         expect { post :create, params: categorization_params }.to change(Question, :count).by(1)
         question = Question.last
@@ -375,6 +394,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Multiple Choice question' do
+      let(:subject_name) { 'biology' }
+
       it 'creates a Multiple Choice question with all parameters' do
         expect { post :create, params: multiple_choice_params }.to change(Question, :count).by(1)
         question = Question.last
@@ -424,6 +445,8 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Select All That Apply question' do
+      let(:subject_name) { 'biology' }
+
       it 'creates a Select All That Apply question with all parameters' do
         expect { post :create, params: select_all_params }.to change(Question, :count).by(1)
         question = Question.last

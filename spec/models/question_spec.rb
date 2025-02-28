@@ -72,6 +72,22 @@ RSpec.describe Question, type: :model do
       it { is_expected.to be_a(Question::InvalidType) }
       it { is_expected.not_to be_valid }
     end
+    context "when row's SUBJECT is not in table Subject" do
+      let(:row) { CsvRow.new('IMPORT_ID' => '1', 'TYPE' => 'Essay', 'SUBJECT' => searched_subject) }
+      let(:searched_subject) { 'France' }
+      let!(:setting_names_array) do
+        subjects_data = YAML.load_file('spec/fixtures/files/valid_subjects.yaml')
+        subjects_data['subjects']['name']
+      end
+      let(:found_subject) { setting_names_array.include?(searched_subject) ? searched_subject : nil }
+
+      before do
+        allow(Subject).to receive(:find_by).with(name: searched_subject).and_return(found_subject)
+      end
+
+      it { is_expected.to be_a(Question::InvalidSubject) }
+      it { is_expected.not_to be_valid }
+    end
   end
 
   describe '.invalid_question_due_to_missing_headers' do

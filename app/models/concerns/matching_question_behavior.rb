@@ -166,23 +166,64 @@ module MatchingQuestionBehavior
     delegate :ident, :text, to: :response, prefix: true
   end
 
+  ##
+  # Builds the QTI data structure for matching questions, with special attention to Canvas's
+  # rendering requirements for dropdown menus.
+  #
+  # The method generates two types of identifiers:
+  # 1. Response identifiers (format: "response_1000", "response_2000", etc.)
+  # 2. Choice identifiers (format: "100", "101", etc.)
+  #
+  # @note While the IMS QTI 1.2 spec only requires identifiers to be unique within an item scope,
+  #       Canvas has additional undocumented requirements for proper dropdown rendering. Through
+  #       testing, we found that:
+  #       - Simple numeric identifiers work reliably
+  #       - Complex hyphenated strings (e.g., item-7d58016d00d-c-0) cause dropdown rendering issues
+  #       - Each choice must have a unique identifier even if the text is the same
+  #
+  # @see https://www.imsglobal.org/question/qtiv1p2/imsqti_asi_bindv1p2.html Section 3.2.4.1
+  #
   def build_qti_data
     @qti_response_conditions = []
 
-    # We're assigning proportional value to each correct answer; we're making an assumption of 2
-    # decimals of precision based on provided examples.
+    # Calculate proportional value for scoring
     value = format("%0.2f", qti_max_value.to_f / data.count)
 
-    # We want the choice index to be unique
-    choice_index = 0
+    # Initialize choice ID tracking
+    # Starting at 100 gives room for expansion while keeping IDs short
+    choice_base = 100
+    used_idents = Set.new
+
     data.each_with_index do |datum, index|
       choices = []
       Array.wrap(datum.fetch('correct')).each do |choice|
-        choices << Choice.new(ident: "#{item_ident}-c-#{choice_index}", text: choice)
-        choice_index += 1
+        # Ensure unique identifiers even when choice text is duplicated
+        ident = choice_base.to_s
+        while used_idents.include?(ident)
+          choice_base += 1
+          ident = choice_base.to_s
+        end
+
+        used_idents.add(ident)
+        choices << Choice.new(
+          ident:,
+          text: choice
+        )
+        choice_base += 1
       end
-      response = Response.new(ident: "#{item_ident}-r-#{index}", text: datum.fetch('answer'))
-      @qti_response_conditions << ResponseCondition.new(value:, response:, choices:)
+
+      # Response IDs use multiples of 1000 to maintain clear separation from choice IDs
+      # and to allow for future insertion of additional responses if needed
+      response = Response.new(
+        ident: "response_#{(index + 1) * 1000}",
+        text: datum.fetch('answer')
+      )
+
+      @qti_response_conditions << ResponseCondition.new(
+        value:,
+        response:,
+        choices:
+      )
     end
   end
   # @!endgroup QTI Exporter

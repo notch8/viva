@@ -8,7 +8,7 @@ class SubjectImporter
     subjects = subjects_data['subjects']['name']
 
     subjects.each do |subject_name|
-      Subject.find_or_create_by(name: subject_name)
+      Subject.find_or_create_by(name: subject_name.downcase)
     end
   end
 end

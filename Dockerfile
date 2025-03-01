@@ -15,7 +15,19 @@ RUN apt-get update -qq && \
     apt-get install -y \
     nodejs \
     postgresql-client \
-    vim-tiny && \
+    vim-tiny \
+    # Cypress dependencies
+    xvfb \
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libnotify-dev \
+    libgconf-2-4 \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libxtst6 \
+    xauth && \
     npm install -g yarn
 
 ENV APP_HOME /app
@@ -30,7 +42,8 @@ RUN (bundle check || bundle install)
 
 ADD package.json ./package.json
 ADD yarn.lock ./yarn.lock
-RUN yarn install
+ADD .yarnrc.yml ./.yarnrc.yml
+RUN yarn install --network-timeout 100000
 
 COPY . $APP_HOME
 RUN bash -l -c " \

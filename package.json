@@ -40,5 +40,9 @@
     "cypress": "13.2.0",
     "eslint": "^8.49.0",
     "eslint-plugin-react": "^7.33.2"
+  },
+  "optionalDependencies": {
+    "@esbuild/darwin-arm64": "^0.18.0",
+    "@esbuild/linux-x64": "^0.18.0"
   }
 }

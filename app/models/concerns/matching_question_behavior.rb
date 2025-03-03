@@ -170,17 +170,8 @@ module MatchingQuestionBehavior
   # Builds the QTI data structure for matching questions, with special attention to Canvas's
   # rendering requirements for dropdown menus.
   #
-  # The method generates two types of identifiers:
-  # 1. Response identifiers (format: "response_1000", "response_2000", etc.)
-  # 2. Choice identifiers (format: "100", "101", etc.)
-  #
-  # @note While the IMS QTI 1.2 spec only requires identifiers to be unique within an item scope,
-  #       Canvas has additional undocumented requirements for proper dropdown rendering. Through
-  #       testing, we found that:
-  #       - Simple numeric identifiers work reliably
-  #       - Complex hyphenated strings (e.g., item-7d58016d00d-c-0) cause dropdown rendering issues
-  #       - Each choice must have a unique identifier even if the text is the same
-  #
+  # @see #generate_unique_identifiers
+  # @see #create_response_conditions
   # @see https://www.imsglobal.org/question/qtiv1p2/imsqti_asi_bindv1p2.html Section 3.2.4.1
   #
   def build_qti_data
@@ -189,33 +180,28 @@ module MatchingQuestionBehavior
     # Calculate proportional value for scoring
     value = format("%0.2f", qti_max_value.to_f / data.count)
 
-    # Initialize choice ID tracking
-    # Starting at 100 gives room for expansion while keeping IDs short
-    choice_base = 100
+    # Generate a random base for unique identifiers across questions
+    random_base = rand(1000..9000)
+
+    create_response_conditions(random_base, value)
+  end
+
+  ##
+  # Creates response conditions with unique identifiers for this question
+  #
+  # @param random_base [Integer] Base number to ensure uniqueness across questions
+  # @param value [String] Proportional value for scoring
+  #
+  def create_response_conditions(random_base, value)
+    choice_base = random_base
     used_idents = Set.new
 
     data.each_with_index do |datum, index|
-      choices = []
-      Array.wrap(datum.fetch('correct')).each do |choice|
-        # Ensure unique identifiers even when choice text is duplicated
-        ident = choice_base.to_s
-        while used_idents.include?(ident)
-          choice_base += 1
-          ident = choice_base.to_s
-        end
+      choices = create_choices(datum, choice_base, used_idents)
 
-        used_idents.add(ident)
-        choices << Choice.new(
-          ident:,
-          text: choice
-        )
-        choice_base += 1
-      end
-
-      # Response IDs use multiples of 1000 to maintain clear separation from choice IDs
-      # and to allow for future insertion of additional responses if needed
+      # Response IDs also use the random base to ensure uniqueness across questions
       response = Response.new(
-        ident: "response_#{(index + 1) * 1000}",
+        ident: "response_#{random_base + (index + 1) * 1000}",
         text: datum.fetch('answer')
       )
 
@@ -226,6 +212,36 @@ module MatchingQuestionBehavior
       )
     end
   end
+
+  ##
+  # Creates choice objects with unique identifiers
+  #
+  # @param datum [Hash] The data for this matching pair
+  # @param choice_base [Integer] Base number for choice identifiers
+  # @param used_idents [Set] Set of already used identifiers
+  # @return [Array<Choice>] Array of choice objects
+  #
+  # rubocop:disable Metrics/MethodLength
+  def create_choices(datum, choice_base, used_idents)
+    choices = []
+    Array.wrap(datum.fetch('correct')).each do |choice|
+      # Ensure unique identifiers even when choice text is duplicated
+      ident = choice_base.to_s
+      while used_idents.include?(ident)
+        choice_base += 1
+        ident = choice_base.to_s
+      end
+
+      used_idents.add(ident)
+      choices << Choice.new(
+        ident:,
+        text: choice
+      )
+      choice_base += 1
+    end
+    choices
+  end
+  # rubocop:enable Metrics/MethodLength
   # @!endgroup QTI Exporter
   ##
 end

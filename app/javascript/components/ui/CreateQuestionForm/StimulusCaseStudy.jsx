@@ -3,6 +3,7 @@ import React, {
 } from 'react'
 import { Button } from 'react-bootstrap'
 import { SUBQUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
+import Scenario from './Scenario'
 import Bowtie from './Bowtie'
 import Categorization from './Categorization'
 import DragAndDrop from './DragAndDrop'
@@ -19,6 +20,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
 
   const COMPONENT_MAP = useMemo(
     () => ({
+      'Scenario': Scenario,
       'Bow Tie': Bowtie,
       'Categorization': Categorization,
       'Drag and Drop': DragAndDrop,
@@ -32,6 +34,8 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
 
   const initializeDataForType = useCallback((type) => {
     switch (type) {
+    case 'Scenario':
+      return { text: '' }
     case 'Multiple Choice':
     case 'Select All That Apply':
     case 'Drag and Drop':
@@ -192,4 +196,3 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
 }
 
 export default React.memo(StimulusCaseStudy)
-

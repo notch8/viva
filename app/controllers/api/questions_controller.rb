@@ -133,7 +133,7 @@ class Api::QuestionsController < ApplicationController
   # @param [ActionController::Parameters] params The parameters passed in the request.
   # @return [Question] The newly created question object.
   def create_stimulus_case_study(data, params)
-    Question::StimulusCaseStudy.new(
+    @stimulus_case_study = Question::StimulusCaseStudy.new(
       text: data['text'],
       child_of_aggregation: false,
       level: params[:level]
@@ -186,12 +186,15 @@ class Api::QuestionsController < ApplicationController
       raise ArgumentError, "Invalid subquestion type: #{subquestion_data['type']}" if type.blank?
 
       processed_data = process_subquestion_data(type, subquestion_data['data'])
-      Question.new(
-        type:,
-        text: subquestion_data['text'],
-        data: processed_data,
-        child_of_aggregation: true
-      )
+      subquestion = Question.new(
+                      type:,
+                      text: subquestion_data['text'],
+                      data: processed_data,
+                      child_of_aggregation: true
+                    )
+      subquestion.parent_question = @stimulus_case_study if type == "Question::Scenario"
+
+      subquestion
     end
   end
 
@@ -255,6 +258,7 @@ class Api::QuestionsController < ApplicationController
       'Matching' => 'Question::Matching',
       'Multiple Choice' => 'Question::Traditional',
       'Select All That Apply' => 'Question::SelectAllThatApply',
+      'Scenario' => 'Question::Scenario',
       'Stimulus Case Study' => 'Question::StimulusCaseStudy'
     }
 

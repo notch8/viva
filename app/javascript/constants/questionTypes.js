@@ -11,6 +11,7 @@ export const QUESTION_TYPE_NAMES = [
 ]
 
 export const SUBQUESTION_TYPE_NAMES = [
+  { key: 'scenario', value: 'Scenario' },
   { key: 'Bow Tie', value: 'Bow Tie' },
   { key: 'Categorization', value: 'Categorization' },
   { key: 'Drag and Drop', value: 'Drag and Drop' },

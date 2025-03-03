@@ -197,7 +197,7 @@ const SearchBar = (props) => {
                 View Bookmarks
               </a>
               <a
-                href={'/questions/download?format=txt'}
+                href={'/bookmarks/export?format=txt'}
                 className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
                 role='button'
                 aria-disabled={!hasBookmarks}
@@ -205,7 +205,7 @@ const SearchBar = (props) => {
                 Export as Plain Text
               </a>
               <a
-                href={'/questions/download?format=md'}
+                href={'/bookmarks/export?format=md'}
                 className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
                 role='button'
                 aria-disabled={!hasBookmarks}
@@ -213,7 +213,7 @@ const SearchBar = (props) => {
                 Export as Markdown
               </a>
               <a
-                href={`/.xml?${bookmarkedQuestionIds.map(id => `bookmarked_question_ids[]=${encodeURIComponent(id)}`).join('&')}`}
+                href={'/bookmarks/export?format=xml'}
                 className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
                 role='button'
                 aria-disabled={!hasBookmarks}

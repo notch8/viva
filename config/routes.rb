@@ -9,12 +9,7 @@ Rails.application.routes.draw do
     authenticated :user do
       # search page routes
       root 'search#index', as: :authenticated_root
-
-      # Necessary for downloading the XML file from the search result.
-      get '/(.:format)', to: 'search#index'
-
-      # download the bookmarked questions in a text file
-      get 'questions/download', to: 'search#download', as: 'download_questions'
+      post '/search/create_bookmarks', to: 'search#create_bookmarks'
 
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'
@@ -27,6 +22,7 @@ Rails.application.routes.draw do
       delete 'bookmarks/destroy_all', to: 'bookmarks#destroy_all' # has to come before bookmarks#destroy
       post 'bookmarks', to: 'bookmarks#create'
       delete 'bookmarks/:id', to: 'bookmarks#destroy', as: 'bookmark'
+      get 'bookmarks/export', to: 'bookmarks#export'
       # create a question
       namespace :api do
         resources :questions, only: [:create]

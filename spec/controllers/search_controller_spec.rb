@@ -37,7 +37,6 @@ RSpec.describe SearchController do
         expect(inertia.props[:type_names]).to be_a(Array)
         expect(inertia.props[:levels]).to be_a(Array)
         expect(inertia.props[:type_names]).to be_a(Array)
-        expect(inertia.props[:exportHrefs]).to match_array([{ href: ".xml", type: "xml" }])
         expect(inertia.props[:filteredQuestions].as_json).to(
           eq([
                {
@@ -101,8 +100,6 @@ RSpec.describe SearchController do
 
         given_params = { selected_keywords:, selected_subjects: }
         get :index, params: given_params
-
-        expect(inertia.props[:exportHrefs]).to match_array([{ href: ".xml?#{given_params.to_query}", type: "xml" }])
 
         # test that the page has the correct params
         expect(inertia.props[:selectedKeywords]).to eq(selected_keywords)

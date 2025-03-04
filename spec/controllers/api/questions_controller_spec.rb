@@ -259,7 +259,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating an essay question' do
-      let(:subject_name) { 'geography' }
+      let(:subject_name) { 'Geography' }
 
       it 'creates an essay question with all parameters' do
         expect { post :create, params: essay_params }.to change(Question, :count).by(1)
@@ -270,13 +270,13 @@ RSpec.describe Api::QuestionsController, type: :controller do
         expect(question.data).to eq({ 'html' => '<p>What is the capital of France?</p>' })
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('france', 'capital cities')
-        expect(question.subjects.map(&:name)).to contain_exactly('geography')
-        expect(question.subjects.map(&:name)).to_not include('invalid')
+        expect(question.subjects.map(&:name)).to contain_exactly('Geography')
+        expect(question.subjects.map(&:name)).to_not include('Invalid')
       end
     end
 
     context 'when creating a Drag and Drop question' do
-      let(:subject_name) { 'logic' }
+      let(:subject_name) { 'Logic' }
 
       it 'creates a Drag and Drop question with all parameters' do
         expect { post :create, params: drag_and_drop_params }.to change(Question, :count).by(1)
@@ -292,12 +292,12 @@ RSpec.describe Api::QuestionsController, type: :controller do
         )
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('ordering', 'dragdrop')
-        expect(question.subjects.map(&:name)).to contain_exactly('logic')
+        expect(question.subjects.map(&:name)).to contain_exactly('Logic')
       end
     end
 
     context 'when creating a Matching question' do
-      let(:subject_name) { 'pharmacology' }
+      let(:subject_name) { 'Pharmacology' }
 
       it 'creates a Matching question with all parameters' do
         expect { post :create, params: matching_params }.to change(Question, :count).by(1)
@@ -313,12 +313,12 @@ RSpec.describe Api::QuestionsController, type: :controller do
         )
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('ssris', 'snris')
-        expect(question.subjects.map(&:name)).to contain_exactly('pharmacology')
+        expect(question.subjects.map(&:name)).to contain_exactly('Pharmacology')
       end
     end
 
     context 'when creating a Categorization question' do
-      let(:subject_name) { 'nutrition' }
+      let(:subject_name) { 'Nutrition' }
 
       it 'creates a Categorization question with all parameters' do
         expect { post :create, params: categorization_params }.to change(Question, :count).by(1)
@@ -334,7 +334,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
         )
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('food groups', 'categorization')
-        expect(question.subjects.map(&:name)).to contain_exactly('nutrition')
+        expect(question.subjects.map(&:name)).to contain_exactly('Nutrition')
       end
 
       it 'does not create a Categorization question with invalid data' do
@@ -394,7 +394,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Multiple Choice question' do
-      let(:subject_name) { 'biology' }
+      let(:subject_name) { 'Biology' }
 
       it 'creates a Multiple Choice question with all parameters' do
         expect { post :create, params: multiple_choice_params }.to change(Question, :count).by(1)
@@ -410,7 +410,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
                                     ])
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
-        expect(question.subjects.map(&:name)).to contain_exactly('biology')
+        expect(question.subjects.map(&:name)).to contain_exactly('Biology')
       end
 
       it 'does not create a Multiple Choice question with multiple correct answers' do
@@ -445,7 +445,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Select All That Apply question' do
-      let(:subject_name) { 'biology' }
+      let(:subject_name) { 'Biology' }
 
       it 'creates a Select All That Apply question with all parameters' do
         expect { post :create, params: select_all_params }.to change(Question, :count).by(1)
@@ -461,7 +461,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
                                     ])
         expect(question.images.count).to eq(1)
         expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
-        expect(question.subjects.map(&:name)).to contain_exactly('biology')
+        expect(question.subjects.map(&:name)).to contain_exactly('Biology')
       end
 
       it 'does not create a Select All That Apply question with no correct answers' do

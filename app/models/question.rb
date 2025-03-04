@@ -289,7 +289,7 @@ class Question < ApplicationRecord
 
     return Question::InvalidLevel.new(row) if row['LEVEL'] && Level.names.exclude?(row['LEVEL'])
 
-    return Question::InvalidSubject.new(row) if extract_subject_names_from(row)&.any? { |subject| Subject.names.exclude?(subject.strip.downcase) }
+    return Question::InvalidSubject.new(row) if extract_subject_names_from(row)&.any? { |subject| Subject.names.exclude?(subject.strip) }
 
     klass.build_row(row:, questions:)
   end
@@ -383,7 +383,7 @@ class Question < ApplicationRecord
     row.flat_map do |header, value|
       next if value.blank?
       next unless header.present? && (header == "#{column}S" || header == column || header.start_with?("#{column}_"))
-      value.split(/\s*,\s*/).map { |v| v.strip.downcase }
+      value.split(/\s*,\s*/).map(&:strip)
     end.uniq.compact.sort
   end
   private_class_method :extract_names_from

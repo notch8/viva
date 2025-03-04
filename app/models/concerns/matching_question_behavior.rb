@@ -166,25 +166,82 @@ module MatchingQuestionBehavior
     delegate :ident, :text, to: :response, prefix: true
   end
 
+  ##
+  # Builds the QTI data structure for matching questions, with special attention to Canvas's
+  # rendering requirements for dropdown menus.
+  #
+  # @see #generate_unique_identifiers
+  # @see #create_response_conditions
+  # @see https://www.imsglobal.org/question/qtiv1p2/imsqti_asi_bindv1p2.html Section 3.2.4.1
+  #
   def build_qti_data
     @qti_response_conditions = []
 
-    # We're assigning proportional value to each correct answer; we're making an assumption of 2
-    # decimals of precision based on provided examples.
+    # Calculate proportional value for scoring
     value = format("%0.2f", qti_max_value.to_f / data.count)
 
-    # We want the choice index to be unique
-    choice_index = 0
+    # Generate a random base for unique identifiers across questions
+    random_base = rand(1000..9000)
+
+    create_response_conditions(random_base, value)
+  end
+
+  ##
+  # Creates response conditions with unique identifiers for this question
+  #
+  # @param random_base [Integer] Base number to ensure uniqueness across questions
+  # @param value [String] Proportional value for scoring
+  #
+  def create_response_conditions(random_base, value)
+    choice_base = random_base
+    used_idents = Set.new
+
     data.each_with_index do |datum, index|
-      choices = []
-      Array.wrap(datum.fetch('correct')).each do |choice|
-        choices << Choice.new(ident: "#{item_ident}-c-#{choice_index}", text: choice)
-        choice_index += 1
-      end
-      response = Response.new(ident: "#{item_ident}-r-#{index}", text: datum.fetch('answer'))
-      @qti_response_conditions << ResponseCondition.new(value:, response:, choices:)
+      choices = create_choices(datum, choice_base, used_idents)
+
+      # Response IDs also use the random base to ensure uniqueness across questions
+      response = Response.new(
+        ident: "response_#{random_base + (index + 1) * 1000}",
+        text: datum.fetch('answer')
+      )
+
+      @qti_response_conditions << ResponseCondition.new(
+        value:,
+        response:,
+        choices:
+      )
     end
   end
+
+  ##
+  # Creates choice objects with unique identifiers
+  #
+  # @param datum [Hash] The data for this matching pair
+  # @param choice_base [Integer] Base number for choice identifiers
+  # @param used_idents [Set] Set of already used identifiers
+  # @return [Array<Choice>] Array of choice objects
+  #
+  # rubocop:disable Metrics/MethodLength
+  def create_choices(datum, choice_base, used_idents)
+    choices = []
+    Array.wrap(datum.fetch('correct')).each do |choice|
+      # Ensure unique identifiers even when choice text is duplicated
+      ident = choice_base.to_s
+      while used_idents.include?(ident)
+        choice_base += 1
+        ident = choice_base.to_s
+      end
+
+      used_idents.add(ident)
+      choices << Choice.new(
+        ident:,
+        text: choice
+      )
+      choice_base += 1
+    end
+    choices
+  end
+  # rubocop:enable Metrics/MethodLength
   # @!endgroup QTI Exporter
   ##
 end

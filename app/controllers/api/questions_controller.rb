@@ -169,7 +169,7 @@ class Api::QuestionsController < ApplicationController
   # @param [Array<String>] keywords The array of keyword names.
   def handle_keywords_case_study(stimulus_case_study, keywords)
     keywords&.each do |keyword_name|
-      keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
+      keyword = Keyword.find_or_initialize_by(name: keyword_name)
       stimulus_case_study.keywords << keyword unless stimulus_case_study.keywords.include?(keyword)
     end
   end
@@ -529,7 +529,7 @@ class Api::QuestionsController < ApplicationController
     return if params[:question][:keywords].blank?
 
     params[:question][:keywords].each do |keyword_name|
-      keyword = Keyword.find_or_initialize_by(name: keyword_name.strip.downcase)
+      keyword = Keyword.find_or_initialize_by(name: keyword_name)
       question.keywords << keyword unless question.keywords.include?(keyword)
     end
   end
@@ -542,7 +542,7 @@ class Api::QuestionsController < ApplicationController
     return if params[:question][:subjects].blank?
 
     params[:question][:subjects].each do |subject_name|
-      subject = Subject.find_by(name: subject_name.strip.downcase)
+      subject = Subject.find_by(name: subject_name)
       question.subjects << subject unless question.subjects.include?(subject) || subject.nil?
     end
   end
@@ -554,7 +554,7 @@ class Api::QuestionsController < ApplicationController
   # @param [Array<String>] subjects The array of subject names.
   def handle_subjects_case_study(stimulus_case_study, subjects)
     subjects&.each do |subject_name|
-      subject = Subject.find_by(name: subject_name.strip.downcase)
+      subject = Subject.find_by(name: subject_name)
       stimulus_case_study.subjects << subject unless stimulus_case_study.subjects.include?(subject) || subject.nil?
     end
   end

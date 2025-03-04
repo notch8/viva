@@ -14,7 +14,7 @@ const Subject = ({ subjectOptions, handleAddSubject }) => {
   return (
     <div className='bg-light-2 p-2 mb-2 rounded'>
       <h6 className='fw-bold'>Subjects</h6>
-      <InputGroup className='mb-3 text-uppercase'>
+      <InputGroup className='mb-3'>
         <Form.Group controlId='add-subject'>
           <Typeahead
             id='basic-typeahead'

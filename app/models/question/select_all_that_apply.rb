@@ -8,6 +8,7 @@
 class Question::SelectAllThatApply < Question
   self.type_name = "Select All That Apply"
   self.model_exporter = 'traditional_type'
+  self.blackboard_export_type = 'MA'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::SelectAllThatApply}.

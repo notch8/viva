@@ -11,6 +11,7 @@ class Question::Traditional < Question
   # @see https://github.com/notch8/viva/issues/261
   self.type_name = "Multiple Choice"
   self.model_exporter = 'traditional_type'
+  self.blackboard_export_type = 'MC'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.

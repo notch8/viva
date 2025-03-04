@@ -6,16 +6,10 @@ module QuestionFormatter
     self.output_format = 'txt'
 
     def format_content
-      case @question
-      when Question::Traditional, Question::SelectAllThatApply
-        traditional_type
-      when Question::Essay
-        essay_type
-      when Question::Matching
-        matching_type
-      end
-
-      [type_mapper, @text, @answers].join("\t")
+      blackboard_type = @question.blackboard_export_type
+      return if blackboard_type.blank?
+      format_by_type
+      [blackboard_type, @text, @answers].join("\t")
     end
 
     private
@@ -44,19 +38,6 @@ module QuestionFormatter
         'true' => 'correct',
         'false' => 'incorrect'
       }
-    end
-
-    def type_mapper
-      case @question
-      when Question::Traditional
-        'MC'
-      when Question::SelectAllThatApply
-        'MA'
-      when Question::Essay
-        'ESS'
-      when Question::Matching
-        'MAT'
-      end
     end
   end
 end

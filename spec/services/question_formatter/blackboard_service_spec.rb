@@ -9,7 +9,7 @@ RSpec.describe QuestionFormatter::BlackboardService do
     Rails.root.join('spec', 'fixtures', 'files', 'bb_export.txt').readlines.map(&:chomp)
   end
 
-  describe '#export' do
+  describe '#format_content' do
     context 'when it is traditional (multiple choice)' do
       let(:question) do
         Question::Traditional.new(
@@ -75,6 +75,15 @@ RSpec.describe QuestionFormatter::BlackboardService do
 
       it 'returns the correct text' do
         expect(subject.format_content).to eq(file_lines[3])
+      end
+    end
+
+    context 'when blacboard export type is not supported' do
+      let(:question) { FactoryBot.build(:question_upload) }
+
+      it 'returns nil' do
+        expect(question.blackboard_export_type).to be_nil
+        expect(subject.format_content).to be_nil
       end
     end
   end

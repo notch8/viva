@@ -46,6 +46,7 @@ class Question < ApplicationRecord
   # model_exporter is the method name in the formatters used for text downloading
   # it must be defined in the inheriting classes
   class_attribute :model_exporter, default: nil, instance_writer: false
+  class_attribute :blackboard_export_type, default: nil, instance_writer: false
 
   ##
   # @!attribute qti_max_value [r|w]

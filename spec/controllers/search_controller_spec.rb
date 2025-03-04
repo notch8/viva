@@ -9,23 +9,6 @@ RSpec.describe SearchController do
       sign_in user
     end
 
-    context 'xml format' do
-      it 'uses the search parameters to build the data' do
-        FactoryBot.create(:question_traditional, :with_keywords, :with_subjects)
-        get :index, format: :xml
-
-        expect(response.content_type).to eq('application/xml; charset=utf-8')
-        expect(response).to be_successful
-        expect(assigns(:questions).count).to eq(1)
-        # Yes, you're reading this right.  The body for attachments is empty.  We need to instead
-        # check the content disposition.  Unfortunately we don't have access to the contents of that
-        # file.
-        expect(response.body).to be_empty
-        expect(response.headers['Content-Disposition']).to match(%r{^attachment; filename="questions-\d{4}-\d{2}})
-        expect(response.headers['Content-Disposition']).to end_with(%(classic-question-canvas.qti.xml"))
-      end
-    end
-
     context 'inertia format', inertia: true do
       it "returns a 'Search' component with properties of :keywords, :types, :subjects, and :filteredQuestions" do
         question = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
@@ -37,7 +20,6 @@ RSpec.describe SearchController do
         expect(inertia.props[:type_names]).to be_a(Array)
         expect(inertia.props[:levels]).to be_a(Array)
         expect(inertia.props[:type_names]).to be_a(Array)
-        expect(inertia.props[:exportHrefs]).to match_array([{ href: ".xml", type: "xml" }])
         expect(inertia.props[:filteredQuestions].as_json).to(
           eq([
                {
@@ -102,8 +84,6 @@ RSpec.describe SearchController do
         given_params = { selected_keywords:, selected_subjects: }
         get :index, params: given_params
 
-        expect(inertia.props[:exportHrefs]).to match_array([{ href: ".xml?#{given_params.to_query}", type: "xml" }])
-
         # test that the page has the correct params
         expect(inertia.props[:selectedKeywords]).to eq(selected_keywords)
         expect(inertia.props[:selectedSubjects]).to eq(selected_subjects)
@@ -127,52 +107,6 @@ RSpec.describe SearchController do
                }
              ])
         )
-      end
-    end
-
-    context 'when a question has images' do
-      it 'send a zip file with the images' do
-        FactoryBot.create(:question_traditional, :with_images)
-        get :index, format: :xml
-
-        expect(response.content_type).to eq('application/zip')
-        expect(response).to be_successful
-        expect(response.body).to be_present
-        expect(response.headers['Content-Disposition']).to match(/.zip/)
-      end
-    end
-
-    context 'downloading question text' do
-      let(:question) { FactoryBot.build_stubbed(:question_traditional) }
-
-      before do
-        allow(Question).to receive(:where).and_return([question])
-      end
-
-      context 'downloading as plain text' do
-        it 'returns a txt file' do
-          get :download, format: :txt
-          expect(response.content_type).to eq('text/plain')
-          expect(response.headers['Content-Disposition']).to match(/questions-.*\.txt/)
-        end
-
-        it 'includes bookmarked questions in the response' do
-          get :download, format: :txt
-          expect(response.body).to include(question.text)
-        end
-      end
-
-      context 'downloading as markdown' do
-        it 'returns a md file' do
-          get :download, format: :md
-          expect(response.content_type).to eq('text/plain')
-          expect(response.headers['Content-Disposition']).to match(/questions-.*\.md/)
-        end
-
-        it 'includes bookmarked questions in the response' do
-          get :download, format: :md
-          expect(response.body).to include(question.text)
-        end
       end
     end
   end

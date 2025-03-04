@@ -1,11 +1,11 @@
 import React from 'react'
 import {
-  Container, Row, Col, DropdownButton, Dropdown, CloseButton, Alert
+  Container, Row, Col, CloseButton, Alert, Button
 } from 'react-bootstrap'
-import CustomDropdown from '../CustomDropdown'
+import { Inertia } from '@inertiajs/inertia'
 
 const SearchFilters = (props) => {
-  const { selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, exportHrefs, errors } = props
+  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, submit, handleFilters, errors } = props
   const filterArray = [selectedSubjects, selectedKeywords, selectedTypes, selectedLevels]
 
   const arrayHasItems = (array) => array.length > 0
@@ -18,6 +18,18 @@ const SearchFilters = (props) => {
   const removeFilterAndSearch = (event, item, filter) => {
     handleFilters({ target: { value: item } }, filter === selectedSubjects ? 'subjects' : filter === selectedKeywords ? 'keywords' : filter === selectedTypes ? 'types' : 'levels')
     submit(event)
+  }
+
+  const handleBookmarkBatch = () => {
+    const filteredIds = filteredQuestions.map(question => question.id).join(',')
+    Inertia.post('/search/create_bookmarks', { filtered_ids: filteredIds }, {
+      onSuccess: () => {
+        console.log('Bookmarks added successfully')
+      },
+      onError: () => {
+        console.error('Error adding bookmarks')
+      }
+    })
   }
 
   return (
@@ -56,24 +68,12 @@ const SearchFilters = (props) => {
               </Row>
             </Container>
             <Col className='d-flex justify-content-center justify-content-md-end align-items-end border-top bg-light-2 p-2'>
-              <CustomDropdown dropdownSelector='.dropdown-toggle'>
-                <DropdownButton
-                  id='download-questions-button'
-                  title='Export Questions'
-                >
-                  {exportHrefs.map((fileInfo, index) => (
-                    <Dropdown.Item
-                      className='p-2'
-                      key={fileInfo.type}
-                      href={fileInfo.href}
-                      target='_blank'
-                      download={`questions.${fileInfo.type}`}
-                      eventKey={index}>
-                      {fileInfo.type.toUpperCase()}
-                    </Dropdown.Item>
-                  ))}
-                </DropdownButton>
-              </CustomDropdown>
+              <Button
+                className='p-2'
+                onClick={handleBookmarkBatch}
+              >
+                Bookmark Filtered
+              </Button>
             </Col>
           </Col>
         </Row>

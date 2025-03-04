@@ -1,5 +1,5 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE > yarn doctoc README.md -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [VIVA](#viva)
@@ -10,10 +10,11 @@
     - [Common Columns](#common-columns)
       - [Indexed Columns](#indexed-columns)
     - [Question Type Documentation](#question-type-documentation)
-    - [Exporting XML](#exporting-xml)
+    - [Exporting Questions](#exporting-questions)
+      - [Canvas XML](#canvas-xml)
   - [Data Management](#data-management)
     - [Creating New Users](#creating-new-users)
-    - [Reseting Questions and Data](#reseting-questions-and-data)
+    - [Resetting Questions and Data](#resetting-questions-and-data)
   - [Development](#development)
     - [Getting Started](#getting-started)
     - [Creating New Question Types](#creating-new-question-types)
@@ -88,7 +89,7 @@ All question types support the following CSV headers:
     -   Multiple Choice
     -   Upload
 -   `KEYWORD` (Recommended): One or more phrases that describe the question; separate each phrase with a comma
--   `SUBJECT` (Recommended): One or more subjects that are topical for this question; separate each phrase with a comma
+-   `SUBJECT` (Recommended): One or more subjects that are topical for this question; separate each phrase with a comma; subjects must match the predefined subjects in the database
 -   `LEVEL` (Recommended):
 -   `IMAGE_PATH` (Optional): One or more image file paths, separated by semicolons
 -   `ALT_TEXT` (Optional): One or more alt texts corresponding to the images, separated by semicolons
@@ -270,28 +271,44 @@ The Scenario type is a special "question" type available only as *part_of* a Sti
 
 <details><summary>Upload</summary>
 
-As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-14 Thu&gt;</span></span>, the Upload question behaves in the same manner as the Essay question; see it’s documentation for details.
+As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-14 Thu&gt;</span></span>, the Upload question behaves in the same manner as the Essay question; see its documentation for details.
 </details>
 
-### Exporting XML
+### Exporting Questions
+
+Each Learning Management System (LMS) has its own specifications for importing questions. This necessitated unique download formats. 
+
+*Note:* Not all questions types are supported in every LMS.
+
+All question types can be exported as plain text (.txt) or in a markdown format (.md). The questions can be copied into the text document platform of your choice. Some platforms autoformat markdown and some will require a format conversion.
+
+#### Canvas XML
 
 From the home page.
 
 -   Select your search criteria.
 -   Click the “Search” button.
+-   Bookmark the questions you want to export.
 
-The Search Filters section shows your chosen search criteria.
+The View Bookmarks section shows your chosen questions.
 
--   Click “Export Questions” and select “XML”
+-   Click “Bookmarks” and select “Export as XML”
 
 This will download an `.xml` file (e.g. `questions-2023-12-13_15_38_01_508.classic-question-canvas.qti.xml`).  To upload that file into Canvas you will need to convert the downloaded XML file into a `.zip` file.  The way to do this varies by operating system.
 
 As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2023-12-13 Wed&gt; </span></span> we export into a “classic question” format; the rationalization being two fold:
 
-1.  Canvas presently supports both “classic” and “new” formats.
-2.  In Canvas you may migrate “Classic” questions to “new” formats, but not vice versa.
+1.  Canvas presently supports both “Classic” and “New” formats.
+2.  In Canvas you may migrate “Classic” questions to “New” formats, but not vice versa.
 
-*Note:* Only after providing a Search Filter will you be able to “Export” questions.
+*Note:* Only after bookmarking the questions will you be able to “Export”.
+
+As of <span class="timestamp-wrapper"><span class="timestamp">&lt;2025-3-4 Tues&gt; </span></span> the question types that are supported in the "Classic" version of Canvas are the following:
+
+-   Essay
+-   Multiple Choice
+-   Select All That Apply
+-   Matching
 
 ## Data Management
 

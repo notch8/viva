@@ -36,4 +36,66 @@ RSpec.describe BookmarksController do
       expect { delete :destroy_all }.to change { Bookmark.count }.from(2).to(0)
     end
   end
+
+  describe '#export' do
+    let(:question) { FactoryBot.build_stubbed(:question_traditional) }
+
+    before do
+      allow(Question).to receive(:where).and_return([question])
+    end
+
+    context 'as plain text' do
+      it 'returns a txt file' do
+        get :export, format: :txt
+        expect(response.content_type).to eq('text/plain')
+        expect(response.headers['Content-Disposition']).to match(/questions-.*\.txt/)
+      end
+
+      it 'includes bookmarked questions in the response' do
+        get :export, format: :txt
+        expect(response.body).to include(question.text)
+      end
+    end
+
+    context 'as markdown' do
+      it 'returns a md file' do
+        get :export, format: :md
+        expect(response.content_type).to eq('text/plain')
+        expect(response.headers['Content-Disposition']).to match(/questions-.*\.md/)
+      end
+
+      it 'includes bookmarked questions in the response' do
+        get :export, format: :md
+        expect(response.body).to include(question.text)
+      end
+    end
+
+    context 'as xml' do
+      it 'returns an xml file' do
+        get :export, format: :xml
+
+        expect(response.content_type).to eq('application/xml; charset=utf-8')
+        expect(response).to be_successful
+        expect(response.headers['Content-Disposition']).to match(/questions-.*\.xml/)
+      end
+
+      context 'when a question has images' do
+        let(:question) { FactoryBot.create(:question_traditional, :with_images) }
+
+        it 'send a zip file with the images' do
+          get :export, format: :xml
+
+          expect(response.content_type).to eq('application/zip')
+          expect(response).to be_successful
+          expect(response.headers['Content-Disposition']).to match(/questions-.*\.zip/)
+        end
+      end
+    end
+
+    it 'redirects to the root path if the format is not supported' do
+      get :export, params: { format: 'csv' }
+
+      expect(response).to redirect_to(authenticated_root_path)
+    end
+  end
 end

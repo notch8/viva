@@ -29,9 +29,11 @@ class BookmarksController < ApplicationController
     @questions = Question.where(id: Bookmark.select(:question_id))
     case params[:format]
     when 'md'
-      md_download
+      service = QuestionFormatter::MarkdownService
+      export_file_for(service)
     when 'txt'
-      text_download
+      service = QuestionFormatter::PlainTextService
+      export_file_for(service)
     when 'xml'
       xml_download
     else
@@ -45,14 +47,9 @@ class BookmarksController < ApplicationController
     "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}"
   end
 
-  def text_download
-    content = @questions.map { |question| QuestionFormatter::PlainTextService.new(question).format_content }.join('')
-    send_data content, filename: "#{export_filename}.txt", type: 'text/plain'
-  end
-
-  def md_download
-    content = @questions.map { |question| QuestionFormatter::MarkdownService.new(question).format_content }.join('')
-    send_data content, filename: "#{export_filename}.md", type: 'text/plain'
+  def export_file_for(service)
+    content = @questions.map { |question| service.new(question).format_content }.join('')
+    send_data content, filename: "#{export_filename}.#{service.output_format}", type: 'text/plain'
   end
 
   def xml_download

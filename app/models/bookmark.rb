@@ -7,10 +7,8 @@ class Bookmark < ApplicationRecord
     question_ids = question_ids.split(',')
     question_ids.each do |question_id|
       bookmark = user.bookmarks.find_or_create_by(question_id:)
-      if !bookmark.save
-        return :error
-      end
+      return :error unless bookmark.save
     end
-    return :success
+    :success
   end
 end

@@ -54,7 +54,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           <h6 className='fw-bold pt-3'>Subject</h6>
           {question.subject_names.map((subject, index) => (
             <div
-              className='m-1 btn bg-white text-lowercase'
+              className='m-1 badge badge-light text-dark bg-white'
               key={index}
             >
               {subject}

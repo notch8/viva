@@ -54,8 +54,8 @@ RSpec.describe Question::DragAndDrop do
       context 'when saved' do
         before { subject.save }
 
-        its(:keyword_names) { is_expected.to match_array(["one", "two"]) }
-        its(:subject_names) { is_expected.to match_array(["big", "little"]) }
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
         its(:level) { is_expected.to eq(Level.names.first) }
       end
     end
@@ -112,8 +112,8 @@ RSpec.describe Question::DragAndDrop do
       context 'when saved' do
         before { subject.save }
 
-        its(:keyword_names) { is_expected.to match_array(["one", "two"]) }
-        its(:subject_names) { is_expected.to match_array(["big", "little"]) }
+        its(:keyword_names) { is_expected.to match_array(["One", "Two"]) }
+        its(:subject_names) { is_expected.to match_array(["Big", "Little"]) }
       end
     end
   end

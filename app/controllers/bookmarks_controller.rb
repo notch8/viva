@@ -28,15 +28,15 @@ class BookmarksController < ApplicationController
   def export
     @questions = current_user.bookmarked_questions
     format = params[:format]
-    
+
     case format
     when 'txt'
-      send_data BookmarkExporter.as_text(@questions), 
-                filename: "bookmarked-questions-#{Time.now.strftime('%Y%m%d')}.txt", 
+      send_data BookmarkExporter.as_text(@questions),
+                filename: "bookmarked-questions-#{Time.zone.now.strftime('%Y%m%d')}.txt",
                 type: 'text/plain'
     when 'md'
-      send_data BookmarkExporter.as_markdown(@questions), 
-                filename: "bookmarked-questions-#{Time.now.strftime('%Y%m%d')}.md", 
+      send_data BookmarkExporter.as_markdown(@questions),
+                filename: "bookmarked-questions-#{Time.zone.now.strftime('%Y%m%d')}.md",
                 type: 'text/markdown'
     when 'xml', 'canvas'
       # Canvas uses QTI XML format
@@ -44,12 +44,12 @@ class BookmarksController < ApplicationController
     when 'blackboard'
       # Blackboard uses TSV format
       send_data BookmarkExporter.as_blackboard(@questions),
-                filename: "blackboard-questions-#{Time.now.strftime('%Y%m%d')}.txt",
+                filename: "blackboard-questions-#{Time.zone.now.strftime('%Y%m%d')}.txt",
                 type: 'text/tab-separated-values'
     when 'brightspace', 'moodle'
       # Not implemented yet - show a flash message and redirect
-      redirect_back(fallback_location: authenticated_root_path, 
-                   alert: "#{format.capitalize} export is not implemented yet.")
+      redirect_back(fallback_location: authenticated_root_path,
+                    alert: "#{format.capitalize} export is not implemented yet.")
     else
       redirect_back(fallback_location: authenticated_root_path, alert: t('.alert'))
     end

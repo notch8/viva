@@ -219,10 +219,10 @@ const SearchBar = (props) => {
           </DropdownButton>
         </InputGroup>
       </Container>
-      <ExportModal 
-        show={showExportModal} 
-        onHide={() => setShowExportModal(false)} 
-        hasBookmarks={hasBookmarks} 
+      <ExportModal
+        show={showExportModal}
+        onHide={() => setShowExportModal(false)}
+        hasBookmarks={hasBookmarks}
       />
     </Form>
   )

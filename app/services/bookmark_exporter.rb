@@ -16,7 +16,7 @@ class BookmarkExporter
     xml_content = ApplicationController.render(
       template: 'bookmarks/export',
       layout: false,
-      assigns: { questions: questions, title: "Viva Questions Export #{Time.current.strftime('%B %-d, %Y')}" }
+      assigns: { questions:, title: "Viva Questions Export #{Time.current.strftime('%B %-d, %Y')}" }
     )
     xml_content
   end
@@ -31,28 +31,26 @@ class BookmarkExporter
     questions.map { |question| QuestionFormatter::BlackboardService.new(question).format_content }.join("\n\n")
   end
 
-  def self.as_brightspace(questions)
+  def self.as_brightspace(_questions)
     # Not implemented yet
     "BrightSpace export format is not implemented yet."
   end
 
-  def self.as_moodle(questions)
+  def self.as_moodle(_questions)
     # Not implemented yet
     "Moodle export format is not implemented yet."
   end
 
-  private
-
   def self.generate_zip_file(questions, format)
     xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.#{format}.xml"
-    
+
     # Generate XML content based on format
     xml_content = case format
                   when 'canvas'
                     ApplicationController.render(
                       template: 'bookmarks/export',
                       layout: false,
-                      assigns: { questions: questions, title: "Canvas Export #{Time.current.strftime('%B %-d, %Y')}" }
+                      assigns: { questions:, title: "Canvas Export #{Time.current.strftime('%B %-d, %Y')}" }
                     )
                   when 'blackboard'
                     # Use Blackboard specific formatter if available
@@ -64,12 +62,12 @@ class BookmarkExporter
                     # Use Moodle specific formatter if available
                     "Moodle export format is not implemented yet."
                   end
-    
+
     # Get all images from questions
     images = questions.flat_map(&:images)
-    
+
     # Create zip file
     zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
     zip_file_service.generate_zip
   end
-end 
+end

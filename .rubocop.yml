@@ -27,3 +27,6 @@ Rails/HasAndBelongsToMany:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false

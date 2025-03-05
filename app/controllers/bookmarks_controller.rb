@@ -26,18 +26,32 @@ class BookmarksController < ApplicationController
   end
 
   def export
-    @questions = Question.where(id: current_user.bookmarks.select(:question_id))
-    case params[:format]
-    when 'md'
-      service = QuestionFormatter::MarkdownService
-      export_file_for(service)
+    @questions = current_user.bookmarked_questions
+    format = params[:format]
+    
+    case format
     when 'txt'
-      service = QuestionFormatter::PlainTextService
-      export_file_for(service)
-    when 'xml'
+      send_data BookmarkExporter.as_text(@questions), 
+                filename: "bookmarked-questions-#{Time.now.strftime('%Y%m%d')}.txt", 
+                type: 'text/plain'
+    when 'md'
+      send_data BookmarkExporter.as_markdown(@questions), 
+                filename: "bookmarked-questions-#{Time.now.strftime('%Y%m%d')}.md", 
+                type: 'text/markdown'
+    when 'xml', 'canvas'
+      # Canvas uses QTI XML format
       xml_download
+    when 'blackboard'
+      # Blackboard uses TSV format
+      send_data BookmarkExporter.as_blackboard(@questions),
+                filename: "blackboard-questions-#{Time.now.strftime('%Y%m%d')}.txt",
+                type: 'text/tab-separated-values'
+    when 'brightspace', 'moodle'
+      # Not implemented yet - show a flash message and redirect
+      redirect_back(fallback_location: authenticated_root_path, 
+                   alert: "#{format.capitalize} export is not implemented yet.")
     else
-      redirect_to authenticated_root_path, alert: t('.alert')
+      redirect_back(fallback_location: authenticated_root_path, alert: t('.alert'))
     end
   end
 

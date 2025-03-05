@@ -4,6 +4,7 @@ import {
 } from 'react-bootstrap'
 import { MagnifyingGlass, XCircle } from '@phosphor-icons/react'
 import { Inertia } from '@inertiajs/inertia'
+import ExportModal from '../Export/ExportModal'
 
 const SearchBar = (props) => {
   const {
@@ -30,6 +31,7 @@ const SearchBar = (props) => {
   })
   const filters = { subjects, types, levels }
   const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
+  const [showExportModal, setShowExportModal] = useState(false)
 
   useEffect(() => {
     if (searchTerm !== undefined && searchTerm !== query) {
@@ -196,30 +198,6 @@ const SearchBar = (props) => {
               >
                 View Bookmarks
               </a>
-              <a
-                href={'/bookmarks/export?format=txt'}
-                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
-                role='button'
-                aria-disabled={!hasBookmarks}
-              >
-                Export as Plain Text
-              </a>
-              <a
-                href={'/bookmarks/export?format=md'}
-                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
-                role='button'
-                aria-disabled={!hasBookmarks}
-              >
-                Export as Markdown
-              </a>
-              <a
-                href={'/bookmarks/export?format=xml'}
-                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
-                role='button'
-                aria-disabled={!hasBookmarks}
-              >
-                Export as XML
-              </a>
               <Button
                 variant='danger'
                 className='p-2 m-2'
@@ -228,10 +206,24 @@ const SearchBar = (props) => {
               >
                 Clear Bookmarks
               </Button>
+              {hasBookmarks && (
+                <Button
+                  variant='secondary'
+                  className='p-2 m-2'
+                  onClick={() => setShowExportModal(true)}
+                >
+                  Export Options
+                </Button>
+              )}
             </div>
           </DropdownButton>
         </InputGroup>
       </Container>
+      <ExportModal 
+        show={showExportModal} 
+        onHide={() => setShowExportModal(false)} 
+        hasBookmarks={hasBookmarks} 
+      />
     </Form>
   )
 }

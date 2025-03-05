@@ -38,10 +38,29 @@ RSpec.describe BookmarksController do
   end
 
   describe '#export' do
-    let(:question) { FactoryBot.build_stubbed(:question_traditional) }
+    let(:other_user) { FactoryBot.create(:user) }
+    let(:question) { FactoryBot.create(:question_traditional) }
+    let(:other_question) { FactoryBot.create(:question_traditional) }
 
     before do
-      allow(Question).to receive(:where).and_return([question])
+      question.bookmarks.create(user:)
+      other_question.bookmarks.create(user: other_user)
+      sign_in user
+    end
+
+    context 'when exporting bookmarks' do
+      it "only includes the current user's bookmarked questions" do
+        get :export, format: :txt
+        expect(response.body).to include(question.text)
+        expect(response.body).not_to include(other_question.text)
+      end
+
+      it 'scopes the questions to only those bookmarked by current user' do
+        current_user = user
+        expect(current_user.bookmarks.count).to eq(1)
+        expect(current_user.bookmarks.first.question).to eq(question)
+        expect(current_user.bookmarks.first.question).not_to eq(other_question)
+      end
     end
 
     context 'as plain text' do

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="matching">
+    <tags>
+      <tag>
+        <text>Engineering</text>
+      </tag>
+      <tag>
+        <text>History</text>
+      </tag>
+    </tags>
+    <name>
+      <text>Question::Matching 1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Match each medication to its appropriate nursing consideration:</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <subquestion format="html">
+      <text><![CDATA[<p>Digoxin</p>]]></text>
+      <answer>
+        <text>Monitor for bradycardia and dysrhythmias</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Furosemide</p>]]></text>
+      <answer>
+        <text>Monitor for electrolyte imbalances and dehydration</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Warfarin</p>]]></text>
+      <answer>
+        <text>Monitor for bleeding and check INR levels</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Metformin</p>]]></text>
+      <answer>
+        <text>Monitor for lactic acidosis and check renal function</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Levothyroxine</p>]]></text>
+      <answer>
+        <text>Monitor for signs of hyperthyroidism and check TSH levels</text>
+      </answer>
+    </subquestion>
+  </question>
+</quiz>

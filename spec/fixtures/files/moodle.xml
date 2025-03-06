@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="essay">
+    <tags/>
+    <name>
+      <text>Ethical Considerations in End-of-Life Care</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<div class="question-introduction">
+  <h3>Nursing Ethics in End-of-Life Care</h3>
+
+  <p><strong>Describe the ethical dilemma in this scenario and explain how you would approach this situation as the patient's nurse. Include in your discussion:</strong></p>
+  <ul>
+    <li>The key ethical principles involved</li>
+    <li>Your role as patient advocate</li>
+  </ul>
+
+  <p>Support your response with specific references to the nursing code of ethics and current best practices in end-of-life care.</p>
+</div>
+]]></text>
+    </questiontext>
+  </question>
+  <question type="matching">
+    <tags/>
+    <name>
+      <text>Question::Matching </text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>Match each medication to its appropriate nursing consideration:</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <subquestion format="html">
+      <text><![CDATA[<p>Digoxin</p>]]></text>
+      <answer>
+        <text>Monitor for bradycardia and dysrhythmias</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Furosemide</p>]]></text>
+      <answer>
+        <text>Monitor for electrolyte imbalances and dehydration</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Warfarin</p>]]></text>
+      <answer>
+        <text>Monitor for bleeding and check INR levels</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Metformin</p>]]></text>
+      <answer>
+        <text>Monitor for lactic acidosis and check renal function</text>
+      </answer>
+    </subquestion>
+    <subquestion format="html">
+      <text><![CDATA[<p>Levothyroxine</p>]]></text>
+      <answer>
+        <text>Monitor for signs of hyperthyroidism and check TSH levels</text>
+      </answer>
+    </subquestion>
+  </question>
+  <question type="multichoice">
+    <tags/>
+    <name>
+      <text>Question::Traditional </text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>A nurse is administering IV vancomycin to a patient. Twenty minutes into the infusion, the patient develops a diffuse erythematous rash on the face, neck, and upper torso, accompanied by hypotension with BP 90/50 mmHg. What is the priority nursing action?</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <single>true</single>
+    <answer fraction="100">
+      <text><![CDATA[<p>Stop the medication immediately and notify the physician</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Continue administration at a slower rate and monitor vital signs</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Administer diphenhydramine as prescribed and continue the infusion</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Document the reaction and complete the scheduled dose</p>]]></text>
+    </answer>
+  </question>
+  <question type="multichoice">
+    <tags/>
+    <name>
+      <text>Question::SelectAllThatApply </text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>A nurse is caring for a patient diagnosed with community-acquired pneumonia. Which nursing interventions are appropriate for this patient? Select all that apply.</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Monitor vital signs every 2-4 hours</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Maintain head of bed elevation at 30-45 degrees</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Administer antibiotics as prescribed on time</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Restrict fluid intake to prevent pulmonary edema</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Place the patient in a supine position for lung expansion</p>]]></text>
+    </answer>
+  </question>
+</quiz>

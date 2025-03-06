@@ -116,5 +116,14 @@ RSpec.describe QuestionFormatter::MoodleService do
         end
       end
     end
+
+    context 'when it is multiple questions' do
+      subject { described_class.new(questions) }
+      let(:fixture) { 'spec/fixtures/files/moodle.xml' }
+
+      it 'returns the correct xml' do
+        expect(subject.format_content).to eq File.read(fixture)
+      end
+    end
   end
 end

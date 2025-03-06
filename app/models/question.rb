@@ -578,7 +578,6 @@ class Question < ApplicationRecord
         .gsub(/\s+/, ' ')
         .strip
         .downcase
-        .truncate(1000)
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength

@@ -24,6 +24,25 @@ RSpec.describe QuestionFormatter::MoodleService do
           { 'answer' => 'Metformin', 'correct' => ['Monitor for lactic acidosis and check renal function'] },
           { 'answer' => 'Levothyroxine', 'correct' => ['Monitor for signs of hyperthyroidism and check TSH levels'] }
         ]
+      ),
+      Question::Traditional.new(
+        text: 'A nurse is administering IV vancomycin to a patient. Twenty minutes into the infusion, the patient develops a diffuse erythematous rash on the face, neck, and upper torso, accompanied by hypotension with BP 90/50 mmHg. What is the priority nursing action?',
+        data: [
+          { 'answer' => 'Stop the medication immediately and notify the physician', 'correct' => true },
+          { 'answer' => 'Continue administration at a slower rate and monitor vital signs', 'correct' => false },
+          { 'answer' => 'Administer diphenhydramine as prescribed and continue the infusion', 'correct' => false },
+          { 'answer' => 'Document the reaction and complete the scheduled dose', 'correct' => false }
+        ]
+      ),
+      Question::SelectAllThatApply.new(
+        text: 'A nurse is caring for a patient diagnosed with community-acquired pneumonia. Which nursing interventions are appropriate for this patient? Select all that apply.',
+        data: [
+          { 'answer' => 'Monitor vital signs every 2-4 hours', 'correct' => true },
+          { 'answer' => 'Maintain head of bed elevation at 30-45 degrees', 'correct' => true },
+          { 'answer' => 'Administer antibiotics as prescribed on time', 'correct' => true },
+          { 'answer' => 'Restrict fluid intake to prevent pulmonary edema', 'correct' => false },
+          { 'answer' => 'Place the patient in a supine position for lung expansion', 'correct' => false }
+        ]
       )
     ]
   end
@@ -70,6 +89,26 @@ RSpec.describe QuestionFormatter::MoodleService do
       context 'when it is Matching' do
         let(:question) { questions.find { |question| question.is_a? Question::Matching } }
         let(:fixture) { 'spec/fixtures/files/moodle_matching.xml' }
+
+        it 'returns the correct xml' do
+          allow(question).to receive(:id).and_return(1)
+          expect(subject.format_content).to eq File.read(fixture)
+        end
+      end
+
+      context 'when it is Traditional' do
+        let(:question) { questions.find { |question| question.is_a? Question::Traditional } }
+        let(:fixture) { 'spec/fixtures/files/moodle_traditional.xml' }
+
+        it 'returns the correct xml' do
+          allow(question).to receive(:id).and_return(1)
+          expect(subject.format_content).to eq File.read(fixture)
+        end
+      end
+
+      context 'when it is SATA' do
+        let(:question) { questions.find { |question| question.is_a? Question::SelectAllThatApply } }
+        let(:fixture) { 'spec/fixtures/files/moodle_sata.xml' }
 
         it 'returns the correct xml' do
           allow(question).to receive(:id).and_return(1)

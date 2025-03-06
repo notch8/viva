@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module QuestionFormatter
+  # rubocop:disable Metrics/ClassLength
   class MoodleService < BaseService
     self.output_format = 'xml'
     attr_reader :questions, :question
@@ -36,13 +37,29 @@ module QuestionFormatter
 
     def matching_type
       question_wrapper do
-        matching_type_feedback_tags
+        feedback_tags
         question.data.each do |d|
           xml.subquestion(format: 'html') do
             text_cdata_wrapper("<p>#{d['answer']}</p>")
             xml.answer do
               xml.text_ d['correct'].first
             end
+          end
+        end
+      end
+    end
+
+    def traditional_type
+      question_wrapper do
+        feedback_tags
+        data = question.data
+        total_fraction = (100.0 / data.count { |d| d['correct'] }).round(5)
+        total_fraction = total_fraction == 100.0 ? total_fraction.to_i : total_fraction
+        data.each do |d|
+          fraction = d['correct'] ? total_fraction : 0
+          xml.single_ total_fraction == 100 ? true : false
+          xml.answer(fraction:) do
+            text_cdata_wrapper("<p>#{d['answer']}</p>")
           end
         end
       end
@@ -100,7 +117,7 @@ module QuestionFormatter
       end
     end
 
-    def matching_type_feedback_tags
+    def feedback_tags
       xml.correctfeedback(format: 'html') do
         text_cdata_wrapper('<p>Your answer is correct.</p>')
       end
@@ -112,4 +129,5 @@ module QuestionFormatter
       end
     end
   end
+  # rubocop:enable Metrics/ClassLength
 end

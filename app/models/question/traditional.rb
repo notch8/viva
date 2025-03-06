@@ -12,6 +12,7 @@ class Question::Traditional < Question
   self.type_name = "Multiple Choice"
   self.model_exporter = 'traditional_type'
   self.blackboard_export_type = 'MC'
+  self.moodle_type = 'multichoice'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.

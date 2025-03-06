@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="multichoice">
+    <tags>
+      <tag>
+        <text>Engineering</text>
+      </tag>
+      <tag>
+        <text>History</text>
+      </tag>
+    </tags>
+    <name>
+      <text>Question::Traditional 1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>A nurse is administering IV vancomycin to a patient. Twenty minutes into the infusion, the patient develops a diffuse erythematous rash on the face, neck, and upper torso, accompanied by hypotension with BP 90/50 mmHg. What is the priority nursing action?</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <single>true</single>
+    <answer fraction="100">
+      <text><![CDATA[<p>Stop the medication immediately and notify the physician</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Continue administration at a slower rate and monitor vital signs</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Administer diphenhydramine as prescribed and continue the infusion</p>]]></text>
+    </answer>
+    <single>true</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Document the reaction and complete the scheduled dose</p>]]></text>
+    </answer>
+  </question>
+</quiz>

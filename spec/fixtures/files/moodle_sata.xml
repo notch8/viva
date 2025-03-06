@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+  <question type="multichoice">
+    <tags>
+      <tag>
+        <text>Engineering</text>
+      </tag>
+      <tag>
+        <text>History</text>
+      </tag>
+    </tags>
+    <name>
+      <text>Question::SelectAllThatApply 1</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p>A nurse is caring for a patient diagnosed with community-acquired pneumonia. Which nursing interventions are appropriate for this patient? Select all that apply.</p>]]></text>
+    </questiontext>
+    <correctfeedback format="html">
+      <text><![CDATA[<p>Your answer is correct.</p>]]></text>
+    </correctfeedback>
+    <partiallycorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is partially correct.</p>]]></text>
+    </partiallycorrectfeedback>
+    <incorrectfeedback format="html">
+      <text><![CDATA[<p>Your answer is incorrect.</p>]]></text>
+    </incorrectfeedback>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Monitor vital signs every 2-4 hours</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Maintain head of bed elevation at 30-45 degrees</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="33.33333">
+      <text><![CDATA[<p>Administer antibiotics as prescribed on time</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Restrict fluid intake to prevent pulmonary edema</p>]]></text>
+    </answer>
+    <single>false</single>
+    <answer fraction="0">
+      <text><![CDATA[<p>Place the patient in a supine position for lung expansion</p>]]></text>
+    </answer>
+  </question>
+</quiz>

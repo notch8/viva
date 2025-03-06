@@ -27,9 +27,11 @@ class BookmarksController < ApplicationController
 
   def export
     @questions = current_user.bookmarked_questions
-    format = params[:format]
 
-    case format
+    case params[:format]
+    when 'md'
+      service = QuestionFormatter::MarkdownService
+      export_file_for(service)
     when 'txt'
       send_data BookmarkExporter.as_text(@questions),
                 filename: "bookmarked-questions-#{Time.zone.now.strftime('%Y%m%d')}.txt",

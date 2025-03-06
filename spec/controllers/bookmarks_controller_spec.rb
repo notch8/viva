@@ -41,25 +41,31 @@ RSpec.describe BookmarksController do
     let(:other_user) { FactoryBot.create(:user) }
     let(:question) { FactoryBot.create(:question_traditional) }
     let(:other_question) { FactoryBot.create(:question_traditional) }
+    let(:question_3) { FactoryBot.create(:question_essay) }
+    let(:question_4) { FactoryBot.create(:question_essay) }
+    let(:current_user) { controller.current_user }
 
     before do
       question.bookmarks.create(user:)
       other_question.bookmarks.create(user: other_user)
+      user.bookmarks.create(question: question_3)
       sign_in user
+      allow(controller).to receive(:current_user).and_return(user)
     end
 
     context 'when exporting bookmarks' do
       it "only includes the current user's bookmarked questions" do
         get :export, format: :txt
         expect(response.body).to include(question.text)
+        expect(response.body).to include(question_3.text)
         expect(response.body).not_to include(other_question.text)
+        expect(response.body).not_to include(question_4.text)
       end
 
       it 'scopes the questions to only those bookmarked by current user' do
-        current_user = user
-        expect(current_user.bookmarks.count).to eq(1)
-        expect(current_user.bookmarks.first.question).to eq(question)
-        expect(current_user.bookmarks.first.question).not_to eq(other_question)
+        expect(current_user.bookmarks.count).to eq(2)
+        expect(current_user.bookmarks.map(&:question)).to include(question, question_3)
+        expect(current_user.bookmarks.map(&:question)).not_to include(other_question)
       end
     end
 
@@ -86,6 +92,7 @@ RSpec.describe BookmarksController do
       it 'includes bookmarked questions in the response' do
         get :export, format: :md
         expect(response.body).to include(question.text)
+        expect(response.body).to include(question_3.text)
       end
     end
 

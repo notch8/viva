@@ -9,4 +9,12 @@ class Image < ApplicationRecord
   def url
     Rails.application.routes.url_helpers.rails_blob_url(file, only_path: true)
   end
+
+  def original_filename
+    file.blob.filename.to_s
+  end
+
+  def binary_data
+    file.download
+  end
 end

@@ -47,6 +47,7 @@ class Question < ApplicationRecord
   # it must be defined in the inheriting classes
   class_attribute :model_exporter, default: nil, instance_writer: false
   class_attribute :blackboard_export_type, default: nil, instance_writer: false
+  class_attribute :moodle_type, default: nil, instance_writer: false
 
   ##
   # @!attribute qti_max_value [r|w]
@@ -133,7 +134,7 @@ class Question < ApplicationRecord
   def self.type_names
     Question.descendants.each_with_object([]) do |descendant, array|
       array << descendant.type_name if descendant.included_in_filterable_type
-    end
+    end.sort
   end
 
   ##
@@ -578,7 +579,6 @@ class Question < ApplicationRecord
         .gsub(/\s+/, ' ')
         .strip
         .downcase
-        .truncate(1000)
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength

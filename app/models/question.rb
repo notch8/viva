@@ -134,7 +134,7 @@ class Question < ApplicationRecord
   def self.type_names
     Question.descendants.each_with_object([]) do |descendant, array|
       array << descendant.type_name if descendant.included_in_filterable_type
-    end
+    end.sort
   end
 
   ##

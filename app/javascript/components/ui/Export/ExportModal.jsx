@@ -8,29 +8,27 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
   // Define supported question types for each export format
   const supportedTypes = {
     canvas: {
-      'Multiple Choice': true,
-      'True/False': true,
-      'Fill in the Blank': true,
+      'Categorization': true,
       'Essay': true,
-      'Short Answer': true
+      'Matching': true,
+      'Multiple Choice': true,
+      'Select All That Apply': true,
+      'File Upload': true
     },
     blackboard: {
+      'Essay': true,
+      'Matching': true,
       'Multiple Choice': true,
-      'True/False': true,
-      'Short Answer': true,
-      'Essay': true
+      'Select All That Apply': true,
     },
     brightspace: {
-      'Multiple Choice': true,
-      'True/False': true,
-      'Short Answer': true,
-      'Essay': true
+      'TBD': true,
     },
     moodle: {
+      'Essay': true,
+      'Matching': true,
       'Multiple Choice': true,
-      'True/False': true,
-      'Short Answer': true,
-      'Essay': true
+      'Select All That Apply': true,
     },
     txt: {
       'All question types': true
@@ -67,22 +65,6 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('canvas')}</Tooltip>}
-                  >
-                    <Button
-                      variant='outline-primary'
-                      className='export-button'
-                      href='/bookmarks/export?format=canvas'
-                      disabled={!hasBookmarks}
-                    >
-                      <i className='bi bi-grid-3x3-gap-fill fs-1 mb-3'></i>
-                      <span className='text-uppercase'>Canvas</span>
-                    </Button>
-                  </OverlayTrigger>
-                </div>
-                <div className='col-md-6 d-flex justify-content-center'>
-                  <OverlayTrigger
-                    placement='top'
                     overlay={<Tooltip>{getTooltipText('blackboard')}</Tooltip>}
                   >
                     <Button
@@ -96,8 +78,6 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                     </Button>
                   </OverlayTrigger>
                 </div>
-              </div>
-              <div className='row w-100'>
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
@@ -111,6 +91,24 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                     >
                       <i className='bi bi-brightness-high-fill fs-1 mb-3'></i>
                       <span className='text-uppercase'>BrightSpace (D2L)</span>
+                    </Button>
+                  </OverlayTrigger>
+                </div>
+              </div>
+              <div className='row w-100'>
+                <div className='col-md-6 d-flex justify-content-center'>
+                  <OverlayTrigger
+                    placement='top'
+                    overlay={<Tooltip>{getTooltipText('canvas')}</Tooltip>}
+                  >
+                    <Button
+                      variant='outline-primary'
+                      className='export-button'
+                      href='/bookmarks/export?format=canvas'
+                      disabled={!hasBookmarks}
+                    >
+                      <i className='bi bi-grid-3x3-gap-fill fs-1 mb-3'></i>
+                      <span className='text-uppercase'>Canvas</span>
                     </Button>
                   </OverlayTrigger>
                 </div>
@@ -140,22 +138,6 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('txt')}</Tooltip>}
-                  >
-                    <Button
-                      variant='outline-primary'
-                      className='export-button'
-                      href='/bookmarks/export?format=txt'
-                      disabled={!hasBookmarks}
-                    >
-                      <i className='bi bi-file-text fs-1 mb-3'></i>
-                      <span className='text-uppercase'>Plain Text</span>
-                    </Button>
-                  </OverlayTrigger>
-                </div>
-                <div className='col-md-6 d-flex justify-content-center'>
-                  <OverlayTrigger
-                    placement='top'
                     overlay={<Tooltip>{getTooltipText('md')}</Tooltip>}
                   >
                     <Button
@@ -166,6 +148,22 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                     >
                       <i className='bi bi-markdown fs-1 mb-3'></i>
                       <span className='text-uppercase'>Markdown</span>
+                    </Button>
+                  </OverlayTrigger>
+                </div>
+                <div className='col-md-6 d-flex justify-content-center'>
+                  <OverlayTrigger
+                    placement='top'
+                    overlay={<Tooltip>{getTooltipText('txt')}</Tooltip>}
+                  >
+                    <Button
+                      variant='outline-primary'
+                      className='export-button'
+                      href='/bookmarks/export?format=txt'
+                      disabled={!hasBookmarks}
+                    >
+                      <i className='bi bi-file-text fs-1 mb-3'></i>
+                      <span className='text-uppercase'>Plain Text</span>
                     </Button>
                   </OverlayTrigger>
                 </div>

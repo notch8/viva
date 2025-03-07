@@ -20,11 +20,6 @@ class BookmarksController < ApplicationController
   def export
     @bookmarks = current_user.bookmarks.includes(:question)
 
-    if params[:format] == 'json'
-      render json: @bookmarks
-      return
-    end
-
     if params[:format].in?(%w[canvas blackboard brightspace moodle_xml txt md xml])
       handle_export
     else

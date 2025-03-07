@@ -10,14 +10,26 @@
 #
 # @see BookmarkExportService for the export process handling
 class BookmarkExporter
+  # Format questions as plain text
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String] The formatted text content
   def self.as_text(questions)
     questions.map { |question| QuestionFormatter::PlainTextService.new(question).format_content }.join("\n\n")
   end
 
+  # Format questions as markdown
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String] The formatted markdown content
   def self.as_markdown(questions)
     questions.map { |question| QuestionFormatter::MarkdownService.new(question).format_content }.join("\n\n")
   end
 
+  # Format questions as XML
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String] The formatted XML content
   def self.as_xml(questions)
     # Use the existing XML export functionality
     xml_content = ApplicationController.render(
@@ -28,6 +40,11 @@ class BookmarkExporter
     xml_content
   end
 
+  # Format questions for Canvas LMS
+  # If questions have images, creates a zip file
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String, Tempfile] The formatted XML content or a zip file
   def self.as_canvas(questions)
     # Canvas uses the QTI XML format
     # Generate the XML content
@@ -55,53 +72,37 @@ class BookmarkExporter
     end
   end
 
+  # Format questions for Blackboard LMS
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String] The formatted content for Blackboard
   def self.as_blackboard(questions)
     # Blackboard uses TSV format
     questions.map { |question| QuestionFormatter::BlackboardService.new(question).format_content }.join("\n\n")
   end
 
+  # Format questions for Brightspace LMS
+  # Note: Not fully implemented yet
+  #
+  # @param _questions [Array<Question>] The questions to format
+  # @return [String] A message indicating the format is not implemented
   def self.as_brightspace(_questions)
     # Not implemented yet
     "BrightSpace export format is not implemented yet."
   end
 
+  # Format questions for Moodle LMS
+  #
+  # @param questions [Array<Question>] The questions to format
+  # @return [String] The formatted XML content for Moodle
   def self.as_moodle(questions)
     # Moodle uses its own XML format, which is implemented in MoodleService
     QuestionFormatter::MoodleService.new(questions).format_content
   end
 
-  def self.generate_zip_file(questions, format)
-    xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.#{format}.xml"
-    xml_content = generate_content_for_format(questions, format)
-
-    # Get all images from questions
-    images = questions.flat_map(&:images)
-
-    # Create zip file
-    zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
-    zip_file_service.generate_zip
-  end
-
-  def self.generate_content_for_format(questions, format)
-    case format
-    when 'canvas'
-      ApplicationController.render(
-        template: 'bookmarks/export',
-        layout: false,
-        assigns: { questions:, title: "Canvas Export #{Time.current.strftime('%B %-d, %Y')}" }
-      )
-    when 'blackboard'
-      # Use Blackboard specific formatter if available
-      questions.map { |question| QuestionFormatter::BlackboardService.new(question).format_content }.join("\n\n")
-    when 'brightspace'
-      # Use BrightSpace specific formatter if available
-      "BrightSpace export format is not implemented yet."
-    when 'moodle'
-      # Use Moodle specific formatter
-      QuestionFormatter::MoodleService.new(questions).format_content
-    end
-  end
-
+  # Generate Moodle XML format
+  #
+  # @return [String] The formatted XML for Moodle
   def to_moodle_xml
     # Generate Moodle-specific XML format
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|

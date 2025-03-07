@@ -6,8 +6,8 @@ RSpec.describe BookmarkExportService do
   let(:user) { build_stubbed(:user) }
   let(:question1) { build_stubbed(:question_traditional) }
   let(:question2) { build_stubbed(:question_essay) }
-  let(:bookmark1) { build_stubbed(:bookmark, user: user, question: question1) }
-  let(:bookmark2) { build_stubbed(:bookmark, user: user, question: question2) }
+  let(:bookmark1) { build_stubbed(:bookmark, user:, question: question1) }
+  let(:bookmark2) { build_stubbed(:bookmark, user:, question: question2) }
   let(:bookmarks) { [bookmark1, bookmark2] }
   let(:service) { described_class.new(bookmarks) }
 
@@ -89,7 +89,7 @@ RSpec.describe BookmarkExportService do
       context 'when questions have images' do
         let(:image) { double('Image') }
         let(:question_with_images) { build_stubbed(:question_traditional) }
-        let(:bookmark_with_images) { build_stubbed(:bookmark, user: user, question: question_with_images) }
+        let(:bookmark_with_images) { build_stubbed(:bookmark, user:, question: question_with_images) }
         let(:service_with_images) { described_class.new([bookmark_with_images]) }
 
         before do
@@ -99,12 +99,12 @@ RSpec.describe BookmarkExportService do
 
         it 'returns a hash with a zip file' do
           allow(BookmarkExporter).to receive(:as_xml).and_return('<xml>content</xml>')
-          
+
           temp_file = Tempfile.new(['test', '.zip'])
           zip_service = instance_double(ZipFileService)
           allow(ZipFileService).to receive(:new).and_return(zip_service)
           allow(zip_service).to receive(:generate_zip).and_return(temp_file)
-          
+
           result = service_with_images.send(:xml_export)
 
           expect(result[:data]).to eq(temp_file)
@@ -132,7 +132,7 @@ RSpec.describe BookmarkExportService do
         it 'returns a hash with a zip file' do
           temp_file = Tempfile.new(['test', '.zip'])
           allow(BookmarkExporter).to receive(:as_canvas).and_return(temp_file)
-          
+
           result = service.send(:canvas_export)
 
           expect(result[:data]).to eq(temp_file)
@@ -176,4 +176,4 @@ RSpec.describe BookmarkExportService do
       end
     end
   end
-end 
+end

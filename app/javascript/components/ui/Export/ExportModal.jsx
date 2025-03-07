@@ -3,51 +3,16 @@ import {
   Modal, Button, Tabs, Tab, OverlayTrigger, Tooltip
 } from 'react-bootstrap'
 import './Export.css'
+import { usePage } from '@inertiajs/inertia-react'
 
 const ExportModal = ({ show, onHide, hasBookmarks }) => {
-  const supportedTypes = {
-    canvas: {
-      'Categorization': true,
-      'Essay': true,
-      'Matching': true,
-      'Multiple Choice': true,
-      'Select All That Apply': true,
-      'File Upload': true
-    },
-    blackboard: {
-      'Essay': true,
-      'Matching': true,
-      'Multiple Choice': true,
-      'Select All That Apply': true,
-    },
-    brightspace: {
-      'TBD': true,
-    },
-    moodle: {
-      'Essay': true,
-      'Matching': true,
-      'Multiple Choice': true,
-      'Select All That Apply': true,
-    },
-    txt: {
-      'All question types': true
-    },
-    md: {
-      'All question types': true
-    }
-  }
-
-  const getTooltipText = (format) => {
-    const types = supportedTypes[format]
-    if (types['All question types']) {
+  const lms = usePage().props.lms
+  const getTooltipText = (questionTypes) => {
+    if (questionTypes === '') {
       return 'Supports all question types in plain text format'
     }
 
-    const supportedList = Object.keys(types)
-      .filter(type => types[type])
-      .join(', ')
-
-    return `Supports: ${supportedList}`
+    return `Supports: ${questionTypes.join(', ')}`
   }
 
   return (
@@ -63,7 +28,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('blackboard')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText(lms.blackboard)}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'
@@ -79,7 +44,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('brightspace')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText([])}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'
@@ -97,7 +62,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('canvas')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText(lms.canvas)}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'
@@ -113,7 +78,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('moodle')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText(lms.moodle)}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'
@@ -136,7 +101,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('md')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText('')}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'
@@ -152,7 +117,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                 <div className='col-md-6 d-flex justify-content-center'>
                   <OverlayTrigger
                     placement='top'
-                    overlay={<Tooltip>{getTooltipText('txt')}</Tooltip>}
+                    overlay={<Tooltip>{getTooltipText('')}</Tooltip>}
                   >
                     <Button
                       variant='outline-primary'

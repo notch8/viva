@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 ##
-# Service to handle exporting bookmarked questions in various formats
-# handles the "what to export" (content formatting)
+# Service to handle the content formatting for bookmark exports
+#
+# This service is responsible for:
+# - Formatting question content into various export formats (text, markdown, XML, etc.)
+# - Implementing the specific requirements of each export format
+# - Converting question data into the appropriate structure for each format
+#
+# @see BookmarkExportService for the export process handling
 class BookmarkExporter
   def self.as_text(questions)
     questions.map { |question| QuestionFormatter::PlainTextService.new(question).format_content }.join("\n\n")

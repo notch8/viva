@@ -30,7 +30,8 @@ class SearchController < ApplicationController
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
       filteredQuestions: Question.filter_as_json(search: params[:search], **filter_values),
-      bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id)
+      bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id),
+      lms: Question.lms
     }
   end
 

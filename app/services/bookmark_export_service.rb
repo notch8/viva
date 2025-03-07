@@ -1,8 +1,15 @@
 # frozen_string_literal: true
 
 ##
-# Service to handle exporting bookmarks in various formats
-# handles the "how to export" (file structure, response format)
+# Service to handle the export process for bookmarks
+#
+# This service is responsible for:
+# - Determining the appropriate file format and structure for exports
+# - Creating the appropriate response data structure (file vs content)
+# - Setting correct content types and filenames
+# - Handling zip file creation when necessary
+#
+# @see BookmarkExporter for the actual content formatting logic
 class BookmarkExportService
   attr_reader :questions, :bookmarks
 

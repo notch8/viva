@@ -88,18 +88,6 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
                   <span>Markdown</span>
                 </div>
               </Button>
-
-              <Button
-                variant='outline-primary'
-                className='m-2 export-button'
-                href='/bookmarks/export?format=xml'
-                disabled={!hasBookmarks}
-              >
-                <div className='d-flex align-items-center'>
-                  <i className='bi bi-filetype-xml fs-4 me-2'></i>
-                  <span>QTI XML</span>
-                </div>
-              </Button>
             </div>
           </Tab>
         </Tabs>

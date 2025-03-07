@@ -25,7 +25,11 @@ class BookmarksController < ApplicationController
       return
     end
 
-    handle_export if params[:format].in?(%w[canvas blackboard brightspace moodle_xml txt md])
+    if params[:format].in?(%w[canvas blackboard brightspace moodle_xml txt md xml])
+      handle_export
+    else
+      redirect_to authenticated_root_path, alert: t('.unsupported_format')
+    end
   end
 
   private

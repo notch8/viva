@@ -2,6 +2,7 @@
 
 ##
 # Service to handle exporting bookmarks in various formats
+# handles the "how to export" (file structure, response format)
 class BookmarkExportService
   attr_reader :questions, :bookmarks
 
@@ -24,6 +25,8 @@ class BookmarkExportService
       text_export
     when 'md'
       markdown_export
+    when 'xml'
+      xml_export
     end
   end
 
@@ -69,13 +72,41 @@ class BookmarkExportService
 
   def text_export
     { data: BookmarkExporter.as_text(questions),
-      filename: "bookmarks.txt",
-      type: "text/plain" }
+      filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.txt",
+      type: "text/plain",
+      is_file: false }
   end
 
   def markdown_export
     { data: BookmarkExporter.as_markdown(questions),
-      filename: "bookmarks.md",
-      type: "text/plain" }
+      filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.md",
+      type: "text/plain",
+      is_file: false }
+  end
+
+  def xml_export
+    xml_content = BookmarkExporter.as_xml(questions)
+
+    # Check if any questions have images
+    if questions.any? { |question| question.images.any? }
+      # If there are images, we need to create a zip file
+      xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml"
+      images = questions.flat_map(&:images)
+
+      # Use ZipFileService to create the zip file
+      zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+      temp_file = zip_file_service.generate_zip
+
+      { data: temp_file,
+        filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.zip",
+        type: "application/zip",
+        is_file: true }
+    else
+      # If no images, just return the XML content
+      { data: xml_content,
+        filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml",
+        type: "application/xml; charset=utf-8",
+        is_file: false }
+    end
   end
 end

@@ -2,6 +2,7 @@
 
 ##
 # Service to handle exporting bookmarked questions in various formats
+# handles the "what to export" (content formatting)
 class BookmarkExporter
   def self.as_text(questions)
     questions.map { |question| QuestionFormatter::PlainTextService.new(question).format_content }.join("\n\n")

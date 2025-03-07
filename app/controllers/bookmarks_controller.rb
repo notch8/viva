@@ -1,23 +1,15 @@
 # frozen_string_literal: true
 class BookmarksController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_bookmark, only: [:destroy]
 
   def create
-    @bookmark = current_user.bookmarks.find_or_create_by(question_id: params[:question_id])
-    if @bookmark.save
-      redirect_back(fallback_location: authenticated_root_path, notice: t('.success'))
-    else
-      redirect_back(fallback_location: authenticated_root_path, alert: t('.failure'))
-    end
+    @bookmark = current_user.bookmarks.find_or_create_by(bookmark_params)
+    handle_bookmark_action(@bookmark.save, '.success', '.failure')
   end
 
   def destroy
-    @bookmark = current_user.bookmarks.find_by(question_id: params[:id])
-    if @bookmark&.destroy
-      redirect_back(fallback_location: authenticated_root_path, notice: t('.success'))
-    else
-      redirect_back(fallback_location: authenticated_root_path, alert: t('.failure'))
-    end
+    handle_bookmark_action(@bookmark&.destroy, '.success', '.failure')
   end
 
   def destroy_all
@@ -26,83 +18,47 @@ class BookmarksController < ApplicationController
   end
 
   def export
-    @questions = current_user.bookmarked_questions
+    @bookmarks = current_user.bookmarks.includes(:question)
 
-    case params[:format]
-    when 'md'
-      service = QuestionFormatter::MarkdownService
-      export_file_for(service)
-    when 'txt'
-      send_data BookmarkExporter.as_text(@questions),
-                filename: "bookmarked-questions-#{Time.zone.now.strftime('%Y%m%d')}.txt",
-                type: 'text/plain'
-    when 'md'
-      send_data BookmarkExporter.as_markdown(@questions),
-                filename: "bookmarked-questions-#{Time.zone.now.strftime('%Y%m%d')}.md",
-                type: 'text/markdown'
-    when 'xml', 'canvas'
-      # Canvas uses QTI XML format
-      xml_download
-    when 'blackboard'
-      # Blackboard uses TSV format
-      send_data BookmarkExporter.as_blackboard(@questions),
-                filename: "blackboard-questions-#{Time.zone.now.strftime('%Y%m%d')}.txt",
-                type: 'text/tab-separated-values'
-    when 'brightspace', 'moodle'
-      # Not implemented yet - show a flash message and redirect
-      redirect_back(fallback_location: authenticated_root_path,
-                    alert: "#{format.capitalize} export is not implemented yet.")
-    else
-      redirect_back(fallback_location: authenticated_root_path, alert: t('.alert'))
+    if params[:format] == 'json'
+      render json: @bookmarks
+      return
     end
+
+    handle_export if params[:format].in?(%w[canvas blackboard brightspace moodle_xml txt md])
   end
 
   private
 
-  def export_filename(now = Time.current)
-    "questions-#{now.strftime('%Y-%m-%d_%H:%M:%S:%L')}"
+  def set_bookmark
+    @bookmark = current_user.bookmarks.find_by(question_id: params[:id])
   end
 
-  def export_file_for(service)
-    content = @questions.map { |question| service.new(question).format_content }.join('')
-    send_data content, filename: "#{export_filename}.#{service.output_format}", type: 'text/plain'
+  def bookmark_params
+    { question_id: params[:question_id] }
   end
 
-  def xml_download
-    now = Time.current
-    @title = "Viva Questions for #{now.strftime('%B %-d, %Y %9N')}"
-
-    # Why the long suffix?  Because Canvas supports both "classic" and "new" format; and per
-    # conversations with the client, we're looking to only export classic (as you can migrate a
-    # classic question to new format).  This filename is another "helpful clue" and introduces
-    # later considerations for what the file format might be.
-    filename = "#{export_filename(now)}.classic-question-canvas.qti.xml"
-
-    if any_question_has_images?
-      serve_zip_file(filename)
+  def handle_bookmark_action(success, success_key, failure_key)
+    if success
+      redirect_back(fallback_location: authenticated_root_path, notice: t(success_key))
     else
-      serve_xml_file(filename)
+      redirect_back(fallback_location: authenticated_root_path, alert: t(failure_key))
     end
   end
 
-  def any_question_has_images?
-    @questions.any? { |question| question.images.any? }
-  end
+  def handle_export
+    export_result = BookmarkExportService.new(@bookmarks).export(params[:format])
 
-  def serve_zip_file(xml_filename)
-    xml_content = render_to_string(format: :xml)
-    images = @questions.flat_map(&:images)
-    zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
-    temp_file = zip_file_service.generate_zip
-    zip_filename = xml_filename.gsub('.xml', '.zip')
-
-    send_file(temp_file.path, filename: zip_filename)
-  end
-
-  def serve_xml_file(filename)
-    # Set the 'Content-Disposition' as 'attachment' so that instead of showing the XML file in the
-    # browser, we instead tell the browser to automatically download this file.
-    response.headers['Content-Disposition'] = %(attachment; filename="#{filename}")
-    render format: :xml
+    if export_result[:is_file]
+      # If it's a file path (for zip files), use send_file
+      send_file(export_result[:data].path,
+                filename: export_result[:filename],
+                type: export_result[:type])
+    else
+      # Otherwise use send_data for content
+      send_data export_result[:data],
+               filename: export_result[:filename],
+               type: export_result[:type]
+    end
   end
 end

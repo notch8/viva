@@ -5,7 +5,6 @@ import {
 import './Export.css'
 
 const ExportModal = ({ show, onHide, hasBookmarks }) => {
-  // Define supported question types for each export format
   const supportedTypes = {
     canvas: {
       'Categorization': true,
@@ -38,7 +37,6 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
     }
   }
 
-  // Helper function to generate tooltip text
   const getTooltipText = (format) => {
     const types = supportedTypes[format]
     if (types['All question types']) {

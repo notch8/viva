@@ -10,6 +10,7 @@
 # - Handling zip file creation when necessary
 #
 # @see BookmarkExporter for the actual content formatting logic
+# rubocop:disable Metrics/ClassLength
 class BookmarkExportService
   # @return [Array<Bookmark>] The bookmarks to be exported
   attr_reader :bookmarks
@@ -30,6 +31,7 @@ class BookmarkExportService
   #
   # @param format [String] The format to export ('txt', 'md', 'xml', etc.)
   # @return [Hash, nil] A hash containing the export data, filename, content type, and file flag
+  # rubocop:disable Metrics/MethodLength
   def export(format)
     case format
     when 'canvas'
@@ -48,6 +50,7 @@ class BookmarkExportService
       xml_export
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -56,22 +59,34 @@ class BookmarkExportService
   # @return [Hash] A hash containing the export data, filename, content type, and file flag
   def canvas_export
     canvas_result = BookmarkExporter.as_canvas(questions)
+    canvas_result.is_a?(Tempfile) ? canvas_zip_export(canvas_result) : canvas_xml_export(canvas_result)
+  end
 
-    # Check if the result is a temp file (for zip) or XML string
-    if canvas_result.is_a?(Tempfile)
-      # It's a zip file (temp file)
-      filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.zip"
-      { data: canvas_result,
-        filename:,
-        type: "application/zip",
-        is_file: true } # Add a flag to indicate this is a file path
-    else
-      # It's XML content (string)
-      filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
-      { data: canvas_result,
-        filename:,
-        type: "application/xml" }
-    end
+  # Create export hash for Canvas zip file
+  #
+  # @param temp_file [Tempfile] The zip file containing Canvas export
+  # @return [Hash] A hash containing the export data, filename, content type, and file flag
+  def canvas_zip_export(temp_file)
+    filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.zip"
+    {
+      data: temp_file,
+      filename:,
+      type: "application/zip",
+      is_file: true
+    }
+  end
+
+  # Create export hash for Canvas XML content
+  #
+  # @param xml_content [String] The XML content for Canvas export
+  # @return [Hash] A hash containing the export data, filename, content type, and file flag
+  def canvas_xml_export(xml_content)
+    filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
+    {
+      data: xml_content,
+      filename:,
+      type: "application/xml"
+    }
   end
 
   # Export bookmarks in Blackboard format
@@ -127,27 +142,47 @@ class BookmarkExportService
   # @return [Hash] A hash containing the export data, filename, content type, and file flag
   def xml_export
     xml_content = BookmarkExporter.as_xml(questions)
+    questions_have_images? ? xml_zip_export(xml_content) : xml_content_export(xml_content)
+  end
 
-    # Check if any questions have images
-    if questions.any? { |question| question.images.any? }
-      # If there are images, we need to create a zip file
-      xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml"
-      images = questions.flat_map(&:images)
+  # Check if any questions have images
+  #
+  # @return [Boolean] True if any questions have images, false otherwise
+  def questions_have_images?
+    questions.any? { |question| question.images.any? }
+  end
 
-      # Use ZipFileService to create the zip file
-      zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
-      temp_file = zip_file_service.generate_zip
+  # Create export hash for XML content with images (zip file)
+  #
+  # @param xml_content [String] The XML content
+  # @return [Hash] A hash containing the export data, filename, content type, and file flag
+  def xml_zip_export(xml_content)
+    xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml"
+    images = questions.flat_map(&:images)
 
-      { data: temp_file,
-        filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.zip",
-        type: "application/zip",
-        is_file: true }
-    else
-      # If no images, just return the XML content
-      { data: xml_content,
-        filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml",
-        type: "application/xml; charset=utf-8",
-        is_file: false }
-    end
+    # Use ZipFileService to create the zip file
+    zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+    temp_file = zip_file_service.generate_zip
+
+    {
+      data: temp_file,
+      filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.zip",
+      type: "application/zip",
+      is_file: true
+    }
+  end
+
+  # Create export hash for XML content without images
+  #
+  # @param xml_content [String] The XML content
+  # @return [Hash] A hash containing the export data, filename, content type, and file flag
+  def xml_content_export(xml_content)
+    {
+      data: xml_content,
+      filename: "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.xml",
+      type: "application/xml; charset=utf-8",
+      is_file: false
+    }
   end
 end
+# rubocop:enable Metrics/ClassLength

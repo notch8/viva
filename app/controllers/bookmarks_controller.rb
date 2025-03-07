@@ -54,12 +54,10 @@ class BookmarksController < ApplicationController
     export_result = BookmarkExportService.new(@bookmarks).export(params[:format])
 
     if export_result[:is_file]
-      # If it's a file path (for zip files), use send_file
       send_file(export_result[:data].path,
                 filename: export_result[:filename],
                 type: export_result[:type])
     else
-      # Otherwise use send_data for content
       send_data export_result[:data],
                filename: export_result[:filename],
                type: export_result[:type]

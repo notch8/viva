@@ -109,9 +109,13 @@ RSpec.describe BookmarkExporter do
   end
 
   describe '.as_brightspace' do
-    it 'returns a message that the format is not implemented' do
+    it 'uses D2lService to format questions' do
+      brightspace_service = instance_double(QuestionFormatter::D2lService)
+      expect(QuestionFormatter::D2lService).to receive(:new).with(questions).and_return(brightspace_service)
+      expect(brightspace_service).to receive(:format_content).and_return("brightspace content")
+
       result = described_class.as_brightspace(questions)
-      expect(result).to eq("BrightSpace export format is not implemented yet.")
+      expect(result).to eq("brightspace content")
     end
   end
 

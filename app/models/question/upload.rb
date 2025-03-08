@@ -12,6 +12,7 @@ class Question::Upload < Question
   self.type_name = "Upload"
   self.model_exporter = 'essay_type'
   self.export_as_xml = true
+  self.d2l_export_type = 'WR'
 
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow
   end

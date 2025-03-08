@@ -160,8 +160,8 @@ RSpec.describe BookmarkExportService do
         result = service.send(:brightspace_export)
 
         expect(result[:data]).to eq('brightspace content')
-        expect(result[:filename]).to eq('brightspace_export.txt')
-        expect(result[:type]).to eq('text/plain')
+        expect(result[:filename]).to eq('brightspace_export.csv')
+        expect(result[:type]).to eq('text/csv')
       end
     end
 

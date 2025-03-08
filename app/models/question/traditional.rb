@@ -11,6 +11,7 @@ class Question::Traditional < Question
   # @see https://github.com/notch8/viva/issues/261
   self.type_name = "Multiple Choice"
   self.model_exporter = 'traditional_type'
+  self.d2l_export_type = 'MC'
   self.blackboard_export_type = 'MC'
   self.moodle_type = 'multichoice'
 

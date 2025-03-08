@@ -13,6 +13,7 @@ class Question::Essay < Question
   self.blackboard_export_type = 'ESS'
   self.moodle_type = 'essay'
   self.export_as_xml = true
+  self.d2l_export_type = 'WR'
 
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow
   end

@@ -48,7 +48,7 @@ class Question < ApplicationRecord
   class_attribute :model_exporter, default: nil, instance_writer: false
   class_attribute :blackboard_export_type, default: nil, instance_writer: false
   class_attribute :moodle_type, default: nil, instance_writer: false
-
+  class_attribute :d2l_export_type, default: nil, instance_writer: false
   ##
   # @!attribute qti_max_value [r|w]
   #   @return [Integer]

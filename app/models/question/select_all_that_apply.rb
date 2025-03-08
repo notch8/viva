@@ -10,6 +10,7 @@ class Question::SelectAllThatApply < Question
   self.model_exporter = 'traditional_type'
   self.blackboard_export_type = 'MA'
   self.moodle_type = 'multichoice'
+  self.d2l_export_type = 'MS'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::SelectAllThatApply}.

@@ -11,6 +11,25 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
     return `Supports: ${questionTypes.join(', ')}`
   }
 
+  const getIconClass = (format) => {
+    switch (format) {
+      case 'blackboard':
+        return 'bi-clipboard2-fill'
+      case 'brightspace':
+        return 'bi-sun-fill'
+      case 'canvas':
+        return 'bi-grid-3x3-gap-fill'
+      case 'moodle':
+        return 'bi-mortarboard-fill'
+      case 'md':
+        return 'bi-markdown-fill'
+      case 'txt':
+        return 'bi-file-text-fill'
+      default:
+        return 'bi-clipboard2-fill'
+    }
+  }
+
   return (
     <div className='col-md-6 d-flex justify-content-center'>
       <OverlayTrigger
@@ -22,8 +41,10 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
           className='export-button'
           href={`/bookmarks/export?format=${format}`}
           disabled={!hasBookmarks}
+          data-cy={`export-button-${format}`}
+          data-format={format}
         >
-          <i className='bi bi-clipboard2-fill fs-1 mb-3'></i>
+          <i className={`bi ${getIconClass(format)} fs-1 mb-3`}></i>
           <span className='text-uppercase'>{label}</span>
         </Button>
       </OverlayTrigger>

@@ -160,6 +160,33 @@ class Question < ApplicationRecord
   end
 
   ##
+  # Returns available question types for each supported LMS platform
+  #
+  # @return [Hash{Symbol => Array<String>}] Hash mapping LMS platforms to arrays of supported question type names
+  #   - :blackboard - Blackboard compatible question types
+  #   - :canvas - Canvas compatible question types
+  #   - :moodle - Moodle compatible question types
+  def self.lms
+    {
+      blackboard: lms_finder(:blackboard_export_type),
+      # d2l: lms_finder(:d2l),
+      canvas: lms_finder(:export_as_xml),
+      moodle: lms_finder(:moodle_type)
+    }
+  end
+
+  ##
+  # Finds question types that support a given LMS export method
+  #
+  # @param lms [Symbol] The method name that indicates support for a particular LMS
+  # @return [Array<String>] Sorted array of question type names that support the given LMS
+  # @api private
+  def self.lms_finder(lms)
+    Question.descendants.select(&lms).map(&:type_name).sort
+  end
+  private_class_method :lms_finder
+
+  ##
   # @abstract
   #
   # Represents the mapping process of a CSV Row to the underlying {Question}.

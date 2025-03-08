@@ -12,7 +12,7 @@ RSpec.describe 'question/uploads/_upload' do
     # Yes the format type is essay question; perhaps there's a nuance that means Upload and Essay
     # are not identical; but this is what was requested so I'm assuming there's differences
     # somewhere.
-    expect(rendered).to include(%(<fieldentry>essay_question</fieldentry>))
+    expect(rendered).to include(%(<fieldentry>file_upload_question</fieldentry>))
 
     # We are providing HTML and want to ensure it is escaped
     expect(rendered).to include(%(<mattext texttype="text/html">&lt;))

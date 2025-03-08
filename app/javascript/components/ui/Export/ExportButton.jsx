@@ -13,20 +13,20 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
 
   const getIconClass = (format) => {
     switch (format) {
-      case 'blackboard':
-        return 'bi-clipboard2-fill'
-      case 'brightspace':
-        return 'bi-sun-fill'
-      case 'canvas':
-        return 'bi-grid-3x3-gap-fill'
-      case 'moodle':
-        return 'bi-mortarboard-fill'
-      case 'md':
-        return 'bi-markdown-fill'
-      case 'txt':
-        return 'bi-file-text-fill'
-      default:
-        return 'bi-clipboard2-fill'
+    case 'blackboard':
+      return 'bi-clipboard2-fill'
+    case 'brightspace':
+      return 'bi-sun-fill'
+    case 'canvas':
+      return 'bi-grid-3x3-gap-fill'
+    case 'moodle':
+      return 'bi-mortarboard-fill'
+    case 'md':
+      return 'bi-markdown-fill'
+    case 'txt':
+      return 'bi-file-text-fill'
+    default:
+      return 'bi-clipboard2-fill'
     }
   }
 

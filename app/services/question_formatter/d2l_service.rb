@@ -11,6 +11,7 @@ module QuestionFormatter
 
     # @input questions [Array<Question>] array of questions to format
     def initialize(questions)
+      super
       @questions = questions
     end
 
@@ -44,17 +45,17 @@ module QuestionFormatter
 
     def image_url
       image_url = question.images&.first&.url
-      return nil unless image_url.present?
-      return image_url unless base_url.present?
+      return nil if image_url.blank?
+      return image_url if base_url.blank?
       base_url + image_url
     end
 
     def base_url
       default_url_options = Rails.application.config.action_mailer.default_url_options
-      return nil unless default_url_options.present?
+      return nil if default_url_options.blank?
       host = default_url_options[:host]
       port = default_url_options[:port]
-      return nil unless host.present? && port.present?
+      return nil if host.blank? || port.blank?
       "http://#{host}:#{port}"
     end
 

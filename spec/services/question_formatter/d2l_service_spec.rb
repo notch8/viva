@@ -30,7 +30,7 @@ RSpec.describe QuestionFormatter::D2lService do
       ])
   end
   let(:formatted_matching_question) do
-    "NewQuestion,M\nID,\nQuestionText,Sample matching question\nImage,\"\"\nChoice,1,Term 1\nChoice,2,Term 2\nChoice,3,Term 3\nMatch,1,Definition 1\nMatch,2,Definition 2\nMatch,3,Definition 3\n"
+    "NewQuestion,M\nID,\nQuestionText,Sample matching question\nChoice,1,Term 1\nChoice,2,Term 2\nChoice,3,Term 3\nMatch,1,Definition 1\nMatch,2,Definition 2\nMatch,3,Definition 3\n"
   end
   let(:select_all_question) do
     build(:question_select_all_that_apply,
@@ -42,7 +42,7 @@ RSpec.describe QuestionFormatter::D2lService do
       ])
   end
   let(:formatted_select_all_question) do
-    "NewQuestion,MS\nID,\nQuestionText,Sample select all question\nImage,\"\"\nOption,100,Option A\nOption,100,Option B\nOption,0,Option C\n"
+    "NewQuestion,MS\nID,\nQuestionText,Sample select all question\nOption,100,Option A\nOption,100,Option B\nOption,0,Option C\n"
   end
   let(:traditional_question) do
     build(:question_traditional,
@@ -53,7 +53,7 @@ RSpec.describe QuestionFormatter::D2lService do
       ])
   end
   let(:formatted_traditional_question) do
-    "NewQuestion,MC\nID,\nQuestionText,Sample multiple choice\nImage,\"\"\nOption,100,Option A\nOption,0,Option B\n"
+    "NewQuestion,MC\nID,\nQuestionText,Sample multiple choice\nOption,100,Option A\nOption,0,Option B\n"
   end
 
   let(:upload_question) do
@@ -98,6 +98,18 @@ RSpec.describe QuestionFormatter::D2lService do
 
     it 'does not handle other types' do
       expect(described_class.new([unsupported_question]).format_content).to be_blank
+    end
+  end
+
+  describe 'with images' do
+    let(:image) { double(:image, url: "/rails/active_storage/blobs/cat-injured.jpg") }
+
+    before do
+      allow(traditional_question).to receive(:images).and_return([image])
+    end
+
+    it 'includes the image URL' do
+      expect(described_class.new([traditional_question]).format_content).to include(image.url)
     end
   end
 end

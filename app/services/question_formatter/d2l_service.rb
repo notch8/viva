@@ -26,7 +26,7 @@ module QuestionFormatter
           end
         end
       end
-      csv_string
+      csv_string.encode('UTF-8')
     end
 
     private
@@ -42,12 +42,20 @@ module QuestionFormatter
       csv_rows
     end
 
-    def question_image
-      # This should be the file path of the image
-      url = question.images.first&.url
-      return '' unless url
-      parsed_url = URI.parse(url).path.split('/').last
-      "/images/" + parsed_url
+    def image_url
+      image_url = question.images&.first&.url
+      return nil unless image_url.present?
+      return image_url unless base_url.present?
+      base_url + image_url
+    end
+
+    def base_url
+      default_url_options = Rails.application.config.action_mailer.default_url_options
+      return nil unless default_url_options.present?
+      host = default_url_options[:host]
+      port = default_url_options[:port]
+      return nil unless host.present? && port.present?
+      "http://#{host}:#{port}"
     end
 
     ## called by format type
@@ -56,7 +64,7 @@ module QuestionFormatter
       csv_rows = []
       csv_rows += shared_opening_rows
       csv_rows << ['QuestionText', question.text]
-      csv_rows << ['Image', question_image]
+      csv_rows << ['Image', image_url] if image_url
       csv_rows += format_traditional_options(@question.data)
       csv_rows
     end
@@ -65,7 +73,7 @@ module QuestionFormatter
       csv_rows = []
       csv_rows += shared_opening_rows
       csv_rows << ['QuestionText', question.text]
-      csv_rows << ['Image', question_image]
+      csv_rows << ['Image', image_url] if image_url
       csv_rows += format_matching_options(@question.data)
       csv_rows
     end
@@ -75,6 +83,7 @@ module QuestionFormatter
       csv_rows += shared_opening_rows
       csv_rows << ['Title', question.text]
       csv_rows << ['QuestionText', question.data['html'], 'HTML']
+      csv_rows << ['Image', image_url] if image_url
       csv_rows
     end
 

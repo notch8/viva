@@ -81,14 +81,14 @@ class BookmarkExporter
     questions.map { |question| QuestionFormatter::BlackboardService.new(question).format_content }.join("\n\n")
   end
 
-  # Format questions for Brightspace LMS
+  # Format questions for Brightspace D2L LMS
   # Note: Not fully implemented yet
   #
   # @param _questions [Array<Question>] The questions to format
-  # @return [String] A message indicating the format is not implemented
-  def self.as_brightspace(_questions)
-    # Not implemented yet
-    "BrightSpace export format is not implemented yet."
+  # @return [String] the formatted content for Brightspace
+  def self.as_brightspace(questions)
+    # Blackboard uses CSV format
+    QuestionFormatter::D2lService.new(questions).format_content
   end
 
   # Format questions for Moodle LMS

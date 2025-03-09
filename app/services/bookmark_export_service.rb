@@ -103,8 +103,8 @@ class BookmarkExportService
   # @return [Hash] A hash containing the export data, filename, and content type
   def brightspace_export
     { data: BookmarkExporter.as_brightspace(questions),
-      filename: "brightspace_export.txt",
-      type: "text/plain" }
+      filename: "brightspace_export.csv",
+      type: "text/csv" }
   end
 
   # Export bookmarks in Moodle XML format

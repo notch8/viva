@@ -13,6 +13,7 @@ class Question::Matching < Question
   self.moodle_type = 'matching'
   self.export_as_xml = true
   self.choice_cardinality_is_multiple = false
+  self.d2l_export_type = 'M'
 
   class ImportCsvRow < MatchingQuestionBehavior::ImportCsvRow
   end

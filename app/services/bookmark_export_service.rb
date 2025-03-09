@@ -40,7 +40,7 @@ class BookmarkExportService
       blackboard_export
     when 'brightspace'
       brightspace_export
-    when 'moodle_xml'
+    when 'moodle'
       moodle_export
     when 'txt'
       text_export

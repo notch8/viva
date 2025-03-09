@@ -169,7 +169,7 @@ class Question < ApplicationRecord
   def self.lms
     {
       blackboard: lms_finder(:blackboard_export_type),
-      # d2l: lms_finder(:d2l),
+      d2l: lms_finder(:d2l_export_type),
       canvas: lms_finder(:export_as_xml),
       moodle: lms_finder(:moodle_type)
     }

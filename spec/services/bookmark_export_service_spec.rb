@@ -39,7 +39,7 @@ RSpec.describe BookmarkExportService do
       service.export('brightspace')
 
       expect(service).to receive(:moodle_export)
-      service.export('moodle_xml')
+      service.export('moodle')
     end
   end
 

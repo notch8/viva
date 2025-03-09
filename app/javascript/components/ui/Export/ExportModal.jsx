@@ -20,7 +20,7 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
             <div className='d-flex flex-wrap justify-content-center'>
               <div className='row w-100'>
                 <ExportButton format='blackboard' label='Blackboard' questionTypes={lms.blackboard} hasBookmarks={hasBookmarks} />
-                <ExportButton format='brightspace' label='Brightspace' questionTypes={[]} hasBookmarks={hasBookmarks} />
+                <ExportButton format='d2l' label='Brightspace' questionTypes={lms.d2l} hasBookmarks={hasBookmarks} />
               </div>
               <div className='row w-100'>
                 <ExportButton format='canvas' label='Canvas' questionTypes={lms.canvas} hasBookmarks={hasBookmarks} />

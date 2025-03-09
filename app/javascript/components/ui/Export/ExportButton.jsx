@@ -3,8 +3,11 @@ import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap'
 import './Export.css'
 
 const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
-  const getTooltipText = (questionTypes) => {
+  const getTooltipText = (format, questionTypes) => {
     if (questionTypes.length === 0) {
+      if (format === 'md') {
+        return 'Supports all question types in markdown format'
+      }
       return 'Supports all question types in plain text format'
     }
 
@@ -34,7 +37,7 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
     <div className='col-md-6 d-flex justify-content-center'>
       <OverlayTrigger
         placement='top'
-        overlay={<Tooltip>{getTooltipText(questionTypes)}</Tooltip>}
+        overlay={<Tooltip>{getTooltipText(format, questionTypes)}</Tooltip>}
       >
         <Button
           variant='outline-primary'

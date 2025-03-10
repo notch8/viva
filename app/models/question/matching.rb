@@ -10,7 +10,7 @@ class Question::Matching < Question
   self.type_name = "Matching"
   self.model_exporter = 'matching_type'
   self.blackboard_export_type = 'MAT'
-  self.moodle_type = 'matching'
+  self.moodle_export_type = 'matching'
   self.export_as_xml = true
   self.choice_cardinality_is_multiple = false
   self.d2l_export_type = 'M'

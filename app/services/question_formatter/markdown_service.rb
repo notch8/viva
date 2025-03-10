@@ -5,6 +5,8 @@
 module QuestionFormatter
   class MarkdownService < BaseService
     self.output_format = 'md'
+    self.format = 'md' # used as format parameter
+    self.file_type = 'text/plain'
 
     private
 

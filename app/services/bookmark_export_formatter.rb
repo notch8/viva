@@ -9,7 +9,22 @@
 # - Converting question data into the appropriate structure for each format
 #
 # @see BookmarkExportService for the export process handling
-class BookmarkExporter
+class BookmarkExportFormatter
+  def initialize(service, questions, format)
+    @questions = questions
+    @format = format
+    @service = service 
+  end
+
+  def export(questions, format)
+    method = "as_#{format}"
+    raise "Format #{format} is not yet supported for export" unless respond_to?(method)
+
+    send(method, questions)
+  end
+
+  private
+
   # Format questions as plain text
   #
   # @param questions [Array<Question>] The questions to format
@@ -22,22 +37,8 @@ class BookmarkExporter
   #
   # @param questions [Array<Question>] The questions to format
   # @return [String] The formatted markdown content
-  def self.as_markdown(questions)
+  def self.as_md(questions)
     questions.map { |question| QuestionFormatter::MarkdownService.new(question).format_content }.join("\n\n")
-  end
-
-  # Format questions as XML
-  #
-  # @param questions [Array<Question>] The questions to format
-  # @return [String] The formatted XML content
-  def self.as_xml(questions)
-    # Use the existing XML export functionality
-    xml_content = ApplicationController.render(
-      template: 'bookmarks/export',
-      layout: false,
-      assigns: { questions:, title: "Viva Questions Export #{Time.current.strftime('%B %-d, %Y')}" }
-    )
-    xml_content
   end
 
   # Format questions for Canvas LMS
@@ -82,11 +83,10 @@ class BookmarkExporter
   end
 
   # Format questions for Brightspace D2L LMS
-  # Note: Not fully implemented yet
   #
   # @param _questions [Array<Question>] The questions to format
   # @return [String] the formatted content for Brightspace
-  def self.as_brightspace(questions)
+  def self.as_d2l(questions)
     # Blackboard uses CSV format
     QuestionFormatter::D2lService.new(questions).format_content
   end
@@ -98,21 +98,5 @@ class BookmarkExporter
   def self.as_moodle(questions)
     # Moodle uses its own XML format, which is implemented in MoodleService
     QuestionFormatter::MoodleService.new(questions).format_content
-  end
-
-  # Generate Moodle XML format
-  #
-  # @return [String] The formatted XML for Moodle
-  def to_moodle
-    # Generate Moodle-specific XML format
-    builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-      @bookmarks.each do |bookmark|
-        question = bookmark.question
-        # Call the appropriate exporter method for each question type
-        question.to_moodle(xml) if question.respond_to?(:to_moodle)
-      end
-    end
-
-    builder.to_xml
   end
 end

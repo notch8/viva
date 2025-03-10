@@ -6,19 +6,35 @@ module QuestionFormatter
     ##
     # Service to handle formatting questions for downloads
     class_attribute :output_format, default: nil
-    attr_reader :question, :subq
+    class_attribute :format, default: nil
+    class_attribute :file_type, default: nil
 
-    def initialize(question, subq = false)
-      @question = question
-      @subq = subq
+    attr_reader :questions, :subq, :question
+
+    def initialize(questions)
+      @questions = questions
+
     end
 
     def format_content
-      format_by_type + divider_line
+      @questions.each do |question|
+        @question = question
+        question_content = process_question(question)
+      end.join(join_by)
     end
 
     # These methods are protected instead of private so they can be called by other instances
     protected
+
+  def join_by
+      "\n\n"
+    end
+
+    def process_question(question, subq=false)
+      @question = question
+      @subq = subq
+      format_by_type + divider_line
+    end
 
     def essay_type
       format_question_header + format_essay_content
@@ -52,7 +68,7 @@ module QuestionFormatter
       when "Question::Scenario"
         format_scenario(sub_question)
       else
-        "#{self.class.new(sub_question, true).format_by_type}\n"
+        "#{process_question(sub_question, true).format_by_type}\n"
       end
     end
 

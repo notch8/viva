@@ -46,7 +46,7 @@ RSpec.describe BookmarkExportService do
   describe 'export formats' do
     describe '#text_export' do
       it 'returns a hash with text data' do
-        allow(BookmarkExporter).to receive(:as_text).and_return('text content')
+        allow(BookmarkExportFormatter).to receive(:as_text).and_return('text content')
         result = service.send(:text_export)
 
         expect(result[:data]).to eq('text content')
@@ -58,7 +58,7 @@ RSpec.describe BookmarkExportService do
 
     describe '#markdown_export' do
       it 'returns a hash with markdown data' do
-        allow(BookmarkExporter).to receive(:as_markdown).and_return('markdown content')
+        allow(BookmarkExportFormatter).to receive(:as_markdown).and_return('markdown content')
         result = service.send(:markdown_export)
 
         expect(result[:data]).to eq('markdown content')
@@ -76,7 +76,7 @@ RSpec.describe BookmarkExportService do
         end
 
         it 'returns a hash with XML data' do
-          allow(BookmarkExporter).to receive(:as_xml).and_return('<xml>content</xml>')
+          allow(BookmarkExportFormatter).to receive(:as_xml).and_return('<xml>content</xml>')
           result = service.send(:xml_export)
 
           expect(result[:data]).to eq('<xml>content</xml>')
@@ -98,7 +98,7 @@ RSpec.describe BookmarkExportService do
         end
 
         it 'returns a hash with a zip file' do
-          allow(BookmarkExporter).to receive(:as_xml).and_return('<xml>content</xml>')
+          allow(BookmarkExportFormatter).to receive(:as_xml).and_return('<xml>content</xml>')
 
           temp_file = Tempfile.new(['test', '.zip'])
           zip_service = instance_double(ZipFileService)
@@ -118,7 +118,7 @@ RSpec.describe BookmarkExportService do
     describe '#canvas_export' do
       context 'when result is a string' do
         it 'returns a hash with XML data' do
-          allow(BookmarkExporter).to receive(:as_canvas).and_return('<xml>canvas content</xml>')
+          allow(BookmarkExportFormatter).to receive(:as_canvas).and_return('<xml>canvas content</xml>')
           result = service.send(:canvas_export)
 
           expect(result[:data]).to eq('<xml>canvas content</xml>')
@@ -131,7 +131,7 @@ RSpec.describe BookmarkExportService do
       context 'when result is a tempfile' do
         it 'returns a hash with a zip file' do
           temp_file = Tempfile.new(['test', '.zip'])
-          allow(BookmarkExporter).to receive(:as_canvas).and_return(temp_file)
+          allow(BookmarkExportFormatter).to receive(:as_canvas).and_return(temp_file)
 
           result = service.send(:canvas_export)
 
@@ -145,7 +145,7 @@ RSpec.describe BookmarkExportService do
 
     describe '#blackboard_export' do
       it 'returns a hash with blackboard data' do
-        allow(BookmarkExporter).to receive(:as_blackboard).and_return('blackboard content')
+        allow(BookmarkExportFormatter).to receive(:as_blackboard).and_return('blackboard content')
         result = service.send(:blackboard_export)
 
         expect(result[:data]).to eq('blackboard content')
@@ -156,7 +156,7 @@ RSpec.describe BookmarkExportService do
 
     describe '#brightspace_export' do
       it 'returns a hash with brightspace data' do
-        allow(BookmarkExporter).to receive(:as_brightspace).and_return('brightspace content')
+        allow(BookmarkExportFormatter).to receive(:as_brightspace).and_return('brightspace content')
         result = service.send(:brightspace_export)
 
         expect(result[:data]).to eq('brightspace content')
@@ -167,7 +167,7 @@ RSpec.describe BookmarkExportService do
 
     describe '#moodle_export' do
       it 'returns a hash with moodle data' do
-        allow(BookmarkExporter).to receive(:as_moodle).and_return('<xml>moodle content</xml>')
+        allow(BookmarkExportFormatter).to receive(:as_moodle).and_return('<xml>moodle content</xml>')
         result = service.send(:moodle_export)
 
         expect(result[:data]).to eq('<xml>moodle content</xml>')

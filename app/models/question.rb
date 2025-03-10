@@ -46,9 +46,16 @@ class Question < ApplicationRecord
   # model_exporter is the method name in the formatters used for text downloading
   # it must be defined in the inheriting classes
   class_attribute :model_exporter, default: nil, instance_writer: false
+  # export_type is used as the dynamically-called method in method format_by_type in BaseService
   class_attribute :blackboard_export_type, default: nil, instance_writer: false
-  class_attribute :moodle_type, default: nil, instance_writer: false
+  class_attribute :moodle_export_type, default: nil, instance_writer: false
   class_attribute :d2l_export_type, default: nil, instance_writer: false
+  ##
+  # @note This is used for the Canvas LMS export.
+  # @!attribute export_as_xml [r|w]
+  #   @return [TrueClass] when we can export this file as XML.
+  #   @return [FalseClass] when we cannot export this file as XML.
+  class_attribute :export_as_xml, default: false, instance_writer: false, instance_reader: true, instance_predicate: true
   ##
   # @!attribute qti_max_value [r|w]
   #   @return [Integer]
@@ -74,12 +81,6 @@ class Question < ApplicationRecord
   def assessment_question_identifierref
     @assessment_question_identifierref ||= Digest::SHA1.hexdigest("#{text}\n#{data}")
   end
-
-  ##
-  # @!attribute export_as_xml [r|w]
-  #   @return [TrueClass] when we can export this file as XML.
-  #   @return [FalseClass] when we cannot export this file as XML.
-  class_attribute :export_as_xml, default: false, instance_writer: false, instance_reader: true, instance_predicate: true
   # @!endgroup QTI Exporter
   ##
 
@@ -171,7 +172,7 @@ class Question < ApplicationRecord
       blackboard: lms_finder(:blackboard_export_type),
       d2l: lms_finder(:d2l_export_type),
       canvas: lms_finder(:export_as_xml),
-      moodle: lms_finder(:moodle_type)
+      moodle: lms_finder(:moodle_export_type)
     }
   end
 

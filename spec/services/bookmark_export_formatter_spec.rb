@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe BookmarkExporter do
+RSpec.describe BookmarkExportFormatter do
   let(:traditional_question) { build_stubbed(:question_traditional, text: "What is Ruby?") }
   let(:essay_question) { build_stubbed(:question_essay, text: "Explain Rails architecture.") }
   let(:questions) { [traditional_question, essay_question] }

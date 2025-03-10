@@ -96,7 +96,7 @@ module QuestionFormatter
     def add_image_files
       question.images.each do |image|
         xml.file(name: image.original_filename, path: '/', encoding: 'base64') do
-          xml << binary_base_64(image)
+          xml << image.base64_encoded_data
         end
       end
     end
@@ -105,10 +105,6 @@ module QuestionFormatter
       question.images.map do |image|
         "<p><img src=\"@@PLUGINFILE@@/#{image.original_filename}\" alt=\"#{image.alt_text}\"></p>"
       end
-    end
-
-    def binary_base_64(image)
-      Base64.strict_encode64(image.binary_data)
     end
 
     def text_cdata_wrapper(text)

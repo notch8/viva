@@ -13,14 +13,16 @@ module QuestionFormatter
 
     def initialize(questions)
       @questions = questions
-
     end
 
     def format_content
+      question_content = []
       @questions.each do |question|
         @question = question
-        question_content = process_question(question)
-      end.join(join_by)
+        content = process_question(question)
+        question_content << content if content.present?
+      end
+      question_content.join(join_by)
     end
 
     # These methods are protected instead of private so they can be called by other instances

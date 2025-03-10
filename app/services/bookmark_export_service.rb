@@ -118,7 +118,7 @@ class BookmarkExportService
   # Export bookmarks as plain text
   #
   # @return [Hash] A hash containing the export data, filename, content type, and file flag
-  def text_export(data)
+  def txt_export(data)
     export_result(data:)
   end
 

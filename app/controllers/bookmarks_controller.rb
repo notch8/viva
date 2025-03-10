@@ -26,7 +26,7 @@ class BookmarksController < ApplicationController
   end
 
   def export
-    @questions = Question.where(id: current_user.bookmarks.select(:question_id))
+    @questions = Question.where(id: current_user.bookmarks.pluck(:question_id))
     case params[:format]
     when 'md'
       service = QuestionFormatter::MarkdownService

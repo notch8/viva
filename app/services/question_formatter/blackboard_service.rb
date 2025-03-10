@@ -9,7 +9,7 @@ module QuestionFormatter
 
     private
 
-    def process_question(question, subq=false)
+    def process_question(_question, _subq = false)
       blackboard_type = @question.blackboard_export_type
       return if blackboard_type.blank?
       format_by_type

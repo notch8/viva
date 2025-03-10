@@ -82,8 +82,8 @@ class BookmarkExportService
   # @return [Hash] A hash containing the export data, filename, content type, and file flag
   def canvas_zip_export(data)
     export_result(data:,
-                 filename: file_name(suffix: 'zip'),
-                 is_file: true)
+                  filename: file_name(suffix: 'zip'),
+                  is_file: true)
   end
 
   # Create export hash for Canvas XML content

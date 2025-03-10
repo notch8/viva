@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 require 'nokogiri'
 
+# rubocop:disable Metrics/ClassLength
 module QuestionFormatter
   class BaseService
     ##
@@ -28,11 +29,11 @@ module QuestionFormatter
     # These methods are protected instead of private so they can be called by other instances
     protected
 
-  def join_by
+    def join_by
       "\n\n"
     end
 
-    def process_question(question, subq=false)
+    def process_question(question, subq = false)
       @question = question
       @subq = subq
       format_by_type + divider_line
@@ -141,3 +142,4 @@ module QuestionFormatter
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

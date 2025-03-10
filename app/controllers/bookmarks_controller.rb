@@ -20,7 +20,7 @@ class BookmarksController < ApplicationController
   def export
     @bookmarks = current_user.bookmarks.includes(:question)
 
-    if params[:format].in?(%w[canvas blackboard brightspace moodle_xml txt md xml])
+    if params[:format].in?(%w[canvas blackboard brightspace moodle txt md xml])
       handle_export
     else
       redirect_to authenticated_root_path, alert: t('.unsupported_format')

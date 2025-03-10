@@ -103,13 +103,13 @@ class BookmarkExporter
   # Generate Moodle XML format
   #
   # @return [String] The formatted XML for Moodle
-  def to_moodle_xml
+  def to_moodle
     # Generate Moodle-specific XML format
     builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
       @bookmarks.each do |bookmark|
         question = bookmark.question
         # Call the appropriate exporter method for each question type
-        question.to_moodle_xml(xml) if question.respond_to?(:to_moodle_xml)
+        question.to_moodle(xml) if question.respond_to?(:to_moodle)
       end
     end
 

@@ -14,7 +14,7 @@ class Image < ApplicationRecord
     file.blob.filename.to_s
   end
 
-  def binary_data
-    file.download
+  def base64_encoded_data
+    Base64.strict_encode64(file.download)
   end
 end

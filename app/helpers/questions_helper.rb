@@ -5,7 +5,7 @@ module QuestionsHelper
     return '' if question.images.blank?
 
     question.images.map do |image|
-      "<img src=\"/images/#{File.basename(image.url)}\" alt=\"#{image.alt_text}\">"
+      "<img src=\"questions/images/#{File.basename(image.url)}\" alt=\"#{image.alt_text}\">"
     end.join
   end
 end

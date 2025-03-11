@@ -9,8 +9,8 @@ RSpec.describe ZipFileService do
       temp_file = described_class.new(question.images, 'xml content', 'filename.xml').generate_zip
 
       Zip::File.open(temp_file.path) do |zipfile|
-        expect(zipfile.entries.map(&:name)).to include('filename.xml')
-        expect(zipfile.entries.map(&:name)).to include("images/#{question.images.first.file.filename}")
+        expect(zipfile.entries.map(&:name)).to include('questions/filename.xml')
+        expect(zipfile.entries.map(&:name)).to include("questions/images/#{question.images.first.file.filename}")
       end
     end
   end

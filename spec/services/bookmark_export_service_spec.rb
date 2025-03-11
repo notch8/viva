@@ -93,10 +93,9 @@ RSpec.describe BookmarkExportService do
         it 'returns a hash with XML data' do
           result = service.export('canvas')
 
-          expect(result[:data]).to eq(xml_content)
-          expect(result[:filename]).to match(/questions-canvas.*\.xml/)
-          expect(result[:type]).to eq('application/xml')
-          expect(result[:is_file]).to be false
+          expect(result[:filename]).to match(/questions-canvas.*\.zip/)
+          expect(result[:type]).to eq('application/zip')
+          expect(result[:is_file]).to be true
         end
       end
 

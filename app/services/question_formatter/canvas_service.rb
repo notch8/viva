@@ -17,37 +17,36 @@ module QuestionFormatter
         assigns: { questions:, title: "Canvas Export #{Time.current.strftime('%B %-d, %Y')}" }
       )
 
-      # Check if any questions have images
-      if questions.any? { |question| question.images.any? }
-        # If there are images, we need to create a zip file
-        xml_filename = "questions-#{Time.current.strftime('%Y-%m-%d_%H:%M:%S:%L')}.classic-question-canvas.qti.xml"
-        images = questions.flat_map(&:images)
+      xml_filename = 'questions.xml'
+      images = questions.flat_map(&:images)
 
-        # Use ZipFileService to create the zip file
-        zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
-        temp_file = zip_file_service.generate_zip
+      # Use ZipFileService to create the zip file
+      zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+      temp_file = zip_file_service.generate_zip
+      add_manifest!(temp_file)
+      # Return the temp file object (not just the data)
+      temp_file
+    end
 
-        # Return the temp file object (not just the data)
-        temp_file
-      else
-        # If no images, just return the XML content
-        xml_content
+    private
+
+    def add_manifest!(zip_file)
+      Zip::File.open(zip_file.path, Zip::File::CREATE) do |zip|
+        files = zip.map(&:name)
+        manifest = generate_manifest(files)
+        zip.get_output_stream('imsmanifest.xml') do |os|
+          os.write(manifest)
+        end
       end
     end
 
-    def generate_manifest
-      # TODO: explore creating this manifest based off of the temp_file
+    def generate_manifest(files)
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         xml.manifest do
           xml.resources do
-            xml.resource do
-              xml.file href: "questions/questions.xml"
-            end
-            questions.each do |question|
-              question.images.each do |image|
-                xml.resource do
-                  xml.file href: "questions/images/#{image.original_filename}"
-                end
+            files.each do |file|
+              xml.resource do
+                xml.file href: file
               end
             end
           end

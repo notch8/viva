@@ -31,10 +31,10 @@ module QuestionFormatter
     private
 
     def add_manifest!(zip_file)
-      Zip::File.open(zip_file.path, Zip::File::CREATE) do |zip|
-        files = zip.map(&:name)
+      Zip::File.open(zip_file.path, Zip::File::CREATE) do |zip_entries|
+        files = zip_entries.map(&:name)
         manifest = generate_manifest(files)
-        zip.get_output_stream('imsmanifest.xml') do |os|
+        zip_entries.get_output_stream('imsmanifest.xml') do |os|
           os.write(manifest)
         end
       end

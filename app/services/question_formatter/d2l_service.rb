@@ -6,8 +6,11 @@ require 'csv'
 # Service to handle formatting questions into D2L's CSV format
 module QuestionFormatter
   class D2lService < BaseService
-    self.output_format = 'csv'
-    attr_reader :questions
+    self.output_format = 'csv' # used as file suffix
+    self.format = 'd2l' # used as format parameter
+    self.file_type = 'text/csv'
+
+    attr_reader :questions, :question
 
     # @input questions [Array<Question>] array of questions to format
     def initialize(questions)

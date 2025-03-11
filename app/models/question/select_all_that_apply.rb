@@ -9,7 +9,7 @@ class Question::SelectAllThatApply < Question
   self.type_name = "Select All That Apply"
   self.model_exporter = 'traditional_type'
   self.blackboard_export_type = 'MA'
-  self.moodle_type = 'multichoice'
+  self.moodle_export_type = 'multichoice'
   self.d2l_export_type = 'MS'
 
   ##
@@ -101,7 +101,7 @@ class Question::SelectAllThatApply < Question
 
   ##
   # @!group QTI Exporter
-  self.export_as_xml = true
+  self.canvas_export_type = true
 
   ##
   # @yieldparam index [Integer]

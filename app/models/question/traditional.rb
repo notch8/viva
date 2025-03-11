@@ -13,7 +13,7 @@ class Question::Traditional < Question
   self.model_exporter = 'traditional_type'
   self.d2l_export_type = 'MC'
   self.blackboard_export_type = 'MC'
-  self.moodle_type = 'multichoice'
+  self.moodle_export_type = 'multichoice'
 
   ##
   # Represents the mapping process of a CSV Row to the underlying {Question::Traditional}.
@@ -101,7 +101,7 @@ class Question::Traditional < Question
 
   ##
   # @!group QTI Exporter
-  self.export_as_xml = true
+  self.canvas_export_type = true
 
   ##
   # @return [Integer]

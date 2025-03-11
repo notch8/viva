@@ -10,7 +10,7 @@ RSpec.describe Question, type: :model do
   its(:type_label) { is_expected.to eq("Question") }
   its(:type_name) { is_expected.to eq("Question") }
   its(:required_csv_headers) { is_expected.to eq(%w[IMPORT_ID TEXT TYPE]) }
-  its(:export_as_xml) { is_expected.to eq(false) }
+  its(:canvas_export_type) { is_expected.to eq(false) }
   it { is_expected.not_to have_parts }
   it { should have_many(:bookmarks).dependent(:destroy) }
 

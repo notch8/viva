@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionFormatter::MarkdownService do
-  let(:service) { described_class.new(question) }
+  let(:service) { described_class.new([question]) }
 
   describe '#format' do
     subject { service.format_content }

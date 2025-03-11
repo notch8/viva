@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionFormatter::BlackboardService do
-  subject { described_class.new(question) }
+  subject { described_class.new([question]) }
 
   let(:file_lines) do
     Rails.root.join('spec', 'fixtures', 'files', 'bb_export.txt').readlines.map(&:chomp)
@@ -78,12 +78,12 @@ RSpec.describe QuestionFormatter::BlackboardService do
       end
     end
 
-    context 'when blacboard export type is not supported' do
+    context 'when blackboard export type is not supported' do
       let(:question) { FactoryBot.build(:question_upload) }
 
       it 'returns nil' do
         expect(question.blackboard_export_type).to be_nil
-        expect(subject.format_content).to be_nil
+        expect(subject.format_content).to be_blank
       end
     end
   end

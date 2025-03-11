@@ -4,19 +4,17 @@ module QuestionFormatter
   # rubocop:disable Metrics/ClassLength
   class MoodleService < BaseService
     self.output_format = 'xml'
-    attr_reader :questions, :question
-    attr_accessor :xml
+    self.format = 'moodle' # used as format parameter
+    self.file_type = 'application/xml'
 
-    def initialize(questions)
-      super
-      @questions = questions
-    end
+    attr_accessor :xml
 
     def format_content
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
         @xml = xml
         xml.quiz do
           questions.each do |question|
+            next if question.moodle_export_type.nil?
             @question = question
             format_by_type
           end
@@ -66,7 +64,7 @@ module QuestionFormatter
     end
 
     def question_wrapper(name_text: "#{question.class} #{question.id}", questiontext_text: "<p>#{question.text}</p>")
-      xml.question(type: question.moodle_type) do
+      xml.question(type: question.moodle_export_type) do
         xml.tags do
           question.subjects.each do |subject|
             xml.tag do

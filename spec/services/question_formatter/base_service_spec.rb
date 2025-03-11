@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionFormatter::BaseService do
-  let(:subject) { described_class.new(question) }
+  let(:subject) { described_class.new([question]) }
   let(:question) do
     build(:question_essay,
       text: 'Sample essay question',

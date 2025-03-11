@@ -28,9 +28,9 @@ const ImageUploader = ({ images, setImages }) => {
           file,
           preview: URL.createObjectURL(file),
           isValid: true,
+          altText: ''
         })
-      }
-      else {
+      } else {
         setError('image', 'Please select a JPG, JPEG, or PNG to upload.')
         setTimeout(() => {
           clearErrors()
@@ -39,9 +39,17 @@ const ImageUploader = ({ images, setImages }) => {
     })
 
     setImages((prevImages) => [...prevImages, ...newImages])
-    if(fileInputRef.current) {
+    if (fileInputRef.current) {
       fileInputRef.current.value = '' // Reset the file input
     }
+  }
+
+  const handleAltTextChange = (index, altText) => {
+    setImages((prevImages) => {
+      const updatedImages = [...prevImages]
+      updatedImages[index].altText = altText
+      return updatedImages
+    })
   }
 
   return (
@@ -75,6 +83,14 @@ const ImageUploader = ({ images, setImages }) => {
           <span className={`me-3 ${!image.isValid ? 'text-danger' : ''}`}>
             {image.file.name} {!image.isValid && '(Invalid)'}
           </span>
+          <Form.Control
+            type='text'
+            placeholder='Enter alt text'
+            name='question[alt_text]'
+            value={image.altText}
+            onChange={(e) => handleAltTextChange(index, e.target.value)}
+            className='me-2'
+          />
           <button
             type='button'
             className='btn btn-danger btn-sm ms-3'

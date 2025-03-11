@@ -517,7 +517,8 @@ class Api::QuestionsController < ApplicationController
     return if params[:question][:images].blank?
 
     params[:question][:images].each do |uploaded_file|
-      question.images.build(file: uploaded_file)
+      image = question.images.build(file: uploaded_file)
+      image.alt_text = params.dig(:question, :alt_text) if params.dig(:question, :alt_text).present?
     end
   end
 

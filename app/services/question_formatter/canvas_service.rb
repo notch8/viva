@@ -34,5 +34,27 @@ module QuestionFormatter
         xml_content
       end
     end
+
+    def generate_manifest
+      # TODO: explore creating this manifest based off of the temp_file
+      builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
+        xml.manifest do
+          xml.resources do
+            xml.resource do
+              xml.file href: "questions/questions.xml"
+            end
+            questions.each do |question|
+              question.images.each do |image|
+                xml.resource do
+                  xml.file href: "questions/images/#{image.original_filename}"
+                end
+              end
+            end
+          end
+        end
+      end
+
+      builder.to_xml
+    end
   end
 end

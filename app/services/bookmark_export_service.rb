@@ -83,6 +83,7 @@ class BookmarkExportService
   def canvas_zip_export(data)
     export_result(data:,
                   filename: file_name(suffix: 'zip'),
+                  type: 'application/zip',
                   is_file: true)
   end
 

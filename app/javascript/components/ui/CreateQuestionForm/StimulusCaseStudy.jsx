@@ -29,7 +29,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
       'Matching': Matching,
       'Multiple Choice': MultipleChoice,
       'Select All That Apply': SelectAllThatApply,
-      'Upload': Upload
+      'File Upload': Upload
     }),
     []
   )
@@ -53,7 +53,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
     case 'Categorization':
       return [{ answer: '', correct: [] }]
     case 'Essay':
-    case 'Upload':
+    case 'File Upload':
       return { html: '<p></p>' }
     default:
       return null
@@ -98,7 +98,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
         const updated = prev.map((sq) => {
           if (sq.id === id) {
             const updatedSq = { ...sq, [key]: value }
-            if ((sq.type === 'Essay' || sq.type === 'Upload') && key === 'text') {
+            if ((sq.type === 'Essay' || sq.type === 'File Upload') && key === 'text') {
               updatedSq.data = {
                 html: value
                   .split('\n')

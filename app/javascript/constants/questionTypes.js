@@ -7,7 +7,7 @@ export const QUESTION_TYPE_NAMES = [
   { key: 'Traditional', value: 'Multiple Choice' },
   { key: 'Select All That Apply', value: 'Select All That Apply' },
   { key: 'Case Study', value: 'Stimulus Case Study' },
-  { key: 'Upload', value: 'Upload' },
+  { key: 'Upload', value: 'File Upload' },
 ]
 
 export const SUBQUESTION_TYPE_NAMES = [
@@ -19,5 +19,5 @@ export const SUBQUESTION_TYPE_NAMES = [
   { key: 'Matching', value: 'Matching' },
   { key: 'Traditional', value: 'Multiple Choice' },
   { key: 'Select All That Apply', value: 'Select All That Apply' },
-  { key: 'Upload', value: 'Upload' }
+  { key: 'Upload', value: 'File Upload' }
 ]

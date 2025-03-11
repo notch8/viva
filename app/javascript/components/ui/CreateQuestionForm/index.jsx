@@ -36,7 +36,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     'Multiple Choice': MultipleChoice,
     'Select All That Apply': SelectAllThatApply,
     'Stimulus Case Study': StimulusCaseStudy,
-    'Upload': Upload
+    'File Upload': Upload
   }
 
   const QuestionComponent = COMPONENT_MAP[questionType] || null
@@ -94,7 +94,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       'Multiple Choice': () => appendData(filterValidData(data)),
       'Select All That Apply': () => appendData(filterValidData(data)),
       'Stimulus Case Study': () => appendData(data),
-      Upload: () =>
+      'File Upload': () =>
         appendData({
           html: questionText
             .split('\n')
@@ -239,6 +239,13 @@ const CreateQuestionForm = ({ subjectOptions }) => {
         if (!Array.isArray(questionData)) return true // Ensure questionData is an array
         const correctCount = questionData.filter((item) => item.correct).length
         if (correctCount < 1) return true // Must have at least 1 correct answer
+        break
+      }
+
+      case 'File Upload': {
+        if (!questionText?.trim()) {
+          return true // File Upload must have valid content
+        }
         break
       }
 

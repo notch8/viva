@@ -21,8 +21,7 @@
   </itemmetadata>
   <presentation>
     <material>
-      <%= image_tags_for(categorization) %>
-      <mattext texttype="text/plain"><%= categorization.text %></mattext>
+      <mattext texttype="text/html"><%= image_tags_for(categorization) + categorization.text %></mattext>
     </material>
     <% categorization.qti_responses.each do |response| %>
       <response_lid ident="<%= response.ident %>" rcardinality="Multiple">

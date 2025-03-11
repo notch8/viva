@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <resources>
+    <resource>
+      <file href="questions/questions.xml"/>
+    </resource>
+    <resource>
+      <file href="questions/images/test_image_1.png"/>
+    </resource>
+    <resource>
+      <file href="questions/images/test_image_2.png"/>
+    </resource>
+    <resource>
+      <file href="questions/images/test_image_3.png"/>
+    </resource>
+  </resources>
+</manifest>

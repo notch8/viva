@@ -40,7 +40,9 @@ FactoryBot.define do
       end
 
       after(:create) do |question, evaluator|
-        create_list(:image, evaluator.images_count, question:)
+        evaluator.images_count.times do |i|
+          create(:image, question:, sequence_number: i + 1)
+        end
       end
     end
 

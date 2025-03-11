@@ -2,10 +2,10 @@
 
 module QuestionsHelper
   def image_tags_for(question)
-    return if question.images.blank?
+    return '' if question.images.blank?
 
     question.images.map do |image|
-      "<img src=\"/images/#{question.id}/#{CGI.escapeHTML(File.basename(image.url))}\" alt=\"#{CGI.escapeHTML(image.alt_text)}\">"
-    end.join("\n      ").html_safe # rubocop:disable Rails/OutputSafety
+      "<img src=\"questions/images/#{File.basename(image.url)}\" alt=\"#{image.alt_text}\">"
+    end.join
   end
 end

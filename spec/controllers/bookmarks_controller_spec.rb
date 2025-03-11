@@ -51,7 +51,6 @@ RSpec.describe BookmarksController do
       user.bookmarks.create(question: question_3)
       sign_in user
       allow(controller).to receive(:current_user).and_return(user)
-      # allow(BookmarksExportService).to_receive(:export).with(format).and_return(export_service)
     end
 
     context 'when exporting bookmarks' do

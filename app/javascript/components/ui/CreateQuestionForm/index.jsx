@@ -8,6 +8,7 @@ import Matching from './Matching'
 import MultipleChoice from './MultipleChoice'
 import SelectAllThatApply from './SelectAllThatApply'
 import StimulusCaseStudy from './StimulusCaseStudy'
+import Upload from './Upload'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 // import Keyword from './Keyword'
@@ -35,6 +36,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     'Multiple Choice': MultipleChoice,
     'Select All That Apply': SelectAllThatApply,
     'Stimulus Case Study': StimulusCaseStudy,
+    'Upload': Upload
   }
 
   const QuestionComponent = COMPONENT_MAP[questionType] || null
@@ -91,7 +93,14 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       'Bow Tie': () => data && appendData(data),
       'Multiple Choice': () => appendData(filterValidData(data)),
       'Select All That Apply': () => appendData(filterValidData(data)),
-      'Stimulus Case Study': () => appendData(data)
+      'Stimulus Case Study': () => appendData(data),
+      Upload: () =>
+        appendData({
+          html: questionText
+            .split('\n')
+            .map((line, index) => `<p key=${index}>${line}</p>`)
+            .join('')
+        })
     }
 
     if (handlers[questionType]) {

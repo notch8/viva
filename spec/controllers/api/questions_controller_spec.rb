@@ -232,6 +232,11 @@ RSpec.describe Api::QuestionsController, type: :controller do
                   { answer: 'Planting trees', correct: false },
                   { answer: 'Recycling waste', correct: false }
                 ]
+              },
+              {
+                type: 'Question::Upload',
+                text: 'Upload your analysis of the data.',
+                data: { html: '<p>Please upload your file with detailed analysis.</p>' }
               }
             ]
           }.to_json,
@@ -240,6 +245,22 @@ RSpec.describe Api::QuestionsController, type: :controller do
           ],
           keywords: ['Climate Change', 'Polar Regions'],
           subjects: ['Environment']
+        }
+      }
+    end
+
+    let(:upload_params) do
+      {
+        question: {
+          type: 'Question::Upload',
+          level: '2',
+          text: 'Please upload your solution file.',
+          data: { html: '<p>Please upload your solution file.</p>' }.to_json,
+          images: [
+            fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
+          ],
+          keywords: ['Upload', 'Solution'],
+          subjects: ['Programming']
         }
       }
     end
@@ -258,7 +279,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
       allow(Subject).to receive(:find_by).and_call_original
     end
 
-    context 'when creating an essay question' do
+    context 'when creating an Essay question' do
       let(:subject_name) { 'Geography' }
 
       it 'creates an essay question with all parameters' do
@@ -497,7 +518,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
     context 'when creating a Stimulus Case Study question' do
       it 'increases the Question count for parent and subquestions' do
         expect { post :create, params: stimulus_case_study_params }
-          .to change(Question, :count).by(8) # 1 parent + 3 subquestions
+          .to change(Question, :count).by(9) # 1 parent + 8 subquestions
       end
 
       it 'creates a Stimulus Case Study parent question' do
@@ -519,7 +540,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
         end
 
         it 'creates subquestions' do
-          expect(sub_questions.count).to eq(7)
+          expect(sub_questions.count).to eq(8)
         end
 
         context 'when subquestion type is BowTie' do
@@ -587,6 +608,14 @@ RSpec.describe Api::QuestionsController, type: :controller do
           end
         end
 
+        context 'when subquestion type is Upload' do
+          it 'creates an Upload subquestion for the Stimulus Case Study' do
+            upload_sub_question = sub_questions.find_by(type: 'Question::Upload')
+            expect(upload_sub_question.text).to eq('Upload your analysis of the data.')
+            expect(upload_sub_question.data).to eq({ 'html' => '<p>Please upload your file with detailed analysis.</p>' })
+          end
+        end
+
         context 'when subquestion type is Traditional' do
           it 'creates a Traditional subquestion for the Stimulus Case Study' do
             traditional_sub_question = sub_questions.find_by(type: 'Question::Traditional')
@@ -601,7 +630,24 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
 
-    context 'when the request is invalid' do
+    context 'when creating an Upload question' do
+      let(:subject_name) { 'Programming' }
+
+      it 'creates an upload question with all parameters' do
+        expect { post :create, params: upload_params }.to change(Question, :count).by(1)
+        question = Question.last
+
+        expect(question.text).to eq('Please upload your solution file.')
+        expect(question.level).to eq('2')
+        expect(question.data).to eq({ 'html' => '<p>Please upload your solution file.</p>' })
+        expect(question.images.count).to eq(1)
+        expect(question.keywords.map(&:name)).to contain_exactly('upload', 'solution')
+        expect(question.subjects.map(&:name)).to contain_exactly('Programming')
+        expect(question.subjects.map(&:name)).to_not include('Invalid')
+      end
+    end
+
+    context 'with invalid parameters' do
       it 'does not create a new question' do
         expect { post :create, params: invalid_params }.not_to change(Question, :count)
       end

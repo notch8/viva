@@ -261,7 +261,7 @@ class Api::QuestionsController < ApplicationController
       'Select All That Apply' => 'Question::SelectAllThatApply',
       'Scenario' => 'Question::Scenario',
       'Stimulus Case Study' => 'Question::StimulusCaseStudy',
-      'Upload' => 'Question::Upload'
+      'File Upload' => 'Question::Upload'
     }
 
     type_mapping[type] || type

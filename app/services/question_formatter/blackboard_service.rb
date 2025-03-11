@@ -22,7 +22,7 @@ module QuestionFormatter
     end
 
     def essay_type
-      @text = [@question.text, @question.data['html']].join('<br/>')
+      @text = [@question.text, remove_newlines(@question.data['html'])].join('<br/>')
       @answers = '[Placeholder essay text]'
     end
 
@@ -38,6 +38,10 @@ module QuestionFormatter
         'true' => 'correct',
         'false' => 'incorrect'
       }
+    end
+
+    def remove_newlines(text)
+      text.delete("\n")
     end
   end
 end

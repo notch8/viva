@@ -51,7 +51,7 @@ RSpec.describe QuestionFormatter::BlackboardService do
       let(:question) do
         Question::Essay.new(
           text: 'Themes of friendship and perseverance',
-          data: { 'html' => 'Analyze how the themes of friendship and perseverance are portrayed in a popular shonen anime of your choice. Include specific examples from the series.' }
+          data: { 'html' => "<div class=\"question-introduction\">\n  <p>Analyze how themes of friendship are portrayed in shonen anime.</p>\n<p>Include specific examples from the series.</p></div>" }
         )
       end
 

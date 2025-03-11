@@ -9,7 +9,7 @@
     </qtimetadata>
     <section ident="root_section">
       <% @questions.each do |question| %>
-	<% next unless question.export_as_xml %>
+	<% next unless question.canvas_export_type %>
 	<%= render question %>
       <% end %>
     </section>

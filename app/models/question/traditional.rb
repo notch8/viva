@@ -101,7 +101,7 @@ class Question::Traditional < Question
 
   ##
   # @!group QTI Exporter
-  self.export_as_xml = true
+  self.canvas_export_type = true
 
   ##
   # @return [Integer]

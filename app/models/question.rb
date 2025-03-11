@@ -52,10 +52,10 @@ class Question < ApplicationRecord
   class_attribute :d2l_export_type, default: nil, instance_writer: false
   ##
   # @note This is used for the Canvas LMS export.
-  # @!attribute export_as_xml [r|w]
+  # @!attribute canvas_export_type [r|w]
   #   @return [TrueClass] when we can export this file as XML.
   #   @return [FalseClass] when we cannot export this file as XML.
-  class_attribute :export_as_xml, default: false, instance_writer: false, instance_reader: true, instance_predicate: true
+  class_attribute :canvas_export_type, default: false, instance_writer: false, instance_reader: true, instance_predicate: true
   ##
   # @!attribute qti_max_value [r|w]
   #   @return [Integer]
@@ -171,7 +171,7 @@ class Question < ApplicationRecord
     {
       blackboard: lms_finder(:blackboard_export_type),
       d2l: lms_finder(:d2l_export_type),
-      canvas: lms_finder(:export_as_xml),
+      canvas: lms_finder(:canvas_export_type),
       moodle: lms_finder(:moodle_export_type)
     }
   end

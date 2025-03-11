@@ -12,7 +12,7 @@ class Question::Essay < Question
   self.model_exporter = 'essay_type'
   self.blackboard_export_type = 'ESS'
   self.moodle_export_type = 'essay'
-  self.export_as_xml = true
+  self.canvas_export_type = true
   self.d2l_export_type = 'WR'
 
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow

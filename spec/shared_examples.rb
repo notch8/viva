@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_type_name_to_class: true, included_in_filterable_type: true, has_parts: false|
+RSpec.shared_examples 'a Question' do |valid: true, canvas_export_type: false, test_type_name_to_class: true, included_in_filterable_type: true, has_parts: false|
   it { is_expected.to respond_to(:keyword_names) }
   it { is_expected.to respond_to(:subject_names) }
   its(:keyword_names) { is_expected.to be_a(Array) }
@@ -23,7 +23,7 @@ RSpec.shared_examples 'a Question' do |valid: true, export_as_xml: false, test_t
 
   describe 'QTI Export' do
     its(:assessment_question_identifierref) { is_expected.to be_a(String) }
-    its(:export_as_xml) { is_expected.to eq(export_as_xml) }
+    its(:canvas_export_type) { is_expected.to eq(canvas_export_type) }
   end
 
   describe 'validations' do

@@ -101,7 +101,7 @@ class Question::SelectAllThatApply < Question
 
   ##
   # @!group QTI Exporter
-  self.export_as_xml = true
+  self.canvas_export_type = true
 
   ##
   # @yieldparam index [Integer]

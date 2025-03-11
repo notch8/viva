@@ -9,7 +9,7 @@ class Question::Categorization < Question
 
   self.type_name = "Categorization"
   self.model_exporter = 'categorization_type'
-  self.export_as_xml = true
+  self.canvas_export_type = true
   self.choice_cardinality_is_multiple = true
 
   class ImportCsvRow < MatchingQuestionBehavior::ImportCsvRow

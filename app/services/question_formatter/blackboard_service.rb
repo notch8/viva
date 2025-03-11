@@ -4,15 +4,17 @@ module QuestionFormatter
   class BlackboardService < BaseService
     # Even though this is really a TSV under the hood, Blackboard exports out a .txt extension
     self.output_format = 'txt'
+    self.format = 'blackboard' # used as format parameter
+    self.file_type = 'text/plain'
 
-    def format_content
+    private
+
+    def process_question(_question, _subq = false)
       blackboard_type = @question.blackboard_export_type
       return if blackboard_type.blank?
       format_by_type
       [blackboard_type, @text, @answers].join("\t")
     end
-
-    private
 
     def traditional_type
       @text = @question.text

@@ -18,7 +18,7 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
     switch (format) {
     case 'blackboard':
       return 'bi-clipboard2-fill'
-    case 'brightspace':
+    case 'd2l':
       return 'bi-sun-fill'
     case 'canvas':
       return 'bi-grid-3x3-gap-fill'

@@ -55,18 +55,18 @@ const ImageUploader = ({ images, setImages }) => {
   return (
     <div className='image-uploader'>
       <InputGroup className='my-4 text-uppercase upload-form'>
-        <InputGroup.Text className='strait py-3' htmlFor='file-upload'>
+        <InputGroup.Text className='strait py-2' htmlFor='file-upload'>
           Upload Image
         </InputGroup.Text>
-        <Form.Group>
+        <Form.Group className='w-100'>
           <Form.Control
             type='file'
             id='file-upload'
             aria-label='Upload an image here'
             onChange={handleChange}
-            className='rounded-0 py-3'
+            className='rounded-0 py-2'
             accept='image/jpeg, image/jpg, image/png'
-            ref={fileInputRef} // Attach ref for resetting
+            ref={fileInputRef}
           />
         </Form.Group>
       </InputGroup>
@@ -74,30 +74,38 @@ const ImageUploader = ({ images, setImages }) => {
       {errors.image && <Alert variant='danger' dismissible>{errors.image}</Alert>}
 
       {images.map((image, index) => (
-        <div key={index} className='d-flex align-items-center mt-2'>
-          <img
-            src={image.preview}
-            alt='Preview'
-            style={{ width: '50px', height: '50px', objectFit: 'cover', marginRight: '10px' }}
-          />
-          <span className={`me-3 ${!image.isValid ? 'text-danger' : ''}`}>
-            {image.file.name} {!image.isValid && '(Invalid)'}
-          </span>
-          <Form.Control
-            type='text'
-            placeholder='Enter alt text'
-            name='question[alt_text]'
-            value={image.altText}
-            onChange={(e) => handleAltTextChange(index, e.target.value)}
-            className='me-2'
-          />
-          <button
-            type='button'
-            className='btn btn-danger btn-sm ms-3'
-            onClick={() => handleRemoveImage(index)}
-          >
-            Remove
-          </button>
+        <div key={index} className='image-preview-container mb-3'>
+          <div className='d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100'>
+            <div className='d-flex align-items-center gap-2 mb-2 mb-md-0'>
+              <img
+                src={image.preview}
+                alt='Preview'
+                className='preview-image'
+                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+              />
+              <span className={`filename ${!image.isValid ? 'text-danger' : ''}`}>
+                {image.file.name} {!image.isValid && '(Invalid)'}
+              </span>
+            </div>
+
+            <div className='d-flex flex-grow-1 gap-2 w-100'>
+              <Form.Control
+                type='text'
+                placeholder='Enter alt text'
+                name='question[alt_text]'
+                value={image.altText}
+                onChange={(e) => handleAltTextChange(index, e.target.value)}
+                className='flex-grow-1'
+              />
+              <button
+                type='button'
+                className='btn btn-danger btn-sm'
+                onClick={() => handleRemoveImage(index)}
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
       ))}
     </div>

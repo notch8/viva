@@ -8,9 +8,6 @@ const Question = ({ text, title = 'Question', images }) => {
         return (
           <div key={index} className='image-container'>
             <img src={image.url} alt={image.alt_text} className='w-75 my-4'/>
-            {image.alt_text && (
-              <p className='text-muted small mt-2'>Alt text: {image.alt_text}</p>
-            )}
           </div>
         )
       })}

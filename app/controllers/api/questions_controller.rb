@@ -51,6 +51,7 @@ class Api::QuestionsController < ApplicationController
   # @param [Hash] data The processed parameters.
   # @return [Question] New question object.
   def build_question(processed_params)
+    alt_texts = processed_params.delete(:alt_text)
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
     question.level = nil if question.level.blank?
     question
@@ -516,9 +517,12 @@ class Api::QuestionsController < ApplicationController
   def handle_image_uploads(question)
     return if params[:question][:images].blank?
 
-    params[:question][:images].each do |uploaded_file|
-      image = question.images.build(file: uploaded_file)
-      image.alt_text = params.dig(:question, :alt_text) if params.dig(:question, :alt_text).present?
+    params[:question][:images].each_with_index do |uploaded_file, index|
+      alt_text = params[:question][:alt_text]&.[](index)
+      question.images.build(
+        file: uploaded_file,
+        alt_text: alt_text
+      )
     end
   end
 
@@ -572,7 +576,8 @@ class Api::QuestionsController < ApplicationController
       :data,
       images: [],
       keywords: [],
-      subjects: []
+      subjects: [],
+      alt_text: []
     )
   end
 end

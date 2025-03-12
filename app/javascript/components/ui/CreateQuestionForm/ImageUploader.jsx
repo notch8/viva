@@ -4,7 +4,7 @@ import { useForm } from '@inertiajs/inertia-react'
 
 const ImageUploader = ({ images, setImages }) => {
   const fileInputRef = useRef(null)
-  const { clearErrors, setError, errors } = useForm({ image: '' })
+  const { clearErrors, setError, errors } = useForm({ image: '', altText: '' })
 
   const handleRemoveImage = (index) => {
     setImages((prevImages) => {
@@ -48,8 +48,20 @@ const ImageUploader = ({ images, setImages }) => {
     setImages((prevImages) => {
       const updatedImages = [...prevImages]
       updatedImages[index].altText = altText
+      if (altText.trim()) {
+        clearErrors('altText')
+      }
       return updatedImages
     })
+  }
+
+  const validateAltText = (index) => {
+    const image = images[index]
+    if (!image.altText.trim()) {
+      setError('altText', 'Alt text is required for all images')
+      return false
+    }
+    return true
   }
 
   return (
@@ -72,6 +84,7 @@ const ImageUploader = ({ images, setImages }) => {
       </InputGroup>
 
       {errors.image && <Alert variant='danger' dismissible>{errors.image}</Alert>}
+      {errors.altText && <Alert variant='danger' dismissible>{errors.altText}</Alert>}
 
       {images.map((image, index) => (
         <div key={index} className='image-preview-container mb-3'>
@@ -91,11 +104,13 @@ const ImageUploader = ({ images, setImages }) => {
             <div className='d-flex flex-grow-1 gap-2 w-100'>
               <Form.Control
                 type='text'
-                placeholder='Enter alt text'
-                name='question[alt_text]'
+                placeholder='Enter alt text (required)'
+                name={`question[alt_text][]`}
                 value={image.altText}
                 onChange={(e) => handleAltTextChange(index, e.target.value)}
                 className='flex-grow-1'
+                required
+                onBlur={() => validateAltText(index)}
               />
               <button
                 type='button'

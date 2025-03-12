@@ -63,7 +63,7 @@ RSpec.describe QuestionFormatter::BlackboardService do
     context 'when it is Matching' do
       let(:question) do
         Question::Matching.new(
-          text: 'Match each anime character to their respective series',
+          text: "Time for a matching question!\r\nMatch each anime character to their respective series",
           data: [
             { 'answer' => 'Spike Spiegel', 'correct' => ['Cowboy Bebop'] },
             { 'answer' => 'Mikasa Ackerman', 'correct' => ['Attack on Titan'] },

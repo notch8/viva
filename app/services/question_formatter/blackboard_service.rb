@@ -24,7 +24,7 @@ module QuestionFormatter
     end
 
     def essay_type
-      @text = [question_text, remove_newlines(@question.data['html'])].join('<br/>')
+      @text = [question_text, scrub!(@question.data['html'])].join('<br/>')
       @answers = '[Placeholder essay text]'
     end
 
@@ -42,12 +42,12 @@ module QuestionFormatter
       }
     end
 
-    def remove_newlines(text)
-      text.delete("\n")
+    def question_text
+      image_tag + scrub!(@question.text)
     end
 
-    def question_text
-      image_tag + @question.text
+    def scrub!(text)
+      text.delete("\n").gsub("\r", '<br/><br/>')
     end
 
     def image_tag

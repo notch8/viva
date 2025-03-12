@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'rexml/document'
+
 ##
 # Service to handle formatting questions into Canvas's dti format
 module QuestionFormatter
@@ -18,6 +20,8 @@ module QuestionFormatter
         assigns: { questions:, title: "Canvas Export #{Time.current.strftime('%B %-d, %Y')}" }
       )
 
+      xml_content = pretty_xml!(xml_content)
+
       xml_filename = 'questions.xml'
       images = questions.flat_map(&:images)
 
@@ -30,6 +34,17 @@ module QuestionFormatter
     end
 
     private
+
+    # Returns a pretty version of the xml input
+    def pretty_xml!(xml_content)
+      String.new.tap do |output|
+        REXML::Formatters::Pretty.new.tap do |formatter|
+          formatter.compact = true
+          formatter.width = Float::INFINITY
+          formatter.write(REXML::Document.new(xml_content), output)
+        end
+      end
+    end
 
     def add_manifest!(zip_file)
       Zip::File.open(zip_file.path, Zip::File::CREATE) do |zip_entries|

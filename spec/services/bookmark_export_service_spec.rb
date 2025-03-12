@@ -158,7 +158,7 @@ RSpec.describe BookmarkExportService do
 
     context 'when it is unsupported' do
       it 'raises an error' do
-        expect { service.export('foo') }.to raise_error
+        expect { service.export('foo') }.to raise_error(RuntimeError)
       end
     end
   end

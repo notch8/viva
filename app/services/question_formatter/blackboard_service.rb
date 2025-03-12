@@ -17,19 +17,19 @@ module QuestionFormatter
     end
 
     def traditional_type
-      @text = @question.text
+      @text = question_text
       @answers = @question.data.map do |data|
         [data['answer'], coherce_answer_mapper[data['correct'].to_s]].join("\t")
       end
     end
 
     def essay_type
-      @text = [@question.text, remove_newlines(@question.data['html'])].join('<br/>')
+      @text = [question_text, remove_newlines(@question.data['html'])].join('<br/>')
       @answers = '[Placeholder essay text]'
     end
 
     def matching_type
-      @text = @question.text
+      @text = question_text
       @answers = @question.data.map do |datum|
         [datum['answer'], datum['correct'].first].join("\t")
       end
@@ -44,6 +44,16 @@ module QuestionFormatter
 
     def remove_newlines(text)
       text.delete("\n")
+    end
+
+    def question_text
+      image_tag + @question.text
+    end
+
+    def image_tag
+      @question.images.map do |image|
+        "<img src=\"data:#{image.mime_type};base64,#{image.base64_encoded_data}\" alt=\"#{image.alt_text}\"><br/>"
+      end.join
     end
   end
 end

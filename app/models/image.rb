@@ -17,4 +17,8 @@ class Image < ApplicationRecord
   def base64_encoded_data
     Base64.strict_encode64(file.download)
   end
+
+  def mime_type
+    file.blob.content_type
+  end
 end

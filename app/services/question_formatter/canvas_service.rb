@@ -4,9 +4,10 @@
 # Service to handle formatting questions into Canvas's dti format
 module QuestionFormatter
   class CanvasService < BaseService
-    self.output_format = 'xml' # used as file suffix
+    self.output_format = 'zip' # used as file suffix
     self.format = 'canvas' # used as format parameter
-    self.file_type = 'application/xml'
+    self.file_type = 'application/zip'
+    self.is_file = true
 
     def format_content
       # Canvas uses the QTI XML format

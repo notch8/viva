@@ -9,6 +9,7 @@ module QuestionFormatter
     self.output_format = 'zip' # used as file suffix
     self.format = 'd2l' # used as format parameter
     self.file_type = 'application/zip'
+    self.is_file = true
 
     attr_reader :questions, :question
 

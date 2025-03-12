@@ -9,6 +9,7 @@ module QuestionFormatter
     class_attribute :output_format, default: nil
     class_attribute :format, default: nil
     class_attribute :file_type, default: nil
+    class_attribute :is_file, default: false
 
     attr_reader :questions, :subq, :question
 

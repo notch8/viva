@@ -5,7 +5,7 @@ module QuestionFormatter
   class MoodleService < BaseService
     self.output_format = 'xml'
     self.format = 'moodle' # used as format parameter
-    self.file_type = 'application/xml'
+    self.file_type = 'text/xml'
 
     attr_accessor :xml
 

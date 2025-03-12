@@ -4,9 +4,10 @@
 # Service to handle formatting questions into Canvas's dti format
 module QuestionFormatter
   class CanvasService < BaseService
-    self.output_format = 'xml' # used as file suffix
+    self.output_format = 'zip' # used as file suffix
     self.format = 'canvas' # used as format parameter
-    self.file_type = 'application/xml'
+    self.file_type = 'application/zip'
+    self.is_file = true
 
     def format_content
       # Canvas uses the QTI XML format
@@ -21,7 +22,7 @@ module QuestionFormatter
       images = questions.flat_map(&:images)
 
       # Use ZipFileService to create the zip file
-      zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+      zip_file_service = ZipFileService.new(images, xml_content, xml_filename, 'questions')
       temp_file = zip_file_service.generate_zip
       add_manifest!(temp_file)
       # Return the temp file object (not just the data)

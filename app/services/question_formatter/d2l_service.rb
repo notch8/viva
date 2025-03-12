@@ -6,9 +6,10 @@ require 'csv'
 # Service to handle formatting questions into D2L's CSV format
 module QuestionFormatter
   class D2lService < BaseService
-    self.output_format = 'csv' # used as file suffix
+    self.output_format = 'zip' # used as file suffix
     self.format = 'd2l' # used as format parameter
-    self.file_type = 'text/csv'
+    self.file_type = 'application/zip'
+    self.is_file = true
 
     attr_reader :questions, :question
 
@@ -19,7 +20,7 @@ module QuestionFormatter
     end
 
     def format_content
-      csv_string = CSV.generate do |csv|
+      csv_content = CSV.generate do |csv|
         @questions.each do |question|
           next if question.d2l_export_type.nil?
           @question = question
@@ -29,8 +30,13 @@ module QuestionFormatter
             csv << row
           end
         end
-      end
-      csv_string.encode('UTF-8')
+      end.encode('UTF-8')
+
+      csv_filename = 'questions.csv'
+      images = questions.flat_map(&:images)
+
+      zip_file_service = ZipFileService.new(images, csv_content, csv_filename)
+      zip_file_service.generate_zip
     end
 
     private
@@ -46,29 +52,11 @@ module QuestionFormatter
       csv_rows
     end
 
-    def image_url
-      image_url = question.images&.first&.url
-      return nil if image_url.blank?
-      return image_url if base_url.blank?
-      base_url + image_url
-    end
-
-    def base_url
-      default_url_options = Rails.application.config.action_mailer.default_url_options
-      return nil if default_url_options.blank?
-      host = default_url_options[:host]
-      port = default_url_options[:port]
-      return nil if host.blank? || port.blank?
-      "http://#{host}:#{port}"
-    end
-
-    ## called by format type
-
     def traditional_type
       csv_rows = []
       csv_rows += shared_opening_rows
       csv_rows << ['QuestionText', question.text]
-      csv_rows << ['Image', image_url] if image_url
+      csv_rows << ['Image', image_paths].flatten if question.images.present?
       csv_rows += format_traditional_options(@question.data)
       csv_rows
     end
@@ -77,7 +65,7 @@ module QuestionFormatter
       csv_rows = []
       csv_rows += shared_opening_rows
       csv_rows << ['QuestionText', question.text]
-      csv_rows << ['Image', image_url] if image_url
+      csv_rows << ['Image', image_paths].flatten if question.images.present?
       csv_rows += format_matching_options(@question.data)
       csv_rows
     end
@@ -87,7 +75,7 @@ module QuestionFormatter
       csv_rows += shared_opening_rows
       csv_rows << ['Title', question.text]
       csv_rows << ['QuestionText', question.data['html'], 'HTML']
-      csv_rows << ['Image', image_url] if image_url
+      csv_rows << ['Image', image_paths].flatten if question.images.present?
       csv_rows
     end
 
@@ -117,6 +105,12 @@ module QuestionFormatter
       end
 
       choice_rows + match_rows
+    end
+
+    def image_paths
+      question.images.map do |image|
+        "images/#{image.original_filename}"
+      end
     end
   end
 end

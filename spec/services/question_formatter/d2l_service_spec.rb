@@ -76,40 +76,65 @@ RSpec.describe QuestionFormatter::D2lService do
 
   describe '#format_content' do
     it 'handles essays' do
-      expect(described_class.new([essay_question]).format_content).to eq(formatted_essay_question)
-      expect(described_class.new([essay_question]).format_content).to be_a(String)
+      zip_file = described_class.new([essay_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to eq(formatted_essay_question)
+        expect(content).to be_a(String)
+      end
     end
 
     it 'handles matching' do
-      expect(described_class.new([matching_question]).format_content).to eq(formatted_matching_question)
+      zip_file = described_class.new([matching_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to eq(formatted_matching_question)
+      end
     end
 
     it 'handles select all that apply' do
-      expect(described_class.new([select_all_question]).format_content).to eq(formatted_select_all_question)
+      zip_file = described_class.new([select_all_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to eq(formatted_select_all_question)
+      end
     end
 
     it 'handles traditional' do
-      expect(described_class.new([traditional_question]).format_content).to eq(formatted_traditional_question)
+      zip_file = described_class.new([traditional_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to eq(formatted_traditional_question)
+      end
     end
 
     it 'handles uploads' do
-      expect(described_class.new([upload_question]).format_content).to eq(formatted_upload_question)
+      zip_file = described_class.new([upload_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to eq(formatted_upload_question)
+      end
     end
 
     it 'does not handle other types' do
-      expect(described_class.new([unsupported_question]).format_content).to be_blank
+      zip_file = described_class.new([unsupported_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        content = zip_entries.get_input_stream('questions.csv').read
+        expect(content).to be_blank
+      end
     end
   end
 
   describe 'with images' do
-    let(:image) { double(:image, url: "/rails/active_storage/blobs/cat-injured.jpg") }
-
-    before do
-      allow(traditional_question).to receive(:images).and_return([image])
+    let(:traditional_question) do
+      create(:question_traditional, :with_images)
     end
 
     it 'includes the image URL' do
-      expect(described_class.new([traditional_question]).format_content).to include(image.url)
+      zip_file = described_class.new([traditional_question]).format_content
+      Zip::File.open(zip_file.path) do |zip_entries|
+        expect(zip_entries.map(&:name).any? { |name| name.include?('images') }).to eq true
+      end
     end
   end
 end

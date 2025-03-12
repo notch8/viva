@@ -21,7 +21,7 @@ module QuestionFormatter
       images = questions.flat_map(&:images)
 
       # Use ZipFileService to create the zip file
-      zip_file_service = ZipFileService.new(images, xml_content, xml_filename)
+      zip_file_service = ZipFileService.new(images, xml_content, xml_filename, 'questions')
       temp_file = zip_file_service.generate_zip
       add_manifest!(temp_file)
       # Return the temp file object (not just the data)

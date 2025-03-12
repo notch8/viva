@@ -153,8 +153,8 @@ RSpec.describe BookmarkExportService do
         result = service.export('d2l')
 
         expect(result[:data]).to eq('brightspace content')
-        expect(result[:filename]).to match(/questions-d2l.*\.csv/)
-        expect(result[:type]).to eq('text/csv')
+        expect(result[:filename]).to match(/questions-d2l.*\.zip/)
+        expect(result[:type]).to eq('application/zip')
       end
     end
 

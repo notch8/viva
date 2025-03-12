@@ -15,10 +15,11 @@ class ZipFileService
   # @param xml_content [String] The XML content to include in the zip file
   # @param filename [String] The name of the XML file within the zip
   # @return [ZipFileService] A new instance of the service
-  def initialize(images, xml_content, filename)
+  def initialize(images, xml_content, filename, base_path = nil)
     @images = images
     @xml_content = xml_content
     @filename = filename
+    @base_path = base_path
   end
 
   # Generate a zip file containing the XML content and images
@@ -28,10 +29,11 @@ class ZipFileService
     temp_file = Tempfile.new(["questions-", ".zip"])
 
     Zip::File.open(temp_file.path, Zip::File::CREATE) do |zipfile|
-      zipfile.get_output_stream("questions/#{@filename}") { |f| f.write(@xml_content) }
-
+      file_path = @base_path.blank? ? @filename : "#{@base_path}/#{@filename}"
+      zipfile.get_output_stream(file_path) { |f| f.write(@xml_content) }
+      images_path = @base_path.blank? ? 'images' : "#{@base_path}/images"
       @images.each do |image|
-        add_image_to_zip(zipfile, image)
+        add_image_to_zip(zipfile, image, File.join(images_path))
       end
     end
 
@@ -45,11 +47,12 @@ class ZipFileService
   # @param zipfile [Zip::File] The zip file to add the image to
   # @param image [Image] The image to add
   # @return [void]
-  def add_image_to_zip(zipfile, image)
-    image_filename = image.file.filename.to_s
+  def add_image_to_zip(zipfile, image, path)
+    image_filename = image.original_filename
     image_binary = image.file.download
+    image_path = File.join(path, image_filename)
 
-    zipfile.get_output_stream("questions/images/#{image_filename}") do |f|
+    zipfile.get_output_stream(image_path) do |f|
       f.write(image_binary)
     end
   end

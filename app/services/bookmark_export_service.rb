@@ -106,7 +106,7 @@ class BookmarkExportService
   #
   # @return [Hash] A hash containing the export data, filename, and content type
   def d2l_export(data)
-    export_result(data:)
+    export_result(data:, is_file: true)
   end
 
   # Export bookmarks in Moodle XML format

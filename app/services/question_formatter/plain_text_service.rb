@@ -5,6 +5,8 @@
 module QuestionFormatter
   class PlainTextService < BaseService
     self.output_format = 'txt'
+    self.format = 'txt' # used as format parameter
+    self.file_type = 'text/plain'
 
     private
 

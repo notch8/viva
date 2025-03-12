@@ -96,25 +96,15 @@ RSpec.describe BookmarksController do
       end
     end
 
-    context 'as xml' do
-      it 'returns an xml file' do
-        get :export, format: :xml
+    context 'as canvas' do
+      let(:question) { FactoryBot.create(:question_traditional, :with_images) }
 
-        expect(response.content_type).to eq('application/xml; charset=utf-8')
+      it 'send a zip file with the images' do
+        get :export, format: :canvas
+
+        expect(response.content_type).to eq('application/zip')
         expect(response).to be_successful
-        expect(response.headers['Content-Disposition']).to match(/questions-.*\.xml/)
-      end
-
-      context 'when a question has images' do
-        let(:question) { FactoryBot.create(:question_traditional, :with_images) }
-
-        it 'send a zip file with the images' do
-          get :export, format: :xml
-
-          expect(response.content_type).to eq('application/zip')
-          expect(response).to be_successful
-          expect(response.headers['Content-Disposition']).to match(/questions-.*\.zip/)
-        end
+        expect(response.headers['Content-Disposition']).to match(/questions-.*\.zip/)
       end
     end
 

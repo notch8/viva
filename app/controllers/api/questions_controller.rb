@@ -87,7 +87,7 @@ class Api::QuestionsController < ApplicationController
       processed[:data] = process_categorization_data(processed[:data])
     when 'Question::DragAndDrop'
       processed[:data] = process_drag_and_drop_data(processed[:data])
-    when 'Question::Essay'
+    when 'Question::Essay', 'Question::Upload'
       processed[:data] = process_essay_data(processed[:data])
     when 'Question::BowTie'
       processed[:data] = process_bow_tie_data(processed[:data])
@@ -210,12 +210,13 @@ class Api::QuestionsController < ApplicationController
     when 'Question::Matching'
       process_matching_data(data)
     when 'Question::BowTie'
-      default_bow_tie_data = {
+      process_bow_tie_data(data) || {
         'left' => { 'answers' => [] },
         'right' => { 'answers' => [] },
         'center' => { 'answers' => [] }
       }
-      process_bow_tie_data(data) || default_bow_tie_data
+    when 'Question::Essay', 'Question::Upload'
+      process_essay_data(data)
     else
       data
     end
@@ -260,7 +261,8 @@ class Api::QuestionsController < ApplicationController
       'Multiple Choice' => 'Question::Traditional',
       'Select All That Apply' => 'Question::SelectAllThatApply',
       'Scenario' => 'Question::Scenario',
-      'Stimulus Case Study' => 'Question::StimulusCaseStudy'
+      'Stimulus Case Study' => 'Question::StimulusCaseStudy',
+      'File Upload' => 'Question::Upload'
     }
 
     type_mapping[type] || type

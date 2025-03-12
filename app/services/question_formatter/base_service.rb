@@ -1,39 +1,58 @@
 # frozen_string_literal: true
 require 'nokogiri'
 
+# rubocop:disable Metrics/ClassLength
 module QuestionFormatter
   class BaseService
     ##
     # Service to handle formatting questions for downloads
     class_attribute :output_format, default: nil
-    attr_reader :question, :subq
+    class_attribute :format, default: nil
+    class_attribute :file_type, default: nil
 
-    def initialize(question, subq = false)
-      @question = question
-      @subq = subq
+    attr_reader :questions, :subq, :question
+
+    def initialize(questions)
+      @questions = questions
     end
 
     def format_content
-      format_by_type + divider_line
+      question_content = []
+      @questions.each do |question|
+        @question = question
+        content = process_question(question)
+        question_content << content + divider_line if content.present?
+      end
+      question_content.join(join_by)
     end
 
     # These methods are protected instead of private so they can be called by other instances
     protected
+
+    def join_by
+      "\n\n"
+    end
+
+    def process_question(question, subq = false)
+      @question = question
+      @subq = subq
+      format_by_type
+    end
 
     def essay_type
       format_question_header + format_essay_content
     end
 
     def traditional_type
-      format_question_header + format_answers(@question.data) { |answer, index| format_traditional_answer(answer, index) }
+      format_question_header + format_answers(question.data) { |answer, index| format_traditional_answer(answer, index) }
     end
 
     def matching_type
-      format_question_header + format_answers(@question.data) { |answer, index| format_matching_answer(answer, index) }
+      format_question_header + format_answers(question.data) { |answer, index| format_matching_answer(answer, index) }
     end
 
     def categorization_type
-      format_question_header + format_categories(@question.data)
+      format_question_header + format_categories(question.data)
     end
 
     def bowtie_type
@@ -41,10 +60,12 @@ module QuestionFormatter
     end
 
     def stimulus_type
-      output = @question.child_questions.map { |sub_question| format_sub_question(sub_question) }
+      header = format_question_header
+      output = question.child_questions.map { |sub_question| format_sub_question(sub_question) }
+
       # remove extra line breaks
       output[-1] = output[-1].chomp if output.any?
-      "#{format_question_header}#{output.join('')}"
+      "#{header}#{output.join('')}"
     end
 
     def format_sub_question(sub_question)
@@ -52,12 +73,12 @@ module QuestionFormatter
       when "Question::Scenario"
         format_scenario(sub_question)
       else
-        "#{self.class.new(sub_question, true).format_by_type}\n"
+        "#{process_question(sub_question, true)}\n"
       end
     end
 
     def format_by_type
-      method = @question.class.model_exporter
+      method = question.class.model_exporter
       begin
         send(method)
       rescue
@@ -68,7 +89,7 @@ module QuestionFormatter
     private
 
     def divider_line
-      raise NotImplementedError, "Subclasses must implement divider_line"
+      ''
     end
 
     def format_scenario(question)
@@ -80,7 +101,7 @@ module QuestionFormatter
     end
 
     def format_essay_content
-      plain_text = format_html(@question.data['html'])
+      plain_text = format_html(question.data['html'])
       "Text: #{plain_text}\n"
     end
 
@@ -102,7 +123,7 @@ module QuestionFormatter
 
     def format_bowtie_sections
       sections = ['center', 'left', 'right'].map do |section|
-        answers = @question.data[section]['answers'].map.with_index do |answer, index|
+        answers = question.data[section]['answers'].map.with_index do |answer, index|
           format_traditional_answer(answer, index)
         end.join('')
         "#{section.capitalize}\n#{answers}"
@@ -111,7 +132,7 @@ module QuestionFormatter
     end
 
     def question_type
-      @question.class.type_name
+      question.class.type_name
     end
 
     def format_html(html)
@@ -123,3 +144,4 @@ module QuestionFormatter
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

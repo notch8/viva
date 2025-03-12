@@ -8,6 +8,7 @@ import Matching from './Matching'
 import MultipleChoice from './MultipleChoice'
 import SelectAllThatApply from './SelectAllThatApply'
 import StimulusCaseStudy from './StimulusCaseStudy'
+import Upload from './Upload'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import LevelDropdown from './LevelDropdown'
 // import Keyword from './Keyword'
@@ -35,6 +36,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     'Multiple Choice': MultipleChoice,
     'Select All That Apply': SelectAllThatApply,
     'Stimulus Case Study': StimulusCaseStudy,
+    'File Upload': Upload
   }
 
   const QuestionComponent = COMPONENT_MAP[questionType] || null
@@ -91,7 +93,14 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       'Bow Tie': () => data && appendData(data),
       'Multiple Choice': () => appendData(filterValidData(data)),
       'Select All That Apply': () => appendData(filterValidData(data)),
-      'Stimulus Case Study': () => appendData(data)
+      'Stimulus Case Study': () => appendData(data),
+      'File Upload': () =>
+        appendData({
+          html: questionText
+            .split('\n')
+            .map((line, index) => `<p key=${index}>${line}</p>`)
+            .join('')
+        })
     }
 
     if (handlers[questionType]) {
@@ -233,6 +242,13 @@ const CreateQuestionForm = ({ subjectOptions }) => {
         if (!Array.isArray(questionData)) return true // Ensure questionData is an array
         const correctCount = questionData.filter((item) => item.correct).length
         if (correctCount < 1) return true // Must have at least 1 correct answer
+        break
+      }
+
+      case 'File Upload': {
+        if (!questionText?.trim()) {
+          return true // File Upload must have valid content
+        }
         break
       }
 

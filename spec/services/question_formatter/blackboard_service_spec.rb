@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe QuestionFormatter::BlackboardService do
-  subject { described_class.new(question) }
+  subject { described_class.new([question]) }
 
   let(:file_lines) do
     Rails.root.join('spec', 'fixtures', 'files', 'bb_export.txt').readlines.map(&:chomp)
@@ -51,7 +51,7 @@ RSpec.describe QuestionFormatter::BlackboardService do
       let(:question) do
         Question::Essay.new(
           text: 'Themes of friendship and perseverance',
-          data: { 'html' => 'Analyze how the themes of friendship and perseverance are portrayed in a popular shonen anime of your choice. Include specific examples from the series.' }
+          data: { 'html' => "<div class=\"question-introduction\">\n  <p>Analyze how themes of friendship are portrayed in shonen anime.</p>\n<p>Include specific examples from the series.</p></div>" }
         )
       end
 
@@ -78,12 +78,12 @@ RSpec.describe QuestionFormatter::BlackboardService do
       end
     end
 
-    context 'when blacboard export type is not supported' do
+    context 'when blackboard export type is not supported' do
       let(:question) { FactoryBot.build(:question_upload) }
 
       it 'returns nil' do
         expect(question.blackboard_export_type).to be_nil
-        expect(subject.format_content).to be_nil
+        expect(subject.format_content).to be_blank
       end
     end
   end

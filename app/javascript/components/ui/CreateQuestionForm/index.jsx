@@ -107,7 +107,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       handlers[questionType]()
     }
 
-    images.forEach((image, index) => {
+    images.forEach((image) => {
       formData.append('question[images][]', image.file)
       formData.append('question[alt_text][]', image.altText)
     })

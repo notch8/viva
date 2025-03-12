@@ -105,7 +105,7 @@ const ImageUploader = ({ images, setImages }) => {
               <Form.Control
                 type='text'
                 placeholder='Enter alt text (required)'
-                name={`question[alt_text][]`}
+                name={'question[alt_text][]'}
                 value={image.altText}
                 onChange={(e) => handleAltTextChange(index, e.target.value)}
                 className='flex-grow-1'

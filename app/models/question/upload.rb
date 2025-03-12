@@ -14,6 +14,10 @@ class Question::Upload < Question
   self.canvas_export_type = true
   self.d2l_export_type = 'WR'
 
+  def self.display_name
+    "File Upload"
+  end
+
   class ImportCsvRow < MarkdownQuestionBehavior::ImportCsvRow
   end
 end

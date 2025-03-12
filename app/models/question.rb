@@ -183,7 +183,7 @@ class Question < ApplicationRecord
   # @return [Array<String>] Sorted array of question type names that support the given LMS
   # @api private
   def self.lms_finder(lms)
-    Question.descendants.select(&lms).map(&:type_name).sort
+    Question.descendants.select(&lms).map { |q| q.respond_to?(:display_name) ? q.display_name : q.type_name }.sort
   end
   private_class_method :lms_finder
 

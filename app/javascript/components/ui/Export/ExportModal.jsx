@@ -17,30 +17,23 @@ const ExportModal = ({ show, onHide, hasBookmarks }) => {
       <Modal.Body>
         <Tabs defaultActiveKey='lms' className='mb-3'>
           <Tab eventKey='lms' title='Learning Management Systems'>
-            <div className='d-flex flex-wrap justify-content-center'>
-              <div className='row w-100'>
-                <ExportButton format='blackboard' label='Blackboard' questionTypes={lms.blackboard} hasBookmarks={hasBookmarks} />
-                <ExportButton format='d2l' label='Brightspace' questionTypes={lms.d2l} hasBookmarks={hasBookmarks} />
-              </div>
-              <div className='row w-100'>
-                <ExportButton format='canvas' label='Canvas' questionTypes={lms.canvas} hasBookmarks={hasBookmarks} />
-                <ExportButton format='moodle' label='Moodle' questionTypes={lms.moodle} hasBookmarks={hasBookmarks} />
-              </div>
+            <div className='d-flex justify-content-between'>
+              <ExportButton format='canvas' label='Canvas' questionTypes={lms.canvas} hasBookmarks={hasBookmarks} />
+              <ExportButton format='blackboard' label='Blackboard' questionTypes={lms.blackboard} hasBookmarks={hasBookmarks} />
+              <ExportButton format='d2l' label='Brightspace (D2L)' questionTypes={lms.d2l} hasBookmarks={hasBookmarks} />
+              <ExportButton format='moodle' label='Moodle' questionTypes={lms.moodle} hasBookmarks={hasBookmarks} />
             </div>
           </Tab>
-
           <Tab eventKey='text' title='Text Formats'>
             <div className='d-flex justify-content-center'>
-              <div className='row w-100'>
-                <ExportButton format='md' label='Markdown' questionTypes={[]} hasBookmarks={hasBookmarks} />
-                <ExportButton format='txt' label='Plain Text' questionTypes={[]} hasBookmarks={hasBookmarks} />
-              </div>
+              <ExportButton format='md' label='Markdown' questionTypes={[]} hasBookmarks={hasBookmarks} />
+              <ExportButton format='txt' label='Plain Text' questionTypes={[]} hasBookmarks={hasBookmarks} />
             </div>
           </Tab>
         </Tabs>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant='secondary' onClick={onHide} className='px-4'>
+        <Button variant='secondary' onClick={onHide}>
           Close
         </Button>
       </Modal.Footer>

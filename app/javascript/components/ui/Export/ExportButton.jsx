@@ -1,19 +1,8 @@
 import React from 'react'
-import {Button, OverlayTrigger, Tooltip} from 'react-bootstrap'
+import {Button} from 'react-bootstrap'
 import './Export.css'
 
 const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
-  const getTooltipText = (format, questionTypes) => {
-    if (questionTypes.length === 0) {
-      if (format === 'md') {
-        return 'Supports all question types in markdown format'
-      }
-      return 'Supports all question types in plain text format'
-    }
-
-    return `Supports: ${questionTypes.join(', ')}`
-  }
-
   const getIconClass = (format) => {
     switch (format) {
     case 'blackboard':
@@ -33,24 +22,30 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
     }
   }
 
+  const isTextFormat = format === 'md' || format === 'txt'
+
   return (
-    <div className='col-md-6 d-flex justify-content-center'>
-      <OverlayTrigger
-        placement='top'
-        overlay={<Tooltip>{getTooltipText(format, questionTypes)}</Tooltip>}
+    <div className='export-button-container'>
+      <Button
+        variant='outline-primary'
+        className='export-button'
+        href={`/bookmarks/export?format=${format}`}
+        disabled={!hasBookmarks}
+        data-cy={`export-button-${format}`}
+        data-format={format}
       >
-        <Button
-          variant='outline-primary'
-          className='export-button'
-          href={`/bookmarks/export?format=${format}`}
-          disabled={!hasBookmarks}
-          data-cy={`export-button-${format}`}
-          data-format={format}
-        >
-          <i className={`bi ${getIconClass(format)} fs-1 mb-3`}></i>
-          <span className='text-uppercase'>{label}</span>
-        </Button>
-      </OverlayTrigger>
+        <i className={`bi ${getIconClass(format)}`}></i>
+        <span>{label}</span>
+      </Button>
+      <div className='supported-types'>
+        {isTextFormat ? (
+          <div>All Question Types Supported</div>
+        ) : (
+          questionTypes.map((type, index) => (
+            <div key={index}>{type}</div>
+          ))
+        )}
+      </div>
     </div>
   )
 }

@@ -86,5 +86,13 @@ RSpec.describe QuestionFormatter::BlackboardService do
         expect(subject.format_content).to be_blank
       end
     end
+
+    context 'when the question has images' do
+      let!(:question) { FactoryBot.create(:question_traditional, :with_images) }
+
+      it 'adds image tags to the text' do
+        expect(subject.format_content.scan("<img src=\"data:image/png").length).to eq(question.images.size)
+      end
+    end
   end
 end

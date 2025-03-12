@@ -1,0 +1,36 @@
+.image-uploader {
+  .upload-form {
+    @media (max-width: 768px) {
+      flex-direction: column;
+      
+      .input-group-text {
+        border-radius: 4px 4px 0 0;
+        width: 100%;
+      }
+      
+      .form-control {
+        border-radius: 0 0 4px 4px;
+      }
+    }
+  }
+
+  .image-preview-container {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 4px;
+    
+    .filename {
+      font-size: 0.875rem;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    @media (max-width: 768px) {
+      .btn-danger {
+        padding: 0.375rem 0.75rem;
+      }
+    }
+  }
+} 

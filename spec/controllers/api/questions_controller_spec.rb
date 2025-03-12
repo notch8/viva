@@ -13,6 +13,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
           images: [
             fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
           ],
+          alt_text: ['A descriptive alt text for test image'],
           keywords: ['France', 'Capital Cities'],
           subjects: ['Geography', 'Invalid']
         }
@@ -32,6 +33,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
           images: [
             fixture_file_upload(Rails.root.join('spec', 'fixtures', 'files', 'test_image.png'), 'image/png')
           ],
+          alt_text: ['Drag and drop question image description'],
           keywords: ['Ordering', 'DragDrop'],
           subjects: ['Logic']
         }
@@ -290,6 +292,7 @@ RSpec.describe Api::QuestionsController, type: :controller do
         expect(question.level).to eq('2')
         expect(question.data).to eq({ 'html' => '<p>What is the capital of France?</p>' })
         expect(question.images.count).to eq(1)
+        expect(question.images.first.alt_text).to eq('A descriptive alt text for test image')
         expect(question.keywords.map(&:name)).to contain_exactly('france', 'capital cities')
         expect(question.subjects.map(&:name)).to contain_exactly('Geography')
         expect(question.subjects.map(&:name)).to_not include('Invalid')

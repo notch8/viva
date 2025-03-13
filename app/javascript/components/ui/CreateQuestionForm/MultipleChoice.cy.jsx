@@ -3,11 +3,11 @@ import MultipleChoice from './MultipleChoice'
 
 describe('MultipleChoice Component', () => {
   beforeEach(() => {
-    // Create stubs for the callback functions
+    // Create a stub for functions passed as props
     const handleTextChange = cy.stub().as('handleTextChange')
     const onDataChange = cy.stub().as('onDataChange')
 
-    // Mount the component with default props
+    // Mount the component with initial props
     cy.mount(
       <MultipleChoice
         questionText=''

@@ -1,3 +1,6 @@
+// NOTE: As of March 2025 the keyword functionality is not being used in the application
+// The client may eventually decide to remove it entirely
+// We are keeping the code and commenting out all related functionality
 import React, { useState } from 'react'
 import {
   Alert, Button, Form, InputGroup

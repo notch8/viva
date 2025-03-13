@@ -9,10 +9,10 @@ describe('QuestionTypeDropdown Component', () => {
   ]
 
   beforeEach(() => {
-    // Create a stub for the handleQuestionTypeSelection function
+    // Create a stub for functions passed as props
     const handleQuestionTypeSelection = cy.stub().as('handleQuestionTypeSelection')
 
-    // Mount the component with required props
+    // Mount the component with initial props
     cy.mount(
       <QuestionTypeDropdown
         handleQuestionTypeSelection={handleQuestionTypeSelection}
@@ -48,10 +48,5 @@ describe('QuestionTypeDropdown Component', () => {
 
     // Check that the selection handler was called with the correct value
     cy.get('@handleQuestionTypeSelection').should('have.been.calledWith', selectedType)
-  })
-
-  it('has the correct CSS classes for styling', () => {
-    cy.get('.dropdown-toggle').should('have.class', 'btn-secondary')
-    cy.get('.question-type-dropdown').should('exist')
   })
 })

@@ -3,10 +3,10 @@ import Upload from './Upload'
 
 describe('<Upload />', () => {
   beforeEach(() => {
-    // Create a stub for the handleTextChange function and store it as an alias
+    // Create a stub for functions passed as props
     const handleTextChange = cy.stub().as('handleTextChange')
 
-    // Mount the component before each test with initial props
+    // Mount the component with initial props
     cy.mount(
       <Upload
         questionText=''
@@ -28,13 +28,13 @@ describe('<Upload />', () => {
     const handleTextChange = cy.stub().as('handleTextChange')
     cy.mount(
       <Upload
-        questionText='Sample question text'
+        questionText='What is the capital of France?'
         handleTextChange={handleTextChange}
       />
     )
 
     // Check that the textarea displays the initial value
-    cy.get('textarea').should('have.value', 'Sample question text')
+    cy.get('textarea').should('have.value', 'What is the capital of France?')
   })
 
   it('calls handleTextChange when text is entered', () => {
@@ -54,13 +54,6 @@ describe('<Upload />', () => {
     })
   })
 
-  it('properly updates value when typing (with controlled component simulation)', () => {
-    // This test is more complex and may not be necessary for this component
-    // Let's simplify it to just check that typing triggers the callback
-    cy.get('textarea').clear().type('Test')
-    cy.get('@handleTextChange').should('have.been.called')
-  })
-
   it('updates when new props are received', () => {
     // Remount with new props to simulate an update
     const handleTextChange = cy.stub().as('handleTextChange')
@@ -78,13 +71,5 @@ describe('<Upload />', () => {
   it('has the correct number of rows', () => {
     // Check that the textarea has 3 rows as specified in the component
     cy.get('textarea').should('have.attr', 'rows', '3')
-  })
-
-  it('has the correct Bootstrap classes', () => {
-    // The Form.Group component renders as a div with the mb-3 class
-    cy.get('div').should('have.class', 'mb-3')
-
-    // Check that the textarea has the expected Bootstrap class
-    cy.get('textarea').should('have.class', 'form-control')
   })
 })

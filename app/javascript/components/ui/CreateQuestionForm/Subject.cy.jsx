@@ -3,10 +3,10 @@ import Subject from './Subject'
 
 describe('<Subject />', () => {
   beforeEach(() => {
-    // Create a stub for the handleAddSubject function
+    // Create a stub for functions passed as props
     const handleAddSubject = cy.stub().as('handleAddSubject')
 
-    // Mount the component before each test
+    // Mount the component with initial props
     cy.mount(
       <Subject
         subjectOptions={['Mathematics', 'Physics', 'Chemistry', 'Biology']}

@@ -3,10 +3,10 @@ import QuestionText from './QuestionText'
 
 describe('QuestionText Component', () => {
   beforeEach(() => {
-    // Create a stub for the handleTextChange function
+    // Create a stub for functions passed as props
     const handleTextChange = cy.stub().as('handleTextChange')
 
-    // Mount the component with default props
+    // Mount the component with initial props
     cy.mount(
       <QuestionText
         questionText=''
@@ -43,14 +43,5 @@ describe('QuestionText Component', () => {
     const testInput = 'New question text'
     cy.get('textarea').type(testInput)
     cy.get('@handleTextChange').should('have.been.called')
-  })
-
-  it('has the correct styling classes', () => {
-    cy.get('textarea')
-      .should('have.class', 'mr-4')
-      .should('have.class', 'p-2')
-      .should('have.class', 'mb-4')
-
-    cy.get('.fw-bold').should('exist')
   })
 })

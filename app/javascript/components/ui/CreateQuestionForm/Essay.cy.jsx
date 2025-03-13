@@ -3,11 +3,11 @@ import Essay from './Essay'
 
 describe('Essay Component', () => {
   beforeEach(() => {
-    // Create stubs for the callback functions
+    // Create a stub for functions passed as props
     const handleTextChange = cy.stub().as('handleTextChange')
     const handleSubmit = cy.stub().as('handleSubmit')
 
-    // Mount the component with default props
+    // Mount the component with initial props
     cy.mount(
       <Essay
         questionText=''

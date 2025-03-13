@@ -15,7 +15,7 @@ import Upload from './Upload'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
   const [subQuestions, setSubQuestions] = useState([])
   const updateTimeout = useRef(null)
 
@@ -147,7 +147,7 @@ const StimulusCaseStudy = ({ questionText, handleTextChange, onDataChange, reset
 
   return (
     <div className='stimulus-case-study-form'>
-      <h3>Stimulus Case Study</h3>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
 
       <h4>Subquestions</h4>

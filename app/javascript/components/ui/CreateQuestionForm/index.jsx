@@ -298,9 +298,10 @@ const CreateQuestionForm = ({ subjectOptions }) => {
             <div className='d-flex flex-wrap'>
               <div className='flex-fill'>
                 <QuestionComponent
-                  questionText={questionText}
                   handleTextChange={handleTextChange}
                   onDataChange={setData}
+                  questionText={questionText}
+                  questionType={questionType}
                   resetFields={resetFields}
                 />
                 <ImageUploader images={images} setImages={setImages} />

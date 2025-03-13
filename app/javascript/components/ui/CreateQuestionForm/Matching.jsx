@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import QuestionText from './QuestionText'
 
-const Matching = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const Matching = ({ handleTextChange, onDataChange,questionText, questionType, resetFields }) => {
   const [pairs, setPairs] = useState([
     { answer: '', correct: '' },
     { answer: '', correct: '' },
@@ -45,6 +45,7 @@ const Matching = ({ questionText, handleTextChange, onDataChange, resetFields })
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <h6>Matching Pairs</h6>
       {pairs.map((pair, index) => (

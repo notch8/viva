@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
-const SelectAllThatApply = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const SelectAllThatApply = ({ handleTextChange, onDataChange, questionType, questionText, resetFields }) => {
   const updateTimeout = useRef(null)
 
   const updateParent = useCallback((updatedAnswers) => {
@@ -26,6 +26,7 @@ const SelectAllThatApply = ({ questionText, handleTextChange, onDataChange, rese
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <AnswerSet
         resetFields={resetFields}

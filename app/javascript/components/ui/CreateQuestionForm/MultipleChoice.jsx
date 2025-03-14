@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
-const MultipleChoice = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const MultipleChoice = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
   const updateTimeout = useRef(null)
 
   const updateParent = useCallback((updatedAnswers) => {
@@ -26,6 +26,7 @@ const MultipleChoice = ({ questionText, handleTextChange, onDataChange, resetFie
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <AnswerSet
         resetFields={resetFields}

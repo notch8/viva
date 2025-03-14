@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
-const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const DragAndDrop = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
   const updateTimeout = useRef(null)
 
   const updateParent = useCallback((updatedAnswers) => {
@@ -26,6 +26,7 @@ const DragAndDrop = ({ questionText, handleTextChange, onDataChange, resetFields
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <AnswerSet
         resetFields={resetFields}

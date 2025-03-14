@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import QuestionText from './QuestionText'
 
-const Categorization = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const Categorization = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
   const [categories, setCategories] = useState([{ answer: '', correct: [''] }])
 
   useEffect(() => {
@@ -64,6 +64,7 @@ const Categorization = ({ questionText, handleTextChange, onDataChange, resetFie
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <h6>Categorization</h6>
       {categories.map((category, index) => (

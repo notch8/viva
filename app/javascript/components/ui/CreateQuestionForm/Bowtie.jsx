@@ -2,7 +2,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
-const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) => {
+const Bowtie = ({ handleTextChange, onDataChange, questionText, questionType,  resetFields }) => {
   const [centerAnswers, setCenterAnswers] = useState([])
   const [rightAnswers, setRightAnswers] = useState([])
   const [leftAnswers, setLeftAnswers] = useState([])
@@ -48,6 +48,7 @@ const Bowtie = ({ questionText, handleTextChange, onDataChange, resetFields }) =
 
   return (
     <>
+      <h3>{questionType} Question</h3>
       <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
       <AnswerSet
         resetFields={resetFields}

@@ -22,7 +22,7 @@ const SearchFilters = (props) => {
 
   const handleBookmarkBatch = () => {
     const filteredIds = filteredQuestions.map(question => question.id).join(',')
-    Inertia.post('/search/create_bookmarks', { filtered_ids: filteredIds }, {
+    Inertia.post('/bookmarks/create_batch', { filtered_ids: filteredIds }, {
       onSuccess: () => {
         console.log('Bookmarks added successfully')
       },

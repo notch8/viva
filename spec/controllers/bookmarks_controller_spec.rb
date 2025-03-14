@@ -17,6 +17,17 @@ RSpec.describe BookmarksController do
     end
   end
 
+  describe '#create_batch' do
+    let(:question) { double('Question', id: '1') }
+    let(:question_ids) { [question.id] }
+
+    it 'creates a bookmark and redirects back with success notice' do
+      expect(Bookmark).to receive(:create_batch).with(question_ids:, user:)
+
+      post :create_batch, params: { filtered_ids: question_ids }
+    end
+  end
+
   describe '#destroy' do
     it 'deletes a bookmark for the current user' do
       question = FactoryBot.create(:question_traditional)

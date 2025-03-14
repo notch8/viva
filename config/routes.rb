@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       # bookmarks page routes
       delete 'bookmarks/destroy_all', to: 'bookmarks#destroy_all' # has to come before bookmarks#destroy
       post 'bookmarks', to: 'bookmarks#create'
+      post '/bookmarks/create_batch', to: 'bookmarks#create_batch'
       delete 'bookmarks/:id', to: 'bookmarks#destroy', as: 'bookmark'
       get 'bookmarks/export', to: 'bookmarks#export'
       # create a question

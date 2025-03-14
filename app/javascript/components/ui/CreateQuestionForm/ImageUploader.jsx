@@ -67,10 +67,13 @@ const ImageUploader = ({ images, setImages }) => {
   return (
     <div className='image-uploader'>
       <InputGroup className='my-4 text-uppercase upload-form'>
-        <InputGroup.Text className='strait py-2' htmlFor='file-upload'>
+        <Form.Label
+          className='strait py-2 input-group-text'
+          htmlFor='file-upload'
+        >
           Upload Image
-        </InputGroup.Text>
-        <Form.Group className='w-100'>
+        </Form.Label>
+        <Form.Group className='flex-grow-1'>
           <Form.Control
             type='file'
             id='file-upload'

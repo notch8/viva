@@ -7,15 +7,6 @@ class SearchController < ApplicationController
     render inertia: 'Search', props: shared_props
   end
 
-  def create_bookmarks
-    result = Bookmark.create_batch(question_ids: params[:filtered_ids], user: current_user)
-    if result == :error
-      redirect_back(fallback_location: authenticated_root_path, notice: t('.failure'))
-    else
-      redirect_back(fallback_location: authenticated_root_path, notice: t('.success'))
-    end
-  end
-
   # private
 
   def shared_props

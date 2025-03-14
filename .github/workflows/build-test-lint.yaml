@@ -30,7 +30,7 @@ jobs:
     uses: notch8/actions/.github/workflows/report.yaml@v0.0.23
   cypress-tests:
     needs: build
-    uses: notch8/actions/.github/workflows/cypress.yaml@update-cypress-yaml
+    uses: notch8/actions/.github/workflows/cypress.yaml@main
     with:
       cypress-container-name: cypress-tests
   rubocop:

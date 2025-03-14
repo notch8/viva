@@ -418,53 +418,65 @@ RSpec.describe Api::QuestionsController, type: :controller do
     end
 
     context 'when creating a Multiple Choice question' do
-      let(:subject_name) { 'Biology' }
+      context 'with valid parameters' do
+        let(:subject_name) { 'Biology' }
 
-      it 'creates a Multiple Choice question with all parameters' do
-        expect { post :create, params: multiple_choice_params }.to change(Question, :count).by(1)
-        question = Question.last
+        it 'creates a Multiple Choice question with all parameters' do
+          expect { post :create, params: multiple_choice_params }.to change(Question, :count).by(1)
+          question = Question.last
 
-        expect(question.text).to eq('Which of the following is a fruit?')
-        expect(question.level).to eq('2')
-        expect(question.data).to eq([
-                                      { "answer" => "Apple", "correct" => true },
-                                      { "answer" => "Carrot", "correct" => false },
-                                      { "answer" => "Broccoli", "correct" => false },
-                                      { "answer" => "Celery", "correct" => false }
-                                    ])
-        expect(question.images.count).to eq(1)
-        expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
-        expect(question.subjects.map(&:name)).to contain_exactly('Biology')
+          expect(question.text).to eq('Which of the following is a fruit?')
+          expect(question.level).to eq('2')
+          expect(question.data).to eq([
+                                        { "answer" => "Apple", "correct" => true },
+                                        { "answer" => "Carrot", "correct" => false },
+                                        { "answer" => "Broccoli", "correct" => false },
+                                        { "answer" => "Celery", "correct" => false }
+                                      ])
+          expect(question.images.count).to eq(1)
+          expect(question.keywords.map(&:name)).to contain_exactly('fruits', 'food groups')
+          expect(question.subjects.map(&:name)).to contain_exactly('Biology')
+        end
+
+        it 'does not create a Multiple Choice question with multiple correct answers' do
+          invalid_data_params = multiple_choice_params.deep_merge(
+            question: {
+              data: [
+                { "answer" => "Apple", "correct" => true },
+                { "answer" => "Banana", "correct" => true }
+              ].to_json
+            }
+          )
+
+          expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
+        end
+
+        it 'does not create a Multiple Choice question with no correct answers' do
+          invalid_data_params = multiple_choice_params.deep_merge(
+            question: {
+              data: [
+                { "answer" => "Apple", "correct" => false },
+                { "answer" => "Banana", "correct" => false }
+              ].to_json
+            }
+          )
+
+          expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
+        end
       end
 
-      it 'does not create a Multiple Choice question with multiple correct answers' do
-        invalid_data_params = multiple_choice_params.deep_merge(
-          question: {
-            data: [
-              { "answer" => "Apple", "correct" => true },
-              { "answer" => "Banana", "correct" => true }
-            ].to_json
-          }
-        )
+      context 'with invalid parameters' do
+        it 'does not create a Multiple Choice question with invalid data' do
+          invalid_data_params = multiple_choice_params.deep_merge(question: { data: 'foo' })
 
-        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
-      end
-
-      it 'does not create a Multiple Choice question with no correct answers' do
-        invalid_data_params = multiple_choice_params.deep_merge(
-          question: {
-            data: [
-              { "answer" => "Apple", "correct" => false },
-              { "answer" => "Banana", "correct" => false }
-            ].to_json
-          }
-        )
-
-        expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.parsed_body['errors']).to include('Multiple Choice questions must have exactly one correct answer.')
+          expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors']).to include('Multiple Choice questions require at least one answer.')
+        end
       end
     end
 
@@ -524,14 +536,26 @@ RSpec.describe Api::QuestionsController, type: :controller do
           .to change(Question, :count).by(9) # 1 parent + 8 subquestions
       end
 
-      it 'creates a Stimulus Case Study parent question' do
-        post :create, params: stimulus_case_study_params
-        question = Question.find_by(type: 'Question::StimulusCaseStudy')
+      context 'with valid parameters' do
+        it 'creates a Stimulus Case Study parent question' do
+          post :create, params: stimulus_case_study_params
+          question = Question.find_by(type: 'Question::StimulusCaseStudy')
 
-        # Ensure the parent question is created with correct attributes
-        expect(question).not_to be_nil
-        expect(question.text).to eq('Analyze the impact of climate change on polar regions.')
-        expect(question.level).to eq('4')
+          # Ensure the parent question is created with correct attributes
+          expect(question).not_to be_nil
+          expect(question.text).to eq('Analyze the impact of climate change on polar regions.')
+          expect(question.level).to eq('4')
+        end
+      end
+
+      context 'with invalid parameters' do
+        it 'does not create a Stimulus Case Study question with invalid data' do
+          invalid_data_params = stimulus_case_study_params.deep_merge(question: { data: {}.to_json })
+
+          expect { post :create, params: invalid_data_params }.not_to change(Question, :count)
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response.parsed_body['errors']).to include('Stimulus Case Study data is required.')
+        end
       end
 
       context 'creates subquestions for the Stimulus Case Study' do

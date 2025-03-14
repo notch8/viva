@@ -400,24 +400,6 @@ class Api::QuestionsController < ApplicationController
   end
 
   ##
-  # Cleans up parsed Matching question data.
-  #
-  # @param [Array<Hash>] data The input array of pairs.
-  # @return [Array<Hash>] Cleaned and valid matching pairs.
-  def clean_matching_data(data)
-    formatted_data = data.map do |pair|
-      {
-        'answer' => pair['answer'].to_s.strip,
-        'correct' => Array(pair['correct']).map(&:strip)
-      }
-    end
-
-    formatted_data.reject do |pair|
-      pair['answer'].blank? || pair['correct'].empty?
-    end
-  end
-
-  ##
   # Processes data for a Drag and Drop question type.
   #
   # @param [String, Array] data The input data in JSON or Array format.

@@ -9,7 +9,6 @@ Rails.application.routes.draw do
     authenticated :user do
       # search page routes
       root 'search#index', as: :authenticated_root
-      post '/search/create_bookmarks', to: 'search#create_bookmarks'
 
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'

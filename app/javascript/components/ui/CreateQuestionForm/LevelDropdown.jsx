@@ -13,11 +13,11 @@ const LevelDropdown = ({ handleLevelSelection }) => {
   }
 
   return (
-    <Form.Group controlId='level' className='my-4'>
-      <Form.Label className='h6 fw-bold'>Select Level</Form.Label>
+    <Form.Group className='my-4'>
+      <Form.Label className='h6 fw-bold' htmlFor='level'>Select Level</Form.Label>
       <CustomDropdown dropdownSelector='.question-type-dropdown'>
         <Dropdown onSelect={levelDropdown} className='question-type-dropdown'>
-          <Dropdown.Toggle variant='secondary'>{selectedLevel}</Dropdown.Toggle>
+          <Dropdown.Toggle variant='secondary' id='level'>{selectedLevel}</Dropdown.Toggle>
           <Dropdown.Menu>
             { LEVELS.map(({ key }) => (
               <Dropdown.Item key={key} eventKey={key}>

@@ -6,12 +6,14 @@ import { Plus } from '@phosphor-icons/react'
 import AnswerField from './AnswerField'
 
 const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, numberOfDisplayedAnswers = 1 }) => {
+
   const initialAnswers = useMemo(
     () => Array.from({ length: numberOfDisplayedAnswers }, () => ({ answer: '', correct: false })),
     [numberOfDisplayedAnswers]
   )
 
   const [answers, setAnswers] = useState(initialAnswers)
+
   const debounceTimeout = useRef(null)
 
   useEffect(() => {
@@ -39,12 +41,24 @@ const AnswerSet = ({ resetFields, getAnswerSet, title, multipleCorrectAnswers, n
   }, [answers, notifyParent])
 
   const updateAnswer = useCallback((index, field, value) => {
-    const updatedAnswers = answers.map((answer, i) =>
-      i === index ? { ...answer, [field]: value } : answer
-    )
+    let updatedAnswers
+
+    if (field === 'correct' && value === true && !multipleCorrectAnswers) {
+      // For radio buttons (single correct answer), only one can be true at a time
+      updatedAnswers = answers.map((answer, i) => ({
+        ...answer,
+        correct: i === index // Only the selected one is correct
+      }))
+    } else {
+      // For text changes or checkbox changes
+      updatedAnswers = answers.map((answer, i) =>
+        i === index ? { ...answer, [field]: value } : answer
+      )
+    }
+
     setAnswers(updatedAnswers)
     notifyParent(updatedAnswers)
-  }, [answers, notifyParent])
+  }, [answers, multipleCorrectAnswers, notifyParent])
 
   const removeAnswer = useCallback((index) => {
     const updatedAnswers = answers.filter((_, i) => i !== index)

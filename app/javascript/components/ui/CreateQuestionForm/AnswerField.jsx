@@ -16,23 +16,9 @@ const AnswerField = ({ answers, updateAnswer, removeAnswer, title, buttonType = 
           />
           <Form.Check
             type={buttonType}
+            name={buttonType === 'radio' ? 'correctAnswerGroup' : `checkbox-${index}`}
             checked={answer.correct}
-            onClick={() => {
-              if (buttonType === 'radio') {
-                if (answer.correct) {
-                  // Deselect the current radio button
-                  updateAnswer(index, 'correct', false)
-                } else {
-                  // Ensure no other radio button is selected before selecting this one
-                  if (!answers.some(a => a.correct)) {
-                    updateAnswer(index, 'correct', true)
-                  }
-                }
-              } else if (buttonType === 'checkbox') {
-                // Toggle the checkbox state
-                updateAnswer(index, 'correct', !answer.correct)
-              }
-            }}
+            onChange={() => updateAnswer(index, 'correct', !answer.correct)}
             label='Correct'
           />
           <Button

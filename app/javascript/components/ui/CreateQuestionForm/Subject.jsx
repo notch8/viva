@@ -15,9 +15,14 @@ const Subject = ({ subjectOptions, handleAddSubject }) => {
     <div className='bg-light-2 p-2 mb-2 rounded'>
       <h6 className='fw-bold'>Subjects</h6>
       <InputGroup className='mb-3'>
-        <Form.Group controlId='add-subject'>
+        <Form.Group id='add-subject'>
           <Typeahead
             id='basic-typeahead'
+            inputProps={{
+              id: 'basic-typeahead-input',
+              name: 'subjects',
+              'aria-label': 'Select subjects'
+            }}
             onChange={handleSubjectChange}
             options={subjectOptions}
             placeholder='Select subjects'

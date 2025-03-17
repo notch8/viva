@@ -84,7 +84,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       Categorization: () => appendData(data),
       Essay: () =>
         appendData({
-          html: questionText
+          html: data
             .split('\n')
             .map((line, index) => `<p key=${index}>${line}</p>`)
             .join(''),
@@ -96,7 +96,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
       'Stimulus Case Study': () => appendData(data),
       'File Upload': () =>
         appendData({
-          html: questionText
+          html: data
             .split('\n')
             .map((line, index) => `<p key=${index}>${line}</p>`)
             .join('')
@@ -160,9 +160,8 @@ const CreateQuestionForm = ({ subjectOptions }) => {
     // Main question type validations (when selected as a regular question)
     const validateQuestionType = (type, questionData) => {
       switch (type) {
-      case 'Essay': {
-        // For regular "Essay" type, validate using questionText
-        if (!questionText?.trim()) {
+      case 'Essay', 'File Upload': {
+        if (typeof data === 'object' || data === '') {
           return true // Essay must have valid content
         }
         break
@@ -242,13 +241,6 @@ const CreateQuestionForm = ({ subjectOptions }) => {
         if (!Array.isArray(questionData)) return true // Ensure questionData is an array
         const correctCount = questionData.filter((item) => item.correct).length
         if (correctCount < 1) return true // Must have at least 1 correct answer
-        break
-      }
-
-      case 'File Upload': {
-        if (!questionText?.trim()) {
-          return true // File Upload must have valid content
-        }
         break
       }
 

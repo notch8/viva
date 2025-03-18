@@ -48,7 +48,7 @@ const SearchBar = ({
           <Form.Control
             type='text'
             name='search'
-            placeholder='search questions...'
+            placeholder='Search questions...'
             value={query}
             onChange={onQueryChange}
             className='border border-light-4 text-black'
@@ -60,13 +60,13 @@ const SearchBar = ({
             type='submit'
             disabled={processing}
           >
-            <span className='me-1'>Search</span>
+            <span className='me-1'>Apply Filters & Search</span>
             <MagnifyingGlass size={20} weight='bold' />
           </Button>
-          {query && (
+          {(query || filterState.selectedSubjects.length > 0 || filterState.selectedTypes.length > 0 || filterState.selectedLevels.length > 0) && (
             <Button
-              variant='outline-secondary'
-              className='d-flex align-items-center fs-6 justify-content-center border-light-4'
+              variant='secondary'
+              className='d-flex align-items-center fs-6 justify-content-center text-white'
               size='lg'
               onClick={onReset}
             >

@@ -6,15 +6,23 @@ describe('<ExportButton />', () => {
     cy.mount(<ExportButton format='blackboard' label='Blackboard' questionTypes={[]} hasBookmarks={false} />)
   })
 
-  it('displays correct tooltip text for empty questionTypes array', () => {
-    cy.mount(<ExportButton format='blackboard' label='Blackboard' questionTypes={[]} hasBookmarks={false} />)
-    cy.get('.export-button').trigger('mouseover')
-    cy.get('.tooltip-inner').should('contain', 'Supports all question types in plain text format')
+  it('displays "All Question Types Supported" for text formats', () => {
+    // Test with markdown format
+    cy.mount(<ExportButton format='md' label='Markdown' questionTypes={[]} hasBookmarks={false} />)
+    cy.get('.supported-types').should('contain', 'All Question Types Supported')
+
+    // Test with txt format
+    cy.mount(<ExportButton format='txt' label='Text' questionTypes={[]} hasBookmarks={false} />)
+    cy.get('.supported-types').should('contain', 'All Question Types Supported')
   })
 
-  it('displays correct tooltip text for non-empty questionTypes array', () => {
-    cy.mount(<ExportButton format='blackboard' label='Blackboard' questionTypes={['Type1', 'Type2']} hasBookmarks={false} />)
-    cy.get('.export-button').trigger('mouseover')
-    cy.get('.tooltip-inner').should('contain', 'Supports: Type1, Type2')
+  it('displays supported question types for non-text formats', () => {
+    const questionTypes = ['Multiple Choice', 'Short Answer']
+    cy.mount(<ExportButton format='blackboard' label='Blackboard' questionTypes={questionTypes} hasBookmarks={false} />)
+
+    // Check that each question type is displayed
+    questionTypes.forEach(type => {
+      cy.get('.supported-types').should('contain', type)
+    })
   })
 })

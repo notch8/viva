@@ -58,18 +58,60 @@ module QuestionFormatter
 
     def generate_manifest(files)
       builder = Nokogiri::XML::Builder.new(encoding: 'UTF-8') do |xml|
-        xml.manifest do
-          xml.resources do
-            files.each do |file|
-              xml.resource do
-                xml.file href: file
-              end
-            end
-          end
-        end
+        build_manifest_structure(xml, files)
       end
 
       builder.to_xml
+    end
+
+    def build_manifest_structure(xml, files)
+      xml.manifest(manifest_attributes) do
+        build_metadata_section(xml)
+        build_resources_section(xml, files)
+      end
+    end
+
+    def manifest_attributes
+      {
+        'xmlns' => 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1',
+        'xmlns:lom' => 'http://ltsc.ieee.org/xsd/imsccv1p1/LOM/resource',
+        'xmlns:imsmd' => 'http://www.imsglobal.org/xsd/imsmd_v1p2',
+        'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
+        'identifier' => 'quiz-export',
+        'xsi:schemaLocation' => 'http://www.imsglobal.org/xsd/imsccv1p1/imscp_v1p1 http://www.imsglobal.org/xsd/imscp_v1p1.xsd'
+      }
+    end
+
+    def build_metadata_section(xml)
+      xml.metadata do
+        xml.schema 'IMS Content'
+        xml.schemaversion '1.1.3'
+      end
+    end
+
+    def build_resources_section(xml, files)
+      xml.resources do
+        add_quiz_resource(xml, files)
+        add_image_resources(xml, files)
+      end
+    end
+
+    def add_quiz_resource(xml, files)
+      quiz_file = files.find { |file| file.end_with?('questions.xml') }
+      return unless quiz_file
+      xml.resource('identifier' => 'quiz-resource', 'type' => 'imsqti_xmlv1p2') do
+        xml.file('href' => quiz_file)
+      end
+    end
+
+    def add_image_resources(xml, files)
+      image_files = files.select { |file| file.include?('/images/') }
+      image_files.each do |file|
+        image_name = File.basename(file, File.extname(file))
+        xml.resource('identifier' => "media-#{image_name}", 'type' => 'webcontent') do
+          xml.file('href' => file)
+        end
+      end
     end
   end
 end

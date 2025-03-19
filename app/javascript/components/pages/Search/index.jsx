@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '../../App'
-import { useForm } from '@inertiajs/inertia-react'
 import { Container, Row } from 'react-bootstrap'
+import { Inertia } from '@inertiajs/inertia'
+import { useForm } from '@inertiajs/inertia-react'
 import QuestionWrapper from '../../ui/Question/QuestionWrapper'
 import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
-import { Inertia } from '@inertiajs/inertia'
 
 const Search = ({
   filteredQuestions,
@@ -67,25 +67,38 @@ const Search = ({
 
   const handleFilterChange = (event, filterKey) => {
     const { value, checked } = event.target
-    setFilterState((prevState) => {
-      const updatedFilters = [...prevState[filterKey]]
 
-      if (checked && !updatedFilters.includes(value)) {
-        updatedFilters.push(value)
-      } else if (!checked) {
-        const index = updatedFilters.indexOf(value)
-        if (index !== -1) {
-          updatedFilters.splice(index, 1)
-        }
+    const newFilterState = { ...filterState }
+    const updatedFilters = [...newFilterState[filterKey]]
+
+    if (checked && !updatedFilters.includes(value)) {
+      updatedFilters.push(value)
+    } else if (!checked) {
+      const index = updatedFilters.indexOf(value)
+      if (index !== -1) {
+        updatedFilters.splice(index, 1)
       }
+    }
 
-      return { ...prevState, [filterKey]: updatedFilters }
+    newFilterState[filterKey] = updatedFilters
+    setFilterState(newFilterState)
+
+    // Immediately trigger the search when new filters are selected
+    Inertia.get('/', {
+      search: query,
+      selected_keywords: newFilterState.selectedKeywords,
+      selected_subjects: newFilterState.selectedSubjects,
+      selected_types: newFilterState.selectedTypes,
+      selected_levels: newFilterState.selectedLevels,
+    }, {
+      preserveState: true,
+      preserveScroll: true
     })
   }
 
-  // Removes a specific filter item and triggers a search with the updated filters
+  // Removes a specific filter item and triggers a search
   // @param {string} item - The filter value to remove
-  // @param {string} filterType - The type of filter ('Subjects', 'Keywords', 'Types', or 'Levels')
+  // @param {string} filterType - The type of filter ('Subjects', 'Types', or 'Levels')
   const removeFilterAndSearch = (item, filterType) => {
     // Create updated filter arrays
     let updatedKeywords = [...filterState.selectedKeywords]
@@ -104,7 +117,6 @@ const Search = ({
       updatedLevels = updatedLevels.filter(level => level !== item)
     }
 
-    // Update the component state
     setFilterState({
       selectedKeywords: updatedKeywords,
       selectedSubjects: updatedSubjects,

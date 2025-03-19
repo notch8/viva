@@ -60,7 +60,7 @@ const SearchBar = ({
             type='submit'
             disabled={processing}
           >
-            <span className='me-1'>Apply Filters & Search</span>
+            <span className='me-1'>Apply Search Terms</span>
             <MagnifyingGlass size={20} weight='bold' />
           </Button>
           {(query || filterState.selectedSubjects.length > 0 || filterState.selectedTypes.length > 0 || filterState.selectedLevels.length > 0) && (
@@ -70,7 +70,7 @@ const SearchBar = ({
               size='lg'
               onClick={onReset}
             >
-              <span className='me-1'>Reset</span>
+              <span className='me-1'>Reset All Filters</span>
               <XCircle size={20} weight='bold' />
             </Button>
           )}

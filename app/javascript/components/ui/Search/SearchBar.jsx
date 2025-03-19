@@ -6,99 +6,28 @@ import { MagnifyingGlass, XCircle } from '@phosphor-icons/react'
 import { Inertia } from '@inertiajs/inertia'
 import ExportModal from '../Export/ExportModal'
 
-const SearchBar = (props) => {
-  const {
-    subjects,
-    // keywords,
-    types,
-    levels,
-    processing,
-    selectedKeywords,
-    selectedTypes,
-    selectedSubjects,
-    selectedLevels,
-    bookmarkedQuestionIds,
-    searchTerm
-  } = props
-
-  // const filters = { subjects, keywords, types, levels }
-  const [query, setQuery] = useState(searchTerm || '')
-  const [filterState, setFilterState] = useState({
-    selectedKeywords: selectedKeywords || [],
-    selectedTypes: selectedTypes || [],
-    selectedSubjects: selectedSubjects || [],
-    selectedLevels: selectedLevels || []
-  })
+const SearchBar = ({
+  subjects,
+  // keywords,
+  types,
+  levels,
+  processing,
+  query,
+  onQueryChange,
+  onSubmit,
+  onReset,
+  onFilterChange,
+  filterState,
+  bookmarkedQuestionIds
+}) => {
   const filters = { subjects, types, levels }
   const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
   const [showExportModal, setShowExportModal] = useState(false)
 
-  useEffect(() => {
-    if (searchTerm !== undefined && searchTerm !== query) {
-      setQuery(searchTerm)
-    }
-  }, [searchTerm])
-
+  // Update bookmark state when props change
   useEffect(() => {
     setHasBookmarks(bookmarkedQuestionIds.length > 0)
   }, [bookmarkedQuestionIds])
-
-  const handleSearchChange = (event) => {
-    setQuery(event.target.value)
-  }
-
-  const handleSearchSubmit = (event) => {
-    event.preventDefault()
-    console.log('Submitting with filters:', filterState)
-    Inertia.get(window.location.pathname, {
-      search: query,
-      selected_keywords: filterState.selectedKeywords,
-      selected_subjects: filterState.selectedSubjects,
-      selected_types: filterState.selectedTypes,
-      selected_levels: filterState.selectedLevels,
-    }, {
-      preserveState: true,
-      preserveScroll: true
-    })
-  }
-
-  const handleReset = () => {
-    setQuery('')
-    setFilterState({
-      selectedKeywords: [],
-      selectedTypes: [],
-      selectedSubjects: [],
-      selectedLevels: []
-    })
-    Inertia.get(window.location.pathname, {
-      search: '',
-      selected_keywords: [],
-      selected_subjects: [],
-      selected_types: [],
-      selected_levels: [],
-    }, {
-      preserveState: true,
-      preserveScroll: true
-    })
-  }
-
-  const handleFilterChange = (event, filterKey) => {
-    const { value, checked } = event.target
-    setFilterState((prevState) => {
-      const updatedFilters = [...prevState[filterKey]]
-
-      if (checked && !updatedFilters.includes(value)) {
-        updatedFilters.push(value)
-      } else if (!checked) {
-        const index = updatedFilters.indexOf(value)
-        if (index !== -1) {
-          updatedFilters.splice(index, 1)
-        }
-      }
-
-      return { ...prevState, [filterKey]: updatedFilters }
-    })
-  }
 
   const handleDeleteAllBookmarks = () => {
     Inertia.delete('/bookmarks/destroy_all', {
@@ -112,16 +41,16 @@ const SearchBar = (props) => {
   }
 
   return (
-    <Form onSubmit={handleSearchSubmit}>
+    <Form onSubmit={onSubmit}>
       <Container className='p-0 mt-2 search-bar'>
         <InputGroup className='mb-3 flex-column flex-md-row'>
           {/* Search Input */}
           <Form.Control
             type='text'
             name='search'
-            placeholder='search questions...'
+            placeholder='Search questions...'
             value={query}
-            onChange={handleSearchChange}
+            onChange={onQueryChange}
             className='border border-light-4 text-black'
           />
           <Button
@@ -131,17 +60,17 @@ const SearchBar = (props) => {
             type='submit'
             disabled={processing}
           >
-            <span className='me-1'>Search</span>
+            <span className='me-1'>Apply Search Terms</span>
             <MagnifyingGlass size={20} weight='bold' />
           </Button>
-          {query && (
+          {(query || filterState.selectedSubjects.length > 0 || filterState.selectedTypes.length > 0 || filterState.selectedLevels.length > 0) && (
             <Button
-              variant='outline-secondary'
-              className='d-flex align-items-center fs-6 justify-content-center border-light-4'
+              variant='secondary'
+              className='d-flex align-items-center fs-6 justify-content-center text-white'
               size='lg'
-              onClick={handleReset}
+              onClick={onReset}
             >
-              <span className='me-1'>Reset</span>
+              <span className='me-1'>Reset All Filters</span>
               <XCircle size={20} weight='bold' />
             </Button>
           )}
@@ -170,7 +99,7 @@ const SearchBar = (props) => {
                     id={item}
                     className='mx-0'
                     value={item}
-                    onChange={(event) => handleFilterChange(event, `selected${key.charAt(0).toUpperCase() + key.slice(1)}`)}
+                    onChange={(event) => onFilterChange(event, `selected${key.charAt(0).toUpperCase() + key.slice(1)}`)}
                     checked={filterState[`selected${key.charAt(0).toUpperCase() + key.slice(1)}`].includes(item)}
                   />
                   <Form.Check.Label className='ps-2'>

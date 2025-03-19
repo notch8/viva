@@ -1,46 +1,173 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Layout from '../../App'
-import { useForm } from '@inertiajs/inertia-react'
 import { Container, Row } from 'react-bootstrap'
+import { Inertia } from '@inertiajs/inertia'
+import { useForm } from '@inertiajs/inertia-react'
 import QuestionWrapper from '../../ui/Question/QuestionWrapper'
 import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
 
-const Search = (props) => {
-  const { filteredQuestions, selectedSubjects, selectedKeywords, selectedTypes, selectedLevels, subjects, keywords, types, levels, bookmarkedQuestionIds } = props
-  const { setData, get, processing, clearErrors } = useForm({
-    selected_keywords: selectedKeywords || [],
-    selected_subjects: selectedSubjects || [],
-    selected_types: selectedTypes || [],
-    selected_levels: selectedLevels || [],
+const Search = ({
+  filteredQuestions,
+  selectedSubjects,
+  selectedKeywords,
+  selectedTypes,
+  selectedLevels,
+  subjects,
+  keywords,
+  types,
+  levels,
+  bookmarkedQuestionIds,
+  searchTerm
+}) => {
+
+  const [query, setQuery] = useState(searchTerm || '')
+  const [filterState, setFilterState] = useState({
+    selectedKeywords: selectedKeywords || [],
+    selectedTypes: selectedTypes || [],
+    selectedSubjects: selectedSubjects || [],
+    selectedLevels: selectedLevels || []
   })
 
-  const handleFilters = (event, filterName) => {
-    const { value, checked } = event.target
-    const filterKey = `selected_${filterName}`
+  // Update state when props change
+  useEffect(() => {
+    if (searchTerm !== undefined && searchTerm !== query) {
+      setQuery(searchTerm)
+    }
 
-    setData((prevData) => {
-      const updatedData = { ...prevData }
-      const selectedArray = updatedData[filterKey] || []
+    setFilterState({
+      selectedKeywords: selectedKeywords || [],
+      selectedTypes: selectedTypes || [],
+      selectedSubjects: selectedSubjects || [],
+      selectedLevels: selectedLevels || []
+    })
+  }, [searchTerm, selectedKeywords, selectedTypes, selectedSubjects, selectedLevels])
 
-      if (checked && !selectedArray.includes(value)) {
-        selectedArray.push(value)
-      } else if (!checked) {
-        const index = selectedArray.indexOf(value)
-        if (index !== -1) {
-          selectedArray.splice(index, 1)
-        }
-      }
+  const { processing, clearErrors } = useForm()
 
-      updatedData[filterKey] = selectedArray
-      return updatedData
+  const handleSearchChange = (event) => {
+    setQuery(event.target.value)
+  }
+
+  const handleSearchSubmit = (event) => {
+    if (event) event.preventDefault()
+    clearErrors()
+
+    Inertia.get('/', {
+      search: query,
+      selected_keywords: filterState.selectedKeywords,
+      selected_subjects: filterState.selectedSubjects,
+      selected_types: filterState.selectedTypes,
+      selected_levels: filterState.selectedLevels,
+    }, {
+      preserveState: true,
+      preserveScroll: true
     })
   }
 
-  const submit = (e) => {
-    clearErrors()
-    e.preventDefault()
-    get('/')
+  const handleFilterChange = (event, filterKey) => {
+    const { value, checked } = event.target
+
+    const newFilterState = { ...filterState }
+    const updatedFilters = [...newFilterState[filterKey]]
+
+    if (checked && !updatedFilters.includes(value)) {
+      updatedFilters.push(value)
+    } else if (!checked) {
+      const index = updatedFilters.indexOf(value)
+      if (index !== -1) {
+        updatedFilters.splice(index, 1)
+      }
+    }
+
+    newFilterState[filterKey] = updatedFilters
+    setFilterState(newFilterState)
+
+    // Immediately trigger the search when new filters are selected
+    Inertia.get('/', {
+      search: query,
+      selected_keywords: newFilterState.selectedKeywords,
+      selected_subjects: newFilterState.selectedSubjects,
+      selected_types: newFilterState.selectedTypes,
+      selected_levels: newFilterState.selectedLevels,
+    }, {
+      preserveState: true,
+      preserveScroll: true
+    })
+  }
+
+  // Removes a specific filter item and triggers a search
+  // @param {string} item - The filter value to remove
+  // @param {string} filterType - The type of filter ('Subjects', 'Types', or 'Levels')
+  const removeFilterAndSearch = (item, filterType) => {
+    // Create updated filter arrays
+    let updatedKeywords = [...filterState.selectedKeywords]
+    let updatedSubjects = [...filterState.selectedSubjects]
+    let updatedTypes = [...filterState.selectedTypes]
+    let updatedLevels = [...filterState.selectedLevels]
+
+    // Remove the item from the appropriate array
+    if (filterType === 'Subjects') {
+      updatedSubjects = updatedSubjects.filter(subject => subject !== item)
+    } else if (filterType === 'Keywords') {
+      updatedKeywords = updatedKeywords.filter(keyword => keyword !== item)
+    } else if (filterType === 'Types') {
+      updatedTypes = updatedTypes.filter(type => type !== item)
+    } else if (filterType === 'Levels') {
+      updatedLevels = updatedLevels.filter(level => level !== item)
+    }
+
+    setFilterState({
+      selectedKeywords: updatedKeywords,
+      selectedSubjects: updatedSubjects,
+      selectedTypes: updatedTypes,
+      selectedLevels: updatedLevels
+    })
+
+    // Perform search with the updated values
+    Inertia.get('/', {
+      search: query,
+      selected_keywords: updatedKeywords,
+      selected_subjects: updatedSubjects,
+      selected_types: updatedTypes,
+      selected_levels: updatedLevels,
+    }, {
+      preserveState: true,
+      preserveScroll: true
+    })
+  }
+
+  const handleReset = () => {
+    setQuery('')
+    setFilterState({
+      selectedKeywords: [],
+      selectedTypes: [],
+      selectedSubjects: [],
+      selectedLevels: []
+    })
+
+    Inertia.get('/', {
+      search: '',
+      selected_keywords: [],
+      selected_subjects: [],
+      selected_types: [],
+      selected_levels: [],
+    }, {
+      preserveState: true,
+      preserveScroll: true
+    })
+  }
+
+  const handleBookmarkBatch = () => {
+    const filteredIds = filteredQuestions.map(question => question.id).join(',')
+    Inertia.post('/bookmarks/create_batch', { filtered_ids: filteredIds }, {
+      onSuccess: () => {
+        console.log('Bookmarks added successfully')
+      },
+      onError: () => {
+        console.error('Error adding bookmarks')
+      }
+    })
   }
 
   return (
@@ -50,23 +177,22 @@ const Search = (props) => {
         keywords={keywords}
         types={types}
         levels={levels}
-        submit={submit}
-        handleFilters={handleFilters}
         processing={processing}
-        selectedSubjects={selectedSubjects || []}
-        selectedKeywords={selectedKeywords || []}
-        selectedTypes={selectedTypes || []}
-        selectedLevels={selectedLevels || []}
+        query={query}
+        onQueryChange={handleSearchChange}
+        onSubmit={handleSearchSubmit}
+        onReset={handleReset}
+        onFilterChange={handleFilterChange}
+        filterState={filterState}
         bookmarkedQuestionIds={bookmarkedQuestionIds || []}
       />
       <SearchFilters
-        filteredQuestions={filteredQuestions || []}
-        selectedSubjects={selectedSubjects || []}
-        selectedKeywords={selectedKeywords || []}
-        selectedTypes={selectedTypes || []}
-        selectedLevels={selectedLevels || []}
-        handleFilters={handleFilters}
-        submit={submit}
+        selectedSubjects={filterState.selectedSubjects}
+        selectedKeywords={filterState.selectedKeywords}
+        selectedTypes={filterState.selectedTypes}
+        selectedLevels={filterState.selectedLevels}
+        removeFilterAndSearch={removeFilterAndSearch}
+        onBookmarkBatch={handleBookmarkBatch}
       />
       {filteredQuestions.length ?
         (filteredQuestions.map((question) => {

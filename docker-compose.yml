@@ -28,7 +28,7 @@ services:
     <<: *app
     entrypoint: /bin/bash ./ops/entrypoint-vite.sh
     environment:
-      DEBUG: "*vite*"
+      DEBUG: '*vite*'
       RAILS_ENV: development
       VITE_RUBY_HOST: 0.0.0.0
     ports:

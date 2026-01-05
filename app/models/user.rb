@@ -10,4 +10,8 @@ class User < ApplicationRecord
 
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_questions, through: :bookmarks, source: :question
+
+  def admin?
+    admin
+  end
 end

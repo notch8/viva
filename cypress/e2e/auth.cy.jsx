@@ -1,9 +1,7 @@
 describe('Authentication Workflow', () => {
-  // Generate a unique email for testing to avoid conflicts
-  const uniqueId = Math.floor(Math.random() * 100000)
   const testUser = {
-    email: `test-user-${uniqueId}@example.com`,
-    password: 'Password123!',
+    email: 'admin@example.com',
+    password: 'testing123',
     newPassword: 'NewPassword456!'
   }
 
@@ -11,32 +9,6 @@ describe('Authentication Workflow', () => {
     // Clear cookies and local storage between tests
     cy.clearCookies()
     cy.clearLocalStorage()
-  })
-
-  it('should allow a user to sign up and log out', () => {
-    cy.visit('/register')
-
-    // Verify signup page elements
-    cy.contains('h2', 'Sign up').should('be.visible')
-    cy.get('form').should('exist')
-
-    // Fill out the signup form
-    cy.get('input[name="user[email]"]').type(testUser.email)
-    cy.get('input[name="user[password]"]').type(testUser.password)
-    cy.get('input[name="user[password_confirmation]"]').type(testUser.password)
-
-    // Submit the form
-    cy.get('input[type="submit"]').click()
-
-    // Verify successful signup (redirected to search page)
-    cy.url().should('include', '/')
-
-    // Find and click the logout button/link
-    cy.get('button[aria-controls="sidebar"]:not(.ms-auto)').click()
-    cy.get('a[href="/logout"]').click()
-
-    // Verify h2 element with text "Log in"
-    cy.contains('h2', 'Log in').should('be.visible')
   })
 
   it('should allow a user to log in and log out', () => {
@@ -62,23 +34,6 @@ describe('Authentication Workflow', () => {
 
     // Verify h2 element with text "Log in"
     cy.contains('h2', 'Log in').should('be.visible')
-  })
-
-  it('should allow a user to request a password reset', () => {
-    cy.visit('/password/new')
-
-    // Verify forgot password page elements
-    cy.contains('Forgot your password').should('be.visible')
-    cy.get('form').should('exist')
-
-    // Fill out the form
-    cy.get('input[name="user[email]"]').type(testUser.email)
-
-    // Submit the form
-    cy.get('input[type="submit"]').click()
-
-    // Navigate to the root page
-    cy.url().should('include', '/')
   })
 
   it('should allow a user to update their password', () => {

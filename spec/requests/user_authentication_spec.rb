@@ -57,4 +57,10 @@ RSpec.describe 'User Authentication', type: :request do
       end
     end
   end
+
+  describe 'GET /register' do
+    it 'is not accessible (registration disabled)' do
+      expect { get '/register' }.to raise_error(ActionController::RoutingError)
+    end
+  end
 end

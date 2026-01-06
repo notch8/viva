@@ -11,7 +11,11 @@ class User < ApplicationRecord
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_questions, through: :bookmarks, source: :question
 
-  def admin?
-    admin
+  def active_for_authentication?
+    super && active?
+  end
+
+  def inactive_message
+    'Your account is not active. Please contact support.'
   end
 end

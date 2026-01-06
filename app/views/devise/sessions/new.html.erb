@@ -1,4 +1,14 @@
 <main class='container d-flex justify-content-center align-items-center vh-100'>
+  <% if flash.any? %>
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+      <% flash.each do |type, message| %>
+        <div class="alert alert-<%= type == 'notice' ? 'info' : 'danger' %> alert-dismissible fade show" role="alert">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
   <div class='row justify-content-center'>
     <figure class='logo mt-5 mt-md-0'>
       <%= image_tag('logo.png',

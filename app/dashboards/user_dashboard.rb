@@ -12,7 +12,8 @@ class UserDashboard < Administrate::BaseDashboard
     email: Field::String,
     invitation_sent_at: Field::DateTime,
     invitation_accepted_at: Field::DateTime,
-    admin: Field::Boolean
+    admin: Field::Boolean,
+    active: Field::Boolean
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -25,6 +26,7 @@ class UserDashboard < Administrate::BaseDashboard
     invitation_sent_at
     invitation_accepted_at
     admin
+    active
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -34,6 +36,7 @@ class UserDashboard < Administrate::BaseDashboard
     invitation_sent_at
     invitation_accepted_at
     admin
+    active
   ].freeze
 
   # FORM_ATTRIBUTES
@@ -42,6 +45,7 @@ class UserDashboard < Administrate::BaseDashboard
   FORM_ATTRIBUTES = %i[
     email
     admin
+    active
   ].freeze
 
   # COLLECTION_FILTERS

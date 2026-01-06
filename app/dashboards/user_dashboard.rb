@@ -11,7 +11,9 @@ class UserDashboard < Administrate::BaseDashboard
   ATTRIBUTE_TYPES = {
     email: Field::String,
     invitation_sent_at: Field::DateTime,
-    invitation_accepted_at: Field::DateTime
+    invitation_accepted_at: Field::DateTime,
+    admin: Field::Boolean,
+    active: Field::Boolean
   }.freeze
 
   # COLLECTION_ATTRIBUTES
@@ -23,6 +25,8 @@ class UserDashboard < Administrate::BaseDashboard
     email
     invitation_sent_at
     invitation_accepted_at
+    admin
+    active
   ].freeze
 
   # SHOW_PAGE_ATTRIBUTES
@@ -31,6 +35,8 @@ class UserDashboard < Administrate::BaseDashboard
     email
     invitation_sent_at
     invitation_accepted_at
+    admin
+    active
   ].freeze
 
   # FORM_ATTRIBUTES
@@ -38,6 +44,8 @@ class UserDashboard < Administrate::BaseDashboard
   # on the model's form (`new` and `edit`) pages.
   FORM_ATTRIBUTES = %i[
     email
+    admin
+    active
   ].freeze
 
   # COLLECTION_FILTERS

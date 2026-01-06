@@ -69,6 +69,13 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  # Use letter_opener in production if ENABLE_LETTER_OPENER is set
+  # temp solution to enable letter_opener for friends which has RAILS_ENV set to production
+  if ENV['ENABLE_LETTER_OPENER'].present?
+    config.action_mailer.delivery_method = :letter_opener
+    config.action_mailer.perform_deliveries = true
+  end
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

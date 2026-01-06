@@ -2,7 +2,7 @@
 
 Rails.application.routes.draw do
   root to: 'search#index'
-  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
+  mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development? || ENV['ENABLE_LETTER_OPENER'].present?
 
   namespace :admin do
     resources :users do

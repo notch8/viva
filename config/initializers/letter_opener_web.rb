@@ -4,15 +4,18 @@
 # This allows authenticated admin clients to demo email functionality at /letter_opener
 # NOTE: When deploying to real production, remove ENABLE_LETTER_OPENER env var
 # to disable letter_opener_web entirely
-if defined?(LetterOpenerWeb) && defined?(LetterOpenerWeb::LettersController)
-  LetterOpenerWeb::LettersController.class_eval do
-    before_action :authenticate_user!
-    before_action :authenticate_admin!
+Rails.application.config.to_prepare do
+  if defined?(LetterOpenerWeb::LettersController)
+    LetterOpenerWeb::LettersController.class_eval do
+      include Devise::Controllers::Helpers
+      before_action :authenticate_user!
+      before_action :authenticate_admin!
 
-    private
+      private
 
-    def authenticate_admin!
-      redirect_to root_path, alert: 'Access denied. Admin privileges required.' unless current_user&.admin?
+      def authenticate_admin!
+        redirect_to root_path, alert: 'Access denied. Admin privileges required.' unless current_user&.admin?
+      end
     end
   end
 end

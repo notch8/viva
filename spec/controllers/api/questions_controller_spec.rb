@@ -2,6 +2,11 @@
 require 'rails_helper'
 
 RSpec.describe Api::QuestionsController, type: :controller do
+  before do
+    user = create(:user)
+    sign_in user
+  end
+
   describe 'POST #create' do
     let(:essay_params) do
       {

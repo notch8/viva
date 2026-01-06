@@ -22,7 +22,7 @@ services:
     ports:
       - 5432
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql
 
   vite:
     <<: *app
@@ -66,7 +66,6 @@ services:
     depends_on:
       initialize_app:
         condition: service_completed_successfully
-
 
 volumes:
   postgres:

@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
+gem 'administrate'
 gem 'bixby' # for community rubocop rules
 gem 'bootsnap', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'bootstrap', '~> 5.3.0.alpha3'
@@ -10,6 +11,7 @@ gem 'capybara', group: %i[test] # Use system testing [https://guides.rubyonrails
 gem 'database_cleaner-active_record', group: %i[development test]
 gem 'debug', platforms: %i[mri mingw x64_mingw], group: %i[development test]
 gem 'devise', '~> 4.9'
+gem 'devise_invitable'
 gem 'factory_bot', '~> 6.2'
 gem 'factory_bot_rails', group: %i[development test]
 gem 'faker', '~> 2.23'
@@ -17,6 +19,7 @@ gem 'inertia_rails', '~> 3.0'
 gem 'jbuilder' # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jquery-rails'
 gem 'jsbundling-rails' # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
+gem 'letter_opener_web', '~> 3.0', group: %i[development]
 gem 'pg', '~> 1.1' # Use postgresql as the database for Active Record
 gem 'pg_search'
 gem 'pry-byebug', group: %i[development test]

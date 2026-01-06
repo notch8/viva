@@ -5,8 +5,9 @@ Rails.application.routes.draw do
   mount LetterOpenerWeb::Engine, at: '/letter_opener' if Rails.env.development?
 
   namespace :admin do
-    resources :users
-
+    resources :users do
+      post :resend_invitation, on: :member
+    end
     root to: "users#index"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

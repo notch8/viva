@@ -6,7 +6,8 @@ import {
 } from '@phosphor-icons/react'
 
 const Sidebar = ({ open, setOpen }) => {
-  const { url } = usePage()
+  const { url, props } = usePage()
+  const { currentUser } = props
 
   return (
     <Nav className="d-flex flex-column text-nowrap" activeKey="/">
@@ -67,17 +68,19 @@ const Sidebar = ({ open, setOpen }) => {
           Settings
         </Link>
       </Nav.Item>
-      <Nav.Item className="mt-1 bg-light-2">
-        <Nav.Link
-          href="/admin"
-          className={`${
-            url === "/admin" ? "active" : ""
-          } nav-link d-flex align-items-center link-dark`}
-        >
-          <Users weight="bold" alt="Admin" size={18} className="me-2" />
-          Admin
-        </Nav.Link>
-      </Nav.Item>
+      {currentUser.admin &&
+        <Nav.Item className="mt-1 bg-light-2">
+          <Nav.Link
+            href="/admin"
+            className={`${
+              url === "/admin" ? "active" : ""
+            } nav-link d-flex align-items-center link-dark`}
+          >
+            <Users weight="bold" alt="Admin" size={18} className="me-2" />
+            Admin
+          </Nav.Link>
+        </Nav.Item>
+      }
       <Nav.Item className="mt-1 bg-light-2">
         <Nav.Link
           href="/logout"

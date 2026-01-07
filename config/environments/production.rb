@@ -69,6 +69,11 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
+  # Set default URL options for email generation (required for Devise invitation emails)
+  host = ENV['RAILS_HOST'] || 'viva-friends.notch8.cloud'
+  protocol = ENV['RAILS_PROTOCOL'] || 'https'
+  config.action_mailer.default_url_options = { host: host, protocol: protocol }
+
   # Use letter_opener in production if ENABLE_LETTER_OPENER is set
   # temp solution to enable letter_opener for friends which has RAILS_ENV set to production
   if ENV['ENABLE_LETTER_OPENER'].present?

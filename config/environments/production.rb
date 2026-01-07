@@ -69,10 +69,24 @@ Rails.application.configure do
 
   config.action_mailer.perform_caching = false
 
-  # Use letter_opener in production if ENABLE_LETTER_OPENER is set
-  # temp solution to enable letter_opener for friends which has RAILS_ENV set to production
+  # Needed for Devise (and other mailers) to generate absolute URLs in emails.
+  # Example env overrides:
+  # - APP_HOST=viva-friends.notch8.cloud
+  # - APP_PROTOCOL=https
+  # - APP_PORT=443 (usually omit)
+  app_host = ENV.fetch('APP_HOST', 'viva-friends.notch8.cloud')
+  app_protocol = ENV.fetch('APP_PROTOCOL', 'https')
+  app_port = ENV['APP_PORT']
+  default_url_options = { host: app_host, protocol: app_protocol }
+  default_url_options[:port] = app_port if app_port.present?
+  config.action_mailer.default_url_options = default_url_options
+  config.action_controller.default_url_options = default_url_options
+
+  # Use letter_opener_web in production if ENABLE_LETTER_OPENER is set.
+  # This enables an admin-only email viewer at /letter_opener without requiring Launchy (a local browser),
+  # which is not available in typical production/container environments.
   if ENV['ENABLE_LETTER_OPENER'].present?
-    config.action_mailer.delivery_method = :letter_opener
+    config.action_mailer.delivery_method = :letter_opener_web
     config.action_mailer.perform_deliveries = true
   end
 

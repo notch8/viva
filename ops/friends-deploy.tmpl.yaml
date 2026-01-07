@@ -52,6 +52,9 @@ env:
     DATABASE_PASSWORD: $DATABASE_PASSWORD
     DATABASE_USER: postgres
     RAILS_ENV: production
+    # URL configuration for email links (used by Devise and other mailers)
+    APP_HOST: viva-friends.notch8.cloud
+    APP_PROTOCOL: https
     # Enable letter_opener_web for client demos (admin-only access at /letter_opener)
     # To disable for real production: remove this line or set to empty string
     ENABLE_LETTER_OPENER: "true"

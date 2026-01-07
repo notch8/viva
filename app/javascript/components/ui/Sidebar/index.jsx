@@ -5,10 +5,9 @@ import {
   MagnifyingGlass, Gear, SignOut, Upload, CaretLeft, Users
 } from '@phosphor-icons/react'
 
-const Sidebar = ({ open, setOpen }) => {
-  const { url, props } = usePage()
-  const { currentUser } = props
-
+export const Sidebar = ({ open, setOpen, currentUser, url }) => {
+  // the component receives all its data from props making it a pure component
+  // this is much easier to test and ensure correct behavior
   return (
     <Nav className="d-flex flex-column text-nowrap" activeKey="/">
       <Nav.Item>
@@ -96,4 +95,10 @@ const Sidebar = ({ open, setOpen }) => {
   )
 }
 
-export default Sidebar
+// this is a wrapper component that uses Inertia to get the current user and url
+const SidebarWithInertia = (props) => {
+  const { props: pageProps, url } = usePage()
+  return <Sidebar {...props} currentUser={pageProps.currentUser} url={url} />
+}
+
+export default SidebarWithInertia

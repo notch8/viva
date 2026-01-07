@@ -63,4 +63,11 @@ RSpec.describe 'User Authentication', type: :request do
       expect { get '/register' }.to raise_error(ActionController::RoutingError)
     end
   end
+
+  describe 'GET /password/new' do
+    it 'should be accessible (password reset enabled)' do
+      get new_user_password_path
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end

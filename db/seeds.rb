@@ -14,7 +14,11 @@ abort "Don't run this in production" if Rails.env.production?
 if ENV['DEFAULT_USER_EMAIL'] && ENV['DEFAULT_USER_PASSWORD']
   u = User.find_or_create_by(email: ENV['DEFAULT_USER_EMAIL']) do |u|
     u.password = ENV['DEFAULT_USER_PASSWORD']
+    u.admin = true
+    u.active = true
   end
+  # Update existing user if it already exists
+  u.update(admin: true, active: true) if u.persisted?
 end
 
 

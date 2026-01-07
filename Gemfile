@@ -19,7 +19,7 @@ gem 'inertia_rails', '~> 3.0'
 gem 'jbuilder' # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jquery-rails'
 gem 'jsbundling-rails' # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
-gem 'letter_opener_web', '~> 3.0', group: %i[development]
+gem 'letter_opener_web', '~> 3.0'
 gem 'pg', '~> 1.1' # Use postgresql as the database for Active Record
 gem 'pg_search'
 gem 'pry-byebug', group: %i[development test]

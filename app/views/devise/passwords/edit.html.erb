@@ -1,0 +1,61 @@
+<%# OVERRIDE Devise Passwords Edit template to apply Viva inline styles %>
+
+<main class="container d-flex justify-content-center align-items-center vh-100">
+  <% if flash.any? %>
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+      <% flash.each do |type, message| %>
+        <div class="alert alert-<%= type == 'notice' ? 'info' : 'danger' %> alert-dismissible fade show" role="alert">
+          <%= message %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row justify-content-center w-100">
+    <figure class="logo mt-5 mt-md-0">
+      <%= image_tag('logo.png',
+        alt: 'Viva Logo',
+        class: 'img w-75 mx-auto d-block',
+        data: { title: 'Viva Logo' })
+      %>
+    </figure>
+
+    <div class="col-12 col-md-6 col-lg-4 p-5 bg-light rounded d-flex flex-column justify-content-center">
+      <h2 class="text-primary mb-4">Change your password</h2>
+
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'w-100' }) do |f| %>
+        <%= f.hidden_field :reset_password_token %>
+
+        <% if resource.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <ul class="mb-0">
+              <% resource.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="field mt-3">
+          <%= f.label :password, "New password", class: 'form-label' %>
+          <% if @minimum_password_length %>
+            <small class="form-text text-muted d-block">(<%= @minimum_password_length %> characters minimum)</small>
+          <% end %>
+          <%= f.password_field :password, autofocus: true, autocomplete: "new-password", placeholder: 'New password', class: 'bg-secondary-subtle rounded border-0 w-100 p-2' %>
+        </div>
+
+        <div class="field mt-3">
+          <%= f.label :password_confirmation, "Confirm new password", class: 'form-label' %>
+          <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: 'Confirm new password', class: 'bg-secondary-subtle rounded border-0 w-100 p-2' %>
+        </div>
+
+        <div class="actions mt-4 mb-4 d-flex justify-content-center">
+          <%= f.submit "Change my password", class: 'btn btn-primary w-100' %>
+        </div>
+      <% end %>
+
+      <%= render "devise/shared/links" %>
+    </div>
+  </div>
+</main>

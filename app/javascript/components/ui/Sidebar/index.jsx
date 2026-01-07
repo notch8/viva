@@ -2,92 +2,97 @@ import React from 'react'
 import { Nav, Button } from 'react-bootstrap'
 import { Link, usePage } from '@inertiajs/inertia-react'
 import {
-  MagnifyingGlass, Gear, SignOut, Upload, CaretLeft, Users
+  MagnifyingGlass,
+  Gear,
+  SignOut,
+  Upload,
+  CaretLeft,
+  Users
 } from '@phosphor-icons/react'
 
 export const Sidebar = ({ open, setOpen, currentUser, url }) => {
   // the component receives all its data from props making it a pure component
   // this is much easier to test and ensure correct behavior
   return (
-    <Nav className="d-flex flex-column text-nowrap" activeKey="/">
+    <Nav className='d-flex flex-column text-nowrap' activeKey='/'>
       <Nav.Item>
-        <div className="bg-light-1">
+        <div className='bg-light-1'>
           <Button
             onClick={() => setOpen(!open)}
-            aria-controls="sidebar"
+            aria-controls='sidebar'
             aria-expanded={open}
-            className="ms-auto my-2 me-2 rounded-circle btn btn-secondary d-flex px-1 py-1"
-            variant="secondary"
+            className='ms-auto my-2 me-2 rounded-circle btn btn-secondary d-flex px-1 py-1'
+            variant='secondary'
           >
-            <CaretLeft weight="bold" alt="Open Sidebar" />
+            <CaretLeft weight='bold' alt='Open Sidebar' />
           </Button>
         </div>
       </Nav.Item>
-      <Nav.Item className="mt-1 bg-light-2">
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link
-          href="/"
+          href='/'
           className={`${
-            url === "/" ? "active" : ""
+            url === '/' ? 'active' : ''
           } nav-link d-flex align-items-center link-dark`}
         >
           <MagnifyingGlass
-            weight="bold"
-            alt="Search All Questions"
+            weight='bold'
+            alt='Search All Questions'
             size={18}
-            className="me-2"
+            className='me-2'
           />
           Search All Questions
         </Link>
       </Nav.Item>
-      <Nav.Item className="mt-1 bg-light-2">
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link
-          href="/uploads"
+          href='/uploads'
           className={`${
-            url === "/uploads" ? "active" : ""
+            url === '/uploads' ? 'active' : ''
           } nav-link d-flex align-items-center link-dark`}
         >
           <Upload
-            weight="bold"
-            alt="Upload Questions"
+            weight='bold'
+            alt='Upload Questions'
             size={18}
-            className="me-2"
+            className='me-2'
           />
           Upload Questions
         </Link>
       </Nav.Item>
-      <Nav.Item className="mt-1 bg-light-2">
+      <Nav.Item className='mt-1 bg-light-2'>
         <Link
-          href="/settings"
+          href='/settings'
           className={`${
-            url === "/settings" ? "active" : ""
+            url === '/settings' ? 'active' : ''
           } nav-link d-flex align-items-center link-dark`}
           preserveState
         >
-          <Gear weight="bold" alt="Settings" size={18} className="me-2" />
+          <Gear weight='bold' alt='Settings' size={18} className='me-2' />
           Settings
         </Link>
       </Nav.Item>
-      {currentUser.admin &&
-        <Nav.Item className="mt-1 bg-light-2">
+      {currentUser.admin && (
+        <Nav.Item className='mt-1 bg-light-2'>
           <Nav.Link
-            href="/admin"
+            href='/admin'
             className={`${
-              url === "/admin" ? "active" : ""
+              url === '/admin' ? 'active' : ''
             } nav-link d-flex align-items-center link-dark`}
           >
-            <Users weight="bold" alt="Admin" size={18} className="me-2" />
+            <Users weight='bold' alt='Admin' size={18} className='me-2' />
             Admin
           </Nav.Link>
         </Nav.Item>
-      }
-      <Nav.Item className="mt-1 bg-light-2">
+      )}
+      <Nav.Item className='mt-1 bg-light-2'>
         <Nav.Link
-          href="/logout"
+          href='/logout'
           className={`${
-            url === "/logout" ? "active" : ""
+            url === '/logout' ? 'active' : ''
           } nav-link d-flex align-items-center link-dark`}
         >
-          <SignOut weight="bold" alt="Sign Out" size={18} className="me-2" />
+          <SignOut weight='bold' alt='Sign Out' size={18} className='me-2' />
           Sign Out
         </Nav.Link>
       </Nav.Item>

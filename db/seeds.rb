@@ -21,6 +21,22 @@ if ENV['DEFAULT_USER_EMAIL'] && ENV['DEFAULT_USER_PASSWORD']
   u.update(admin: true, active: true) if u.persisted?
 end
 
+u = User.find_or_create_by(email: ENV['INSTRUCTOR_USER_EMAIL1']) do |u|
+  u.password = ENV['DEFAULT_USER_PASSWORD']
+  u.active = true
+end
+# Update existing user if it already exists
+u.update(active: true) if u.persisted?
+
+u = User.find_or_create_by(email: ENV['INSTRUCTOR_USER_EMAIL2']) do |u|
+  u.password = ENV['DEFAULT_USER_PASSWORD']
+  u.active = true
+end
+# Update existing user if it already exists
+u.update(active: true) if u.persisted?
+
+user_id1 = User.find_by(email: ENV['INSTRUCTOR_USER_EMAIL1']).id
+user_id2 = User.find_by(email: ENV['INSTRUCTOR_USER_EMAIL2']).id
 
 # This is some very random data to quickly populate a non-production instance.
 Subject.destroy_all
@@ -98,7 +114,7 @@ upload_question_1_data = {
   HTML
 }
 
-upload_question_1 = Question::Upload.new(text: upload_question_1_data["text"], data: upload_question_1_data)
+upload_question_1 = Question::Upload.new(text: upload_question_1_data["text"], data: upload_question_1_data, user_id: user_id1)
 upload_question_1.subjects << subjects.sample(2)
 questions << upload_question_1
 
@@ -151,7 +167,7 @@ upload_question_2_data = {
   HTML
 }
 
-upload_question_2 = Question::Upload.new(text: upload_question_2_data["text"], data: upload_question_2_data)
+upload_question_2 = Question::Upload.new(text: upload_question_2_data["text"], data: upload_question_2_data, user_id: user_id2)
 upload_question_2.subjects << subjects.sample(2)
 questions << upload_question_2
 
@@ -164,7 +180,8 @@ traditional_question_data = [
 
 traditional_question_1 = Question::Traditional.new(
   text: "A nurse is caring for a patient admitted with acute heart failure. The patient has 3+ pitting edema in the lower extremities and crackles in the lung bases. What is the most appropriate initial nursing intervention?",
-  data: traditional_question_data
+  data: traditional_question_data,
+  user_id: user_id1
 )
 traditional_question_1.subjects << subjects.sample(rand(1..3))
 questions << traditional_question_1
@@ -178,7 +195,8 @@ traditional_question_data_2 = [
 
 traditional_question_2 = Question::Traditional.new(
   text: "A postpartum nurse is assessing a patient who delivered vaginally 6 hours ago. The nurse notes the uterine fundus is boggy and 2 cm above the umbilicus, with moderate lochia rubra. The patient's vital signs are BP 100/60, HR 118, RR 20, and temp 37.2°C. What is the most appropriate nursing action?",
-  data: traditional_question_data_2
+  data: traditional_question_data_2,
+  user_id: user_id2
 )
 traditional_question_2.subjects << subjects.sample(rand(1..3))
 questions << traditional_question_2
@@ -192,7 +210,8 @@ traditional_question_data_3 = [
 
 traditional_question_3 = Question::Traditional.new(
   text: "A nurse is administering IV vancomycin to a patient. Twenty minutes into the infusion, the patient develops a diffuse erythematous rash on the face, neck, and upper torso, accompanied by hypotension with BP 90/50 mmHg. What is the priority nursing action?",
-  data: traditional_question_data_3
+  data: traditional_question_data_3,
+  user_id: user_id1
 )
 traditional_question_3.subjects << subjects.sample(rand(1..3))
 questions << traditional_question_3
@@ -206,7 +225,8 @@ traditional_question_4_data = [
 
 traditional_question_4 = Question::Traditional.new(
   text: "Based on the image, which classification best describes this pressure injury?",
-  data: traditional_question_4_data
+  data: traditional_question_4_data,
+  user_id: user_id2
 )
 
 image = traditional_question_4.images.build(alt_text: "Image of a pressure injury showing full-thickness skin loss with visible subcutaneous fat")
@@ -224,7 +244,8 @@ select_all_question_1_data = [
 
 select_all_question_1 = Question::SelectAllThatApply.new(
   text: "A nurse is caring for a patient diagnosed with community-acquired pneumonia. Which nursing interventions are appropriate for this patient? Select all that apply.",
-  data: select_all_question_1_data
+  data: select_all_question_1_data,
+  user_id: user_id1
 )
 select_all_question_1.subjects << subjects.sample(rand(1..3))
 questions << select_all_question_1
@@ -239,7 +260,8 @@ select_all_question_2_data = [
 
 select_all_question_2 = Question::SelectAllThatApply.new(
   text: "A nurse is implementing care for a patient with an indwelling urinary catheter. Which of the following interventions should be included in the care plan? Select all that apply.",
-  data: select_all_question_2_data
+  data: select_all_question_2_data,
+  user_id: user_id2
 )
 select_all_question_2.subjects << subjects.sample(rand(1..3))
 questions << select_all_question_2
@@ -277,7 +299,8 @@ matching_question_data = [
 
 matching_question_1 = Question::Matching.new(
   text: "Match each medication to its appropriate nursing consideration:",
-  data: matching_question_data
+  data: matching_question_data,
+  user_id: user_id1
 )
 matching_question_1.subjects << subjects.sample(rand(1..3))
 questions << matching_question_1
@@ -307,7 +330,8 @@ matching_question_data_2 = [
 
 matching_question_2 = Question::Matching.new(
   text: "Match each vital sign abnormality with its clinical definition:",
-  data: matching_question_data_2
+  data: matching_question_data_2,
+  user_id: user_id2
 )
 matching_question_2.subjects << subjects.sample(rand(1..3))
 questions << matching_question_2
@@ -343,7 +367,8 @@ essay_question_data = {
 
 essay_question_1 = Question::Essay.new(
   text: "Ethical Considerations in End-of-Life Care",
-  data: essay_question_data
+  data: essay_question_data,
+  user_id: user_id1
 )
 essay_question_1.subjects << subjects.sample(rand(1..3))
 questions << essay_question_1
@@ -380,7 +405,8 @@ essay_question_data_2 = {
 
 essay_question_2 = Question::Essay.new(
   text: "Leadership and Change Management in Nursing Practice",
-  data: essay_question_data_2
+  data: essay_question_data_2,
+  user_id: user_id2
 )
 essay_question_2.subjects << subjects.sample(rand(1..3))
 questions << essay_question_2
@@ -395,7 +421,8 @@ select_all_question_3_data = [
 
 select_all_question_3 = Question::SelectAllThatApply.new(
   text: "The image shows a patient with deep vein thrombosis (DVT) of the left leg. Which nursing interventions are appropriate for this patient? Select all that apply.",
-  data: select_all_question_3_data
+  data: select_all_question_3_data,
+  user_id: user_id1
 )
 
 image = select_all_question_3.images.build(alt_text: "Image of left leg showing redness, swelling, and edema characteristic of deep vein thrombosis (DVT)")
@@ -414,7 +441,8 @@ drag_drop_1_data = [
 
 drag_drop_1 = Question::DragAndDrop.new(
   text: "Blood pressure measurement consists of two values: ___1___ pressure, which represents the force during cardiac contraction, and ___2___ pressure, which represents the force when the heart is relaxed. The ___3___ pressure is an overall indicator of tissue perfusion.",
-  data: drag_drop_1_data
+  data: drag_drop_1_data,
+  user_id: user_id1
 )
 drag_drop_1.subjects << subjects.sample(rand(1..3))
 questions << drag_drop_1
@@ -431,7 +459,8 @@ drag_drop_2_data = [
 
 drag_drop_2 = Question::DragAndDrop.new(
   text: "Drag the clinical manifestations that are consistent with increased intracranial pressure (ICP) as shown in the CT scan image.",
-  data: drag_drop_2_data
+  data: drag_drop_2_data,
+  user_id: user_id2
 )
 
 image = drag_drop_2.images.build(alt_text: "CT scan showing increased intracranial pressure with midline shift")
@@ -452,7 +481,8 @@ categorization_question_1_data = [
 
 categorization_question_1 = Question::Categorization.new(
   text: "Categorize each physiological response according to whether it is primarily mediated by the sympathetic or parasympathetic nervous system:",
-  data: categorization_question_1_data
+  data: categorization_question_1_data,
+  user_id: user_id1
 )
 categorization_question_1.subjects << subjects.sample(rand(1..3))
 questions << categorization_question_1
@@ -470,7 +500,8 @@ categorization_question_2_data = [
 
 categorization_question_2 = Question::Categorization.new(
   text: "Categorize each clinical manifestation according to whether it is an early or late sign of shock:",
-  data: categorization_question_2_data
+  data: categorization_question_2_data,
+  user_id: user_id2
 )
 categorization_question_2.subjects << subjects.sample(rand(1..3))
 questions << categorization_question_2
@@ -567,7 +598,8 @@ bow_tie_question_1_data = {
 
 bow_tie_question_1 = Question::BowTie.new(
   text: "For the given patient condition, identify the corresponding assessment findings and appropriate nursing interventions.",
-  data: bow_tie_question_1_data
+  data: bow_tie_question_1_data,
+  user_id: user_id1
 )
 bow_tie_question_1.subjects << subjects.sample(rand(1..3))
 questions << bow_tie_question_1
@@ -664,21 +696,24 @@ bow_tie_question_2_data = {
 
 bow_tie_question_2 = Question::BowTie.new(
   text: "For the given patient condition, identify the correct assessment findings and appropriate nursing interventions.",
-  data: bow_tie_question_2_data
+  data: bow_tie_question_2_data,
+  user_id: user_id2
 )
 bow_tie_question_2.subjects << subjects.sample(rand(1..3))
 questions << bow_tie_question_2
 
 # First Stimulus Case Study - Respiratory Distress Case
 stimulus_case_study_question_1 = Question::StimulusCaseStudy.new(
-  text: "Respiratory Distress in a Geriatric Patient"
+  text: "Respiratory Distress in a Geriatric Patient",
+  user_id: user_id1
 )
 stimulus_case_study_question_1.subjects << subjects.sample(rand(1..3))
 
 # Create a scenario as the first child
 stimulus_case_study_1_scenario = Question::Scenario.new(
   text: "Mr. Henderson, a 78-year-old male, presents to the emergency department with complaints of progressive shortness of breath over the past 3 days. He reports a productive cough with yellow-green sputum and a fever of 101.2°F (38.4°C) at home this morning. His medical history includes COPD, hypertension, and type 2 diabetes. He uses supplemental oxygen at home (2L/min via nasal cannula). On assessment, vital signs are: BP 148/92 mmHg, HR 110 bpm, RR 28/min, SpO2 88% on room air, and temperature 38.6°C. Lung auscultation reveals diminished breath sounds in the right lower lobe with crackles and wheezing.",
-  parent_question: stimulus_case_study_question_1
+  parent_question: stimulus_case_study_question_1,
+  user_id: user_id1
 )
 stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 0, child_question: stimulus_case_study_1_scenario)
 
@@ -691,7 +726,8 @@ stimulus_case_study_traditional_1 = Question::Traditional.new(
     { "answer" => "Acute exacerbation of COPD", "correct" => false },
     { "answer" => "Congestive heart failure", "correct" => false }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id1
 )
 stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 1, child_question: stimulus_case_study_traditional_1)
 
@@ -705,7 +741,8 @@ stimulus_case_study_select_all_1 = Question::SelectAllThatApply.new(
     { "answer" => "Pneumothorax", "correct" => false },
     { "answer" => "Normal findings", "correct" => false }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id1
 )
 
 image = stimulus_case_study_select_all_1.images.build(alt_text: "Chest X-ray showing right lower lobe infiltrate and pleural effusion")
@@ -716,7 +753,8 @@ stimulus_case_study_question_1.as_parent_question_aggregations.build(presentatio
 # Add another scenario
 stimulus_case_study_1_scenario_2 = Question::Scenario.new(
   text: "After initial assessment, Mr. Henderson is diagnosed with community-acquired pneumonia with acute hypoxemic respiratory failure. The physician has ordered oxygen therapy, IV antibiotics, and chest physiotherapy.",
-  parent_question: stimulus_case_study_question_1
+  parent_question: stimulus_case_study_question_1,
+  user_id: user_id1
 )
 stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 3, child_question: stimulus_case_study_1_scenario_2)
 
@@ -732,7 +770,8 @@ stimulus_case_study_drag_drop_1 = Question::DragAndDrop.new(
     { "answer" => "Restrict fluid intake to prevent pulmonary edema", "correct" => false },
     { "answer" => "Administer bronchodilators as needed", "correct" => false }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id1
 )
 stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 4, child_question: stimulus_case_study_drag_drop_1)
 
@@ -757,7 +796,8 @@ stimulus_case_study_matching = Question::Matching.new(
       "correct" => ["Monitor for signs of bleeding"]
     }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id1
 )
 stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 5, child_question: stimulus_case_study_matching)
 
@@ -765,14 +805,16 @@ questions << stimulus_case_study_question_1
 
 # Second Stimulus Case Study - Neurological Assessment Case
 stimulus_case_study_2 = Question::StimulusCaseStudy.new(
-  text: "Neurological Assessment Following Trauma"
+  text: "Neurological Assessment Following Trauma",
+  user_id: user_id2
 )
 stimulus_case_study_2.subjects << subjects.sample(rand(1..3))
 
 # Create a scenario as the first child
 stimulus_case_study_2_scenario = Question::Scenario.new(
   text: "Emily Chen, a 24-year-old female, is brought to the emergency department by ambulance following a motor vehicle collision. She was the restrained driver and airbags deployed. On arrival, she is conscious but confused about the events. Initial assessment reveals a large contusion on her forehead, unequal pupils (right 5mm, left 3mm), and weakness in her left arm and leg. Vital signs: BP 160/95 mmHg, HR 100 bpm, RR 22/min, SpO2 97% on room air, GCS 13 (E3, V4, M6).",
-  parent_question: stimulus_case_study_2
+  parent_question: stimulus_case_study_2,
+  user_id: user_id2
 )
 stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 0, child_question: stimulus_case_study_2_scenario)
 
@@ -864,14 +906,16 @@ stimulus_case_study_2_bow_tie = Question::BowTie.new(
       ]
     }
   },
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id2
 )
 stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 1, child_question: stimulus_case_study_2_bow_tie)
 
 # Add another scenario
 stimulus_scenario_2 = Question::Scenario.new(
   text: "A CT scan is performed, revealing a small subdural hematoma with minimal midline shift. Emily is admitted to the ICU for close monitoring. Six hours after admission, the nurse notes that Emily's level of consciousness has decreased, with a GCS now at 10 (E2, V3, M5). Her right pupil is now 6mm and minimally reactive to light.",
-  parent_question: stimulus_case_study_2
+  parent_question: stimulus_case_study_2,
+  user_id: user_id2
 )
 stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 2, child_question: stimulus_scenario_2)
 
@@ -884,7 +928,8 @@ stimulus_case_study_2_traditional = Question::Traditional.new(
     { "answer" => "Seizure activity", "correct" => false },
     { "answer" => "Medication side effect", "correct" => false }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id2
 )
 
 image = stimulus_case_study_2_traditional.images.build(alt_text: "CT scan showing subdural hematoma with increasing midline shift")
@@ -905,7 +950,8 @@ stimulus_case_study_2_categorization = Question::Categorization.new(
       "correct" => ["Fever", "Tachycardia", "Hypotension", "Hypoactive bowel sounds"]
     }
   ],
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id2
 )
 stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 4, child_question: stimulus_case_study_2_categorization)
 
@@ -933,7 +979,8 @@ stimulus_case_study_2_essay = Question::Essay.new(
       </div>
     HTML
   },
-  child_of_aggregation: true
+  child_of_aggregation: true,
+  user_id: user_id2
 )
 stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 5, child_question: stimulus_case_study_2_essay)
 

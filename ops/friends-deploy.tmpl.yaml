@@ -55,6 +55,7 @@ env:
     # Enable letter_opener_web for client demos (admin-only access at /letter_opener)
     # To disable for real production: remove this line or set to empty string
     ENABLE_LETTER_OPENER: "true"
+    LAUNCHY_APPLICATION: "none"
     RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_TO_STDOUT: true
     SECRET_KEY_BASE: $SECRET_KEY_BASE

@@ -94,7 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_07_222008) do
     t.text "data"
     t.string "level"
     t.tsvector "searchable"
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.index ["searchable"], name: "index_questions_on_searchable", using: :gin
     t.index ["type"], name: "index_questions_on_type"
     t.index ["user_id"], name: "index_questions_on_user_id"

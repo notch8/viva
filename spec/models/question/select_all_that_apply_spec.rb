@@ -17,7 +17,8 @@ RSpec.describe Question::SelectAllThatApply do
   end
 
   describe '.build_row' do
-    subject { described_class.build_row(row:, questions: {}) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row:, questions: {}, user_id: user.id) }
     [
       [{ "CORRECT_ANSWERS" => "2,4,6", "ANSWER_1" => "A1", "ANSWER_3" => "A3" },
        /CORRECT_ANSWERS column indicates that ANSWER_2, ANSWER_4, ANSWER_6/],

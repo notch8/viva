@@ -11,7 +11,8 @@ RSpec.describe Question::Matching do
   its(:choice_cardinality_is_multiple?) { is_expected.to be_falsey }
 
   context '.build_data' do
-    subject { described_class.build_row(row:, questions: {}) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row:, questions: {}, user_id: user.id) }
     let(:row) do
       CsvRow.new("TYPE" => described_class.type_name,
                  "TEXT" => "#{described_class.type_name} the proper pairings:",

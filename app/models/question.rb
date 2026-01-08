@@ -207,12 +207,13 @@ class Question < ApplicationRecord
              :to_json, # as :as_json
              to: :question
     attr_reader :text, :level, :subject_names, :keyword_names, :data
-    attr_reader :row, :question_type, :questions
+    attr_reader :row, :question_type, :questions, :user_id
 
-    def initialize(row:, question_type:, questions:)
+    def initialize(row:, question_type:, questions:, user_id:)
       @row = row
       @question_type = question_type
       @questions = questions
+      @user_id = user_id
 
       @text = row['TEXT']
       @level = row['LEVEL']
@@ -279,7 +280,7 @@ class Question < ApplicationRecord
       return @question if defined?(@question)
 
       parent_question = questions[row['PART_OF']]&.question
-      attributes = { text:, data:, subject_names:, keyword_names:, level: }
+      attributes = { text:, data:, subject_names:, keyword_names:, level:, user_id: }
       if parent_question&.has_parts?
         attributes[:parent_question] = parent_question
         attributes[:child_of_aggregation] = true
@@ -292,11 +293,11 @@ class Question < ApplicationRecord
 
   ##
 
-  def self.build_row(row:, questions:)
+  def self.build_row(row:, questions:, user_id:)
     # In relying on inner classes, we need to specifically target the current class (a sub-class of
     # Question).  Oddly `self::ImportCsvRow` does not work.  We can use
     # `self.const_get(:ImportCsvRow)` but constantize is Rails idiomatic
-    "#{name}::ImportCsvRow".constantize.new(row:, questions:, question_type: self)
+    "#{name}::ImportCsvRow".constantize.new(row:, questions:, question_type: self, user_id:)
   end
 
   ##
@@ -306,12 +307,13 @@ class Question < ApplicationRecord
   # @param questions [Hash<#to_s,Question>] a hash of questions already processed from the
   #        originating CSV.  Useful for exposing a means of connecting relationships for a
   #        {Question::StimulusCaseStudy}
+  # @param user_id [Integer] the ID of the user creating these questions
   # @return [Question] a subclass of {Question} derived from the row's TYPE property.
   # @return [Question::InvalidQuestion] when we have a row that doesn't have adequate information to
   #         build the proper {Question} subclass.
   # @return [#valid?, #save!, #errors] These three methods are the expected interface for what will
   #         be returned.
-  def self.build_from_csv_row(row:, questions:)
+  def self.build_from_csv_row(row:, questions:, user_id:)
     return Question::NoType.new(row) unless row['TYPE']
 
     klass = Question.type_name_to_class(row['TYPE'], fallback: nil)
@@ -322,7 +324,7 @@ class Question < ApplicationRecord
 
     return Question::InvalidSubject.new(row) if extract_subject_names_from(row)&.any? { |subject| Subject.names.exclude?(subject.strip) }
 
-    klass.build_row(row:, questions:)
+    klass.build_row(row:, questions:, user_id:)
   end
 
   ##

@@ -8,7 +8,8 @@ RSpec.describe Question::BowTie do
   its(:type_name) { is_expected.to eq("Bow Tie") }
 
   describe '.build_row' do
-    subject { described_class.build_row(row: data, questions: {}) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row: data, questions: {}, user_id: user.id) }
 
     let(:base_line_data) do
       {

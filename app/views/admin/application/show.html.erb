@@ -1,5 +1,7 @@
 <%#
 # OVERRIDE Administrate generated view to add a button to resend an invitation
+and to update the Admin column header to 'Role'
+and to update the Admin column value to 'Admin' or 'User' rather than 'true' or 'false'
 # rails generate administrate:views:show
 
 # Show
@@ -71,14 +73,18 @@ as well as a link to its edit page.
 
           <% attributes.each do |attribute| %>
             <dt class="attribute-label" id="<%= attribute.name %>">
-            <%= t(
-              "helpers.label.#{resource_name}.#{attribute.name}",
-              default: page.resource.class.human_attribute_name(attribute.name),
-            ) %>
+            <%# OVERRIDE begin %>
+            <%= attribute.name == 'admin' && page.resource_name == 'user' ? 'Role' : t(
+                "helpers.label.#{resource_name}.#{attribute.name}",
+                default: page.resource.class.human_attribute_name(attribute.name),
+              ) %>
+            <%# OVERRIDE end %>
             </dt>
 
+            <%# OVERRIDE begin %>
             <dd class="attribute-data attribute-data--<%=attribute.html_class%>"
-                ><%= render_field attribute, page: page %></dd>
+                ><%= attribute.name == 'admin' && page.resource_name == 'user' ? humanize_user_role(page.resource) : render_field(attribute, page: page) %></dd>
+            <%# OVERRIDE end %>
           <% end %>
         </fieldset>
       <% end %>

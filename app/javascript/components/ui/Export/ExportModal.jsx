@@ -1,5 +1,7 @@
 import React from 'react'
-import { Modal, Button, Tabs, Tab } from 'react-bootstrap'
+import {
+  Modal, Button, Tabs, Tab
+} from 'react-bootstrap'
 import './Export.css'
 import { usePage } from '@inertiajs/inertia-react'
 import ExportButton from './ExportButton'

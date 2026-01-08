@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
+import { usePage } from '@inertiajs/inertia-react'
 
 const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
+  const { props } = usePage()
+  const { currentUser } = props
+  console.log(currentUser)
   const [isBookmarked, setIsBookmarked] = useState(bookmarkedQuestionIds.includes(question.id))
 
   useEffect(() => {
@@ -30,12 +34,31 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
       })
     }
   }
+  console.log(currentUser.id, question)
+  const handleDelete = () => {
+    if (confirm('Are you sure you want to delete this question?')) {
+      Inertia.delete(`/api/questions/${question.id}`, {
+        onSuccess: () => {
+          alert('Question deleted successfully')
+          // Optionally, redirect or update the UI here
+        },
+        onError: () => {
+          console.error('Error deleting question')
+        }
+      })
+  }}
 
   return (
     <div className='bg-light-2 p-2 rounded'>
       <button className='btn btn-primary mt-1 mb-4' onClick={handleBookmarkToggle}>
         {isBookmarked ? 'Unbookmark' : 'Bookmark'}
       </button>
+      { " "}
+      { (currentUser.id === question.user_id || currentUser.admin) && (
+        <button className='btn btn-danger mt-1 mb-4' onClick={handleDelete}>
+          Delete
+        </button>
+      )}
       {/* {question.keyword_names &&
         <>
           <h6 className='fw-bold'>Keywords</h6>

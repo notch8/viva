@@ -124,7 +124,8 @@ RSpec.describe Question, type: :model do
               keyword_names: question1.keywords.names,
               subject_names: question1.subjects.names,
               images: [],
-              alt_texts: [] }.stringify_keys])
+              alt_texts: [],
+              user_id: question1.user_id }.stringify_keys])
       )
     end
     # rubocop:enable RSpec/ExampleLength

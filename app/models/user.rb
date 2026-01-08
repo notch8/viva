@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_questions, through: :bookmarks, source: :question
-  has_many :questions # , dependent: :destroy - TODO: consider this for later, do we want to reassign questions to another user?
+  has_many :questions, dependent: :nullify
 
   def active_for_authentication?
     super && active?

@@ -10,7 +10,7 @@ import CreateQuestionForm from '../../ui/CreateQuestionForm'
 
 const Uploads = (props) => {
   let responseErrors = props.errors
-  const typeNamesFromPublicFiles = ['traditional', 'bow_tie', 'drag_and_drop', 'sata', 'matching']
+  const typeNamesFromPublicFiles = ['bow_tie', 'categorization', 'drag_and_drop', 'essay', 'matching', 'multiple_choice', 'sata', 'upload']
   const { setData, post, processing, clearErrors, recentlySuccessful, data, setError, errors } = useForm({
     csv: ''
   })

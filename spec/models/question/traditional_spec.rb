@@ -8,7 +8,8 @@ RSpec.describe Question::Traditional do
   its(:type_name) { is_expected.to eq("Multiple Choice") }
 
   describe '.build_row' do
-    subject { described_class.build_row(row: data, questions: {}) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row: data, questions: {}, user_id: user.id) }
 
     [
       [{ "CORRECT_ANSWERS" => "2", "ANSWER_1" => "Hello World!" }, /CORRECT_ANSWERS column indicates that ANSWER_2/],

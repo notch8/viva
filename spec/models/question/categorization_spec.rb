@@ -11,7 +11,8 @@ RSpec.describe Question::Categorization do
 
   describe '.build_row' do
     context 'for cardinality validation' do
-      subject { described_class.build_row(row:, questions: {}) }
+      let(:user) { create(:user) }
+      subject { described_class.build_row(row:, questions: {}, user_id: user.id) }
 
       let(:row) do
         CsvRow.new("TYPE" => "Categorization",

@@ -11,7 +11,8 @@ RSpec.describe Question::StimulusCaseStudy do
   it { is_expected.to have_many(:child_questions) }
 
   describe '.build_row' do
-    subject { described_class.build_row(row:, questions: { 1 => FactoryBot.build(:question_stimulus_case_study) }) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row:, questions: { 1 => FactoryBot.build(:question_stimulus_case_study) }, user_id: user.id) }
 
     context 'when PART_OF another question' do
       let(:row) do

@@ -36,7 +36,8 @@ RSpec.describe Question, type: :model do
   end
 
   describe '.build_from_csv_row' do
-    subject { described_class.build_from_csv_row(row:, questions: {}) }
+    let(:user) { create(:user) }
+    subject { described_class.build_from_csv_row(row:, questions: {}, user_id: user.id) }
 
     context 'when no row TYPE is provided' do
       let(:row) { CsvRow.new('IMPORT_ID' => '1') }
@@ -229,10 +230,12 @@ RSpec.describe Question, type: :model do
   end
 
   describe '#searchable' do
+    let(:user) { create(:user) }
     context 'when data is a hash with html as the value' do
       subject do
         Question::Upload.create(
           text: 'Describe the impact of Studio Ghibli on anime.',
+          user_id: user.id,
           data: { 'html' => '<p>Consider films like Spirited Away and Princess Mononoke.</p><ul><li>Cultural significance</li><li>Link to <a href="https://ghibli.jp">Studio Ghibli</a></li></ul>' }
         )
       end
@@ -253,6 +256,7 @@ RSpec.describe Question, type: :model do
       subject do
         Question::Traditional.create(
           text: 'Which of these is a famous anime director?',
+          user_id: user.id,
           data: [
             { 'answer' => 'Hayao Miyazaki', 'correct' => true },
             { 'answer' => 'Christopher Nolan', 'correct' => false },
@@ -276,17 +280,20 @@ RSpec.describe Question, type: :model do
 
       subject do
         Question::StimulusCaseStudy.new(
-          text: 'Analysis of Attack on Titan themes and symbolism.'
+          text: 'Analysis of Attack on Titan themes and symbolism.',
+          user_id: user.id
         )
       end
 
       let(:child_questions) do
         [
           Question::Scenario.new(
-            text: 'Read the following excerpt about the walls in Attack on Titan.'
+            text: 'Read the following excerpt about the walls in Attack on Titan.',
+            user_id: user.id
           ),
           Question::Categorization.new(
             text: 'Match the Titan types with their characteristics.',
+            user_id: user.id,
             data: [
               { "answer" => "Founding Titan", "correct" => ["Controls other titans", "Memory manipulation"] },
               { "answer" => "Armored Titan", "correct" => ["Hardened body", "Enhanced durability"] },
@@ -296,6 +303,7 @@ RSpec.describe Question, type: :model do
           ),
           Question::DragAndDrop.new(
             text: 'Order the following events chronologically.',
+            user_id: user.id,
             data: [
               { "answer" => "Fall of Wall Maria", "correct" => true },
               { "answer" => "Battle of Trost", "correct" => true },
@@ -305,6 +313,7 @@ RSpec.describe Question, type: :model do
           ),
           Question::Essay.new(
             text: 'Analyze the symbolism of walls in the series.',
+            user_id: user.id,
             data: { "html" => "<p>Consider the following aspects:</p><ul><li>Physical protection</li><li>Symbolic imprisonment</li><li>Link to <a href='https://attackontitan.com'>Official Site</a></li></ul>" }
           )
         ]

@@ -13,7 +13,8 @@ RSpec.describe Question::Scenario do
   its(:data) { is_expected.to be_nil }
 
   describe '.build_row' do
-    subject { described_class.build_row(row:, questions:) }
+    let(:user) { create(:user) }
+    subject { described_class.build_row(row:, questions:, user_id: user.id) }
     let(:row) do
       CsvRow.new("TYPE" => "Scenario",
                  "TEXT" => "Something Something Scenario",

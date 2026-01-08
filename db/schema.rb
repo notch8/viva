@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_05_234051) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_07_222008) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -94,8 +94,10 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_05_234051) do
     t.text "data"
     t.string "level"
     t.tsvector "searchable"
+    t.bigint "user_id"
     t.index ["searchable"], name: "index_questions_on_searchable", using: :gin
     t.index ["type"], name: "index_questions_on_type"
+    t.index ["user_id"], name: "index_questions_on_user_id"
   end
 
   create_table "questions_subjects", id: false, force: :cascade do |t|
@@ -150,4 +152,5 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_05_234051) do
   add_foreign_key "bookmarks", "questions"
   add_foreign_key "bookmarks", "users"
   add_foreign_key "images", "questions"
+  add_foreign_key "questions", "users"
 end

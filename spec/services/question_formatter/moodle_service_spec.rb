@@ -6,10 +6,12 @@ RSpec.describe QuestionFormatter::MoodleService do
   subject { described_class.new(questions) }
 
   # rubocop:disable Layout/LineLength
+  let(:user) { create(:user) }
   let(:questions) do
     [
       Question::Essay.new(
         text: 'Ethical Considerations in End-of-Life Care',
+        user_id: user.id,
         data: {
           'html' =>
             "<div class=\"question-introduction\">\n  <h3>Nursing Ethics in End-of-Life Care</h3>\n\n  <p><strong>Describe the ethical dilemma in this scenario and explain how you would approach this situation as the patient's nurse. Include in your discussion:</strong></p>\n  <ul>\n    <li>The key ethical principles involved</li>\n    <li>Your role as patient advocate</li>\n  </ul>\n\n  <p>Support your response with specific references to the nursing code of ethics and current best practices in end-of-life care.</p>\n</div>\n"
@@ -17,6 +19,7 @@ RSpec.describe QuestionFormatter::MoodleService do
       ),
       Question::Matching.new(
         text: 'Match each medication to its appropriate nursing consideration:',
+        user_id: user.id,
         data: [
           { 'answer' => 'Digoxin', 'correct' => ['Monitor for bradycardia and dysrhythmias'] },
           { 'answer' => 'Furosemide', 'correct' => ['Monitor for electrolyte imbalances and dehydration'] },
@@ -27,6 +30,7 @@ RSpec.describe QuestionFormatter::MoodleService do
       ),
       Question::Traditional.new(
         text: 'A nurse is administering IV vancomycin to a patient. Twenty minutes into the infusion, the patient develops a diffuse erythematous rash on the face, neck, and upper torso, accompanied by hypotension with BP 90/50 mmHg. What is the priority nursing action?',
+        user_id: user.id,
         data: [
           { 'answer' => 'Stop the medication immediately and notify the physician', 'correct' => true },
           { 'answer' => 'Continue administration at a slower rate and monitor vital signs', 'correct' => false },
@@ -36,6 +40,7 @@ RSpec.describe QuestionFormatter::MoodleService do
       ),
       Question::SelectAllThatApply.new(
         text: 'A nurse is caring for a patient diagnosed with community-acquired pneumonia. Which nursing interventions are appropriate for this patient? Select all that apply.',
+        user_id: user.id,
         data: [
           { 'answer' => 'Monitor vital signs every 2-4 hours', 'correct' => true },
           { 'answer' => 'Maintain head of bed elevation at 30-45 degrees', 'correct' => true },

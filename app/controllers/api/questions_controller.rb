@@ -54,6 +54,7 @@ class Api::QuestionsController < ApplicationController
     processed_params.delete(:alt_text)
     question = Question.new(processed_params.except(:keywords, :subjects, :images))
     question.level = nil if question.level.blank?
+    question.user_id = current_user.id
     question
   end
 
@@ -137,7 +138,8 @@ class Api::QuestionsController < ApplicationController
     @stimulus_case_study = Question::StimulusCaseStudy.new(
       text: data['text'],
       child_of_aggregation: false,
-      level: params[:level]
+      level: params[:level],
+      user_id: current_user.id
     )
   end
 
@@ -191,7 +193,8 @@ class Api::QuestionsController < ApplicationController
                       type:,
                       text: subquestion_data['text'],
                       data: processed_data,
-                      child_of_aggregation: true
+                      child_of_aggregation: true,
+                      user_id: current_user.id
                     )
       subquestion.parent_question = @stimulus_case_study if type == "Question::Scenario"
 

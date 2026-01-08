@@ -17,14 +17,14 @@ class Question::ImporterCsv
   # @todo Maybe we don't want to read the given CSV and pass the text into the object.  However,
   #       that is a later concern refactor that should be relatively easy given these various
   #       inflection points.
-  def self.from_file(file)
+  def self.from_file(file, user_id:)
     case File.extname(file)
     when '.csv'
-      new(file.read)
+      new(file.read, user_id:)
     when '.zip'
       extracted_files = handle_zip(file)
       csv_file = extracted_files.find { |file| file.ends_with? ".csv" }
-      new(File.read(csv_file), extracted_files)
+      new(File.read(csv_file), extracted_files, user_id:)
     end
   end
 
@@ -44,12 +44,13 @@ class Question::ImporterCsv
   end
   private_class_method :handle_zip
 
-  def initialize(text, extracted_files = [])
+  def initialize(text, extracted_files = [], user_id:)
     @errors = []
     @text = text
     @extracted_files = extracted_files
+    @user_id = user_id
   end
-  attr_reader :errors, :extracted_files
+  attr_reader :errors, :extracted_files, :user_id
 
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
@@ -76,7 +77,7 @@ class Question::ImporterCsv
       end
 
       import_id = row['IMPORT_ID'].to_s.strip
-      question = Question.build_from_csv_row(row:, questions: @questions)
+      question = Question.build_from_csv_row(row:, questions: @questions, user_id: @user_id)
       if question.valid? && !@questions.key?(import_id)
         attach_images_to_question(question, row['IMAGE_PATH'], row['ALT_TEXT'])
         @questions[import_id] = question

@@ -11,7 +11,7 @@ class UploadsController < ApplicationController
 
   def create
     temp_file = create_params["0"].tempfile
-    @questions = Question::ImporterCsv.from_file(temp_file)
+    @questions = Question::ImporterCsv.from_file(temp_file, user_id: current_user.id)
     if @questions.save
       render inertia: 'Uploads', props: @questions.as_json, status: :created
     else

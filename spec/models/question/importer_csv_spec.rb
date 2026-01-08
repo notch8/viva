@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe Question::ImporterCsv do
-  subject(:instance) { described_class.new(text) }
+  let(:user) { create(:user) }
+  subject(:instance) { described_class.new(text, user_id: user.id) }
   let!(:setting_names_array) do
     subjects_data = YAML.load_file('spec/fixtures/files/valid_subjects.yaml')
     subjects_data['subjects']['name']
@@ -16,7 +17,7 @@ RSpec.describe Question::ImporterCsv do
   describe '.from_file' do
     Rails.root.glob("spec/fixtures/files/valid_*.csv").each do |path|
       context "with \"#{File.basename(path)}\" when saved" do
-        subject { described_class.from_file(file_fixture(File.basename(path))) }
+        subject { described_class.from_file(file_fixture(File.basename(path)), user_id: user.id) }
 
         it 'creates at least one question' do
           # Also this is a great place to put a debug to see the output.
@@ -27,7 +28,7 @@ RSpec.describe Question::ImporterCsv do
 
     Rails.root.glob("spec/fixtures/files/invalid_*.csv").each do |path|
       context "with \"#{File.basename(path)}\" when saved" do
-        subject { described_class.from_file(file_fixture(File.basename(path))) }
+        subject { described_class.from_file(file_fixture(File.basename(path)), user_id: user.id) }
 
         it 'creates no questions' do
           # Also this is a great place to put a debug to see the output.
@@ -45,7 +46,7 @@ RSpec.describe Question::ImporterCsv do
 
     Rails.root.glob("spec/fixtures/files/malformed_*.csv").each do |path|
       context "with \"#{File.basename(path)}\" when saved" do
-        subject { described_class.from_file(file_fixture(File.basename(path))) }
+        subject { described_class.from_file(file_fixture(File.basename(path)), user_id: user.id) }
 
         it 'creates no questions and indicates the message' do
           # Also this is a great place to put a debug to see the output.
@@ -203,7 +204,7 @@ RSpec.describe Question::ImporterCsv do
   end
 
   context 'with a zip file' do
-    subject { described_class.from_file(file_fixture(zip_file_with_one_question_with_two_images)) }
+    subject { described_class.from_file(file_fixture(zip_file_with_one_question_with_two_images), user_id: user.id) }
 
     let(:zip_file_with_one_question_with_two_images) { 'test.zip' }
 

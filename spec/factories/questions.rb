@@ -9,6 +9,7 @@ FactoryBot.define do
   factory :question, aliases: [:question_question] do
     text { Faker::Lorem.unique.sentence }
     child_of_aggregation { false }
+    association :user
 
     ##
     # See https://thoughtbot.github.io/factory_bot/cookbook/has_and_belongs_to_many-associations.html

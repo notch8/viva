@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_questions, through: :bookmarks, source: :question
-  has_many :questions, dependent: :nullify
+  has_many :questions, dependent: :restrict_with_error
 
   def active_for_authentication?
     super && active?

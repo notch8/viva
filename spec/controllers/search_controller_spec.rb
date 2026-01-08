@@ -33,7 +33,8 @@ RSpec.describe SearchController do
                  "keyword_names" => question.keywords.names,
                  "subject_names" => question.subjects.names,
                  "alt_texts" => [],
-                 "images" => []
+                 "images" => [],
+                 "user_id" => question.user_id
                }
              ])
         )
@@ -59,7 +60,8 @@ RSpec.describe SearchController do
                  "keyword_names" => question1.keywords.names,
                  "subject_names" => question1.subjects.names,
                  "alt_texts" => [],
-                 "images" => []
+                 "images" => [],
+                 "user_id" => question1.user_id
                },
                {
                  "id" => question2.id,
@@ -72,7 +74,8 @@ RSpec.describe SearchController do
                  "keyword_names" => question2.keywords.names,
                  "subject_names" => question2.subjects.names,
                  "alt_texts" => [],
-                 "images" => []
+                 "images" => [],
+                 "user_id" => question2.user_id
                }
              ])
         )
@@ -103,7 +106,8 @@ RSpec.describe SearchController do
                  "keyword_names" => question1.keywords.names,
                  "subject_names" => question1.subjects.names,
                  "alt_texts" => [],
-                 "images" => []
+                 "images" => [],
+                 "user_id" => question1.user_id
                }
              ])
         )

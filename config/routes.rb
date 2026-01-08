@@ -38,7 +38,7 @@ Rails.application.routes.draw do
       get 'bookmarks/export', to: 'bookmarks#export'
       # create a question
       namespace :api do
-        resources :questions, only: [:create]
+        resources :questions, only: [:create, :destroy]
       end
     end
 

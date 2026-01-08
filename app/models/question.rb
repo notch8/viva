@@ -341,7 +341,7 @@ class Question < ApplicationRecord
     Question::ExpectedColumnMissing.new(expected: required_headers, given: row.headers)
   end
 
-  FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names].freeze
+  FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names, :user_id].freeze
   FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data].freeze
 
   ##

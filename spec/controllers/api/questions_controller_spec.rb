@@ -692,4 +692,56 @@ RSpec.describe Api::QuestionsController, type: :controller do
       end
     end
   end
+
+  describe 'DELETE #destroy' do
+    let(:new_question) { FactoryBot.create(:question_traditional, user: test_user) }
+    let(:user) { create(:user) }
+    let(:other_user) { create(:user) }
+
+    context 'when the question belongs to current_user' do
+      let(:test_user) { user }
+
+      it 'deletes the question' do
+        sign_in user
+        question = new_question
+
+        expect do
+          delete :destroy, params: { id: question.id }
+        end.to change(Question, :count).by(-1)
+
+        expect(response).to have_http_status(302)
+      end
+    end
+
+    context 'when the question does not belong to current_user' do
+      let(:test_user) { other_user }
+
+      it 'does not delete the question' do
+        question = new_question
+        sign_in user
+
+        expect do
+          delete :destroy, params: { id: question.id }
+        end.not_to change(Question, :count)
+
+        expect(response).to have_http_status(:forbidden)
+      end
+    end
+
+    context 'when the user is an admin' do
+      let(:test_user) { other_user }
+
+      it 'deletes the question' do
+        admin = create(:user, :admin)
+        sign_in admin
+        question = new_question
+
+        expect do
+          delete :destroy, params: { id: question.id }
+        end.to change(Question, :count).by(-1)
+
+        expect(response).to have_http_status(302)
+      end
+    end
+  end
 end

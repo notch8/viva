@@ -43,7 +43,36 @@ class Api::QuestionsController < ApplicationController
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
+  def destroy
+    question = Question.find_by(id: params[:id])
+
+    if question.nil?
+      render json: { errors: ['Question not found.'] }, status: :not_found
+      return
+    end
+    return unless validate_permissions(question)
+
+    return unless question.destroy
+    handle_delete_action(question.destroy, '.success', '.failure')
+  end
+
   private
+
+  def handle_delete_action(success, success_key, failure_key)
+    if success
+      redirect_back(fallback_location: authenticated_root_path, notice: t(success_key))
+    else
+      redirect_back(fallback_location: authenticated_root_path, alert: t(failure_key))
+    end
+  end
+
+  def validate_permissions(question)
+    unless question.user_id == current_user.id || current_user.admin?
+      render json: { errors: ['You do not have permission to delete this question.'] }, status: :forbidden
+      return false
+    end
+    true
+  end
 
   ##
   # Creates an new instance of a regular question (non-case study question type).

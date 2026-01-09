@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import {
-  InputGroup, DropdownButton, Button, Container, Form
+  InputGroup,
+  DropdownButton,
+  Button,
+  Container,
+  Form
 } from 'react-bootstrap'
 import { MagnifyingGlass, XCircle } from '@phosphor-icons/react'
 import { Inertia } from '@inertiajs/inertia'
-import ExportModal from '../Export/ExportModal'
+import { ExportModal } from '../Export/ExportModal'
 
-const SearchBar = ({
+export const SearchBar = ({
   subjects,
   // keywords,
   types,
@@ -18,27 +22,15 @@ const SearchBar = ({
   onReset,
   onFilterChange,
   filterState,
-  bookmarkedQuestionIds
+  bookmarkedQuestionIds,
+  hasBookmarks,
+  showExportModal,
+  onDeleteAllBookmarks,
+  onShowExportModal,
+  onHideExportModal,
+  lms
 }) => {
   const filters = { subjects, types, levels }
-  const [hasBookmarks, setHasBookmarks] = useState(bookmarkedQuestionIds.length > 0)
-  const [showExportModal, setShowExportModal] = useState(false)
-
-  // Update bookmark state when props change
-  useEffect(() => {
-    setHasBookmarks(bookmarkedQuestionIds.length > 0)
-  }, [bookmarkedQuestionIds])
-
-  const handleDeleteAllBookmarks = () => {
-    Inertia.delete('/bookmarks/destroy_all', {
-      onSuccess: () => {
-        setHasBookmarks(false)
-      },
-      onError: () => {
-        console.error('Failed to clear all bookmarks')
-      }
-    })
-  }
 
   return (
     <Form onSubmit={onSubmit}>
@@ -63,7 +55,10 @@ const SearchBar = ({
             <span className='me-1'>Apply Search Terms</span>
             <MagnifyingGlass size={20} weight='bold' />
           </Button>
-          {(query || filterState.selectedSubjects.length > 0 || filterState.selectedTypes.length > 0 || filterState.selectedLevels.length > 0) && (
+          {(query ||
+            filterState.selectedSubjects.length > 0 ||
+            filterState.selectedTypes.length > 0 ||
+            filterState.selectedLevels.length > 0) && (
             <Button
               variant='secondary'
               className='d-flex align-items-center fs-6 justify-content-center text-white'
@@ -99,11 +94,20 @@ const SearchBar = ({
                     id={item}
                     className='mx-0'
                     value={item}
-                    onChange={(event) => onFilterChange(event, `selected${key.charAt(0).toUpperCase() + key.slice(1)}`)}
-                    checked={filterState[`selected${key.charAt(0).toUpperCase() + key.slice(1)}`].includes(item)}
+                    onChange={(event) =>
+                      onFilterChange(
+                        event,
+                        `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
+                      )
+                    }
+                    checked={filterState[
+                      `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
+                    ].includes(item)}
                   />
                   <Form.Check.Label className='ps-2'>
-                    {key === 'types' && item.startsWith('question_') ? item.substring(9) : item}
+                    {key === 'types' && item.startsWith('question_')
+                      ? item.substring(9)
+                      : item}
                   </Form.Check.Label>
                 </Form.Check>
               ))}
@@ -121,7 +125,9 @@ const SearchBar = ({
             <div className='d-flex flex-column align-items-start'>
               <a
                 href='?bookmarked=true'
-                className={`btn btn-primary p-2 m-2 ${!hasBookmarks ? 'disabled' : ''}`}
+                className={`btn btn-primary p-2 m-2 ${
+                  !hasBookmarks ? 'disabled' : ''
+                }`}
                 role='button'
                 aria-disabled={!hasBookmarks}
               >
@@ -130,7 +136,7 @@ const SearchBar = ({
               <Button
                 variant='danger'
                 className='p-2 m-2'
-                onClick={handleDeleteAllBookmarks}
+                onClick={onDeleteAllBookmarks}
                 disabled={!hasBookmarks}
               >
                 Clear Bookmarks
@@ -139,7 +145,7 @@ const SearchBar = ({
                 <Button
                   variant='secondary'
                   className='p-2 m-2'
-                  onClick={() => setShowExportModal(true)}
+                  onClick={onShowExportModal}
                 >
                   Export Options
                 </Button>
@@ -150,11 +156,48 @@ const SearchBar = ({
       </Container>
       <ExportModal
         show={showExportModal}
-        onHide={() => setShowExportModal(false)}
+        onHide={onHideExportModal}
         hasBookmarks={hasBookmarks}
+        lms={lms}
       />
     </Form>
   )
 }
 
-export default SearchBar
+// Container component - handles state, effects, and API calls
+const SearchBarWithState = (props) => {
+  const [hasBookmarks, setHasBookmarks] = useState(
+    props.bookmarkedQuestionIds.length > 0
+  )
+  const [showExportModal, setShowExportModal] = useState(false)
+
+  // Update bookmark state when props change
+  useEffect(() => {
+    setHasBookmarks(props.bookmarkedQuestionIds.length > 0)
+  }, [props.bookmarkedQuestionIds])
+
+  const handleDeleteAllBookmarks = () => {
+    Inertia.delete('/bookmarks/destroy_all', {
+      onSuccess: () => {
+        setHasBookmarks(false)
+      },
+      onError: () => {
+        console.error('Failed to clear all bookmarks')
+      }
+    })
+  }
+
+  return (
+    <SearchBar
+      {...props}
+      hasBookmarks={hasBookmarks}
+      showExportModal={showExportModal}
+      onDeleteAllBookmarks={handleDeleteAllBookmarks}
+      onShowExportModal={() => setShowExportModal(true)}
+      onHideExportModal={() => setShowExportModal(false)}
+      lms={props.lms}
+    />
+  )
+}
+
+export default SearchBarWithState

@@ -28,6 +28,7 @@ const COMPONENT_MAP = {
 }
 
 export const QuestionFormUI = ({
+  question,
   questionType,
   questionText,
   images,
@@ -51,9 +52,9 @@ export const QuestionFormUI = ({
   return (
     <div className='create-question-form'>
       <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-      <QuestionTypeDropdown 
-        handleQuestionTypeSelection={onQuestionTypeSelection} 
-        QUESTION_TYPE_NAMES={QUESTION_TYPE_NAMES} 
+      <QuestionTypeDropdown
+        handleQuestionTypeSelection={onQuestionTypeSelection}
+        QUESTION_TYPE_NAMES={QUESTION_TYPE_NAMES}
       />
 
       {QuestionComponent && (

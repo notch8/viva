@@ -2,14 +2,15 @@
 import React, { useState } from 'react'
 import QuestionFormUI from './QuestionFormUI'
 
-const CreateQuestionForm = ({ subjectOptions }) => {
-  const [questionType, setQuestionType] = useState('')
+const CreateQuestionForm = ({ subjectOptions, question }) => {
+  const [questionType, setQuestionType] = useState(question?.type || '')
   const [questionText, setQuestionText] = useState('')
   const [images, setImages] = useState([])
   const [level, setLevel] = useState('')
   const [subjects, setSubjects] = useState([])
   const [data, setData] = useState({ text: '', subQuestions: [] })
   const [resetFields, setResetFields] = useState(false)
+  console.log('Selected question type:', questionType)
 
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
@@ -30,7 +31,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
   const handleAddSubject = (subject) => setSubjects(subject)
-  
+
   const handleRemoveSubject = (subjectToRemove) =>
     setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
 
@@ -231,6 +232,7 @@ const CreateQuestionForm = ({ subjectOptions }) => {
 
   return (
     <QuestionFormUI
+      question={question}
       questionType={questionType}
       questionText={questionText}
       images={images}

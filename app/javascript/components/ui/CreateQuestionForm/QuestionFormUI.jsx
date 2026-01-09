@@ -17,10 +17,10 @@ import { QUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 
 const COMPONENT_MAP = {
   'Bow Tie': Bowtie,
-  'Categorization': Categorization,
+  Categorization: Categorization,
   'Drag and Drop': DragAndDrop,
-  'Essay': Essay,
-  'Matching': Matching,
+  Essay: Essay,
+  Matching: Matching,
   'Multiple Choice': MultipleChoice,
   'Select All That Apply': SelectAllThatApply,
   'Stimulus Case Study': StimulusCaseStudy,
@@ -51,13 +51,17 @@ export const QuestionFormUI = ({
 
   return (
     <div className='create-question-form'>
-      <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
-      <QuestionTypeDropdown
-        handleQuestionTypeSelection={onQuestionTypeSelection}
-        QUESTION_TYPE_NAMES={QUESTION_TYPE_NAMES}
-      />
+      {!question && (
+        <>
+          <h2 className='h5 fw-bold mt-5'>Create a Question</h2>
+          <QuestionTypeDropdown
+            handleQuestionTypeSelection={onQuestionTypeSelection}
+            QUESTION_TYPE_NAMES={QUESTION_TYPE_NAMES}
+          />
+        </>
+      )}
 
-      {QuestionComponent && (
+      {(QuestionComponent || question) && (
         <div className='question-body bg-white mt-4 p-4'>
           <Form onSubmit={onSubmit} className='question-form mx-4'>
             <div className='d-flex flex-wrap'>

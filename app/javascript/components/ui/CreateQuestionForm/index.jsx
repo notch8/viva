@@ -2,18 +2,33 @@
 import React, { useState } from 'react'
 import QuestionFormUI from './QuestionFormUI'
 
+// Map Rails STI class names to display names
+const TYPE_MAPPER = {
+  'Question::Traditional': 'Multiple Choice',
+  'Question::Categorization': 'Categorization',
+  'Question::DragAndDrop': 'Drag and Drop',
+  'Question::Essay': 'Essay',
+  'Question::Matching': 'Matching',
+  'Question::SelectAllThatApply': 'Select All That Apply',
+  'Question::CaseStudy': 'Stimulus Case Study',
+  'Question::Upload': 'File Upload',
+  'Question::BowTie': 'Bow Tie'
+}
+
 const CreateQuestionForm = ({ subjectOptions, question }) => {
-  const [questionType, setQuestionType] = useState(question?.type || '')
-  const [questionText, setQuestionText] = useState('')
+  const [questionType, setQuestionType] = useState(
+    question ? TYPE_MAPPER[question.type] : ''
+  )
+  const [questionText, setQuestionText] = useState(question?.text || '')
   const [images, setImages] = useState([])
-  const [level, setLevel] = useState('')
-  const [subjects, setSubjects] = useState([])
-  const [data, setData] = useState({ text: '', subQuestions: [] })
+  const [level, setLevel] = useState(question?.level || '')
+  const [subjects, setSubjects] = useState(question?.subjects || [])
+  const [data, setData] = useState(question?.data || { text: '', subQuestions: [] })
   const [resetFields, setResetFields] = useState(false)
-  console.log('Selected question type:', questionType)
 
   const handleQuestionTypeSelection = (type) => {
     setQuestionType(type)
+
     const defaultData = {
       'Bow Tie': {
         center: { label: '', answers: [{ answer: '', correct: false }] },
@@ -45,7 +60,9 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
       formData.append('question[data]', JSON.stringify(dataToAppend))
 
     const filterValidData = (data) =>
-      Array.isArray(data) ? data.filter((item) => item.answer.trim() !== '') : []
+      Array.isArray(data)
+        ? data.filter((item) => item.answer.trim() !== '')
+        : []
 
     const handlers = {
       Matching: () => appendData(data),
@@ -55,7 +72,7 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
           html: data
             .split('\n')
             .map((line, index) => `<p key=${index}>${line}</p>`)
-            .join(''),
+            .join('')
         }),
       'Drag and Drop': () => appendData(filterValidData(data)),
       'Bow Tie': () => data && appendData(data),
@@ -93,7 +110,7 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
     try {
       const response = await fetch('/api/questions', {
         method: 'POST',
-        body: formatFormData(),
+        body: formatFormData()
       })
       if (response.ok) {
         alert('Question saved successfully!')
@@ -119,7 +136,8 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
   }
 
   const isSubmitDisabled = () => {
-    if (!questionText?.trim() || images.some((image) => !image.isValid)) return true
+    if (!questionText?.trim() || images.some((image) => !image.isValid))
+      return true
 
     const validateQuestionType = (type, questionData) => {
       switch (type) {
@@ -192,13 +210,17 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
         }
         case 'Multiple Choice': {
           if (!Array.isArray(questionData)) return true
-          const correctCount = questionData.filter((item) => item.correct).length
+          const correctCount = questionData.filter(
+            (item) => item.correct
+          ).length
           if (correctCount !== 1) return true
           break
         }
         case 'Select All That Apply': {
           if (!Array.isArray(questionData)) return true
-          const correctCount = questionData.filter((item) => item.correct).length
+          const correctCount = questionData.filter(
+            (item) => item.correct
+          ).length
           if (correctCount < 1) return true
           break
         }
@@ -213,7 +235,11 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
     }
 
     if (questionType === 'Stimulus Case Study') {
-      if (!data.text?.trim() || !Array.isArray(data.subQuestions) || data.subQuestions.length === 0) {
+      if (
+        !data.text?.trim() ||
+        !Array.isArray(data.subQuestions) ||
+        data.subQuestions.length === 0
+      ) {
         return true
       }
 

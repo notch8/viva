@@ -379,26 +379,40 @@ class Question < ApplicationRecord
   #
   # @see .filter
   # rubocop:disable Metrics/MethodLength
-  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
-    questions = [Question.find_by_hashid(search)] if search.try(:starts_with?, 'qid-')
-    ##
-    # The :data method/field is an interesting creature; we want to "select" it in queries because
-    # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
-    # it uses the {Question::StimulusCaseStudy#child_questions} to build the data.
-    #
-    # Hence we want to :select that data for querying, but rely instead on the :method.
-    only = select - methods
 
-    # Ensure 'data' is included in the select attributes
+  def self.filter_as_json(args)
+    query = filter_query(**args)
+    format_questions(query, **args.slice(:select, :methods))
+  end
+
+  def self.filter_query(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
+      # A. Handle HashID Search
+      # We return a Relation using 'where' so Pagy can still chain .count/.limit on it
+      if search.try(:starts_with?, 'qid-')
+        found = find_by_hashid(search)
+        return found ? where(id: found.id) : none
+      end
+
+      # B. Calculate Selects
+      # We prepare the select clause just like before
+      only = select - methods
+      only << :data unless only.include?(:data)
+
+      # C. Return the Relation
+      # Assumes 'filter' is your existing scope/method that returns a Relation
+      filter(select: only, search: search, **kwargs)
+    end
+  # rubocop:enable Metrics/MethodLength
+
+  def self.format_questions(questions, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
+    # Recalculate 'only' to match the query logic logic
+    only = select - methods
     only << :data unless only.include?(:data)
 
-    # Ensure the `filter` method is called with eager loading for associations
-    questions ||= filter(select: only, search:, **kwargs)
-
-    # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
     questions.map do |question|
-      question_json = question.as_json(only:, methods:)
+      question_json = question.as_json(only: only, methods: methods)
 
+      # Your custom image logic
       if question.images.present?
         question_json['images'] = question.images_as_json
       else
@@ -409,7 +423,6 @@ class Question < ApplicationRecord
       question_json
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   ##
   # @api private

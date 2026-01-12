@@ -83,7 +83,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           ))}
         </>
       }
-      <div className='d-flex mx-1 text-center mt-5'>
+      <div className='d-flex mx-1 text-center mt-5 mb-2'>
         <Col className='bg-white rounded-start p-2'>
           <h6 className='fw-bold'>Level</h6>
           <span className='strait small'>{question.level}</span>
@@ -93,6 +93,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           <span className='strait small'>{question.type_name}</span>
         </Col>
       </div>
+      <small className='text-muted ps-1'>Question ID: {question.hashid}</small>
     </div>
   )
 }

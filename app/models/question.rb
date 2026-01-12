@@ -8,6 +8,8 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
+  include Hashid::Rails
+
   before_save :index_searchable_field
 
   include PgSearch
@@ -66,6 +68,19 @@ class Question < ApplicationRecord
 
   ##
   # @!group QTI Exporter
+
+  # OVERRIDE Hashid Rails to prepend qid
+  def hashid
+    "qid-#{super}"
+  end
+
+  # OVERRIDE Hashid Rails to prepend qid
+  def self.find_by_hashid(hashid)
+    return nil unless hashid.starts_with?('qid-')
+
+    hashid.gsub!(/^qid-/, '')
+    find_by(id: decode_id(hashid, fallback: false))
+  end
 
   ##
   # @return [String] a unique identifier for the `item` node.
@@ -342,7 +357,7 @@ class Question < ApplicationRecord
   end
 
   FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names, :user_id].freeze
-  FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data].freeze
+  FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data, :hashid].freeze
 
   ##
   # @param select [Array<Symbol>] attribute names both passed forward to {.filter} and exposed in
@@ -364,6 +379,7 @@ class Question < ApplicationRecord
   # @see .filter
   # rubocop:disable Metrics/MethodLength
   def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
+    questions = [Question.find_by_hashid(search)] if search.try(:starts_with?, 'qid-')
     ##
     # The :data method/field is an interesting creature; we want to "select" it in queries because
     # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
@@ -376,7 +392,7 @@ class Question < ApplicationRecord
     only << :data unless only.include?(:data)
 
     # Ensure the `filter` method is called with eager loading for associations
-    questions = filter(select: only, search:, **kwargs)
+    questions ||= filter(select: only, search:, **kwargs)
 
     # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
     questions.map do |question|

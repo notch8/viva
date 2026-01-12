@@ -15,6 +15,7 @@ gem 'devise_invitable'
 gem 'factory_bot', '~> 6.2'
 gem 'factory_bot_rails', group: %i[development test]
 gem 'faker', '~> 2.23'
+gem 'hashid-rails'
 gem 'inertia_rails', '~> 3.0'
 gem 'jbuilder' # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jquery-rails'

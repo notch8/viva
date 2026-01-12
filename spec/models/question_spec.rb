@@ -125,7 +125,8 @@ RSpec.describe Question, type: :model do
               subject_names: question1.subjects.names,
               images: [],
               alt_texts: [],
-              user_id: question1.user_id }.stringify_keys])
+              user_id: question1.user_id,
+              hashid: question1.hashid }.stringify_keys])
       )
     end
     # rubocop:enable RSpec/ExampleLength

@@ -377,31 +377,23 @@ class Question < ApplicationRecord
   #         :select parameter.
   #
   # @see .filter
-  # rubocop:disable Metrics/MethodLength
-
-  def self.filter_as_json(args)
+  def self.filter_as_json(kwargs: {}, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
+    args = { select:, methods: }.merge(kwargs)
     query = filter_query(**args)
     format_questions(query, **args.slice(:select, :methods))
   end
 
   def self.filter_query(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
-      # A. Handle HashID Search
-      # We return a Relation using 'where' so Pagy can still chain .count/.limit on it
-      if search.try(:starts_with?, 'qid-')
-        found = find_by_hashid(search)
-        return found ? where(id: found.id) : none
-      end
-
-      # B. Calculate Selects
-      # We prepare the select clause just like before
-      only = select - methods
-      only << :data unless only.include?(:data)
-
-      # C. Return the Relation
-      # Assumes 'filter' is your existing scope/method that returns a Relation
-      filter(select: only, search: search, **kwargs)
+    if search.try(:starts_with?, 'qid-')
+      found = find_by_hashid(search)
+      return found ? where(id: found.id) : none
     end
-  # rubocop:enable Metrics/MethodLength
+
+    only = select - methods
+    only << :data unless only.include?(:data)
+
+    filter(select: only, search:, **kwargs)
+  end
 
   def self.format_questions(questions, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
     # Recalculate 'only' to match the query logic logic
@@ -409,7 +401,7 @@ class Question < ApplicationRecord
     only << :data unless only.include?(:data)
 
     questions.map do |question|
-      question_json = question.as_json(only: only, methods: methods)
+      question_json = question.as_json(only:, methods:)
 
       # Your custom image logic
       if question.images.present?

@@ -11,6 +11,7 @@ class SearchController < ApplicationController
 
   private
 
+  # rubocop:disable Metrics/MethodLength
   def shared_props
     query = Question.filter_query(search: params[:search], **filter_values)
 
@@ -39,6 +40,7 @@ class SearchController < ApplicationController
       lms: Question.lms
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def filter_values
     {

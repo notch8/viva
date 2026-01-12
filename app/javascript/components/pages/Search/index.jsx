@@ -199,7 +199,7 @@ const Search = ({
       {pagination && pagination.count !== undefined && (
         <Container className='mt-3 mb-2'>
           <Row>
-            <Col>
+            <Col className='px-0'>
               <p className='text-muted mb-0'>
                 <strong>{pagination.count}</strong> result{pagination.count !== 1 ? 's' : ''} found
                 {searchTerm && ` for "${searchTerm}"`}
@@ -220,7 +220,7 @@ const Search = ({
                 />
               )
             })}
-            <Container className='px-4 py-0'>
+            <Container className='px-0 py-0'>
               <Pagination metadata={pagination} />
             </Container>
           </>

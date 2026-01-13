@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_01_07_222008) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_13_190340) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,18 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_07_222008) do
     t.datetime "updated_at", null: false
     t.index ["question_id"], name: "index_bookmarks_on_question_id"
     t.index ["user_id"], name: "index_bookmarks_on_user_id"
+  end
+
+  create_table "feedbacks", force: :cascade do |t|
+    t.text "content"
+    t.boolean "resolved", default: false
+    t.bigint "user_id", null: false
+    t.bigint "question_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "question_hashid"
+    t.index ["question_id"], name: "index_feedbacks_on_question_id"
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
   create_table "images", force: :cascade do |t|
@@ -151,6 +163,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_01_07_222008) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "bookmarks", "questions"
   add_foreign_key "bookmarks", "users"
+  add_foreign_key "feedbacks", "questions"
+  add_foreign_key "feedbacks", "users"
   add_foreign_key "images", "questions"
   add_foreign_key "questions", "users"
 end

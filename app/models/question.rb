@@ -24,6 +24,7 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
+  has_many :feedbacks, dependent: :destroy
   belongs_to :user
 
   ##

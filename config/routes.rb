@@ -37,7 +37,8 @@ Rails.application.routes.draw do
       post '/bookmarks/create_batch', to: 'bookmarks#create_batch'
       delete 'bookmarks/:id', to: 'bookmarks#destroy', as: 'bookmark'
       get 'bookmarks/export', to: 'bookmarks#export'
-      # create a question
+      # analytics page routes
+      get '/analytics', to: 'analytics#index', as: 'analytics'
       namespace :api do
         resources :questions, only: [:create, :destroy]
         resources :feedbacks, only: [:create]

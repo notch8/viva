@@ -18,9 +18,9 @@ RSpec.describe "Api::Feedbacks", type: :request do
         }
       }
 
-      expect {
+      expect do
         post api_feedbacks_path, params: feedback_params
-      }.to change(Feedback, :count).by(1)
+      end.to change(Feedback, :count).by(1)
 
       expect(response).to be_successful
     end

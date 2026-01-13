@@ -8,6 +8,7 @@ Rails.application.routes.draw do
     resources :users do
       post :resend_invitation, on: :member
     end
+    resources :feedbacks, except: [:new, :create]
     root to: "users#index"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

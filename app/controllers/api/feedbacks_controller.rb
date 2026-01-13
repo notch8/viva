@@ -4,7 +4,7 @@ class Api::FeedbacksController < ApplicationController
   def create
     question = Question.find(feedback_params[:question_id])
     @feedback = question.feedbacks.new(
-      feedback_params.except(:question_id, :user_id).merge(user_id: current_user.id)
+      feedback_params.except(:question_id, :user_id).merge(user_id: current_user.id, question_hashid: question.hashid)
     )
 
     if @feedback.save

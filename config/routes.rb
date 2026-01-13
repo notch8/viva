@@ -39,6 +39,7 @@ Rails.application.routes.draw do
       # create a question
       namespace :api do
         resources :questions, only: [:create, :destroy]
+        resources :feedbacks, only: [:create]
       end
     end
 

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import Layout from '../../App'
-import { Container, Row } from 'react-bootstrap'
+import { Container, Row, Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
 import { useForm } from '@inertiajs/inertia-react'
 import QuestionWrapper from '../../ui/Question/QuestionWrapper'
 import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
+import Pagination from '../../Pagination'
 
 const Search = ({
   filteredQuestions,
@@ -18,7 +19,8 @@ const Search = ({
   types,
   levels,
   bookmarkedQuestionIds,
-  searchTerm
+  searchTerm,
+  pagination
 }) => {
 
   const [query, setQuery] = useState(searchTerm || '')
@@ -194,16 +196,35 @@ const Search = ({
         removeFilterAndSearch={removeFilterAndSearch}
         onBookmarkBatch={handleBookmarkBatch}
       />
+      {pagination && pagination.count !== undefined && (
+        <Container className='mt-3 mb-2'>
+          <Row>
+            <Col className='px-0'>
+              <p className='text-muted mb-0'>
+                <strong>{pagination.count}</strong> result{pagination.count !== 1 ? 's' : ''} found
+                {searchTerm && ` for "${searchTerm}"`}
+              </p>
+            </Col>
+          </Row>
+        </Container>
+      )}
       {filteredQuestions.length ?
-        (filteredQuestions.map((question) => {
-          return (
-            <QuestionWrapper
-              key={question.id}
-              question={question}
-              bookmarkedQuestionIds={bookmarkedQuestionIds}
-            />
-          )
-        })) : (
+        (
+          <>
+            {filteredQuestions.map((question) => {
+              return (
+                <QuestionWrapper
+                  key={question.id}
+                  question={question}
+                  bookmarkedQuestionIds={bookmarkedQuestionIds}
+                />
+              )
+            })}
+            <Container className='px-0 py-0'>
+              <Pagination metadata={pagination} />
+            </Container>
+          </>
+        ) : (
           <Container className='mt-5'>
             <Row>
               Your search returned no results. Try removing some filters and searching again.

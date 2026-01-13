@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-react'
+import QuestionEditModal from './QuestionEditModal'
+//  modal for editing questions
 
 const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
   const { props } = usePage()
   const { currentUser } = props
   const [isBookmarked, setIsBookmarked] = useState(bookmarkedQuestionIds.includes(question.id))
+  const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
     setIsBookmarked(bookmarkedQuestionIds.includes(question.id))
@@ -44,7 +47,12 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           console.error('Error deleting question')
         }
       })
-    }}
+    }
+  }
+
+  const handleEdit = () => {
+    setShowEditModal(true)
+  }
 
   return (
     <div className='bg-light-2 p-2 rounded'>
@@ -57,6 +65,17 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           Delete
         </button>
       )}
+      { ' ' }
+      { (currentUser.id === question.user_id || currentUser.admin) && (
+        <button className='btn btn-secondary mt-1 mb-4' onClick={handleEdit}>
+          Edit
+        </button>
+      )}
+      <QuestionEditModal 
+        show={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        question={question}
+      />
       {/* {question.keyword_names &&
         <>
           <h6 className='fw-bold'>Keywords</h6>

@@ -31,8 +31,8 @@ const SearchFilters = ({
 
   // Add users filter if selectedUsers exists and has items
   if (selectedUsers && Array.isArray(selectedUsers) && selectedUsers.length > 0) {
-    filters.push({ 
-      name: 'Users', 
+    filters.push({
+      name: 'Users',
       items: selectedUsers.map(userId => ({
         id: userId,
         display: getUserEmail(userId)
@@ -69,7 +69,7 @@ const SearchFilters = ({
                         // For users, item is an object with id and display
                         const displayValue = filter.name === 'Users' ? item.display : item
                         const filterValue = filter.name === 'Users' ? item.id : item
-                        
+
                         return (
                           <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>
                             <label>{displayValue}</label>

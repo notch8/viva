@@ -93,7 +93,7 @@ const Search = ({
     // For users, normalize to string for consistent comparison
     // (since params come as strings from the backend)
     const normalizedValue = filterKey === 'selectedUsers' ? String(value) : value
-    
+
     // Normalize the existing filters array for comparison
     const normalizedFilters = filterKey === 'selectedUsers'
       ? updatedFilters.map(v => String(v))

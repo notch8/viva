@@ -109,7 +109,7 @@ export const SearchBar = ({
                 // For users, item is an object with id and email
                 const filterKey = `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
                 const filterValue = key === 'users' ? String(item.id) : item
-                
+
                 // Extract display label logic for better readability
                 const getDisplayLabel = () => {
                   if (key === 'users') return item.email
@@ -117,15 +117,15 @@ export const SearchBar = ({
                   return item
                 }
                 const displayLabel = getDisplayLabel()
-                
+
                 // Normalize selectedUsers array values to strings for comparison
                 // (selectedUsers comes from URL params as strings, but item.id is a number)
                 const selectedArray = filterState[filterKey] || []
-                const normalizedSelected = key === 'users' 
+                const normalizedSelected = key === 'users'
                   ? selectedArray.map(v => String(v))
                   : selectedArray
                 const isChecked = normalizedSelected.includes(filterValue)
-                
+
                 return (
                   <Form.Check
                     type='checkbox'

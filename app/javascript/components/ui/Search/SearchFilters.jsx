@@ -14,7 +14,6 @@ const SearchFilters = ({
   onBookmarkBatch,
   errors
 }) => {
-  // Map user IDs to email addresses for display
   const getUserEmail = (userId) => {
     if (!users || !Array.isArray(users)) return userId
     const user = users.find(u => u.id === parseInt(userId, 10) || u.id === userId)
@@ -29,7 +28,6 @@ const SearchFilters = ({
     { name: 'Levels', items: selectedLevels }
   ]
 
-  // Add users filter if selectedUsers exists and has items
   if (selectedUsers && Array.isArray(selectedUsers) && selectedUsers.length > 0) {
     filters.push({
       name: 'Users',
@@ -66,7 +64,6 @@ const SearchFilters = ({
                     <Col key={index} sm={6}>
                       <h3 className='fw-bold h6'>{filter.name}</h3>
                       {filter.items.map((item, itemIndex) => {
-                        // For users, item is an object with id and display
                         const displayValue = filter.name === 'Users' ? item.display : item
                         const filterValue = filter.name === 'Users' ? item.id : item
 

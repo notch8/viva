@@ -10,9 +10,6 @@
     }
   }
 
-  // Add sufficient margin-bottom to accommodate max dropdown height (300px) + padding
-  // This prevents dropdowns from covering the Selected Filters section below
-  // Even with many users, the dropdown will scroll and won't exceed 300px height
   .input-group:last-of-type {
     margin-bottom: 320px; // Max dropdown height (300px) + 20px padding
   }
@@ -41,8 +38,6 @@
 }
 
 .search-filters {
-  // Selected Filters positioned below the reserved dropdown space
-  // The margin-bottom on .search-bar .input-group:last-of-type (320px) creates the space
   margin-top: 0;
   position: relative;
   z-index: 1; // Below dropdowns (z-index: 10) but above other content
@@ -61,7 +56,6 @@
   border-top-left-radius: 0;
   max-height: 300px;
   overflow-y: auto;
-  // Ensure dropdown appears above Selected Filters but below modals
   z-index: 10;
   .form-check {
     &:hover, &:active, &:focus {

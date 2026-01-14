@@ -42,7 +42,6 @@ class SearchController < ApplicationController
       lms: Question.lms
     }
 
-    # Add user filter props for admins only
     if current_user.admin?
       props[:users] = User.order(:email).pluck(:id, :email).map { |id, email| { id:, email: } }
       props[:selectedUsers] = params[:selected_users]
@@ -55,8 +54,6 @@ class SearchController < ApplicationController
 
   def filter_values
     user_ids = current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
-    # For admins, always use user dropdown (ignore filter_my_questions)
-    # For regular users, use filter_my_questions
     should_filter_my_questions = filter_my_questions && !current_user.admin?
 
     {

@@ -29,7 +29,6 @@ const Search = ({
   const currentUser = pageProps.currentUser
 
   const [query, setQuery] = useState(searchTerm || '')
-  // Normalize selectedUsers to strings for consistent comparison
   const normalizeUserIds = (users) => {
     if (!users || !Array.isArray(users)) return []
     return users.map(id => String(id))
@@ -92,11 +91,8 @@ const Search = ({
     const newFilterState = { ...filterState }
     const updatedFilters = [...newFilterState[filterKey]]
 
-    // For users, normalize to string for consistent comparison
-    // (since params come as strings from the backend)
     const normalizedValue = filterKey === 'selectedUsers' ? String(value) : value
 
-    // Normalize the existing filters array for comparison
     const normalizedFilters = filterKey === 'selectedUsers'
       ? updatedFilters.map(v => String(v))
       : updatedFilters
@@ -128,9 +124,6 @@ const Search = ({
     })
   }
 
-  // Removes a specific filter item and triggers a search
-  // @param {string} item - The filter value to remove
-  // @param {string} filterType - The type of filter ('Subjects', 'Types', 'Levels', or 'Users')
   const removeFilterAndSearch = (item, filterType) => {
     // Create updated filter arrays
     let updatedKeywords = [...filterState.selectedKeywords]
@@ -149,7 +142,6 @@ const Search = ({
     } else if (filterType === 'Levels') {
       updatedLevels = updatedLevels.filter(level => level !== item)
     } else if (filterType === 'Users') {
-      // For users, item is the user ID (string), normalize for comparison
       updatedUsers = updatedUsers.filter(user => String(user) !== String(item))
     }
 

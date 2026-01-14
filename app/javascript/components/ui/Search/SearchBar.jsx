@@ -34,7 +34,6 @@ export const SearchBar = ({
   onFilterMyQuestionsToggle,
   currentUser
 }) => {
-  // Build filters object with users first for admins, or regular filters for non-admins
   const filters = currentUser?.admin && users && users.length > 0
     ? { users, subjects, types, levels }
     : { subjects, types, levels }
@@ -108,11 +107,9 @@ export const SearchBar = ({
               key={index}
             >
               {filters[key].map((item, itemIndex) => {
-                // For users, item is an object with id and email
                 const filterKey = `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
                 const filterValue = key === 'users' ? String(item.id) : item
 
-                // Extract display label logic for better readability
                 const getDisplayLabel = () => {
                   if (key === 'users') return item.email
                   if (key === 'types' && item.startsWith('question_')) return item.substring(9)
@@ -120,8 +117,6 @@ export const SearchBar = ({
                 }
                 const displayLabel = getDisplayLabel()
 
-                // Normalize selectedUsers array values to strings for comparison
-                // (selectedUsers comes from URL params as strings, but item.id is a number)
                 const selectedArray = filterState[filterKey] || []
                 const normalizedSelected = key === 'users'
                   ? selectedArray.map(v => String(v))

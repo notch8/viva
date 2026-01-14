@@ -39,6 +39,7 @@ Rails.application.routes.draw do
       get 'bookmarks/export', to: 'bookmarks#export'
       # analytics page routes
       get '/analytics', to: 'analytics#index', as: 'analytics'
+      post '/analytics/export', to: 'analytics#export', as: 'analytics_export'
       namespace :api do
         resources :questions, only: [:create, :destroy]
         resources :feedbacks, only: [:create]

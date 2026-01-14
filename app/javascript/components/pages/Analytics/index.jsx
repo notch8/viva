@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import {
   Container, Row, Col, Card, Button, Form, Alert
 } from 'react-bootstrap'
-import { useForm } from '@inertiajs/inertia-react'
 import Layout from '../../App'
 
 const Analytics = () => {
   const [selectedReport, setSelectedReport] = useState('assessment')
   const [dateError, setDateError] = useState('')
-  const { data, setData, post, processing, errors, clearErrors, recentlySuccessful } = useForm({
+  const [processing, setProcessing] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [data, setData] = useState({
     report_type: 'assessment',
     date_range: 'last_7_days',
     start_date: '',
@@ -17,8 +18,7 @@ const Analytics = () => {
 
   const handleReportChange = (reportType) => {
     setSelectedReport(reportType)
-    setData('report_type', reportType)
-    clearErrors()
+    setData(prev => ({ ...prev, report_type: reportType }))
     setDateError('')
   }
 
@@ -42,15 +42,56 @@ const Analytics = () => {
     return true
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    clearErrors()
 
     if (!validateDateRange()) {
       return
     }
 
-    post('/analytics/export')
+    setProcessing(true)
+    setShowSuccess(false)
+
+    try {
+      const formData = new FormData()
+      formData.append('report_type', data.report_type)
+      formData.append('date_range', data.date_range)
+      if (data.start_date) formData.append('start_date', data.start_date)
+      if (data.end_date) formData.append('end_date', data.end_date)
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+      const response = await fetch('/analytics/export', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': csrfToken || '',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Export failed')
+      }
+
+      // Get the blob and trigger download
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'user_report.csv'
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+
+      setShowSuccess(true)
+      setTimeout(() => setShowSuccess(false), 5000)
+    } catch (error) {
+      console.error('Export error:', error)
+    } finally {
+      setProcessing(false)
+    }
   }
 
   return (
@@ -114,7 +155,7 @@ const Analytics = () => {
                   <Form.Select
                     value={data.date_range}
                     onChange={(e) => {
-                      setData('date_range', e.target.value)
+                      setData(prev => ({ ...prev, date_range: e.target.value }))
                       setDateError('')
                     }}
                   >
@@ -138,7 +179,7 @@ const Analytics = () => {
                       type='date'
                       value={data.start_date}
                       onChange={(e) => {
-                        setData('start_date', e.target.value)
+                        setData(prev => ({ ...prev, start_date: e.target.value }))
                         setDateError('')
                       }}
                       required
@@ -154,7 +195,7 @@ const Analytics = () => {
                       type='date'
                       value={data.end_date}
                       onChange={(e) => {
-                        setData('end_date', e.target.value)
+                        setData(prev => ({ ...prev, end_date: e.target.value }))
                         setDateError('')
                       }}
                       required
@@ -181,18 +222,9 @@ const Analytics = () => {
             </div>
           </Form>
 
-          {recentlySuccessful && (
-            <Alert variant='success' className='mt-3' dismissible>
+          {showSuccess && (
+            <Alert variant='success' className='mt-3' dismissible onClose={() => setShowSuccess(false)}>
               Your report has been generated successfully and will download shortly.
-            </Alert>
-          )}
-
-          {errors && Object.keys(errors).length > 0 && (
-            <Alert variant='danger' className='mt-3' dismissible>
-              <p className='mb-0'>There was an error generating your report. Please try again.</p>
-              {Object.values(errors).map((error, index) => (
-                <small key={index} className='d-block'>{error}</small>
-              ))}
             </Alert>
           )}
         </div>

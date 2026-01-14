@@ -28,7 +28,9 @@ export const SearchBar = ({
   onDeleteAllBookmarks,
   onShowExportModal,
   onHideExportModal,
-  lms
+  lms,
+  filterMyQuestions,
+  onFilterMyQuestionsToggle
 }) => {
   const filters = { subjects, types, levels }
 
@@ -58,7 +60,8 @@ export const SearchBar = ({
           {(query ||
             filterState.selectedSubjects.length > 0 ||
             filterState.selectedTypes.length > 0 ||
-            filterState.selectedLevels.length > 0) && (
+            filterState.selectedLevels.length > 0 ||
+            filterMyQuestions) && (
             <Button
               variant='secondary'
               className='d-flex align-items-center fs-6 justify-content-center text-white'
@@ -73,6 +76,20 @@ export const SearchBar = ({
 
         {/* Filters */}
         <InputGroup className='mb-3 flex-column flex-md-row'>
+          {/* Filter My Questions Button */}
+          <Button
+            variant={filterMyQuestions ? 'primary' : 'outline-light-4'}
+            className={`text-${filterMyQuestions ? 'white' : 'black'} fs-6 d-flex align-items-center justify-content-between`}
+            size='lg'
+            onClick={onFilterMyQuestionsToggle}
+            style={{ minWidth: '180px' }}
+          >
+            <span>MY QUESTIONS</span>
+            {filterMyQuestions && (
+              <span className='ms-2'>✓</span>
+            )}
+          </Button>
+
           {Object.keys(filters).map((key, index) => (
             <DropdownButton
               variant='outline-light-4 text-black fs-6 d-flex align-items-center justify-content-between'
@@ -196,6 +213,8 @@ const SearchBarWithState = (props) => {
       onShowExportModal={() => setShowExportModal(true)}
       onHideExportModal={() => setShowExportModal(false)}
       lms={props.lms}
+      filterMyQuestions={props.filterMyQuestions}
+      onFilterMyQuestionsToggle={props.onFilterMyQuestionsToggle}
     />
   )
 }

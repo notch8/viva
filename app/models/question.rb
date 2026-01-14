@@ -384,7 +384,7 @@ class Question < ApplicationRecord
     format_questions(query, **args.slice(:select, :methods))
   end
 
-  def self.filter_query(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
+  def self.filter_query(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, filter_my_questions: false, **kwargs)
     if search.try(:starts_with?, 'qid-')
       found = find_by_hashid(search)
       return found ? where(id: found.id) : none
@@ -393,7 +393,7 @@ class Question < ApplicationRecord
     only = select - methods
     only << :data unless only.include?(:data)
 
-    filter(select: only, search:, **kwargs)
+    filter(select: only, search:, filter_my_questions:, **kwargs)
   end
 
   def self.format_questions(questions, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
@@ -520,7 +520,7 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false)
+  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false, filter_my_questions: false)
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
@@ -531,7 +531,7 @@ class Question < ApplicationRecord
     # Specifying a very arbitrary order
     questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
     questions = questions.search(search) if search.present?
-
+    questions = questions.where(user_id: user.id) if filter_my_questions && user.present?
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
     # not doing something like `Question::Traditional.where`; but instead `Question.where(type:

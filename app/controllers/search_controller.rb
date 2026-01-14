@@ -13,7 +13,7 @@ class SearchController < ApplicationController
 
   # rubocop:disable Metrics/MethodLength
   def shared_props
-    query = Question.filter_query(search: params[:search], **filter_values)
+    query = Question.filter_query(search: params[:search], filter_my_questions:, **filter_values)
 
     @pagy, @questions_page = pagy(query)
 
@@ -29,6 +29,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
+      filterMyQuestions: filter_my_questions,
 
       # Pass the formatted page
       filteredQuestions: serialized_questions,
@@ -50,7 +51,12 @@ class SearchController < ApplicationController
       levels: params[:selected_levels],
       bookmarked_question_ids: params[:bookmarked_question_ids],
       bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked]),
-      user: current_user
+      user: current_user,
+      filter_my_questions:
     }
+  end
+
+  def filter_my_questions
+    ActiveModel::Type::Boolean.new.cast(params[:filter_my_questions])
   end
 end

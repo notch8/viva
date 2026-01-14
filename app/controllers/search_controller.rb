@@ -29,6 +29,7 @@ class SearchController < ApplicationController
       selectedSubjects: params[:selected_subjects],
       selectedTypes: params[:selected_types],
       selectedLevels: params[:selected_levels],
+      filterMyQuestions: filter_my_questions,
 
       # Pass the formatted page
       filteredQuestions: serialized_questions,

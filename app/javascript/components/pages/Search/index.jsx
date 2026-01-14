@@ -20,7 +20,8 @@ const Search = ({
   levels,
   bookmarkedQuestionIds,
   searchTerm,
-  pagination
+  pagination,
+  filterMyQuestions
 }) => {
 
   const [query, setQuery] = useState(searchTerm || '')
@@ -30,6 +31,7 @@ const Search = ({
     selectedSubjects: selectedSubjects || [],
     selectedLevels: selectedLevels || []
   })
+  const [filterMyQuestionsState, setFilterMyQuestionsState] = useState(filterMyQuestions || false)
 
   // Update state when props change
   useEffect(() => {
@@ -43,7 +45,11 @@ const Search = ({
       selectedSubjects: selectedSubjects || [],
       selectedLevels: selectedLevels || []
     })
-  }, [searchTerm, selectedKeywords, selectedTypes, selectedSubjects, selectedLevels])
+
+    if (filterMyQuestions !== undefined) {
+      setFilterMyQuestionsState(filterMyQuestions)
+    }
+  }, [searchTerm, selectedKeywords, selectedTypes, selectedSubjects, selectedLevels, filterMyQuestions])
 
   const { processing, clearErrors } = useForm()
 
@@ -61,6 +67,7 @@ const Search = ({
       selected_subjects: filterState.selectedSubjects,
       selected_types: filterState.selectedTypes,
       selected_levels: filterState.selectedLevels,
+      filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
       preserveScroll: true
@@ -92,6 +99,7 @@ const Search = ({
       selected_subjects: newFilterState.selectedSubjects,
       selected_types: newFilterState.selectedTypes,
       selected_levels: newFilterState.selectedLevels,
+      filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
       preserveScroll: true
@@ -133,6 +141,7 @@ const Search = ({
       selected_subjects: updatedSubjects,
       selected_types: updatedTypes,
       selected_levels: updatedLevels,
+      filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
       preserveScroll: true
@@ -147,6 +156,7 @@ const Search = ({
       selectedSubjects: [],
       selectedLevels: []
     })
+    setFilterMyQuestionsState(false)
 
     Inertia.get('/', {
       search: '',
@@ -154,6 +164,25 @@ const Search = ({
       selected_subjects: [],
       selected_types: [],
       selected_levels: [],
+      filter_my_questions: false,
+    }, {
+      preserveState: true,
+      preserveScroll: true
+    })
+  }
+
+  // Handler for toggling "My Questions" filter
+  const handleFilterMyQuestionsToggle = () => {
+    const newValue = !filterMyQuestionsState
+    setFilterMyQuestionsState(newValue)
+
+    Inertia.get('/', {
+      search: query,
+      selected_keywords: filterState.selectedKeywords,
+      selected_subjects: filterState.selectedSubjects,
+      selected_types: filterState.selectedTypes,
+      selected_levels: filterState.selectedLevels,
+      filter_my_questions: newValue,
     }, {
       preserveState: true,
       preserveScroll: true
@@ -187,6 +216,8 @@ const Search = ({
         onFilterChange={handleFilterChange}
         filterState={filterState}
         bookmarkedQuestionIds={bookmarkedQuestionIds || []}
+        filterMyQuestions={filterMyQuestionsState}
+        onFilterMyQuestionsToggle={handleFilterMyQuestionsToggle}
       />
       <SearchFilters
         selectedSubjects={filterState.selectedSubjects}

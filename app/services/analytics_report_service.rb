@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AnalyticsReportService
-  REPORT_TYPES = %w[user assessment utilization].freeze
-
   def initialize(report_type:, current_user:, start_date:, end_date:)
     @report_type = report_type
     @current_user = current_user
@@ -138,8 +136,8 @@ class AnalyticsReportService
       base_scope = base_scope.where(created_at: start_datetime..end_datetime)
     end
 
-    # Only include export logs where the associated question still exists
-    base_scope.joins("INNER JOIN questions ON questions.id = export_loggers.question_id")
+    # Use LEFT JOIN to include export logs even if question was deleted
+    base_scope.joins("LEFT JOIN questions ON questions.id = export_loggers.question_id")
               .order(created_at: :desc)
   end
 

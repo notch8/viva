@@ -1,2 +1,2 @@
-IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3,ANSWER_4,ANSWER_5,ANSWER_6,ANSWER_7,KEYWORD,SUBJECT,LEVEL
-45678,Drag and Drop,Which interventions are most appropriate when caring for a client experiencing alcohol withdrawal?,"1, 2, 3, 4",Monitor vital signs,Ensure client safety,Manage hallucinations in a therapeutic manner,Reorient as needed,Increase stimulation,Maintain NPO (nothing by mouth) status,Assess for hypotension,"Alcoholism, Addiction",Health Sciences,1
+IMPORT_ID,TYPE,TEXT,CORRECT_ANSWERS,ANSWER_1,ANSWER_2,ANSWER_3,ANSWER_4,ANSWER_5,ANSWER_6,ANSWER_7,SUBJECT,LEVEL
+45678,Drag and Drop,Which interventions are most appropriate when caring for a client experiencing alcohol withdrawal?,"1, 2, 3, 4",Monitor vital signs,Ensure client safety,Manage hallucinations in a therapeutic manner,Reorient as needed,Increase stimulation,Maintain NPO (nothing by mouth) status,Assess for hypotension,Health Sciences,1

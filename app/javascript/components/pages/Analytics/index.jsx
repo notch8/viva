@@ -9,6 +9,8 @@ const Analytics = () => {
   const [dateError, setDateError] = useState('')
   const [processing, setProcessing] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [showError, setShowError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const [data, setData] = useState({
     report_type: 'assessment',
     date_range: 'last_7_days',
@@ -51,6 +53,7 @@ const Analytics = () => {
 
     setProcessing(true)
     setShowSuccess(false)
+    setShowError(false)
 
     try {
       const formData = new FormData()
@@ -60,7 +63,8 @@ const Analytics = () => {
       if (data.end_date) formData.append('end_date', data.end_date)
 
       const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
-      const response = await fetch('/analytics/export', {
+      // Use a date parameter to prevent caching issues with the filename
+      const response = await fetch(`/analytics/export?t=${Date.now()}`, {
         method: 'POST',
         headers: {
           'X-CSRF-Token': csrfToken || '',
@@ -71,15 +75,27 @@ const Analytics = () => {
       })
 
       if (!response.ok) {
-        throw new Error('Export failed')
+        throw new Error(`Export failed: ${response.statusText}`)
       }
 
       // Get the blob and trigger download
       const blob = await response.blob()
+
+      // Extract filename from Content-Disposition header or generate it
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = `${data.report_type}_report_${data.date_range}.csv`
+
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/)
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '')
+        }
+      }
+
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'user_report.csv'
+      a.download = filename
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -89,6 +105,9 @@ const Analytics = () => {
       setTimeout(() => setShowSuccess(false), 5000)
     } catch (error) {
       console.error('Export error:', error)
+      setErrorMessage(error.message || 'Failed to generate report. Please try again.')
+      setShowError(true)
+      setTimeout(() => setShowError(false), 5000)
     } finally {
       setProcessing(false)
     }
@@ -109,7 +128,7 @@ const Analytics = () => {
               <Card.Body>
                 <Card.Title className='h6'>Assessment Report</Card.Title>
                 <Card.Text className='small text-muted'>
-                  Question ID, Subject(s), Creator Email, Date Created, Date Last Edited
+                  Question ID, Subject(s), Creator Email, Date Created, Date Last Edited, Export Count, Resolved Feedback Count, Unresolved Feedback Count
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -139,7 +158,7 @@ const Analytics = () => {
               <Card.Body>
                 <Card.Title className='h6'>Utilization Report</Card.Title>
                 <Card.Text className='small text-muted'>
-                  Question ID, Export Date, Subject(s)
+                  Question ID, Export Date, Export Type, Subject(s)
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -225,6 +244,12 @@ const Analytics = () => {
           {showSuccess && (
             <Alert variant='success' className='mt-3' dismissible onClose={() => setShowSuccess(false)}>
               Your report has been generated successfully and will download shortly.
+            </Alert>
+          )}
+
+          {showError && (
+            <Alert variant='danger' className='mt-3' dismissible onClose={() => setShowError(false)}>
+              {errorMessage}
             </Alert>
           )}
         </div>

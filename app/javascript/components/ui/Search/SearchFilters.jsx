@@ -8,10 +8,18 @@ const SearchFilters = ({
   selectedKeywords,
   selectedTypes,
   selectedLevels,
+  selectedUsers,
+  users,
   removeFilterAndSearch,
   onBookmarkBatch,
   errors
 }) => {
+  // Map user IDs to email addresses for display
+  const getUserEmail = (userId) => {
+    if (!users || !Array.isArray(users)) return userId
+    const user = users.find(u => u.id === parseInt(userId, 10) || u.id === userId)
+    return user ? user.email : userId
+  }
 
   // Create an array of filter objects with their display names
   const filters = [
@@ -21,12 +29,24 @@ const SearchFilters = ({
     { name: 'Levels', items: selectedLevels }
   ]
 
+  // Add users filter if selectedUsers exists and has items
+  if (selectedUsers && Array.isArray(selectedUsers) && selectedUsers.length > 0) {
+    filters.push({ 
+      name: 'Users', 
+      items: selectedUsers.map(userId => ({
+        id: userId,
+        display: getUserEmail(userId)
+      }))
+    })
+  }
+
   const hasItems = array => Array.isArray(array) && array.length > 0
 
   const hasFilters = hasItems(selectedSubjects) ||
     hasItems(selectedKeywords) ||
     hasItems(selectedTypes) ||
-    hasItems(selectedLevels)
+    hasItems(selectedLevels) ||
+    hasItems(selectedUsers)
 
   // If there are no filters, don't render the component
   if (!hasFilters) return null
@@ -45,16 +65,22 @@ const SearchFilters = ({
                   hasItems(filter.items) && (
                     <Col key={index} sm={6}>
                       <h3 className='fw-bold h6'>{filter.name}</h3>
-                      {filter.items.map((item, itemIndex) => (
-                        <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>
-                          <label>{item}</label>
-                          <CloseButton
-                            aria-label={`Remove filter for ${item}`}
-                            onClick={() => removeFilterAndSearch(item, filter.name)}
-                            className='ms-2'
-                          />
-                        </div>
-                      ))}
+                      {filter.items.map((item, itemIndex) => {
+                        // For users, item is an object with id and display
+                        const displayValue = filter.name === 'Users' ? item.display : item
+                        const filterValue = filter.name === 'Users' ? item.id : item
+                        
+                        return (
+                          <div key={itemIndex} className='m-1 btn bg-white text-lowercase d-inline-flex align-items-center'>
+                            <label>{displayValue}</label>
+                            <CloseButton
+                              aria-label={`Remove filter for ${displayValue}`}
+                              onClick={() => removeFilterAndSearch(filterValue, filter.name)}
+                              className='ms-2'
+                            />
+                          </div>
+                        )
+                      })}
                     </Col>
                   )
                 ))}

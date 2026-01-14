@@ -45,6 +45,8 @@
   border-top: 0;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
+  max-height: 300px;
+  overflow-y: auto;
   .form-check {
     &:hover, &:active, &:focus {
       background-color: var(--bs-tertiary-bg);

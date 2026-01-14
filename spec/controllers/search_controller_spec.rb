@@ -116,6 +116,82 @@ RSpec.describe SearchController do
              ])
         )
       end
+
+      context 'when user is an admin' do
+        let(:admin_user) { FactoryBot.create(:user, admin: true) }
+        let(:user1) { FactoryBot.create(:user, email: 'user1@example.com') }
+        let(:user2) { FactoryBot.create(:user, email: 'user2@example.com') }
+
+        before do
+          sign_in admin_user
+        end
+
+        it 'includes users list and selectedUsers in props' do
+          FactoryBot.create(:question_matching, user: user1)
+          FactoryBot.create(:question_matching, user: user2)
+
+          get :index
+
+          expect(inertia.props[:users]).to be_a(Array)
+          expect(inertia.props[:users].length).to be >= 2
+          expect(inertia.props[:users].pluck(:id)).to include(admin_user.id, user1.id, user2.id)
+          expect(inertia.props[:selectedUsers]).to be_nil
+        end
+
+        it 'filters questions by selected_users' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: user2)
+          question3 = FactoryBot.create(:question_matching, user: admin_user)
+
+          get :index, params: { selected_users: [user1.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([user1.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+          expect(filtered_ids).not_to include(question3.id)
+        end
+
+        it 'filters questions by multiple selected_users' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: user2)
+          question3 = FactoryBot.create(:question_matching, user: admin_user)
+
+          get :index, params: { selected_users: [user1.id, user2.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([user1.id.to_s, user2.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id, question2.id)
+          expect(filtered_ids).not_to include(question3.id)
+        end
+      end
+
+      context 'when user is not an admin' do
+        let(:regular_user) { FactoryBot.create(:user, admin: false) }
+
+        before do
+          sign_in regular_user
+        end
+
+        it 'does not include users list or selectedUsers in props' do
+          get :index
+
+          expect(inertia.props[:users]).to be_nil
+          expect(inertia.props[:selectedUsers]).to be_nil
+        end
+
+        it 'ignores selected_users parameter' do
+          user1 = FactoryBot.create(:user)
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: regular_user)
+
+          get :index, params: { selected_users: [user1.id] }
+
+          # Should return all questions, not filtered by user
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id, question2.id)
+        end
+      end
     end
   end
 end

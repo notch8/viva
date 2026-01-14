@@ -15,6 +15,7 @@ export const SearchBar = ({
   // keywords,
   types,
   levels,
+  users,
   processing,
   query,
   onQueryChange,
@@ -33,6 +34,10 @@ export const SearchBar = ({
   onFilterMyQuestionsToggle
 }) => {
   const filters = { subjects, types, levels }
+  // Only include users filter if users array is provided (admin only)
+  if (users && users.length > 0) {
+    filters.users = users
+  }
 
   return (
     <Form onSubmit={onSubmit}>
@@ -61,6 +66,7 @@ export const SearchBar = ({
             filterState.selectedSubjects.length > 0 ||
             filterState.selectedTypes.length > 0 ||
             filterState.selectedLevels.length > 0 ||
+            (filterState.selectedUsers && filterState.selectedUsers.length > 0) ||
             filterMyQuestions) && (
             <Button
               variant='secondary'
@@ -99,35 +105,53 @@ export const SearchBar = ({
               autoClose='outside'
               key={index}
             >
-              {filters[key].map((item, itemIndex) => (
-                <Form.Check
-                  type='checkbox'
-                  id={item}
-                  className='p-2'
-                  key={itemIndex}
-                >
-                  <Form.Check.Input
+              {filters[key].map((item, itemIndex) => {
+                // For users, item is an object with id and email
+                const filterKey = `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
+                const filterValue = key === 'users' ? String(item.id) : item
+                
+                // Extract display label logic for better readability
+                const getDisplayLabel = () => {
+                  if (key === 'users') return item.email
+                  if (key === 'types' && item.startsWith('question_')) return item.substring(9)
+                  return item
+                }
+                const displayLabel = getDisplayLabel()
+                
+                // Normalize selectedUsers array values to strings for comparison
+                // (selectedUsers comes from URL params as strings, but item.id is a number)
+                const selectedArray = filterState[filterKey] || []
+                const normalizedSelected = key === 'users' 
+                  ? selectedArray.map(v => String(v))
+                  : selectedArray
+                const isChecked = normalizedSelected.includes(filterValue)
+                
+                return (
+                  <Form.Check
                     type='checkbox'
-                    id={item}
-                    className='mx-0'
-                    value={item}
-                    onChange={(event) =>
-                      onFilterChange(
-                        event,
-                        `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
-                      )
-                    }
-                    checked={filterState[
-                      `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
-                    ].includes(item)}
-                  />
-                  <Form.Check.Label className='ps-2'>
-                    {key === 'types' && item.startsWith('question_')
-                      ? item.substring(9)
-                      : item}
-                  </Form.Check.Label>
-                </Form.Check>
-              ))}
+                    id={key === 'users' ? `user-${item.id}` : item}
+                    className='p-2'
+                    key={itemIndex}
+                  >
+                    <Form.Check.Input
+                      type='checkbox'
+                      id={key === 'users' ? `user-${item.id}` : item}
+                      className='mx-0'
+                      value={filterValue}
+                      onChange={(event) =>
+                        onFilterChange(
+                          event,
+                          filterKey
+                        )
+                      }
+                      checked={isChecked}
+                    />
+                    <Form.Check.Label className='ps-2'>
+                      {displayLabel}
+                    </Form.Check.Label>
+                  </Form.Check>
+                )
+              })}
             </DropdownButton>
           ))}
 
@@ -215,6 +239,7 @@ const SearchBarWithState = (props) => {
       lms={props.lms}
       filterMyQuestions={props.filterMyQuestions}
       onFilterMyQuestionsToggle={props.onFilterMyQuestionsToggle}
+      users={props.users}
     />
   )
 }

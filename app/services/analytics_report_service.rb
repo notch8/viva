@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class AnalyticsReportService
   def initialize(report_type:, current_user:, start_date:, end_date:)
     @report_type = report_type
@@ -11,11 +12,8 @@ class AnalyticsReportService
   def generate_report
     method_name = "generate_#{report_type}_report"
 
-    if respond_to?(method_name, true)  # true includes private methods
-      send(method_name)
-    else
-      raise NoMethodError, "Report generator method '#{method_name}' not implemented"
-    end
+    raise NoMethodError, "Report generator method '#{method_name}' not implemented" unless respond_to?(method_name, true) # true includes private methods
+    send(method_name)
   end
 
   private
@@ -162,3 +160,4 @@ class AnalyticsReportService
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

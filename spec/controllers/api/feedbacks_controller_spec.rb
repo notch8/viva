@@ -194,9 +194,8 @@ RSpec.describe Api::FeedbacksController, type: :controller do
           post :create, params: second_params
         end.to change(Feedback, :count).by(1)
 
-        expect(Feedback.where(user: user, question: question).count).to eq(2)
+        expect(Feedback.where(user:, question:).count).to eq(2)
       end
     end
   end
 end
-

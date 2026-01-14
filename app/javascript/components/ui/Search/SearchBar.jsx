@@ -34,11 +34,10 @@ export const SearchBar = ({
   onFilterMyQuestionsToggle,
   currentUser
 }) => {
-  const filters = { subjects, types, levels }
-  // Only include users filter if users array is provided (admin only)
-  if (users && users.length > 0) {
-    filters.users = users
-  }
+  // Build filters object with users first for admins, or regular filters for non-admins
+  const filters = currentUser?.admin && users && users.length > 0
+    ? { users, subjects, types, levels }
+    : { subjects, types, levels }
 
   return (
     <Form onSubmit={onSubmit}>

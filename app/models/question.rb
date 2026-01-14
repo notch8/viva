@@ -605,15 +605,15 @@ class Question < ApplicationRecord
   end
 
   def exported_count
-    ExportLogger.where(question_id: id).count
+    attributes['exports_count'] || ExportLogger.where(question_id: id).count
   end
 
   def resolved_feedback_count
-    feedbacks.where(resolved: true).count
+    attributes['resolved_feedbacks_count'] || feedbacks.where(resolved: true).count
   end
 
   def unresolved_feedback_count
-    feedbacks.where(resolved: false).count
+    attributes['unresolved_feedbacks_count'] || feedbacks.where(resolved: false).count
   end
 
   private

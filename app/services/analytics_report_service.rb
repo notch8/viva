@@ -105,7 +105,15 @@ class AnalyticsReportService
       base_scope = base_scope.where(created_at: start_datetime..end_datetime)
     end
 
-    base_scope.includes(:user).order(created_at: :desc)
+    base_scope
+      .select(
+        'questions.*',
+        '(SELECT COUNT(*) FROM export_loggers WHERE export_loggers.question_id = questions.id) as exports_count',
+        '(SELECT COUNT(*) FROM feedbacks WHERE feedbacks.question_id = questions.id AND feedbacks.resolved = true) as resolved_feedbacks_count',
+        '(SELECT COUNT(*) FROM feedbacks WHERE feedbacks.question_id = questions.id AND feedbacks.resolved = false) as unresolved_feedbacks_count'
+      )
+      .includes(:user)
+      .order(created_at: :desc)
   end
 
   # Utilization Report Methods

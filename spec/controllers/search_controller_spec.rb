@@ -164,6 +164,31 @@ RSpec.describe SearchController do
           expect(filtered_ids).to include(question1.id, question2.id)
           expect(filtered_ids).not_to include(question3.id)
         end
+
+        it 'ignores filter_my_questions parameter when admin uses user dropdown' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: admin_user)
+
+          # Admin selects user1, but also has filter_my_questions=true
+          # Should only filter by selected_users, ignoring filter_my_questions
+          get :index, params: { selected_users: [user1.id], filter_my_questions: true }
+
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+        end
+
+        it 'allows admin to select themselves from user dropdown' do
+          question1 = FactoryBot.create(:question_matching, user: admin_user)
+          question2 = FactoryBot.create(:question_matching, user: user1)
+
+          get :index, params: { selected_users: [admin_user.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([admin_user.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+        end
       end
 
       context 'when user is not an admin' do
@@ -190,6 +215,18 @@ RSpec.describe SearchController do
           # Should return all questions, not filtered by user
           filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
           expect(filtered_ids).to include(question1.id, question2.id)
+        end
+
+        it 'can use filter_my_questions to see only their questions' do
+          question1 = FactoryBot.create(:question_matching, user: regular_user)
+          question2 = FactoryBot.create(:question_matching, user: FactoryBot.create(:user))
+
+          get :index, params: { filter_my_questions: true }
+
+          expect(inertia.props[:filterMyQuestions]).to be true
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
         end
       end
     end

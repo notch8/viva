@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Layout from '../../App'
 import { Container, Row, Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
-import { useForm } from '@inertiajs/inertia-react'
+import { useForm, usePage } from '@inertiajs/inertia-react'
 import QuestionWrapper from '../../ui/Question/QuestionWrapper'
 import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
@@ -25,6 +25,8 @@ const Search = ({
   pagination,
   filterMyQuestions
 }) => {
+  const { props: pageProps } = usePage()
+  const currentUser = pageProps.currentUser
 
   const [query, setQuery] = useState(searchTerm || '')
   // Normalize selectedUsers to strings for consistent comparison
@@ -248,6 +250,7 @@ const Search = ({
         bookmarkedQuestionIds={bookmarkedQuestionIds || []}
         filterMyQuestions={filterMyQuestionsState}
         onFilterMyQuestionsToggle={handleFilterMyQuestionsToggle}
+        currentUser={currentUser}
       />
       <SearchFilters
         selectedSubjects={filterState.selectedSubjects}

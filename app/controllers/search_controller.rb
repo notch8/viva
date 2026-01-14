@@ -54,6 +54,11 @@ class SearchController < ApplicationController
   # rubocop:enable Metrics/MethodLength
 
   def filter_values
+    user_ids = current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
+    # For admins, always use user dropdown (ignore filter_my_questions)
+    # For regular users, use filter_my_questions
+    should_filter_my_questions = filter_my_questions && !current_user.admin?
+
     {
       keywords: params[:selected_keywords],
       subjects: params[:selected_subjects],
@@ -62,8 +67,8 @@ class SearchController < ApplicationController
       bookmarked_question_ids: params[:bookmarked_question_ids],
       bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked]),
       user: current_user,
-      filter_my_questions:,
-      user_ids: current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
+      filter_my_questions: should_filter_my_questions,
+      user_ids:
     }
   end
 

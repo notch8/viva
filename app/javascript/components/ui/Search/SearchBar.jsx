@@ -31,7 +31,8 @@ export const SearchBar = ({
   onHideExportModal,
   lms,
   filterMyQuestions,
-  onFilterMyQuestionsToggle
+  onFilterMyQuestionsToggle,
+  currentUser
 }) => {
   const filters = { subjects, types, levels }
   // Only include users filter if users array is provided (admin only)
@@ -67,7 +68,7 @@ export const SearchBar = ({
             filterState.selectedTypes.length > 0 ||
             filterState.selectedLevels.length > 0 ||
             (filterState.selectedUsers && filterState.selectedUsers.length > 0) ||
-            filterMyQuestions) && (
+            (!currentUser?.admin && filterMyQuestions)) && (
             <Button
               variant='secondary'
               className='d-flex align-items-center fs-6 justify-content-center text-white'
@@ -82,19 +83,21 @@ export const SearchBar = ({
 
         {/* Filters */}
         <InputGroup className='mb-3 flex-column flex-md-row'>
-          {/* Filter My Questions Button */}
-          <Button
-            variant={filterMyQuestions ? 'primary' : 'outline-light-4'}
-            className={`text-${filterMyQuestions ? 'white' : 'black'} fs-6 d-flex align-items-center justify-content-between`}
-            size='lg'
-            onClick={onFilterMyQuestionsToggle}
-            style={{ minWidth: '180px' }}
-          >
-            <span>MY QUESTIONS</span>
-            {filterMyQuestions && (
-              <span className='ms-2'>✓</span>
-            )}
-          </Button>
+          {/* Filter My Questions Button - only show for non-admins */}
+          {!currentUser?.admin && (
+            <Button
+              variant={filterMyQuestions ? 'primary' : 'outline-light-4'}
+              className={`text-${filterMyQuestions ? 'white' : 'black'} fs-6 d-flex align-items-center justify-content-between`}
+              size='lg'
+              onClick={onFilterMyQuestionsToggle}
+              style={{ minWidth: '180px' }}
+            >
+              <span>MY QUESTIONS</span>
+              {filterMyQuestions && (
+                <span className='ms-2'>✓</span>
+              )}
+            </Button>
+          )}
 
           {Object.keys(filters).map((key, index) => (
             <DropdownButton
@@ -240,6 +243,7 @@ const SearchBarWithState = (props) => {
       filterMyQuestions={props.filterMyQuestions}
       onFilterMyQuestionsToggle={props.onFilterMyQuestionsToggle}
       users={props.users}
+      currentUser={props.currentUser}
     />
   )
 }

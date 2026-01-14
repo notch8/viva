@@ -218,6 +218,40 @@ RSpec.describe Question, type: :model do
       expect(described_class.filter(type_name: question1.type_name, keywords: [keyword2.name])).to eq([])
     end
     # rubocop:enable RSpec/ExampleLength
+
+    it 'filters by single user_id' do
+      user1 = FactoryBot.create(:user)
+      question1 = FactoryBot.create(:question_matching, user: user1)
+      question2 = FactoryBot.create(:question_matching, user: user1)
+      FactoryBot.create(:question_matching, user: FactoryBot.create(:user))
+
+      expect(described_class.filter(user_ids: [user1.id])).to match_array([question1, question2])
+    end
+
+    it 'filters by multiple user_ids' do
+      user1 = FactoryBot.create(:user)
+      user2 = FactoryBot.create(:user)
+      questions = [FactoryBot.create(:question_matching, user: user1), FactoryBot.create(:question_matching, user: user2), FactoryBot.create(:question_matching, user: user1)]
+      expect(described_class.filter(user_ids: [user1.id, user2.id])).to match_array(questions)
+    end
+
+    it 'returns empty array when filtering by user with no questions' do
+      user3 = FactoryBot.create(:user)
+      expect(described_class.filter(user_ids: [user3.id])).to eq([])
+    end
+
+    it 'returns empty array when filtering by non-existent user_ids' do
+      FactoryBot.create(:question_matching)
+      non_existent_id = User.maximum(:id).to_i + 1
+      expect(described_class.filter(user_ids: [non_existent_id])).to eq([])
+    end
+
+    it 'returns all questions when user_ids is empty' do
+      user1 = FactoryBot.create(:user)
+      user2 = FactoryBot.create(:user)
+      questions = [FactoryBot.create(:question_matching, user: user1), FactoryBot.create(:question_matching, user: user2), FactoryBot.create(:question_matching, user: user1)]
+      expect(described_class.filter(user_ids: [])).to match_array(questions)
+    end
   end
 
   describe '#errors' do

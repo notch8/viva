@@ -15,6 +15,7 @@ export const SearchBar = ({
   // keywords,
   types,
   levels,
+  users,
   processing,
   query,
   onQueryChange,
@@ -30,9 +31,12 @@ export const SearchBar = ({
   onHideExportModal,
   lms,
   filterMyQuestions,
-  onFilterMyQuestionsToggle
+  onFilterMyQuestionsToggle,
+  currentUser
 }) => {
-  const filters = { subjects, types, levels }
+  const filters = currentUser?.admin && users && users.length > 0
+    ? { users, subjects, types, levels }
+    : { subjects, types, levels }
 
   return (
     <Form onSubmit={onSubmit}>
@@ -61,7 +65,8 @@ export const SearchBar = ({
             filterState.selectedSubjects.length > 0 ||
             filterState.selectedTypes.length > 0 ||
             filterState.selectedLevels.length > 0 ||
-            filterMyQuestions) && (
+            (filterState.selectedUsers && filterState.selectedUsers.length > 0) ||
+            (!currentUser?.admin && filterMyQuestions)) && (
             <Button
               variant='secondary'
               className='d-flex align-items-center fs-6 justify-content-center text-white'
@@ -76,19 +81,21 @@ export const SearchBar = ({
 
         {/* Filters */}
         <InputGroup className='mb-3 flex-column flex-md-row'>
-          {/* Filter My Questions Button */}
-          <Button
-            variant={filterMyQuestions ? 'primary' : 'outline-light-4'}
-            className={`text-${filterMyQuestions ? 'white' : 'black'} fs-6 d-flex align-items-center justify-content-between`}
-            size='lg'
-            onClick={onFilterMyQuestionsToggle}
-            style={{ minWidth: '180px' }}
-          >
-            <span>MY QUESTIONS</span>
-            {filterMyQuestions && (
-              <span className='ms-2'>✓</span>
-            )}
-          </Button>
+          {/* Filter My Questions Button - only show for non-admins */}
+          {!currentUser?.admin && (
+            <Button
+              variant={filterMyQuestions ? 'primary' : 'outline-light-4'}
+              className={`text-${filterMyQuestions ? 'white' : 'black'} fs-6 d-flex align-items-center justify-content-between`}
+              size='lg'
+              onClick={onFilterMyQuestionsToggle}
+              style={{ minWidth: '180px' }}
+            >
+              <span>MY QUESTIONS</span>
+              {filterMyQuestions && (
+                <span className='ms-2'>✓</span>
+              )}
+            </Button>
+          )}
 
           {Object.keys(filters).map((key, index) => (
             <DropdownButton
@@ -99,35 +106,49 @@ export const SearchBar = ({
               autoClose='outside'
               key={index}
             >
-              {filters[key].map((item, itemIndex) => (
-                <Form.Check
-                  type='checkbox'
-                  id={item}
-                  className='p-2'
-                  key={itemIndex}
-                >
-                  <Form.Check.Input
+              {filters[key].map((item, itemIndex) => {
+                const filterKey = `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
+                const filterValue = key === 'users' ? String(item.id) : item
+
+                const getDisplayLabel = () => {
+                  if (key === 'users') return item.email
+                  if (key === 'types' && item.startsWith('question_')) return item.substring(9)
+                  return item
+                }
+                const displayLabel = getDisplayLabel()
+
+                const selectedArray = filterState[filterKey] || []
+                const normalizedSelected = key === 'users'
+                  ? selectedArray.map(v => String(v))
+                  : selectedArray
+                const isChecked = normalizedSelected.includes(filterValue)
+
+                return (
+                  <Form.Check
                     type='checkbox'
-                    id={item}
-                    className='mx-0'
-                    value={item}
-                    onChange={(event) =>
-                      onFilterChange(
-                        event,
-                        `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
-                      )
-                    }
-                    checked={filterState[
-                      `selected${key.charAt(0).toUpperCase() + key.slice(1)}`
-                    ].includes(item)}
-                  />
-                  <Form.Check.Label className='ps-2'>
-                    {key === 'types' && item.startsWith('question_')
-                      ? item.substring(9)
-                      : item}
-                  </Form.Check.Label>
-                </Form.Check>
-              ))}
+                    id={key === 'users' ? `user-${item.id}` : item}
+                    className='p-2'
+                    key={itemIndex}
+                  >
+                    <Form.Check.Input
+                      type='checkbox'
+                      id={key === 'users' ? `user-${item.id}` : item}
+                      className='mx-0'
+                      value={filterValue}
+                      onChange={(event) =>
+                        onFilterChange(
+                          event,
+                          filterKey
+                        )
+                      }
+                      checked={isChecked}
+                    />
+                    <Form.Check.Label className='ps-2'>
+                      {displayLabel}
+                    </Form.Check.Label>
+                  </Form.Check>
+                )
+              })}
             </DropdownButton>
           ))}
 
@@ -215,6 +236,8 @@ const SearchBarWithState = (props) => {
       lms={props.lms}
       filterMyQuestions={props.filterMyQuestions}
       onFilterMyQuestionsToggle={props.onFilterMyQuestionsToggle}
+      users={props.users}
+      currentUser={props.currentUser}
     />
   )
 }

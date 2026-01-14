@@ -12,6 +12,7 @@ class SearchController < ApplicationController
   private
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def shared_props
     query = Question.filter_query(search: params[:search], filter_my_questions:, **filter_values)
 
@@ -19,7 +20,7 @@ class SearchController < ApplicationController
 
     serialized_questions = Question.format_questions(@questions_page)
 
-    {
+    props = {
       keywords: Keyword.names,
       subjects: Subject.names,
       types: Question.type_names,
@@ -40,10 +41,21 @@ class SearchController < ApplicationController
       bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id),
       lms: Question.lms
     }
+
+    if current_user.admin?
+      props[:users] = User.order(:email).pluck(:id, :email).map { |id, email| { id:, email: } }
+      props[:selectedUsers] = params[:selected_users]
+    end
+
+    props
   end
+  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def filter_values
+    user_ids = current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
+    should_filter_my_questions = filter_my_questions && !current_user.admin?
+
     {
       keywords: params[:selected_keywords],
       subjects: params[:selected_subjects],
@@ -52,7 +64,8 @@ class SearchController < ApplicationController
       bookmarked_question_ids: params[:bookmarked_question_ids],
       bookmarked: ActiveModel::Type::Boolean.new.cast(params[:bookmarked]),
       user: current_user,
-      filter_my_questions:
+      filter_my_questions: should_filter_my_questions,
+      user_ids:
     }
   end
 

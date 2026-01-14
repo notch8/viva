@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Layout from '../../App'
 import { Container, Row, Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
-import { useForm } from '@inertiajs/inertia-react'
+import { useForm, usePage } from '@inertiajs/inertia-react'
 import QuestionWrapper from '../../ui/Question/QuestionWrapper'
 import SearchBar from '../../ui/Search/SearchBar'
 import SearchFilters from '../../ui/Search/SearchFilters'
@@ -14,22 +14,31 @@ const Search = ({
   selectedKeywords,
   selectedTypes,
   selectedLevels,
+  selectedUsers,
   subjects,
   keywords,
   types,
   levels,
+  users,
   bookmarkedQuestionIds,
   searchTerm,
   pagination,
   filterMyQuestions
 }) => {
+  const { props: pageProps } = usePage()
+  const currentUser = pageProps.currentUser
 
   const [query, setQuery] = useState(searchTerm || '')
+  const normalizeUserIds = (users) => {
+    if (!users || !Array.isArray(users)) return []
+    return users.map(id => String(id))
+  }
   const [filterState, setFilterState] = useState({
     selectedKeywords: selectedKeywords || [],
     selectedTypes: selectedTypes || [],
     selectedSubjects: selectedSubjects || [],
-    selectedLevels: selectedLevels || []
+    selectedLevels: selectedLevels || [],
+    selectedUsers: normalizeUserIds(selectedUsers)
   })
   const [filterMyQuestionsState, setFilterMyQuestionsState] = useState(filterMyQuestions || false)
 
@@ -43,13 +52,14 @@ const Search = ({
       selectedKeywords: selectedKeywords || [],
       selectedTypes: selectedTypes || [],
       selectedSubjects: selectedSubjects || [],
-      selectedLevels: selectedLevels || []
+      selectedLevels: selectedLevels || [],
+      selectedUsers: normalizeUserIds(selectedUsers)
     })
 
     if (filterMyQuestions !== undefined) {
       setFilterMyQuestionsState(filterMyQuestions)
     }
-  }, [searchTerm, selectedKeywords, selectedTypes, selectedSubjects, selectedLevels, filterMyQuestions])
+  }, [searchTerm, selectedKeywords, selectedTypes, selectedSubjects, selectedLevels, selectedUsers, filterMyQuestions])
 
   const { processing, clearErrors } = useForm()
 
@@ -67,6 +77,7 @@ const Search = ({
       selected_subjects: filterState.selectedSubjects,
       selected_types: filterState.selectedTypes,
       selected_levels: filterState.selectedLevels,
+      selected_users: filterState.selectedUsers,
       filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
@@ -80,10 +91,16 @@ const Search = ({
     const newFilterState = { ...filterState }
     const updatedFilters = [...newFilterState[filterKey]]
 
-    if (checked && !updatedFilters.includes(value)) {
-      updatedFilters.push(value)
+    const normalizedValue = filterKey === 'selectedUsers' ? String(value) : value
+
+    const normalizedFilters = filterKey === 'selectedUsers'
+      ? updatedFilters.map(v => String(v))
+      : updatedFilters
+
+    if (checked && !normalizedFilters.includes(normalizedValue)) {
+      updatedFilters.push(normalizedValue)
     } else if (!checked) {
-      const index = updatedFilters.indexOf(value)
+      const index = normalizedFilters.findIndex(item => item === normalizedValue)
       if (index !== -1) {
         updatedFilters.splice(index, 1)
       }
@@ -99,6 +116,7 @@ const Search = ({
       selected_subjects: newFilterState.selectedSubjects,
       selected_types: newFilterState.selectedTypes,
       selected_levels: newFilterState.selectedLevels,
+      selected_users: newFilterState.selectedUsers,
       filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
@@ -106,15 +124,13 @@ const Search = ({
     })
   }
 
-  // Removes a specific filter item and triggers a search
-  // @param {string} item - The filter value to remove
-  // @param {string} filterType - The type of filter ('Subjects', 'Types', or 'Levels')
   const removeFilterAndSearch = (item, filterType) => {
     // Create updated filter arrays
     let updatedKeywords = [...filterState.selectedKeywords]
     let updatedSubjects = [...filterState.selectedSubjects]
     let updatedTypes = [...filterState.selectedTypes]
     let updatedLevels = [...filterState.selectedLevels]
+    let updatedUsers = [...filterState.selectedUsers]
 
     // Remove the item from the appropriate array
     if (filterType === 'Subjects') {
@@ -125,13 +141,16 @@ const Search = ({
       updatedTypes = updatedTypes.filter(type => type !== item)
     } else if (filterType === 'Levels') {
       updatedLevels = updatedLevels.filter(level => level !== item)
+    } else if (filterType === 'Users') {
+      updatedUsers = updatedUsers.filter(user => String(user) !== String(item))
     }
 
     setFilterState({
       selectedKeywords: updatedKeywords,
       selectedSubjects: updatedSubjects,
       selectedTypes: updatedTypes,
-      selectedLevels: updatedLevels
+      selectedLevels: updatedLevels,
+      selectedUsers: updatedUsers
     })
 
     // Perform search with the updated values
@@ -141,6 +160,7 @@ const Search = ({
       selected_subjects: updatedSubjects,
       selected_types: updatedTypes,
       selected_levels: updatedLevels,
+      selected_users: updatedUsers,
       filter_my_questions: filterMyQuestionsState,
     }, {
       preserveState: true,
@@ -154,7 +174,8 @@ const Search = ({
       selectedKeywords: [],
       selectedTypes: [],
       selectedSubjects: [],
-      selectedLevels: []
+      selectedLevels: [],
+      selectedUsers: []
     })
     setFilterMyQuestionsState(false)
 
@@ -164,6 +185,7 @@ const Search = ({
       selected_subjects: [],
       selected_types: [],
       selected_levels: [],
+      selected_users: [],
       filter_my_questions: false,
     }, {
       preserveState: true,
@@ -182,6 +204,7 @@ const Search = ({
       selected_subjects: filterState.selectedSubjects,
       selected_types: filterState.selectedTypes,
       selected_levels: filterState.selectedLevels,
+      selected_users: filterState.selectedUsers,
       filter_my_questions: newValue,
     }, {
       preserveState: true,
@@ -208,6 +231,7 @@ const Search = ({
         keywords={keywords}
         types={types}
         levels={levels}
+        users={users}
         processing={processing}
         query={query}
         onQueryChange={handleSearchChange}
@@ -218,12 +242,15 @@ const Search = ({
         bookmarkedQuestionIds={bookmarkedQuestionIds || []}
         filterMyQuestions={filterMyQuestionsState}
         onFilterMyQuestionsToggle={handleFilterMyQuestionsToggle}
+        currentUser={currentUser}
       />
       <SearchFilters
         selectedSubjects={filterState.selectedSubjects}
         selectedKeywords={filterState.selectedKeywords}
         selectedTypes={filterState.selectedTypes}
         selectedLevels={filterState.selectedLevels}
+        selectedUsers={filterState.selectedUsers}
+        users={users}
         removeFilterAndSearch={removeFilterAndSearch}
         onBookmarkBatch={handleBookmarkBatch}
       />

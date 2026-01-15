@@ -96,13 +96,15 @@ export const QuestionFormUI = ({
               </div>
             </div>
 
-            <Button
-              type='submit'
-              className='btn btn-primary mt-3'
-              disabled={isSubmitDisabled}
-            >
-              Submit
-            </Button>
+            <div className='d-flex justify-content-end mt-4'>
+              <Button
+                type='submit'
+                className='btn btn-primary'
+                disabled={isSubmitDisabled}
+              >
+                {question ? 'Update' : 'Submit'}
+              </Button>
+            </div>
           </Form>
         </div>
       )}

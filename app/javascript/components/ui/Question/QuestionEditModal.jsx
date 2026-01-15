@@ -22,11 +22,6 @@ const QuestionEditModal = ({ show, onClose, question, subjects }) => {
           onSuccess={handleSuccess}
         />
       </Modal.Body>
-      <Modal.Footer>
-        <button className='btn btn-secondary' onClick={onClose}>
-          Close
-        </button>
-      </Modal.Footer>
     </Modal>
   )
 }

@@ -20,10 +20,21 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
     question ? TYPE_MAPPER[question.type] : ''
   )
   const [questionText, setQuestionText] = useState(question?.text || '')
-  const [images, setImages] = useState([])
+  const [images, setImages] = useState(
+    question?.images?.map((img) => ({
+      file: null,
+      preview: img.url,
+      altText: img.alt_text || '',
+      isValid: true,
+      filename: img.filename || 'Existing image',
+      isExisting: true
+    })) || []
+  )
   const [level, setLevel] = useState(question?.level || '')
   const [subjects, setSubjects] = useState(question?.subjects || [])
-  const [data, setData] = useState(question?.data || { text: '', subQuestions: [] })
+  const [data, setData] = useState(
+    question?.data || { text: '', subQuestions: [] }
+  )
   const [resetFields, setResetFields] = useState(false)
 
   const handleQuestionTypeSelection = (type) => {

@@ -43,11 +43,18 @@ RSpec.describe SearchController do
 
       # TODO: account for types and levels
       it 'makes a request using selected_keywords, selected_subjects, and selected_types, and filters the questions based on these selected values.' do
-        question1 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
-        question2 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects)
+        # Create question2 first with an older timestamp
+        question2 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects, updated_at: 1.day.ago)
+        # Create question1 with a newer timestamp
+        question1 = FactoryBot.create(:question_matching, :with_keywords, :with_subjects, updated_at: Time.current)
+
+        # Debug output to verify timestamps
+        puts "question1 (id: #{question1.id}) updated_at: #{question1.updated_at}"
+        puts "question2 (id: #{question2.id}) updated_at: #{question2.updated_at}"
 
         get :index
         # test that we have both question 1 and 2 to start with
+        # Now question1 will reliably appear first due to updated_at: :desc ordering
         expect(inertia.props[:filteredQuestions].as_json).to(
           eq([
                {

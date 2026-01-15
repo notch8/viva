@@ -104,8 +104,11 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
     }
 
     images.forEach((image) => {
-      formData.append('question[images][]', image.file)
-      formData.append('question[alt_text][]', image.altText)
+      // Only append new images (with file), skip existing ones
+      if (image.file) {
+        formData.append('question[images][]', image.file)
+        formData.append('question[alt_text][]', image.altText)
+      }
     })
 
     subjects.forEach((subject) =>
@@ -118,21 +121,38 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const isUpdate = !!question
+    const url = isUpdate ? `/api/questions/${question.id}` : '/api/questions'
+    const method = isUpdate ? 'PUT' : 'POST'
+
     try {
-      const response = await fetch('/api/questions', {
-        method: 'POST',
+      const response = await fetch(url, {
+        method: method,
         body: formatFormData()
       })
       if (response.ok) {
-        alert('Question saved successfully!')
-        resetForm()
+        alert(`Question ${isUpdate ? 'updated' : 'saved'} successfully!`)
+        if (!isUpdate) {
+          resetForm()
+        }
       } else {
         const errorData = await response.json()
-        alert(`Failed to save the question: ${errorData.errors?.join(', ')}`)
+        alert(
+          `Failed to ${
+            isUpdate ? 'update' : 'save'
+          } the question: ${errorData.errors?.join(', ')}`
+        )
       }
     } catch (error) {
-      console.error('Error saving the question:', error)
-      alert('An error occurred while saving the question.')
+      console.error(
+        `Error ${isUpdate ? 'updating' : 'saving'} the question:`,
+        error
+      )
+      alert(
+        `An error occurred while ${
+          isUpdate ? 'updating' : 'saving'
+        } the question.`
+      )
     }
   }
 

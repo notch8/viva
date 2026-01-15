@@ -172,91 +172,95 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
 
     const validateQuestionType = (type, questionData) => {
       switch (type) {
-      case 'Essay':
-      case 'File Upload': {
-        if (typeof data === 'object' || data === '') {
-          return true
+        case 'Essay':
+        case 'File Upload': {
+          if (typeof data === 'object' || data === '') {
+            return true
+          }
+          break
         }
-        break
-      }
-      case 'Bow Tie': {
-        const { center, left, right } = questionData || {}
-        if (
-          !center?.label?.trim() ||
+        case 'Bow Tie': {
+          const { center, left, right } = questionData || {}
+          if (
+            !center?.label?.trim() ||
             !left?.label?.trim() ||
             !right?.label?.trim() ||
             !center?.answers ||
             !left?.answers ||
             !right?.answers
-        ) {
-          return true
-        }
+          ) {
+            return true
+          }
 
-        const oneCenterAnswerSelected = center.answers.filter(
-          (answer) => answer.correct === true && answer.answer.trim()
-        )
-        const oneOrMoreLeftAnswersSelected = left.answers.filter(
-          (answer) => answer.correct === true && answer.answer.trim()
-        )
-        const oneOrMoreRightAnswersSelected = right.answers.filter(
-          (answer) => answer.correct === true && answer.answer.trim()
-        )
+          const oneCenterAnswerSelected = center.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          )
+          const oneOrMoreLeftAnswersSelected = left.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          )
+          const oneOrMoreRightAnswersSelected = right.answers.filter(
+            (answer) => answer.correct === true && answer.answer.trim()
+          )
 
-        if (
-          oneCenterAnswerSelected.length !== 1 ||
+          if (
+            oneCenterAnswerSelected.length !== 1 ||
             oneOrMoreLeftAnswersSelected.length < 1 ||
             oneOrMoreRightAnswersSelected.length < 1
-        ) {
-          return true
+          ) {
+            return true
+          }
+          break
         }
-        break
-      }
-      case 'Categorization': {
-        if (!questionData || !Array.isArray(questionData)) return true
-        const isInvalid = questionData.some(
-          (item) =>
-            !item.answer.trim() ||
+        case 'Categorization': {
+          if (!questionData || !Array.isArray(questionData)) return true
+          const isInvalid = questionData.some(
+            (item) =>
+              !item.answer.trim() ||
               !item.correct ||
               !Array.isArray(item.correct) ||
               item.correct.some((match) => !match.trim())
-        )
-        return isInvalid
-      }
-      case 'Matching': {
-        if (!questionData || !Array.isArray(questionData)) return true
-        const isInvalid = questionData.some(
-          (pair) => !pair.answer.trim() || !pair.correct.trim()
-        )
-        return isInvalid
-      }
-      case 'Drag and Drop': {
-        if (
-          !questionData ||
+          )
+          return isInvalid
+        }
+        case 'Matching': {
+          if (!questionData || !Array.isArray(questionData)) return true
+          const isInvalid = questionData.some((pair) => {
+            const answer = pair.answer?.trim() || ''
+            const correct = Array.isArray(pair.correct)
+              ? pair.correct[0]?.trim() || ''
+              : pair.correct?.trim() || ''
+            return !answer || !correct
+          })
+          return isInvalid
+        }
+        case 'Drag and Drop': {
+          if (
+            !questionData ||
             !Array.isArray(questionData) ||
             !questionData.some((item) => item.correct && item.answer.trim())
-        ) {
-          return true
+          ) {
+            return true
+          }
+          break
         }
-        break
-      }
-      case 'Multiple Choice': {
-        if (!Array.isArray(questionData)) return true
-        const correctCount = questionData.filter(
-          (item) => item.correct
-        ).length
-        if (correctCount !== 1) return true
-        break
-      }
-      case 'Select All That Apply': {
-        if (!Array.isArray(questionData)) return true
-        const correctCount = questionData.filter(
-          (item) => item.correct
-        ).length
-        if (correctCount < 1) return true
-        break
-      }
-      default:
-        return false
+        case 'Multiple Choice': {
+          if (!Array.isArray(questionData)) return true
+          const correctCount = questionData.filter(
+            (item) => item.correct
+          ).length
+          if (correctCount !== 1) return true
+          break
+        }
+        case 'Select All That Apply': {
+          if (!Array.isArray(questionData)) return true
+          const correctCount = questionData.filter(
+            (item) => item.correct
+          ).length
+          if (correctCount < 1) return true
+          break
+        }
+        default:
+          return false
       }
       return false
     }

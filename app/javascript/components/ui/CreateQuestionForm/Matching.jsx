@@ -12,13 +12,18 @@ const Matching = ({
 }) => {
   const [pairs, setPairs] = useState(
     data && Array.isArray(data) && data.length > 0
-      ? data
+      ? data.map((pair) => ({
+          answer: pair.answer || '',
+          correct: Array.isArray(pair.correct)
+            ? pair.correct[0] || ''
+            : pair.correct || ''
+        }))
       : [
-        { answer: '', correct: '' },
-        { answer: '', correct: '' },
-        { answer: '', correct: '' },
-        { answer: '', correct: '' }
-      ]
+          { answer: '', correct: '' },
+          { answer: '', correct: '' },
+          { answer: '', correct: '' },
+          { answer: '', correct: '' }
+        ]
   )
 
   useEffect(() => {

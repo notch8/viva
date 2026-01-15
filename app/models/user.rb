@@ -19,4 +19,12 @@ class User < ApplicationRecord
   def inactive_message
     'Your account is not active. Please contact support.'
   end
+
+  def role
+    admin? ? 'Admin' : 'User'
+  end
+
+  def questions_exported_count
+    ExportLogger.where(user_id: id).count
+  end
 end

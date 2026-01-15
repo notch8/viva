@@ -7,7 +7,8 @@ import {
   SignOut,
   Upload,
   CaretLeft,
-  Users
+  Users,
+  ChartBar
 } from '@phosphor-icons/react'
 
 export const Sidebar = ({ open, setOpen, currentUser, url }) => {
@@ -85,6 +86,17 @@ export const Sidebar = ({ open, setOpen, currentUser, url }) => {
           </Nav.Link>
         </Nav.Item>
       )}
+      <Nav.Item className='mt-1 bg-light-2'>
+        <Nav.Link
+          href='/analytics'
+          className={`${
+            url === '/analytics' ? 'active' : ''
+          } nav-link d-flex align-items-center link-dark`}
+        >
+          <ChartBar weight='bold' alt='Analytics' size={18} className='me-2' />
+          Analytics
+        </Nav.Link>
+      </Nav.Item>
       <Nav.Item className='mt-1 bg-light-2'>
         <Nav.Link
           href='/logout'

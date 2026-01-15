@@ -606,6 +606,18 @@ class Question < ApplicationRecord
     questions.select(*select_statement)
   end
 
+  def exported_count
+    attributes['exports_count'] || ExportLogger.where(question_id: id).count
+  end
+
+  def resolved_feedback_count
+    attributes['resolved_feedbacks_count'] || feedbacks.where(resolved: true).count
+  end
+
+  def unresolved_feedback_count
+    attributes['unresolved_feedbacks_count'] || feedbacks.where(resolved: false).count
+  end
+
   private
 
   def index_searchable_field

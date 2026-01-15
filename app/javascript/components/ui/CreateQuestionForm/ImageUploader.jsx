@@ -86,8 +86,16 @@ const ImageUploader = ({ images, setImages }) => {
         </Form.Group>
       </InputGroup>
 
-      {errors.image && <Alert variant='danger' dismissible>{errors.image}</Alert>}
-      {errors.altText && <Alert variant='danger' dismissible>{errors.altText}</Alert>}
+      {errors.image && (
+        <Alert variant='danger' dismissible>
+          {errors.image}
+        </Alert>
+      )}
+      {errors.altText && (
+        <Alert variant='danger' dismissible>
+          {errors.altText}
+        </Alert>
+      )}
 
       {images.map((image, index) => (
         <div key={index} className='image-preview-container mb-3'>
@@ -99,8 +107,11 @@ const ImageUploader = ({ images, setImages }) => {
                 className='preview-image'
                 style={{ width: '40px', height: '40px', objectFit: 'cover' }}
               />
-              <span className={`filename ${!image.isValid ? 'text-danger' : ''}`}>
-                {image.file.name} {!image.isValid && '(Invalid)'}
+              <span
+                className={`filename ${!image.isValid ? 'text-danger' : ''}`}
+              >
+                {image.file ? image.file.name : image.filename}{' '}
+                {!image.isValid && '(Invalid)'}
               </span>
             </div>
 

@@ -13,7 +13,7 @@ const QuestionEditModal = ({ show, onClose, question }) => {
   }
 
   return (
-    <Modal show={show} onHide={onClose} size="xl">
+    <Modal show={show} onHide={onClose} size='xl'>
       <Modal.Header closeButton>
         <Modal.Title>Edit Question</Modal.Title>
       </Modal.Header>
@@ -26,7 +26,7 @@ const QuestionEditModal = ({ show, onClose, question }) => {
       </Modal.Body>
       <Modal.Footer>
         <button
-          className="btn btn-secondary"
+          className='btn btn-secondary'
           onClick={onClose}
         >
           Close

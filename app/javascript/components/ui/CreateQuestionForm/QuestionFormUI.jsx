@@ -72,6 +72,7 @@ export const QuestionFormUI = ({
                   questionText={questionText}
                   questionType={questionType}
                   resetFields={resetFields}
+                  data={data}
                 />
                 <ImageUploader images={images} setImages={onImagesChange} />
               </div>

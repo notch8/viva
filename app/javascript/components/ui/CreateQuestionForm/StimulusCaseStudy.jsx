@@ -15,18 +15,34 @@ import Upload from './Upload'
 import QuestionTypeDropdown from './QuestionTypeDropdown'
 import QuestionText from './QuestionText'
 
-const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
-  const [subQuestions, setSubQuestions] = useState([])
+const StimulusCaseStudy = ({
+  handleTextChange,
+  onDataChange,
+  questionText,
+  questionType,
+  resetFields,
+  data
+}) => {
+  const [subQuestions, setSubQuestions] = useState(
+    data?.subQuestions &&
+      Array.isArray(data.subQuestions) &&
+      data.subQuestions.length > 0
+      ? data.subQuestions.map((sq, idx) => ({
+        ...sq,
+        id: sq.id || Date.now() + idx
+      }))
+      : []
+  )
   const updateTimeout = useRef(null)
 
   const COMPONENT_MAP = useMemo(
     () => ({
-      'Scenario': Scenario,
+      Scenario: Scenario,
       'Bow Tie': Bowtie,
-      'Categorization': Categorization,
+      Categorization: Categorization,
       'Drag and Drop': DragAndDrop,
-      'Essay': Essay,
-      'Matching': Matching,
+      Essay: Essay,
+      Matching: Matching,
       'Multiple Choice': MultipleChoice,
       'Select All That Apply': SelectAllThatApply,
       'File Upload': Upload
@@ -46,7 +62,7 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
       return {
         center: { label: 'Center Label', answers: [] },
         left: { label: 'Left Label', answers: [] },
-        right: { label: 'Right Label', answers: [] },
+        right: { label: 'Right Label', answers: [] }
       }
     case 'Matching':
       return [{ answer: '', correct: '' }]
@@ -71,8 +87,8 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
           text: questionText,
           subQuestions: updatedSubQuestions.map((sq) => ({
             ...sq,
-            data: sq.data,
-          })),
+            data: sq.data
+          }))
         })
       }, 300)
     },
@@ -98,12 +114,15 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
         const updated = prev.map((sq) => {
           if (sq.id === id) {
             const updatedSq = { ...sq, [key]: value }
-            if ((sq.type === 'Essay' || sq.type === 'File Upload') && key === 'text') {
+            if (
+              (sq.type === 'Essay' || sq.type === 'File Upload') &&
+              key === 'text'
+            ) {
               updatedSq.data = {
                 html: value
                   .split('\n')
                   .map((line, index) => `<p key=${index}>${line}</p>`)
-                  .join(''),
+                  .join('')
               }
             }
             return updatedSq
@@ -119,7 +138,10 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
 
   const addSubQuestion = useCallback(() => {
     setSubQuestions((prev) => {
-      const updated = [...prev, { id: Date.now(), type: '', text: '', data: null }]
+      const updated = [
+        ...prev,
+        { id: Date.now(), type: '', text: '', data: null }
+      ]
       updateParent(updated)
       return updated
     })
@@ -148,7 +170,10 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
   return (
     <div className='stimulus-case-study-form'>
       <h3>{questionType} Question</h3>
-      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
+      <QuestionText
+        questionText={questionText}
+        handleTextChange={handleTextChange}
+      />
 
       <h4>Subquestions</h4>
       {subQuestions.map((sq) => {
@@ -171,6 +196,7 @@ const StimulusCaseStudy = ({ handleTextChange, onDataChange, questionText, quest
                   handleSubQuestionChange(sq.id, 'data', data)
                 }
                 resetFields={resetFields}
+                data={sq.data}
               />
             )}
             <div>

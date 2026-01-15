@@ -34,7 +34,8 @@ RSpec.describe SearchController do
                  "subject_names" => question.subjects.names,
                  "alt_texts" => [],
                  "images" => [],
-                 "user_id" => question.user_id
+                 "user_id" => question.user_id,
+                 "hashid" => question.hashid
                }
              ])
         )
@@ -61,7 +62,8 @@ RSpec.describe SearchController do
                  "subject_names" => question1.subjects.names,
                  "alt_texts" => [],
                  "images" => [],
-                 "user_id" => question1.user_id
+                 "user_id" => question1.user_id,
+                 "hashid" => question1.hashid
                },
                {
                  "id" => question2.id,
@@ -75,7 +77,8 @@ RSpec.describe SearchController do
                  "subject_names" => question2.subjects.names,
                  "alt_texts" => [],
                  "images" => [],
-                 "user_id" => question2.user_id
+                 "user_id" => question2.user_id,
+                 "hashid" => question2.hashid
                }
              ])
         )
@@ -107,10 +110,124 @@ RSpec.describe SearchController do
                  "subject_names" => question1.subjects.names,
                  "alt_texts" => [],
                  "images" => [],
-                 "user_id" => question1.user_id
+                 "user_id" => question1.user_id,
+                 "hashid" => question1.hashid
                }
              ])
         )
+      end
+
+      context 'when user is an admin' do
+        let(:admin_user) { FactoryBot.create(:user, admin: true) }
+        let(:user1) { FactoryBot.create(:user, email: 'user1@example.com') }
+        let(:user2) { FactoryBot.create(:user, email: 'user2@example.com') }
+
+        before do
+          sign_in admin_user
+        end
+
+        it 'includes users list and selectedUsers in props' do
+          FactoryBot.create(:question_matching, user: user1)
+          FactoryBot.create(:question_matching, user: user2)
+
+          get :index
+
+          expect(inertia.props[:users]).to be_a(Array)
+          expect(inertia.props[:users].length).to be >= 2
+          expect(inertia.props[:users].pluck(:id)).to include(admin_user.id, user1.id, user2.id)
+          expect(inertia.props[:selectedUsers]).to be_nil
+        end
+
+        it 'filters questions by selected_users' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: user2)
+          question3 = FactoryBot.create(:question_matching, user: admin_user)
+
+          get :index, params: { selected_users: [user1.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([user1.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+          expect(filtered_ids).not_to include(question3.id)
+        end
+
+        it 'filters questions by multiple selected_users' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: user2)
+          question3 = FactoryBot.create(:question_matching, user: admin_user)
+
+          get :index, params: { selected_users: [user1.id, user2.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([user1.id.to_s, user2.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id, question2.id)
+          expect(filtered_ids).not_to include(question3.id)
+        end
+
+        it 'ignores filter_my_questions parameter when admin uses user dropdown' do
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: admin_user)
+
+          # Admin selects user1, but also has filter_my_questions=true
+          # Should only filter by selected_users, ignoring filter_my_questions
+          get :index, params: { selected_users: [user1.id], filter_my_questions: true }
+
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+        end
+
+        it 'allows admin to select themselves from user dropdown' do
+          question1 = FactoryBot.create(:question_matching, user: admin_user)
+          question2 = FactoryBot.create(:question_matching, user: user1)
+
+          get :index, params: { selected_users: [admin_user.id] }
+
+          expect(inertia.props[:selectedUsers]).to eq([admin_user.id.to_s])
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+        end
+      end
+
+      context 'when user is not an admin' do
+        let(:regular_user) { FactoryBot.create(:user, admin: false) }
+
+        before do
+          sign_in regular_user
+        end
+
+        it 'does not include users list or selectedUsers in props' do
+          get :index
+
+          expect(inertia.props[:users]).to be_nil
+          expect(inertia.props[:selectedUsers]).to be_nil
+        end
+
+        it 'ignores selected_users parameter' do
+          user1 = FactoryBot.create(:user)
+          question1 = FactoryBot.create(:question_matching, user: user1)
+          question2 = FactoryBot.create(:question_matching, user: regular_user)
+
+          get :index, params: { selected_users: [user1.id] }
+
+          # Should return all questions, not filtered by user
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id, question2.id)
+        end
+
+        it 'can use filter_my_questions to see only their questions' do
+          question1 = FactoryBot.create(:question_matching, user: regular_user)
+          question2 = FactoryBot.create(:question_matching, user: FactoryBot.create(:user))
+
+          get :index, params: { filter_my_questions: true }
+
+          expect(inertia.props[:filterMyQuestions]).to be true
+          filtered_ids = inertia.props[:filteredQuestions].as_json.pluck('id')
+          expect(filtered_ids).to include(question1.id)
+          expect(filtered_ids).not_to include(question2.id)
+        end
       end
     end
   end

@@ -8,6 +8,8 @@
 #
 # rubocop:disable Metrics/ClassLength
 class Question < ApplicationRecord
+  include Hashid::Rails
+
   before_save :index_searchable_field
 
   include PgSearch
@@ -22,6 +24,7 @@ class Question < ApplicationRecord
   has_and_belongs_to_many :keywords, -> { order(name: :asc) }
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
+  has_many :feedbacks, dependent: :destroy
   belongs_to :user
 
   ##
@@ -66,6 +69,19 @@ class Question < ApplicationRecord
 
   ##
   # @!group QTI Exporter
+
+  # OVERRIDE Hashid Rails to prepend qid
+  def hashid
+    "qid-#{super}"
+  end
+
+  # OVERRIDE Hashid Rails to prepend qid
+  def self.find_by_hashid(hashid)
+    return nil unless hashid.starts_with?('qid-')
+
+    hashid.gsub!(/^qid-/, '')
+    find_by(id: decode_id(hashid, fallback: false))
+  end
 
   ##
   # @return [String] a unique identifier for the `item` node.
@@ -342,7 +358,7 @@ class Question < ApplicationRecord
   end
 
   FILTER_DEFAULT_SELECT = [:id, :level, :data, :text, :type, :keyword_names, :subject_names, :user_id].freeze
-  FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data].freeze
+  FILTER_DEFAULT_METHODS = [:type_label, :type_name, :data, :hashid].freeze
 
   ##
   # @param select [Array<Symbol>] attribute names both passed forward to {.filter} and exposed in
@@ -362,26 +378,33 @@ class Question < ApplicationRecord
   #         :select parameter.
   #
   # @see .filter
-  # rubocop:disable Metrics/MethodLength
-  def self.filter_as_json(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, **kwargs)
-    ##
-    # The :data method/field is an interesting creature; we want to "select" it in queries because
-    # in most cases that is adequate.  Yet the {Question::StimulusCaseStudy#data} is unique, in that
-    # it uses the {Question::StimulusCaseStudy#child_questions} to build the data.
-    #
-    # Hence we want to :select that data for querying, but rely instead on the :method.
-    only = select - methods
+  def self.filter_as_json(kwargs: {}, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
+    args = { select:, methods: }.merge(kwargs)
+    query = filter_query(**args)
+    format_questions(query, **args.slice(:select, :methods))
+  end
 
-    # Ensure 'data' is included in the select attributes
+  def self.filter_query(select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS, search: false, filter_my_questions: false, **kwargs)
+    if search.try(:starts_with?, 'qid-')
+      found = find_by_hashid(search)
+      return found ? where(id: found.id) : none
+    end
+
+    only = select - methods
     only << :data unless only.include?(:data)
 
-    # Ensure the `filter` method is called with eager loading for associations
-    questions = filter(select: only, search:, **kwargs)
+    filter(select: only, search:, filter_my_questions:, **kwargs)
+  end
 
-    # Convert to JSON and manually add image URLs and alt texts if they are included in the methods
+  def self.format_questions(questions, select: FILTER_DEFAULT_SELECT, methods: FILTER_DEFAULT_METHODS)
+    # Recalculate 'only' to match the query logic logic
+    only = select - methods
+    only << :data unless only.include?(:data)
+
     questions.map do |question|
       question_json = question.as_json(only:, methods:)
 
+      # Your custom image logic
       if question.images.present?
         question_json['images'] = question.images_as_json
       else
@@ -392,7 +415,6 @@ class Question < ApplicationRecord
       question_json
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   ##
   # @api private
@@ -498,18 +520,20 @@ class Question < ApplicationRecord
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity
   # rubocop:disable Metrics/ParameterLists
-  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false)
+  def self.filter(keywords: [], subjects: [], levels: [], bookmarked_question_ids: [], bookmarked: nil, type_name: nil, select: nil, user: nil, search: false, filter_my_questions: false, user_ids: [])
     # By wrapping in an array we ensure that our keywords.size and subjects.size are counting
     # the number of keywords given and not the number of characters in a singular keyword that was
     # provided.
     keywords = Array.wrap(keywords)
     subjects = Array.wrap(subjects)
     levels = Array.wrap(levels)
+    user_ids = Array.wrap(user_ids)
 
     # Specifying a very arbitrary order
     questions = Question.includes(:keywords, :subjects, images: { file_attachment: :blob }).order(:id)
     questions = questions.search(search) if search.present?
-
+    questions = questions.where(user_id: user.id) if filter_my_questions && user.present?
+    questions = questions.where(user_id: user_ids) if user_ids.present?
     # We want a human readable name for filtering and UI work.  However, we want to convert that
     # into a class.  ActiveRecord is mostly smart about Single Table Inheritance (STI).  But we're
     # not doing something like `Question::Traditional.where`; but instead `Question.where(type:
@@ -580,6 +604,18 @@ class Question < ApplicationRecord
     end
 
     questions.select(*select_statement)
+  end
+
+  def exported_count
+    attributes['exports_count'] || ExportLogger.where(question_id: id).count
+  end
+
+  def resolved_feedback_count
+    attributes['resolved_feedbacks_count'] || feedbacks.where(resolved: true).count
+  end
+
+  def unresolved_feedback_count
+    attributes['unresolved_feedbacks_count'] || feedbacks.where(resolved: false).count
   end
 
   private

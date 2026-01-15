@@ -6,7 +6,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable
+         :recoverable, :rememberable, :trackable, :validatable
 
   has_many :bookmarks, dependent: :destroy
   has_many :bookmarked_questions, through: :bookmarks, source: :question
@@ -18,5 +18,13 @@ class User < ApplicationRecord
 
   def inactive_message
     'Your account is not active. Please contact support.'
+  end
+
+  def role
+    admin? ? 'Admin' : 'User'
+  end
+
+  def questions_exported_count
+    ExportLogger.where(user_id: id).count
   end
 end

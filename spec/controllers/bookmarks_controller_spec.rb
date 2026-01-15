@@ -124,5 +124,9 @@ RSpec.describe BookmarksController do
 
       expect(response).to redirect_to(authenticated_root_path)
     end
+
+    it 'creates a export log' do
+      expect { get :export, format: :txt }.to change { ExportLogger.count }.by(user.bookmarks.count)
+    end
   end
 end

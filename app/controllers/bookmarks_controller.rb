@@ -55,16 +55,23 @@ class BookmarksController < ApplicationController
   end
 
   def handle_export
-    export_result = BookmarkExportService.new(@bookmarks).export(params[:format])
+    export_service = BookmarkExportService.new(@bookmarks)
+    export_result = export_service.export(params[:format])
+
+    # We're not expecting thousands of exported question but if
+    # that is the case then we want to reconsider this approach
+    export_service.questions.each do |question|
+      ExportLogger.create(export_type: params[:format], question_id: question.id, user_id: current_user.id)
+    end
 
     if export_result[:is_file]
       send_file(export_result[:data].path,
-                filename: export_result[:filename],
-                type: export_result[:type])
+        filename: export_result[:filename],
+        type: export_result[:type])
     else
       send_data export_result[:data],
-               filename: export_result[:filename],
-               type: export_result[:type]
+        filename: export_result[:filename],
+        type: export_result[:type]
     end
   end
 end

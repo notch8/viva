@@ -33,6 +33,13 @@ spec:
             claimName: {{ include "app.rails-env.name" . }}-shared
       containers:
         - name: setup
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+            requests:
+              memory: "1Gi"
+              cpu: "100m"
           image: {{ .Values.rails.image.repository }}:{{ .Values.rails.image.tag }}
           volumeMounts:
             - mountPath: /app/public/assets

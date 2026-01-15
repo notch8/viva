@@ -15,11 +15,13 @@ gem 'devise_invitable'
 gem 'factory_bot', '~> 6.2'
 gem 'factory_bot_rails', group: %i[development test]
 gem 'faker', '~> 2.23'
+gem 'hashid-rails'
 gem 'inertia_rails', '~> 3.0'
 gem 'jbuilder' # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem 'jquery-rails'
 gem 'jsbundling-rails' # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem 'letter_opener_web', '~> 3.0'
+gem 'pagy'
 gem 'pg', '~> 1.1' # Use postgresql as the database for Active Record
 gem 'pg_search'
 gem 'pry-byebug', group: %i[development test]

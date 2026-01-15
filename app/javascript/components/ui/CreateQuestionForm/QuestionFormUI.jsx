@@ -64,8 +64,11 @@ export const QuestionFormUI = ({
       {(QuestionComponent || question) && (
         <div className='question-body bg-white mt-4 p-4'>
           <Form onSubmit={onSubmit} className='question-form mx-4'>
-            <div className='d-flex flex-wrap'>
-              <div className='flex-fill'>
+            <div className='d-flex flex-nowrap'>
+              <div
+                className='flex-fill'
+                style={{ maxWidth: '70%', minWidth: 0 }}
+              >
                 <QuestionComponent
                   handleTextChange={onTextChange}
                   onDataChange={onDataChange}
@@ -76,7 +79,10 @@ export const QuestionFormUI = ({
                 />
                 <ImageUploader images={images} setImages={onImagesChange} />
               </div>
-              <div className='tag-section m-4'>
+              <div
+                className='tag-section m-4'
+                style={{ minWidth: '250px', width: '30%' }}
+              >
                 <Subject
                   subjectOptions={subjectOptions}
                   handleAddSubject={onAddSubject}

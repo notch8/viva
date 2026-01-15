@@ -1,14 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, InputGroup } from 'react-bootstrap'
 import { Typeahead } from 'react-bootstrap-typeahead'
 // https://github.com/ericgio/react-bootstrap-typeahead
 
-const Subject = ({ subjectOptions, handleAddSubject }) => {
-  const [subject, setSubject] = useState([])
+const Subject = ({
+  subjectOptions = [],
+  handleAddSubject,
+  selectedSubjects = []
+}) => {
+  const [subject, setSubject] = useState(selectedSubjects || [])
+
+  useEffect(() => {
+    setSubject(selectedSubjects || [])
+  }, [selectedSubjects])
 
   const handleSubjectChange = (selectedSubject) => {
-    setSubject(selectedSubject)
-    handleAddSubject(selectedSubject)
+    const validSubject = selectedSubject || []
+    setSubject(validSubject)
+    handleAddSubject(validSubject)
   }
 
   return (
@@ -24,10 +33,10 @@ const Subject = ({ subjectOptions, handleAddSubject }) => {
               'aria-label': 'Select subjects'
             }}
             onChange={handleSubjectChange}
-            options={subjectOptions}
+            options={subjectOptions || []}
             placeholder='Select subjects'
             multiple={true}
-            selected={subject}
+            selected={subject || []}
           />
         </Form.Group>
       </InputGroup>

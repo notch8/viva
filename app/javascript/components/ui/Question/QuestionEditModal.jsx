@@ -1,15 +1,13 @@
 import React from 'react'
 import { Modal } from 'react-bootstrap'
+import { Inertia } from '@inertiajs/inertia'
 import CreateQuestionForm from '../CreateQuestionForm'
 
-const QuestionEditModal = ({ show, onClose, question }) => {
-  // Baby step handlers - just log for now
-  const handleTextChange = (e) => {
-    console.log('Text changed:', e.target.value)
-  }
-
-  const handleDataChange = (value) => {
-    console.log('Data changed:', value)
+const QuestionEditModal = ({ show, onClose, question, subjects }) => {
+  const handleSuccess = () => {
+    onClose()
+    // Reload the page to show the updated question
+    Inertia.reload()
   }
 
   return (
@@ -20,15 +18,12 @@ const QuestionEditModal = ({ show, onClose, question }) => {
       <Modal.Body>
         <CreateQuestionForm
           question={question}
-          handleTextChange={handleTextChange}
-          onDataChange={handleDataChange}
+          subjectOptions={subjects || []}
+          onSuccess={handleSuccess}
         />
       </Modal.Body>
       <Modal.Footer>
-        <button
-          className='btn btn-secondary'
-          onClick={onClose}
-        >
+        <button className='btn btn-secondary' onClick={onClose}>
           Close
         </button>
       </Modal.Footer>

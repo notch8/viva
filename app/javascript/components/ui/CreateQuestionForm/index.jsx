@@ -15,7 +15,7 @@ const TYPE_MAPPER = {
   'Question::BowTie': 'Bow Tie'
 }
 
-const CreateQuestionForm = ({ subjectOptions, question }) => {
+const CreateQuestionForm = ({ subjectOptions, question, onSuccess }) => {
   const [questionType, setQuestionType] = useState(
     question ? TYPE_MAPPER[question.type] : ''
   )
@@ -31,7 +31,7 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
     })) || []
   )
   const [level, setLevel] = useState(question?.level || '')
-  const [subjects, setSubjects] = useState(question?.subjects || [])
+  const [subjects, setSubjects] = useState(question?.subject_names || [])
   const [data, setData] = useState(
     question?.data || { text: '', subQuestions: [] }
   )
@@ -56,10 +56,12 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
-  const handleAddSubject = (subject) => setSubjects(subject)
+  const handleAddSubject = (subject) => setSubjects(subject || [])
 
   const handleRemoveSubject = (subjectToRemove) =>
-    setSubjects(subjects.filter((subject) => subject !== subjectToRemove))
+    setSubjects(
+      (subjects || []).filter((subject) => subject !== subjectToRemove)
+    )
 
   const formatFormData = () => {
     const formData = new FormData()
@@ -134,6 +136,9 @@ const CreateQuestionForm = ({ subjectOptions, question }) => {
         alert(`Question ${isUpdate ? 'updated' : 'saved'} successfully!`)
         if (!isUpdate) {
           resetForm()
+        }
+        if (onSuccess) {
+          onSuccess()
         }
       } else {
         const errorData = await response.json()

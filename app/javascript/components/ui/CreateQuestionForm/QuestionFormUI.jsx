@@ -81,8 +81,12 @@ export const QuestionFormUI = ({
                   subjectOptions={subjectOptions}
                   handleAddSubject={onAddSubject}
                   handleRemoveSubject={onRemoveSubject}
+                  selectedSubjects={subjects}
                 />
-                <LevelDropdown handleLevelSelection={onLevelSelection} />
+                <LevelDropdown
+                  handleLevelSelection={onLevelSelection}
+                  selectedLevel={level}
+                />
               </div>
             </div>
 

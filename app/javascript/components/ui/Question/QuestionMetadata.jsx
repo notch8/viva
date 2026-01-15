@@ -7,7 +7,7 @@ import QuestionEditModal from './QuestionEditModal'
 import { ChatText } from '@phosphor-icons/react'
 import FeedbackModal from './FeedbackModal'
 
-const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
+const QuestionMetadata = ({ question, bookmarkedQuestionIds, subjects }) => {
   const { props } = usePage()
   const { currentUser } = props
   const [isBookmarked, setIsBookmarked] = useState(
@@ -89,6 +89,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
         show={showEditModal}
         onClose={() => setShowEditModal(false)}
         question={question}
+        subjects={subjects}
       />
       {/* NOTE: Keywords were removed to avoid consistency issues with manually added keywords */}
       {/* {question.keyword_names &&

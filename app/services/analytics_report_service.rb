@@ -96,6 +96,7 @@ class AnalyticsReportService
     ]
   end
 
+  # rubocop:disable Metrics/MethodLength
   def questions
     base_scope = current_user.admin? ? Question : current_user.questions
 
@@ -115,6 +116,7 @@ class AnalyticsReportService
       .includes(:user)
       .order(created_at: :desc)
   end
+  # rubocop:enable Metrics/MethodLength
 
   # Utilization Report Methods
   def utilization_report_headers

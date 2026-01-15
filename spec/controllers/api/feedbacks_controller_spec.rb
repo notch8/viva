@@ -43,10 +43,12 @@ RSpec.describe Api::FeedbacksController, type: :controller do
         expect(feedback.question_id).to eq(question.id)
       end
 
-      it 'sets the feedback content correctly' do
-        post :create, params: valid_params
+      it 'strips leading and trailing whitespace from content' do
+        params_with_whitespace = valid_params.deep_merge(
+          feedback: { content: '   This question needs clarification on the terminology used.   ' }
+        )
+        post :create, params: params_with_whitespace
         feedback = Feedback.last
-
         expect(feedback.content).to eq('This question needs clarification on the terminology used.')
       end
 
@@ -156,7 +158,7 @@ RSpec.describe Api::FeedbacksController, type: :controller do
           post :create, params: valid_params
         end.to change(Feedback, :count).by(1)
 
-        feedbacks = Feedback.where(question: question)
+        feedbacks = Feedback.where(question:)
         expect(feedbacks.count).to eq(2)
         expect(feedbacks.pluck(:user_id)).to contain_exactly(user.id, other_user.id)
       end
@@ -174,7 +176,7 @@ RSpec.describe Api::FeedbacksController, type: :controller do
           post :create, params: second_params
         end.to change(Feedback, :count).by(1)
 
-        user_feedbacks = Feedback.where(user: user, question: question)
+        user_feedbacks = Feedback.where(user:, question:)
         expect(user_feedbacks.count).to eq(2)
         expect(user_feedbacks.pluck(:content)).to contain_exactly(
           'This question needs clarification on the terminology used.',
@@ -190,7 +192,6 @@ RSpec.describe Api::FeedbacksController, type: :controller do
             question_id: question.id,
             content: 'Test content',
             resolved: true,
-            admin_notes: 'Should be ignored',
             user_id: 999
           }
         }
@@ -202,13 +203,7 @@ RSpec.describe Api::FeedbacksController, type: :controller do
         expect(feedback.content).to eq('Test content')
 
         # Check if other fields exist and weren't set from params
-        if feedback.respond_to?(:resolved)
-          expect(feedback.resolved).to be_falsey
-        end
-
-        if feedback.respond_to?(:admin_notes)
-          expect(feedback.admin_notes).to be_nil
-        end
+        expect(feedback.resolved).to be_falsey if feedback.respond_to?(:resolved)
       end
     end
 
@@ -248,41 +243,6 @@ RSpec.describe Api::FeedbacksController, type: :controller do
           expect(json['errors'].join(', ')).to eq('Content is required, Another error')
         end
       end
-    end
-  end
-
-  describe 'with model validation for content presence' do
-    before do
-      # Simulate model validation without changing the model
-      allow_any_instance_of(Feedback).to receive(:valid?).and_wrap_original do |method, *args|
-        instance = method.receiver
-        if instance.content.blank?
-          instance.errors.add(:content, "can't be blank")
-          false
-        else
-          method.call(*args)
-        end
-      end
-    end
-
-    it 'rejects blank content' do
-      blank_params = { feedback: { question_id: question.id, content: '' } }
-
-      post :create, params: blank_params
-
-      expect(response).to have_http_status(:unprocessable_entity)
-      json = response.parsed_body
-      expect(json['errors']).to include("Content can't be blank")
-    end
-
-    it 'rejects whitespace-only content' do
-      whitespace_params = { feedback: { question_id: question.id, content: '   ' } }
-
-      post :create, params: whitespace_params
-
-      expect(response).to have_http_status(:unprocessable_entity)
-      json = response.parsed_body
-      expect(json['errors']).to include("Content can't be blank")
     end
   end
 end

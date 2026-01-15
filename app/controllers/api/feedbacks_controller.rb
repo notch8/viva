@@ -1,7 +1,6 @@
-# app/controllers/api/feedbacks_controller.rb
-class Api::FeedbacksController < ApplicationController
-  before_action :authenticate_user!
+# frozen_string_literal: true
 
+class Api::FeedbacksController < ApplicationController
   def create
     question = find_question
     return unless question

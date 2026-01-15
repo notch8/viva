@@ -12,6 +12,7 @@ require 'zip'
 #    b. And when all records are valid, persisting those records.
 # 2. Negotiating the parent/child relationship of {Question::StimulusCaseStudy} and it's
 #    {Question::Scenario} children as well as other children {Question} objects.
+# rubocop:disable Metrics/ClassLength
 class Question::ImporterCsv
   ##
   # @todo Maybe we don't want to read the given CSV and pass the text into the object.  However,
@@ -28,7 +29,7 @@ class Question::ImporterCsv
     end
   end
 
-  def self.handle_zip(file, destination = Rails.root.join('tmp', 'unzipped', Time.zone.now.strftime("%Y%m%d%H%M%S")))
+  def self.handle_zip(file, destination = Rails.root.join('tmp', 'unzipped', SecureRandom.uuid))
     extracted_files = []
 
     ::Zip::File.open(file) do |zip_file|
@@ -62,6 +63,7 @@ class Question::ImporterCsv
     have_already_verified_headers = false
     # The header_converters ensures that we don't have squirelly little BOM characters and that all
     # columns are titlecase which we later expect.
+    # rubocop:disable Metrics/BlockLength
     CSV.parse(@text, headers: true, skip_blanks: true, header_converters: ->(h) { h.to_s.strip.upcase.delete("\xEF\xBB\xBF") }, encoding: 'utf-8') do |row|
       # Guard clause for verifying the provided headers of the CSV.  This is perhaps something to
       # extract.
@@ -80,7 +82,16 @@ class Question::ImporterCsv
       question = Question.build_from_csv_row(row:, questions: @questions, user_id: @user_id)
       if question.valid? && !@questions.key?(import_id)
         attach_images_to_question(question, row['IMAGE_PATH'], row['ALT_TEXT'])
-        @questions[import_id] = question
+        # If image attachment failed, treat it as an error
+        # Check errors on the actual question object, not the wrapper
+        actual_question = question.question
+        if actual_question.errors.any?
+          @errors[:rows] ||= []
+          error = actual_question.errors.to_hash.merge(import_id:)
+          @errors[:rows] << error
+        else
+          @questions[import_id] = question
+        end
       else
         @errors[:rows] ||= []
         error = question.errors.to_hash.merge(import_id:)
@@ -91,6 +102,7 @@ class Question::ImporterCsv
         @errors[:rows] << error
       end
     end
+    # rubocop:enable Metrics/BlockLength
 
     return false if @errors.present?
 
@@ -104,6 +116,8 @@ class Question::ImporterCsv
 
     # We have errors, save should return false
     false
+  ensure
+    cleanup_extracted_files
   end
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
@@ -119,17 +133,64 @@ class Question::ImporterCsv
   def attach_images_to_question(question, image_paths, alt_texts)
     return if image_paths.blank?
 
-    image_paths.split(';').each_with_index do |image_path, index|
-      image_path = extracted_files.find { |file| file.ends_with?("/#{image_path}") }
-      # Ensure `question` is an instance of `Question`, not `Question::ImportCsvRow`
-      question = question.question
+    # Ensure `question` is an instance of `Question`, not `Question::ImportCsvRow`
+    question = question.question
+    return unless validate_extracted_files(question)
 
-      image = question.images.build
-      image.file.attach(io: File.open(image_path.strip), filename: File.basename(image_path.strip))
-      image.alt_text = alt_texts.split(';')[index].strip if alt_texts.present?
-      image.save!
+    alt_text_array = alt_texts.present? ? alt_texts.split(';') : []
+    image_paths.split(';').each_with_index do |image_path, index|
+      process_image_path(question, image_path, alt_text_array[index])
+    end
+  end
+
+  def validate_extracted_files(question)
+    return true unless extracted_files.empty?
+
+    question.errors.add(:base, "Images specified in CSV but no ZIP file uploaded. Please upload a ZIP file containing both the CSV and image files.")
+    false
+  end
+
+  def process_image_path(question, image_path, alt_text)
+    image_path_stripped = image_path.strip
+    return if image_path_stripped.blank?
+
+    found_file = find_image_file(image_path_stripped)
+    unless found_file
+      add_image_not_found_error(question, image_path_stripped)
+      return
     end
 
+    attach_single_image(question, found_file, alt_text)
+  end
+
+  def find_image_file(image_path)
+    extracted_files.find do |file|
+      file.ends_with?("/#{image_path}") ||
+        File.basename(file) == image_path ||
+        file.ends_with?("\\#{image_path}") # Windows path separator
+    end
+  end
+
+  def add_image_not_found_error(question, image_path)
+    available_files = available_file_names.join(', ')
+    question.errors.add(:base, "Image file not found in ZIP: #{image_path}. Available files: #{available_files}")
+  end
+
+  def available_file_names
+    extracted_files.reject { |f| f.include?('__MACOSX') || f.include?('.DS_Store') }
+                   .map { |f| File.basename(f) }
+  end
+
+  def attach_single_image(question, file_path, alt_text)
+    image = question.images.build
+    image.file.attach(io: File.open(file_path), filename: File.basename(file_path))
+    image.alt_text = alt_text&.strip
+    image.save!
+  end
+
+  def cleanup_extracted_files
+    return if extracted_files.empty?
     FileUtils.rm_rf(File.dirname(extracted_files.first)) # Clean up extracted files
   end
 end
+# rubocop:enable Metrics/ClassLength

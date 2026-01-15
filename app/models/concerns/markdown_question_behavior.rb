@@ -14,6 +14,8 @@ module MarkdownQuestionBehavior
   end
 
   DATA_KEY_NAME = 'html'
+  TEXT_KEY_NAME = 'text'
+
   class ImportCsvRow < Question::ImportCsvRow
     # rubocop:disable Metrics/MethodLength
 
@@ -35,24 +37,25 @@ module MarkdownQuestionBehavior
 
       @section_integers.sort!
       rows = []
-      rows << row.fetch('TEXT') if row.headers.include?("TEXT") && row['TEXT'].present?
+      @text = row.fetch('TEXT')
 
       # Why the double carriage return?  Without that if we have "Text\n* Bullet" that will be
       # converted to "<p>Text\n* Bullet</p>" But with the "\n\n" we end up with
       # "<p>Text</p><ul><li>Bullet</li></ul>"; and multiple bullets also work.
-      @text = @section_integers.each_with_object(rows) do |integer, acc|
+      @html = @section_integers.each_with_object(rows) do |integer, acc|
         acc << row.fetch("TEXT_#{integer}")
       end.join("\n\n")
 
       # We need to ensure that we're not letting stray HTML make it's way into the application;
       # without stripping tags this is a vector for Javascript injection.
-      @text = ApplicationController.helpers.strip_tags(@text)
+      @html = ApplicationController.helpers.sanitize(@html)
+      @text = ApplicationController.helpers.sanitize(@text)
 
       # We're stripping the new line characters as those are not technically not-needed for storage
       # nor transport.
-      html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@text).delete("\n")
+      html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@html).delete("\n")
 
-      @data = { DATA_KEY_NAME => html }
+      @data = { DATA_KEY_NAME => html, TEXT_KEY_NAME => @text }
     end
     # rubocop:enable Metrics/MethodLength
 

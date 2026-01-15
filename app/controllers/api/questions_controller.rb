@@ -43,6 +43,38 @@ class Api::QuestionsController < ApplicationController
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
+  def update
+    question = Question.find_by(id: params[:id])
+
+    if question.nil?
+      render json: { errors: ['Question not found.'] }, status: :not_found
+      return
+    end
+
+    return unless validate_permissions(question)
+
+    processed_params = process_question_params(question_params)
+
+    # Clear existing associations before updating
+    question.keywords.clear
+    question.subjects.clear
+
+    # Update question attributes
+    question.assign_attributes(processed_params.except(:keywords, :subjects, :images, :alt_text))
+    question.level = nil if question.level.blank?
+
+    # Handle associations
+    handle_question_associations(question)
+
+    if question.save
+      render json: { message: 'Question updated successfully!', id: question.id }, status: :ok
+    else
+      render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
+    end
+  rescue ArgumentError => e
+    render json: { errors: [e.message] }, status: :unprocessable_entity
+  end
+
   def destroy
     question = Question.find_by(id: params[:id])
 

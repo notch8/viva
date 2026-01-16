@@ -24,6 +24,7 @@ const Search = ({
   searchTerm,
   pagination,
   filterMyQuestions,
+  allFilteredBookmarked,
   lms
 }) => {
   const { props: pageProps } = usePage()
@@ -214,8 +215,15 @@ const Search = ({
   }
 
   const handleBookmarkBatch = () => {
-    const filteredIds = filteredQuestions.map(question => question.id).join(',')
-    Inertia.post('/bookmarks/create_batch', { filtered_ids: filteredIds }, {
+    Inertia.post('/bookmarks/create_batch', {
+      search: query,
+      selected_keywords: filterState.selectedKeywords,
+      selected_subjects: filterState.selectedSubjects,
+      selected_types: filterState.selectedTypes,
+      selected_levels: filterState.selectedLevels,
+      selected_users: filterState.selectedUsers,
+      filter_my_questions: filterMyQuestionsState
+    }, {
       onSuccess: () => {
         console.log('Bookmarks added successfully')
       },
@@ -255,6 +263,7 @@ const Search = ({
         users={users}
         removeFilterAndSearch={removeFilterAndSearch}
         onBookmarkBatch={handleBookmarkBatch}
+        allFilteredBookmarked={allFilteredBookmarked}
       />
       {pagination && pagination.count !== undefined && (
         <Container className='mt-3 mb-2'>
@@ -281,7 +290,18 @@ const Search = ({
               )
             })}
             <Container className='px-0 py-0'>
-              <Pagination metadata={pagination} />
+              <Pagination
+                metadata={pagination}
+                filterParams={{
+                  search: query,
+                  selected_keywords: filterState.selectedKeywords,
+                  selected_subjects: filterState.selectedSubjects,
+                  selected_types: filterState.selectedTypes,
+                  selected_levels: filterState.selectedLevels,
+                  selected_users: filterState.selectedUsers,
+                  filter_my_questions: filterMyQuestionsState
+                }}
+              />
             </Container>
           </>
         ) : (

@@ -9,7 +9,9 @@ class BookmarksController < ApplicationController
   end
 
   def create_batch
-    result = Bookmark.create_batch(question_ids: params[:filtered_ids], user: current_user)
+    question_ids = filtered_question_ids
+    result = Bookmark.create_batch_from_ids(question_ids:, user: current_user)
+
     if result == :error
       redirect_back(fallback_location: authenticated_root_path, notice: t('.failure'))
     else
@@ -73,5 +75,23 @@ class BookmarksController < ApplicationController
         filename: export_result[:filename],
         type: export_result[:type]
     end
+  end
+
+  def filtered_question_ids
+    user_ids = current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
+    filter_my_questions = ActiveModel::Type::Boolean.new.cast(params[:filter_my_questions])
+    should_filter_my_questions = filter_my_questions && !current_user.admin?
+
+    filter_values = {
+      keywords: params[:selected_keywords],
+      subjects: params[:selected_subjects],
+      type_name: params[:selected_types],
+      levels: params[:selected_levels],
+      user: current_user,
+      filter_my_questions: should_filter_my_questions,
+      user_ids:
+    }
+
+    Question.filter_query(search: params[:search], filter_my_questions:, **filter_values).pluck(:id)
   end
 end

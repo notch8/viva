@@ -18,13 +18,22 @@ RSpec.describe BookmarksController do
   end
 
   describe '#create_batch' do
-    let(:question) { double('Question', id: '1') }
-    let(:question_ids) { [question.id] }
+    let(:question) { FactoryBot.create(:question_traditional) }
 
-    it 'creates a bookmark and redirects back with success notice' do
-      expect(Bookmark).to receive(:create_batch).with(question_ids:, user:)
+    it 'creates bookmarks for all filtered questions and redirects back with success notice' do
+      # The controller now uses filter params to query all matching questions
+      expect(Bookmark).to receive(:create_batch_from_ids).and_return(:success)
 
-      post :create_batch, params: { filtered_ids: question_ids }
+      post :create_batch, params: {
+        search: '',
+        selected_keywords: [],
+        selected_subjects: [],
+        selected_types: [],
+        selected_levels: [],
+        filter_my_questions: false
+      }
+
+      expect(response).to redirect_to(authenticated_root_path)
     end
   end
 

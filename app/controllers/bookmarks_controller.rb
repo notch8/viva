@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class BookmarksController < ApplicationController
+  include QuestionFilterParams
+
   before_action :authenticate_user!
   before_action :set_bookmark, only: [:destroy]
 
@@ -78,20 +80,6 @@ class BookmarksController < ApplicationController
   end
 
   def filtered_question_ids
-    user_ids = current_user.admin? ? Array.wrap(params[:selected_users]).map(&:to_i) : []
-    filter_my_questions = ActiveModel::Type::Boolean.new.cast(params[:filter_my_questions])
-    should_filter_my_questions = filter_my_questions && !current_user.admin?
-
-    filter_values = {
-      keywords: params[:selected_keywords],
-      subjects: params[:selected_subjects],
-      type_name: params[:selected_types],
-      levels: params[:selected_levels],
-      user: current_user,
-      filter_my_questions: should_filter_my_questions,
-      user_ids:
-    }
-
-    Question.filter_query(search: params[:search], filter_my_questions:, **filter_values).pluck(:id)
+    Question.filter_query(search: params[:search], filter_my_questions: question_filter_my_questions, **question_filter_values).pluck(:id)
   end
 end

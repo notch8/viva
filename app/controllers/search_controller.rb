@@ -14,7 +14,7 @@ class SearchController < ApplicationController
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def shared_props
-    query = Question.filter_query(search: params[:search], filter_my_questions:, **filter_values).order(updated_at: :desc)
+    query = Question.filter_query(search: params[:search], filter_my_questions:, **filter_values).reorder(updated_at: :desc)
 
     @pagy, @questions_page = pagy(query)
 

@@ -36,26 +36,29 @@ module MarkdownQuestionBehavior
       end
 
       @section_integers.sort!
-      rows = []
-      @text = row.fetch('TEXT')
+      @text = row['TEXT']
 
+      # Build sections from TEXT_N columns
+      sections = @section_integers.map do |integer|
+        row.fetch("TEXT_#{integer}")
+      end
+
+      # Combine TEXT with sections - TEXT becomes the leading paragraph
       # Why the double carriage return?  Without that if we have "Text\n* Bullet" that will be
       # converted to "<p>Text\n* Bullet</p>" But with the "\n\n" we end up with
       # "<p>Text</p><ul><li>Bullet</li></ul>"; and multiple bullets also work.
-      @html = @section_integers.each_with_object(rows) do |integer, acc|
-        acc << row.fetch("TEXT_#{integer}")
-      end.join("\n\n")
+      all_parts = [@text, *sections].compact
+      combined = all_parts.join("\n\n")
 
-      # We need to ensure that we're not letting stray HTML make it's way into the application;
-      # without stripping tags this is a vector for Javascript injection.
-      @html = ApplicationController.helpers.sanitize(@html)
-      @text = ApplicationController.helpers.sanitize(@text)
+      # Use Loofah with prune scrubber to remove unsafe tags AND their content (like script).
+      # This is more aggressive than sanitize which keeps text content of stripped tags.
+      scrubbed = Loofah.fragment(combined).scrub!(:prune).to_s
 
       # We're stripping the new line characters as those are not technically not-needed for storage
       # nor transport.
-      html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(@html).delete("\n")
+      html = Redcarpet::Markdown.new(Redcarpet::Render::HTML).render(scrubbed).delete("\n")
 
-      @data = { DATA_KEY_NAME => html, TEXT_KEY_NAME => @text }
+      @data = { DATA_KEY_NAME => html }
     end
     # rubocop:enable Metrics/MethodLength
 

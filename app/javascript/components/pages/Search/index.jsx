@@ -23,7 +23,8 @@ const Search = ({
   bookmarkedQuestionIds,
   searchTerm,
   pagination,
-  filterMyQuestions
+  filterMyQuestions,
+  lms
 }) => {
   const { props: pageProps } = usePage()
   const currentUser = pageProps.currentUser
@@ -243,6 +244,7 @@ const Search = ({
         filterMyQuestions={filterMyQuestionsState}
         onFilterMyQuestionsToggle={handleFilterMyQuestionsToggle}
         currentUser={currentUser}
+        lms={lms}
       />
       <SearchFilters
         selectedSubjects={filterState.selectedSubjects}

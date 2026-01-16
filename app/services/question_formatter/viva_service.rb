@@ -88,23 +88,19 @@ module QuestionFormatter
     def traditional_type
       row_data = build_base_row_data
       row_data["CORRECT_ANSWERS"] = extract_correct_traditional_answers(question.data)
-
       answers = extract_traditional_answers(question.data)
       answers.each_with_index do |answer, index|
         row_data["ANSWER_#{index + 1}"] = answer
       end
-
       add_subjects_to_row(row_data)
     end
 
     def matching_type
       row_data = build_base_row_data
-
       question.data.each_with_index do |pair, index|
         row_data["LEFT_#{index + 1}"] = pair['answer']
         row_data["RIGHT_#{index + 1}"] = pair['correct']&.first
       end
-
       add_subjects_to_row(row_data)
     end
 
@@ -119,7 +115,72 @@ module QuestionFormatter
           row_data["TEXT_#{index + 1}"] = block
         end
       end
+      add_subjects_to_row(row_data)
+    end
 
+    def bowtie_type
+      row_data = build_base_row_data
+      # Process center section
+      center_data = question.data['center']
+      if center_data
+        row_data["CENTER_LABEL"] = center_data['label']
+        center_answers = center_data['answers'] || []
+        # Add center answers
+        center_answers.each_with_index do |answer, index|
+          row_data["CENTER_#{index + 1}"] = answer['answer']
+        end
+        # Extract correct answer indices for center
+        row_data["CENTER_CORRECT_ANSWERS"] = extract_correct_indices(center_answers)
+      end
+      # Process left section
+      left_data = question.data['left']
+      if left_data
+        row_data["LEFT_LABEL"] = left_data['label']
+        left_answers = left_data['answers'] || []
+        # Add left answers
+        left_answers.each_with_index do |answer, index|
+          row_data["LEFT_#{index + 1}"] = answer['answer']
+        end
+        # Extract correct answer indices for left
+        row_data["LEFT_CORRECT_ANSWERS"] = extract_correct_indices(left_answers)
+      end
+      # Process right section
+      right_data = question.data['right']
+      if right_data
+        row_data["RIGHT_LABEL"] = right_data['label']
+        right_answers = right_data['answers'] || []
+        # Add right answers
+        right_answers.each_with_index do |answer, index|
+          row_data["RIGHT_#{index + 1}"] = answer['answer']
+        end
+        # Extract correct answer indices for right
+        row_data["RIGHT_CORRECT_ANSWERS"] = extract_correct_indices(right_answers)
+      end
+      add_subjects_to_row(row_data)
+    end
+
+    def categorization_type
+      row_data = build_base_row_data
+      # Extract categories (these are the "answer" fields)
+      categories = question.data.map { |item| item['answer'] }
+      # Add category columns (LEFT_1, LEFT_2, etc.)
+      categories.each_with_index do |category, index|
+        row_data["LEFT_#{index + 1}"] = category
+      end
+      # Extract and format items for each category (RIGHT_1, RIGHT_2, etc.)
+      question.data.each_with_index do |category_data, index|
+        items = category_data['correct'] || []
+        # Join items with commas for CSV format
+        row_data["RIGHT_#{index + 1}"] = items.join(', ')
+      end
+      add_subjects_to_row(row_data)
+    end
+
+    def stimulus_type
+      row_data = build_base_row_data
+      # Stimulus Case Study questions don't have their own data field
+      # They serve as containers for child questions
+      # The child questions will be exported as separate rows with PART_OF references
       add_subjects_to_row(row_data)
     end
 
@@ -144,16 +205,13 @@ module QuestionFormatter
     def extract_html_blocks(html)
       doc = Nokogiri::HTML::DocumentFragment.parse(html)
       blocks = []
-
       doc.children.each do |child|
         next if child.text? && child.text.strip.empty?
-
         if child.text?
           blocks << child.text
         elsif child.name == 'div'
           child.children.each do |inner_child|
             next if inner_child.text? && inner_child.text.strip.empty?
-
             if inner_child.text?
               blocks << inner_child.text
             else
@@ -164,9 +222,17 @@ module QuestionFormatter
           blocks << child.to_html
         end
       end
-
       blocks = [html] if blocks.empty?
       blocks
+    end
+
+    def extract_correct_indices(answers)
+      return '' unless answers.is_a?(Array)
+      correct_indices = []
+      answers.each_with_index do |answer, index|
+        correct_indices << (index + 1) if answer['correct'] == true
+      end
+      correct_indices.join(',')
     end
 
     def extract_filename_from_url(url)

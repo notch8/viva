@@ -73,7 +73,7 @@ export const ExportModal = ({ show, onHide, hasBookmarks, lms = {} }) => {
               />
               <ExportButton
                 format='viva'
-                label='Viva'
+                label='Viva Coala CSV'
                 questionTypes={[]}
                 hasBookmarks={hasBookmarks}
               />

@@ -29,7 +29,7 @@ class Question::ImporterCsv
     end
   end
 
-  def self.handle_zip(file, destination = Rails.root.join('tmp', 'unzipped', Time.zone.now.strftime("%Y%m%d%H%M%S")))
+  def self.handle_zip(file, destination = Rails.root.join('tmp', 'unzipped', SecureRandom.uuid))
     extracted_files = []
 
     ::Zip::File.open(file) do |zip_file|

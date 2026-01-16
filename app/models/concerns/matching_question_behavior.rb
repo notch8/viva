@@ -24,22 +24,29 @@ module MatchingQuestionBehavior
       # These are reused in #validate_well_formed_row
       @lefts = []
       @rights = []
-      # Ensure that we have all of the candidate indices (the left and right side)
+
+      # Only track LEFT/RIGHT columns that have actual data
       row.headers.each do |header|
         next if header.blank?
 
         if header.start_with?("LEFT_")
-          @lefts << header.split(/_+/).last.to_i
+          index = header.split(/_+/).last.to_i
+          # Only add if there's data in either LEFT or RIGHT for this index
+          @lefts << index if row[header].present? || row["RIGHT_#{index}"].present?
         elsif header.start_with?("RIGHT_")
-          @rights << header.split(/_+/).last.to_i
+          index = header.split(/_+/).last.to_i
+          # Only add if there's data in either LEFT or RIGHT for this index
+          @rights << index if row[header].present? || row["LEFT_#{index}"].present?
         end
       end
+
+      # Remove duplicates and sort
+      @lefts = @lefts.uniq.sort
+      @rights = @rights.uniq.sort
 
       indices = (@lefts + @rights).uniq.sort
 
       @data = indices.each_with_object([]) do |index, array|
-        # It is okay that these will possibly be nil; because our downstream validation will catch
-        # them.
         answer = row["LEFT_#{index}"]
         correct = row["RIGHT_#{index}"]&.split(/\s*,\s*/)&.map(&:strip)
         next if answer.blank? && correct.blank?

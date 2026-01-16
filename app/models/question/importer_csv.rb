@@ -185,7 +185,6 @@ class Question::ImporterCsv
     image = question.images.build
     image.file.attach(io: File.open(file_path), filename: File.basename(file_path))
     image.alt_text = alt_text&.strip
-    image.save!
   end
 
   def cleanup_extracted_files

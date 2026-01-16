@@ -301,9 +301,17 @@ class Question < ApplicationRecord
       if parent_question&.has_parts?
         attributes[:parent_question] = parent_question
         attributes[:child_of_aggregation] = true
+
+        @question = question_type.new(**attributes)
+        # Use explicit presentation_order from CSV
+        presentation_order = row['PRESENTATION_ORDER'].present? ? row['PRESENTATION_ORDER'].to_i : 0
+        parent_question.as_parent_question_aggregations.build(
+          child_question: @question,
+          presentation_order: presentation_order
+        )
+      else
+        @question = question_type.new(**attributes)
       end
-      @question = question_type.new(**attributes)
-      parent_question.child_questions << @question if parent_question
       @question
     end
   end

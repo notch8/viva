@@ -9,29 +9,66 @@ module QuestionFormatter
     self.file_type = 'application/zip'
     self.is_file = true
 
-    attr_reader :questions, :question
+    attr_reader :questions, :question, :subq
 
     # @input questions [Array<Question>] array of questions to format
     def initialize(questions)
       super
       @questions = questions
+      @processed_questions = []
     end
 
     def format_content
-      processed_questions = gather_question_data
-      export_file(processed_questions, collect_headers(processed_questions))
+      gather_question_data
+      export_file(@processed_questions, collect_headers(@processed_questions))
+    end
+
+    protected
+
+    def process_question(question, subq = false)
+      @question = question
+      @subq = subq
+      format_by_type
     end
 
     private
 
     def gather_question_data
-      @questions.map do |question|
+      @questions.each do |question|
         @question = question
-        process_question(question)
-      rescue NotImplementedError
-        Rails.logger.error("🚧🚧🚧 Exporting question type #{question.type_name} is not yet implemented for #{self.class.name} 🚧🚧🚧")
-        nil
-      end.compact
+        @subq = false
+
+        # Process the main question
+        row_data = process_question(question)
+        @processed_questions << row_data if row_data
+
+        # If it's a Stimulus Case Study, recursively process child questions
+        if question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
+          process_stimulus_children(question)
+        end
+      end
+    end
+
+    def process_stimulus_children(parent_question)
+      parent_import_id = parent_question.id
+
+      parent_question.child_questions.each_with_index do |child_question, index|
+        # Process child with subq flag set to true
+        child_row_data = process_question(child_question, true)
+
+        if child_row_data
+          # Add PART_OF reference to link child to parent
+          child_row_data["PART_OF"] = parent_import_id
+          # Add PRESENTATION_ORDER based on actual order
+          child_row_data["PRESENTATION_ORDER"] = index
+          @processed_questions << child_row_data
+        end
+      end
+    end
+
+    def format_by_type
+      method = @question.class.model_exporter
+      send(method)
     end
 
     def collect_headers(processed_questions)
@@ -50,9 +87,11 @@ module QuestionFormatter
       end.encode('UTF-8')
 
       csv_filename = 'viva_questions.csv'
-      images = questions.flat_map(&:images)
 
-      zip_file_service = ZipFileService.new(images, csv_content, csv_filename)
+      # Collect ALL images from all questions including children
+      all_images = collect_all_images
+
+      zip_file_service = ZipFileService.new(all_images, csv_content, csv_filename)
       zip_file_service.generate_zip
     end
 
@@ -68,8 +107,12 @@ module QuestionFormatter
       # Add image columns if an image exists
       if question.images_as_json.present? && question.images_as_json.first
         image_info = question.images_as_json.first
-        # Extract just the filename from the URL
-        row_data["IMAGE_PATH"] = extract_filename_from_url(image_info[:url])
+        # Use the original filename from the image attachment
+        if question.images.first
+          row_data["IMAGE_PATH"] = "images/#{question.images.first.original_filename}"
+        else
+          row_data["IMAGE_PATH"] = extract_filename_from_url(image_info[:url])
+        end
         row_data["ALT_TEXT"] = image_info[:alt_text]
       end
 
@@ -164,18 +207,18 @@ module QuestionFormatter
 
     def categorization_type
       row_data = build_base_row_data
-      # Extract categories (these are the "answer" fields)
-      categories = question.data.pluck('answer')
-      # Add category columns (LEFT_1, LEFT_2, etc.)
-      categories.each_with_index do |category, index|
-        row_data["LEFT_#{index + 1}"] = category
-      end
-      # Extract and format items for each category (RIGHT_1, RIGHT_2, etc.)
+
+      # For categorization, we need to ensure LEFT and RIGHT columns match
+      # The importer expects matching pairs of LEFT_N and RIGHT_N
       question.data.each_with_index do |category_data, index|
+        col_index = index + 1
+        # LEFT columns contain category names
+        row_data["LEFT_#{col_index}"] = category_data['answer']
+        # RIGHT columns contain comma-separated items
         items = category_data['correct'] || []
-        # Join items with commas for CSV format
-        row_data["RIGHT_#{index + 1}"] = items.join(', ')
+        row_data["RIGHT_#{col_index}"] = items.join(', ')
       end
+
       add_subjects_to_row(row_data)
     end
 
@@ -184,6 +227,12 @@ module QuestionFormatter
       # Stimulus Case Study questions don't have their own data field
       # They serve as containers for child questions
       # The child questions will be exported as separate rows with PART_OF references
+      add_subjects_to_row(row_data)
+    end
+
+    def scenario_type
+      row_data = build_base_row_data
+      # Scenario questions are text-only descriptions that appear as children of Stimulus Case Studies
       add_subjects_to_row(row_data)
     end
 
@@ -242,6 +291,22 @@ module QuestionFormatter
     def extract_filename_from_url(url)
       # Get the last part of the URL path which should be the filename
       url.split('/').last
+    end
+
+    def collect_all_images
+      images = []
+
+      @questions.each do |question|
+        # Add images from the parent question
+        images.concat(question.images)
+        # If it's a Stimulus Case Study, also collect images from children
+        if question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
+          question.child_questions.each do |child|
+            images.concat(child.images)
+          end
+        end
+      end
+      images
     end
 
     def image_paths

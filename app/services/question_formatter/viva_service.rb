@@ -27,7 +27,10 @@ module QuestionFormatter
       @questions.map do |question|
         @question = question
         process_question(question)
-      end
+      rescue NotImplementedError => e
+        Rails.logger.error("🚧🚧🚧 Exporting question type #{question.type_name} is not yet implemented for #{self.class.name} 🚧🚧🚧")
+        nil
+      end.compact
     end
 
     def collect_headers(processed_questions)

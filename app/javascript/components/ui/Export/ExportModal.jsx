@@ -71,6 +71,12 @@ export const ExportModal = ({ show, onHide, hasBookmarks, lms = {} }) => {
                 questionTypes={[]}
                 hasBookmarks={hasBookmarks}
               />
+              <ExportButton
+                format='viva'
+                label='Viva'
+                questionTypes={[]}
+                hasBookmarks={hasBookmarks}
+              />
             </div>
           </Tab>
         </Tabs>

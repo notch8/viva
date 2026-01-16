@@ -49,6 +49,8 @@ class BookmarkExportService
       QuestionFormatter::D2lService
     when 'moodle'
       QuestionFormatter::MoodleService
+    when 'viva'
+      QuestionFormatter::VivaService
     else
       raise "Format #{requested_format} is not yet supported for export"
     end

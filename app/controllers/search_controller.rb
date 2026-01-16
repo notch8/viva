@@ -18,6 +18,22 @@ class SearchController < ApplicationController
 
     @pagy, @questions_page = pagy(query)
 
+    bookmarked_question_ids = current_user.bookmarks.pluck(:question_id)
+
+    # Check if all filtered questions are already bookmarked
+    # Try to get all filtered IDs, but handle SQL errors gracefully
+    all_filtered_bookmarked = false
+    begin
+      # Get IDs from the base query without includes/selects that cause ambiguity
+      base_query = Question.filter_query(search: params[:search], filter_my_questions:, **filter_values)
+      all_filtered_question_ids = base_query.except(:includes, :select).pluck(:id)
+      all_filtered_bookmarked = all_filtered_question_ids.present? && (all_filtered_question_ids - bookmarked_question_ids).empty?
+    rescue ActiveRecord::StatementInvalid
+      # If SQL error (e.g., ambiguous column), fall back to checking current page only
+      current_page_ids = @questions_page.pluck(:id)
+      all_filtered_bookmarked = current_page_ids.present? && (current_page_ids - bookmarked_question_ids).empty? && @pagy.pages <= 1
+    end
+
     serialized_questions = Question.format_questions(@questions_page)
 
     props = {
@@ -38,7 +54,8 @@ class SearchController < ApplicationController
       # Pass the metadata
       pagination: pagy_metadata(@pagy),
 
-      bookmarkedQuestionIds: current_user.bookmarks.pluck(:question_id),
+      bookmarkedQuestionIds: bookmarked_question_ids,
+      allFilteredBookmarked: all_filtered_bookmarked,
       lms: Question.lms
     }
 

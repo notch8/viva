@@ -23,7 +23,8 @@ const Search = ({
   bookmarkedQuestionIds,
   searchTerm,
   pagination,
-  filterMyQuestions
+  filterMyQuestions,
+  allFilteredBookmarked
 }) => {
   const { props: pageProps } = usePage()
   const currentUser = pageProps.currentUser
@@ -260,6 +261,7 @@ const Search = ({
         users={users}
         removeFilterAndSearch={removeFilterAndSearch}
         onBookmarkBatch={handleBookmarkBatch}
+        allFilteredBookmarked={allFilteredBookmarked}
       />
       {pagination && pagination.count !== undefined && (
         <Container className='mt-3 mb-2'>

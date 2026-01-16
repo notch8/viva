@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 module QuestionFormatter
   class VivaService < BaseService
     # Export viva questions in zipped CSV format for reimporting
@@ -27,7 +28,7 @@ module QuestionFormatter
       @questions.map do |question|
         @question = question
         process_question(question)
-      rescue NotImplementedError => e
+      rescue NotImplementedError
         Rails.logger.error("🚧🚧🚧 Exporting question type #{question.type_name} is not yet implemented for #{self.class.name} 🚧🚧🚧")
         nil
       end.compact
@@ -118,6 +119,7 @@ module QuestionFormatter
       add_subjects_to_row(row_data)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def bowtie_type
       row_data = build_base_row_data
       # Process center section
@@ -158,11 +160,12 @@ module QuestionFormatter
       end
       add_subjects_to_row(row_data)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     def categorization_type
       row_data = build_base_row_data
       # Extract categories (these are the "answer" fields)
-      categories = question.data.map { |item| item['answer'] }
+      categories = question.data.pluck('answer')
       # Add category columns (LEFT_1, LEFT_2, etc.)
       categories.each_with_index do |category, index|
         row_data["LEFT_#{index + 1}"] = category
@@ -198,10 +201,10 @@ module QuestionFormatter
 
     def extract_traditional_answers(data)
       return [] unless data.is_a?(Array)
-
-      data.map { |answer| answer['answer'] }
+      data.pluck('answer')
     end
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def extract_html_blocks(html)
       doc = Nokogiri::HTML::DocumentFragment.parse(html)
       blocks = []
@@ -212,11 +215,11 @@ module QuestionFormatter
         elsif child.name == 'div'
           child.children.each do |inner_child|
             next if inner_child.text? && inner_child.text.strip.empty?
-            if inner_child.text?
-              blocks << inner_child.text
-            else
-              blocks << inner_child.to_html
-            end
+            blocks << if inner_child.text?
+                        inner_child.text
+                      else
+                        inner_child.to_html
+                      end
           end
         else
           blocks << child.to_html
@@ -225,6 +228,7 @@ module QuestionFormatter
       blocks = [html] if blocks.empty?
       blocks
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def extract_correct_indices(answers)
       return '' unless answers.is_a?(Array)
@@ -247,3 +251,4 @@ module QuestionFormatter
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

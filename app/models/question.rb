@@ -25,6 +25,7 @@ class Question < ApplicationRecord
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   has_many :feedbacks, dependent: :destroy
+  has_many :export_loggers, dependent: :nullify
   belongs_to :user
 
   ##

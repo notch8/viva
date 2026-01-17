@@ -30,9 +30,11 @@ RSpec.describe QuestionFormatter::VivaService do
         }
       })
   end
+  # rubocop:disable Layout/LineLength
   let(:formatted_bowtie_question) do
     "IMPORT_ID,TYPE,TEXT,LEVEL,CENTER_LABEL,CENTER_1,CENTER_2,CENTER_CORRECT_ANSWERS,LEFT_LABEL,LEFT_1,LEFT_2,LEFT_CORRECT_ANSWERS,RIGHT_LABEL,RIGHT_1,RIGHT_2,RIGHT_CORRECT_ANSWERS\n,Bow Tie,Sample bow tie question,,Center Label,Center Answer 1,Center Answer 2,1,Left Label,Left Answer 1,Left Answer 2,1,Right Label,Right Answer 1,Right Answer 2,1\n"
   end
+  # rubocop:enable Layout/LineLength
   let(:categorization_question) do
     build(:question_categorization,
       text: 'Sample categorization',
@@ -135,9 +137,11 @@ RSpec.describe QuestionFormatter::VivaService do
       text: 'Main question',
       child_questions: [scenario, sub_question_essay, sub_question_mc])
   end
+  # rubocop:disable Layout/LineLength
   let(:formatted_stimulus_case_study_question) do
     "IMPORT_ID,TYPE,TEXT,LEVEL,PART_OF,PRESENTATION_ORDER,TEXT_1,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n,Stimulus Case Study,Main question,,,,,,,\n,Scenario,Sample scenario,,,0,,,,\n,Essay,Sub question,,,1,<p>Essay prompt</p>,,,\n,Multiple Choice,Multiple choice sub question,,,2,,1,Option A,Option B\n"
   end
+  # rubocop:enable Layout/LineLength
   let(:upload_question) do
     build(:question_upload,
       text: 'Sample upload question',
@@ -248,7 +252,9 @@ RSpec.describe QuestionFormatter::VivaService do
   describe 'roundtripping' do
     subject { Question::ImporterCsv.from_file(viva_questions_file, user_id: user.id) }
     let(:user) { create(:user) }
-    let(:questions) { [bowtie_question, categorization_question, drag_and_drop_question, essay_question, matching_question, traditional_question, select_all_question, upload_question, stimulus_case_study_question] }
+    let(:questions) do
+      [bowtie_question, categorization_question, drag_and_drop_question, essay_question, matching_question, traditional_question, select_all_question, upload_question, stimulus_case_study_question]
+    end
     let(:viva_questions_file) { described_class.new(questions).format_content }
 
     before do

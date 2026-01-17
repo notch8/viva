@@ -12,6 +12,7 @@ const SearchFilters = ({
   users,
   removeFilterAndSearch,
   onBookmarkBatch,
+  allFilteredBookmarked,
   errors
 }) => {
   const getUserEmail = (userId) => {
@@ -87,8 +88,10 @@ const SearchFilters = ({
               <Button
                 className='p-2'
                 onClick={onBookmarkBatch}
+                disabled={allFilteredBookmarked}
+                variant={allFilteredBookmarked ? 'secondary' : 'primary'}
               >
-                Bookmark Filtered
+                {allFilteredBookmarked ? 'All Filtered Questions Bookmarked' : 'Bookmark Filtered'}
               </Button>
             </Col>
           </Col>

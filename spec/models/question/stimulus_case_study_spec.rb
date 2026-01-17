@@ -64,4 +64,20 @@ RSpec.describe Question::StimulusCaseStudy do
       expect(subject[1].keys).to match_array(["type_label", "type_name", "text", "data", "images"])
     end
   end
+
+  describe '#destroy_child_questions' do
+    it "destroys child questions when the StimulusCaseStudy is destroyed" do
+      stimulus_case_study = FactoryBot.create(:question_stimulus_case_study)
+      child_question_ids = stimulus_case_study.child_questions.pluck(:id)
+
+      expect do
+        stimulus_case_study.destroy
+      end.to change(Question::StimulusCaseStudy, :count).by(-1)
+                                                        .and change(Question, :count).by(-(child_question_ids.size + 1)) # +1 for the StimulusCaseStudy itself
+
+      child_question_ids.each do |cq_id|
+        expect(Question.find_by(id: cq_id)).to be_nil
+      end
+    end
+  end
 end

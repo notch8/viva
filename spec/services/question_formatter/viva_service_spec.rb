@@ -244,4 +244,20 @@ RSpec.describe QuestionFormatter::VivaService do
       end
     end
   end
+
+  describe 'roundtripping' do
+    subject { Question::ImporterCsv.from_file(viva_questions_file, user_id: user.id) }
+    let(:user) { create(:user) }
+    let(:questions) { [bowtie_question, categorization_question, drag_and_drop_question, essay_question, matching_question, traditional_question, select_all_question, upload_question, stimulus_case_study_question] }
+    let(:viva_questions_file) { described_class.new(questions).format_content }
+
+    before do
+      questions.each(&:save!)
+    end
+
+    it 'reimports correctly' do
+      # 9 questions within questions array, plus 3 stimulus case study subquestions
+      expect { subject.save }.to change(Question, :count).by(12)
+    end
+  end
 end

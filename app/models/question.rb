@@ -293,6 +293,7 @@ class Question < ApplicationRecord
       valid? && question.save
     end
 
+    # rubocop:disable Metrics/MethodLength
     def question
       return @question if defined?(@question)
 
@@ -307,7 +308,7 @@ class Question < ApplicationRecord
         presentation_order = row['PRESENTATION_ORDER'].present? ? row['PRESENTATION_ORDER'].to_i : 0
         parent_question.as_parent_question_aggregations.build(
           child_question: @question,
-          presentation_order: presentation_order
+          presentation_order:
         )
       else
         @question = question_type.new(**attributes)
@@ -315,9 +316,9 @@ class Question < ApplicationRecord
       @question
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
-
   def self.build_row(row:, questions:, user_id:)
     # In relying on inner classes, we need to specifically target the current class (a sub-class of
     # Question).  Oddly `self::ImportCsvRow` does not work.  We can use

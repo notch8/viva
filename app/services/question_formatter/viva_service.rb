@@ -43,9 +43,7 @@ module QuestionFormatter
         @processed_questions << row_data if row_data
 
         # If it's a Stimulus Case Study, recursively process child questions
-        if question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
-          process_stimulus_children(question)
-        end
+        process_stimulus_children(question) if question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
       end
     end
 
@@ -56,13 +54,12 @@ module QuestionFormatter
         # Process child with subq flag set to true
         child_row_data = process_question(child_question, true)
 
-        if child_row_data
-          # Add PART_OF reference to link child to parent
-          child_row_data["PART_OF"] = parent_import_id
-          # Add PRESENTATION_ORDER based on actual order
-          child_row_data["PRESENTATION_ORDER"] = index
-          @processed_questions << child_row_data
-        end
+        next unless child_row_data
+        # Add PART_OF reference to link child to parent
+        child_row_data["PART_OF"] = parent_import_id
+        # Add PRESENTATION_ORDER based on actual order
+        child_row_data["PRESENTATION_ORDER"] = index
+        @processed_questions << child_row_data
       end
     end
 
@@ -96,6 +93,7 @@ module QuestionFormatter
     end
 
     # Common base data for all question types
+    # rubocop:disable Metrics/MethodLength
     def build_base_row_data
       row_data = {
         "IMPORT_ID" => question.id,
@@ -108,13 +106,14 @@ module QuestionFormatter
       if question.images_as_json.present? && question.images_as_json.first
         image_info = question.images_as_json.first
         # Use the original filename from the image attachment
-        if question.images.first
-          row_data["IMAGE_PATH"] = "images/#{question.images.first.original_filename}"
-        else
-          row_data["IMAGE_PATH"] = extract_filename_from_url(image_info[:url])
-        end
+        row_data["IMAGE_PATH"] = if question.images.first
+                                   "images/#{question.images.first.original_filename}"
+                                 else
+                                   extract_filename_from_url(image_info[:url])
+                                 end
         row_data["ALT_TEXT"] = image_info[:alt_text]
       end
+      # rubocop:disable Metrics/AbcSize
 
       row_data
     end
@@ -300,10 +299,9 @@ module QuestionFormatter
         # Add images from the parent question
         images.concat(question.images)
         # If it's a Stimulus Case Study, also collect images from children
-        if question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
-          question.child_questions.each do |child|
-            images.concat(child.images)
-          end
+        next unless question.type == 'Question::StimulusCaseStudy' && question.respond_to?(:child_questions)
+        question.child_questions.each do |child|
+          images.concat(child.images)
         end
       end
       images

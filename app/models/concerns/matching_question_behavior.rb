@@ -17,7 +17,7 @@ module MatchingQuestionBehavior
     ##
     # @see #validate_well_formed_row
     #
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     # rubocop:disable Metrics/CyclomaticComplexity
     # rubocop:disable Metrics/PerceivedComplexity
     def extract_answers_and_data_from(row)
@@ -55,7 +55,7 @@ module MatchingQuestionBehavior
     end
     # rubocop:enable Metrics/CyclomaticComplexity
     # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def validate_well_formed_row
       validate_matching_lefts_and_rights

@@ -25,6 +25,7 @@ class Question < ApplicationRecord
   has_many :images, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   has_many :feedbacks, dependent: :destroy
+  has_many :export_loggers, dependent: :nullify
   belongs_to :user
 
   ##
@@ -292,6 +293,7 @@ class Question < ApplicationRecord
       valid? && question.save
     end
 
+    # rubocop:disable Metrics/MethodLength
     def question
       return @question if defined?(@question)
 
@@ -300,15 +302,23 @@ class Question < ApplicationRecord
       if parent_question&.has_parts?
         attributes[:parent_question] = parent_question
         attributes[:child_of_aggregation] = true
+
+        @question = question_type.new(**attributes)
+        # Use explicit presentation_order from CSV
+        presentation_order = row['PRESENTATION_ORDER'].present? ? row['PRESENTATION_ORDER'].to_i : 0
+        parent_question.as_parent_question_aggregations.build(
+          child_question: @question,
+          presentation_order:
+        )
+      else
+        @question = question_type.new(**attributes)
       end
-      @question = question_type.new(**attributes)
-      parent_question.child_questions << @question if parent_question
       @question
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   ##
-
   def self.build_row(row:, questions:, user_id:)
     # In relying on inner classes, we need to specifically target the current class (a sub-class of
     # Question).  Oddly `self::ImportCsvRow` does not work.  We can use

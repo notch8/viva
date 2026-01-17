@@ -252,7 +252,7 @@ RSpec.shared_examples 'a Markdown Question' do
 
       it { is_expected.to be_valid }
       it { is_expected.not_to be_persisted }
-      let(:expected_html) { "<p>Title of Question</p><ul><li><p>Bullet Point</p></li><li><p>Second Point</p></li></ul>" }
+      let(:expected_html) { "<ul><li><p>Bullet Point</p></li><li><p>Second Point</p></li></ul>" }
       its(:data) { is_expected.to eq({ "html" => expected_html }) }
 
       it 'will save the underlying record' do

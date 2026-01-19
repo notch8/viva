@@ -43,12 +43,12 @@ module MarkdownQuestionBehavior
         row.fetch("TEXT_#{integer}")
       end
 
-      # Combine TEXT with sections - TEXT becomes the leading paragraph
+      # Combine sections into HTML content. TEXT is stored separately in the text column,
+      # so we don't include it here to avoid duplication.
       # Why the double carriage return?  Without that if we have "Text\n* Bullet" that will be
       # converted to "<p>Text\n* Bullet</p>" But with the "\n\n" we end up with
       # "<p>Text</p><ul><li>Bullet</li></ul>"; and multiple bullets also work.
-      all_parts = [@text, *sections].compact
-      combined = all_parts.join("\n\n")
+      combined = sections.compact.join("\n\n")
 
       # Use Loofah with prune scrubber to remove unsafe tags AND their content (like script).
       # This is more aggressive than sanitize which keeps text content of stripped tags.

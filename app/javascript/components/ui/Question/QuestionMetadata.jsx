@@ -68,23 +68,27 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds, subjects }) => {
   }
 
   return (
-    <div className='bg-light-2 p-2 rounded'>
-      <button
-        className='btn btn-primary mt-1 mb-4'
-        onClick={handleBookmarkToggle}
-      >
-        {isBookmarked ? 'Unbookmark' : 'Bookmark'}
-      </button>{' '}
-      {(currentUser.id === question.user_id || currentUser.admin) && (
-        <button className='btn btn-danger mt-1 mb-4' onClick={handleDelete}>
-          Delete
+    <div className='bg-light-2 p-2 rounded '>
+      <div className='d-flex justify-content-between'>
+        <button
+          className='btn btn-primary mt-1 mb-4'
+          onClick={handleBookmarkToggle}
+        >
+          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </button>
-      )}{' '}
-      {(currentUser.id === question.user_id || currentUser.admin) && (
-        <button className='btn btn-secondary mt-1 mb-4' onClick={handleEdit}>
-          Edit
-        </button>
-      )}
+        <div>
+          {(currentUser.id === question.user_id || currentUser.admin) && (
+            <button className='btn btn-secondary mt-1 mb-4 ms-1' onClick={handleEdit}>
+              Edit
+            </button>
+          )}
+          {(currentUser.id === question.user_id || currentUser.admin) && (
+            <button className='btn btn-danger mt-1 mb-4 ms-1' onClick={handleDelete}>
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
       <QuestionEditModal
         show={showEditModal}
         onClose={() => setShowEditModal(false)}

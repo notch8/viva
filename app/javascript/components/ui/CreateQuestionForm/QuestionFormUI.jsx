@@ -45,7 +45,8 @@ export const QuestionFormUI = ({
   onLevelSelection,
   onAddSubject,
   onRemoveSubject,
-  onSubmit
+  onSubmit,
+  onCancel
 }) => {
   const QuestionComponent = COMPONENT_MAP[questionType] || null
 
@@ -96,7 +97,16 @@ export const QuestionFormUI = ({
               </div>
             </div>
 
-            <div className='d-flex justify-content-end mt-4'>
+            <div className='d-flex justify-content-end mt-4 gap-2'>
+              {question && (
+                <Button
+                  type='button'
+                  className='btn btn-secondary'
+                  onClick={onCancel}
+                >
+                  Cancel
+                </Button>
+              )}
               <Button
                 type='submit'
                 className='btn btn-primary'

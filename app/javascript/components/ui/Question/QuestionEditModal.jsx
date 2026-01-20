@@ -20,6 +20,7 @@ const QuestionEditModal = ({ show, onClose, question, subjects }) => {
           question={question}
           subjectOptions={subjects || []}
           onSuccess={handleSuccess}
+          onCancel={onClose}
         />
       </Modal.Body>
     </Modal>

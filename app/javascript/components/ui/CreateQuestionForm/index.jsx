@@ -15,7 +15,7 @@ const TYPE_MAPPER = {
   'Question::BowTie': 'Bow Tie'
 }
 
-const CreateQuestionForm = ({ subjectOptions, question, onSuccess }) => {
+const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) => {
   const [questionType, setQuestionType] = useState(
     question ? TYPE_MAPPER[question.type] : ''
   )
@@ -316,6 +316,7 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess }) => {
       onAddSubject={handleAddSubject}
       onRemoveSubject={handleRemoveSubject}
       onSubmit={handleSubmit}
+      onCancel={onCancel}
     />
   )
 }

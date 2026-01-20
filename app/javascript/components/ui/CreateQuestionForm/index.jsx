@@ -10,7 +10,7 @@ const TYPE_MAPPER = {
   'Question::Essay': 'Essay',
   'Question::Matching': 'Matching',
   'Question::SelectAllThatApply': 'Select All That Apply',
-  'Question::CaseStudy': 'Stimulus Case Study',
+  'Question::StimulusCaseStudy': 'Stimulus Case Study',
   'Question::Upload': 'File Upload',
   'Question::BowTie': 'Bow Tie'
 }

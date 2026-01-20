@@ -77,7 +77,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds, subjects }) => {
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </button>
         <div>
-          {(currentUser.id === question.user_id || currentUser.admin) && (
+          {((currentUser.id === question.user_id || currentUser.admin) && question.type_name !== 'Stimulus Case Study') && (
             <button className='btn btn-secondary mt-1 mb-4 ms-1' onClick={handleEdit}>
               Edit
             </button>

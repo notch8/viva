@@ -1,7 +1,7 @@
 import React from 'react'
 import QuestionText from './QuestionText'
 
-const Essay = ({ handleTextChange, onDataChange, questionType}) => {
+const Essay = ({ handleTextChange, onDataChange, questionType, questionText, data }) => {
   const handleDataChange = (e) => {
     onDataChange(e.target.value)
   }
@@ -10,13 +10,17 @@ const Essay = ({ handleTextChange, onDataChange, questionType}) => {
     <>
       <h3>{questionType} Question</h3>
       <QuestionText
+        questionText={questionText}  // Add this prop
         handleTextChange={handleTextChange}
         formLabel='Enter Short Description'
         placeHolder='Enter your short description here'
         inputType='input'
         controlId='questionDescription'
       />
-      <QuestionText handleTextChange={handleDataChange} />
+      <QuestionText
+        questionText={data?.html}
+        handleTextChange={handleDataChange}
+      />
     </>
   )
 }

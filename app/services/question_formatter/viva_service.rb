@@ -23,14 +23,6 @@ module QuestionFormatter
       export_file(@processed_questions, collect_headers(@processed_questions))
     end
 
-    protected
-
-    def process_question(question, subq = false)
-      @question = question
-      @subq = subq
-      format_by_type
-    end
-
     private
 
     def gather_question_data
@@ -113,10 +105,10 @@ module QuestionFormatter
                                  end
         row_data["ALT_TEXT"] = image_info[:alt_text]
       end
-      # rubocop:disable Metrics/AbcSize
 
       row_data
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Common method to add subjects to row data
     def add_subjects_to_row(row_data)
@@ -305,12 +297,6 @@ module QuestionFormatter
         end
       end
       images
-    end
-
-    def image_paths
-      question.images.map do |image|
-        "images/#{image.original_filename}"
-      end
     end
   end
 end

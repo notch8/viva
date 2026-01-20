@@ -98,18 +98,6 @@ RSpec.describe QuestionFormatter::VivaService do
   let(:formatted_traditional_question) do
     "IMPORT_ID,TYPE,TEXT,LEVEL,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n,Multiple Choice,Sample multiple choice,,1,Option A,Option B\n"
   end
-  let(:select_all_question) do
-    build(:question_select_all_that_apply,
-      text: 'Sample select all question',
-      data: [
-        { 'answer' => 'Option A', 'correct' => true },
-        { 'answer' => 'Option B', 'correct' => true },
-        { 'answer' => 'Option C', 'correct' => false }
-      ])
-  end
-  let(:formatted_select_all_question) do
-    "NewQuestion,MS\nID,\nQuestionText,Sample select all question\nOption,100,Option A\nOption,100,Option B\nOption,0,Option C\n"
-  end
   let(:sata_question) do
     build(:question_select_all_that_apply,
       text: 'Sample select all question',
@@ -253,7 +241,7 @@ RSpec.describe QuestionFormatter::VivaService do
     subject { Question::ImporterCsv.from_file(viva_questions_file, user_id: user.id) }
     let(:user) { create(:user) }
     let(:questions) do
-      [bowtie_question, categorization_question, drag_and_drop_question, essay_question, matching_question, traditional_question, select_all_question, upload_question, stimulus_case_study_question]
+      [bowtie_question, categorization_question, drag_and_drop_question, essay_question, matching_question, traditional_question, sata_question, upload_question, stimulus_case_study_question]
     end
     let(:viva_questions_file) { described_class.new(questions).format_content }
 

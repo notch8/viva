@@ -43,6 +43,7 @@ class Api::QuestionsController < ApplicationController
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
+  # rubocop:disable Metrics/MethodLength
   def update
     question = Question.find_by(id: params[:id])
 
@@ -60,13 +61,13 @@ class Api::QuestionsController < ApplicationController
     question.subjects.clear
 
     # Update question attributes
-    question.assign_attributes(processed_params.except(:keywords, :subjects, :images, :alt_text))
+    question.assign_attributes(processed_params.except(:keywords, :subjects, :images, :alt_text, :deleted_image_ids, :existing_images))
     question.level = nil if question.level.blank?
 
     # Handle associations
     handle_question_associations(question)
-
     if question.save
+      handle_image_changes!
       render json: { message: 'Question updated successfully!', id: question.id }, status: :ok
     else
       render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
@@ -74,6 +75,7 @@ class Api::QuestionsController < ApplicationController
   rescue ArgumentError => e
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
+  # rubocop:enable Metrics/MethodLength
 
   def destroy
     question = Question.find_by(id: params[:id])
@@ -127,6 +129,22 @@ class Api::QuestionsController < ApplicationController
     handle_image_uploads(question)
     handle_keywords(question)
     handle_subjects(question)
+  end
+
+  def handle_image_changes!
+    deleted_image_ids = question_params[:deleted_image_ids]
+    existing_images = question_params[:existing_images]&.map(&:to_h)
+
+    return if deleted_image_ids.blank? && existing_images.blank?
+
+    deleted_image_ids&.each do |id|
+      Image.find(id).destroy
+    end
+
+    existing_images&.each do |existing_image|
+      image = Image.find(existing_image['id'])
+      image.update(alt_text: existing_image['alt_text'])
+    end
   end
 
   ##
@@ -625,7 +643,9 @@ class Api::QuestionsController < ApplicationController
       images: [],
       keywords: [],
       subjects: [],
-      alt_text: []
+      alt_text: [],
+      deleted_image_ids: [],
+      existing_images: [:id, :alt_text]
     )
   end
 end

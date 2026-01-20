@@ -141,7 +141,11 @@ class Question < ApplicationRecord
 
   def images_as_json
     images.map do |image|
-      { url: image.url, alt_text: image.alt_text }
+      {
+        id: image.id,
+        url: image.url,
+        alt_text: image.alt_text
+      }
     end
   end
 

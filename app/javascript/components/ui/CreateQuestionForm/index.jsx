@@ -27,9 +27,12 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
       altText: img.alt_text || '',
       isValid: true,
       filename: img.filename || 'Existing image',
-      isExisting: true
+      isExisting: true,
+      id: img.id,
+      markedForDeletion: false
     })) || []
   )
+
   const [level, setLevel] = useState(question?.level || '')
   const [subjects, setSubjects] = useState(question?.subject_names || [])
   const [data, setData] = useState(
@@ -111,6 +114,22 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
         formData.append('question[images][]', image.file)
         formData.append('question[alt_text][]', image.altText)
       }
+    })
+
+    const existingImagesWithUpdates = images
+      .filter(img => img.isExisting && !img.markedForDeletion)
+
+    existingImagesWithUpdates.forEach(img => {
+      formData.append('question[existing_images][][id]', img.id)
+      formData.append('question[existing_images][][alt_text]', img.altText)
+    })
+
+    const deletedImageIds = images
+      .filter(img => img.isExisting && img.markedForDeletion)
+      .map(img => img.id)
+
+    deletedImageIds.forEach(id => {
+      formData.append('question[deleted_image_ids][]', id)
     })
 
     subjects.forEach((subject) =>

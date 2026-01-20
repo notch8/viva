@@ -35,6 +35,50 @@ RSpec.describe BookmarksController do
 
       expect(response).to redirect_to(authenticated_root_path)
     end
+
+    it 'handles subject filters without ambiguous column errors' do
+      subject = FactoryBot.create(:subject, name: 'Applied Science')
+      question1 = FactoryBot.create(:question_traditional)
+      question2 = FactoryBot.create(:question_traditional)
+      question1.subjects << subject
+      question2.subjects << subject
+
+      expect do
+        post :create_batch, params: {
+          search: '',
+          selected_keywords: [],
+          selected_subjects: ['Applied Science'],
+          selected_types: [],
+          selected_levels: [],
+          filter_my_questions: false
+        }
+      end.to change { user.bookmarks.count }.by(2)
+
+      expect(response).to redirect_to(authenticated_root_path)
+      expect(user.bookmarks.pluck(:question_id)).to contain_exactly(question1.id, question2.id)
+    end
+
+    it 'handles keyword filters without ambiguous column errors' do
+      keyword = FactoryBot.create(:keyword, name: 'test-keyword')
+      question1 = FactoryBot.create(:question_traditional)
+      question2 = FactoryBot.create(:question_traditional)
+      question1.keywords << keyword
+      question2.keywords << keyword
+
+      expect do
+        post :create_batch, params: {
+          search: '',
+          selected_keywords: ['test-keyword'],
+          selected_subjects: [],
+          selected_types: [],
+          selected_levels: [],
+          filter_my_questions: false
+        }
+      end.to change { user.bookmarks.count }.by(2)
+
+      expect(response).to redirect_to(authenticated_root_path)
+      expect(user.bookmarks.pluck(:question_id)).to contain_exactly(question1.id, question2.id)
+    end
   end
 
   describe '#destroy' do

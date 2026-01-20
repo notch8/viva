@@ -7,7 +7,7 @@
 class Question::Scenario < Question
   self.type_label = "Scenario"
   self.type_name = "Scenario"
-  self.model_exporter = 'scenario'
+  self.model_exporter = 'scenario_type'
   self.included_in_filterable_type = false
 
   class ImportCsvRow < Question::ImportCsvRow

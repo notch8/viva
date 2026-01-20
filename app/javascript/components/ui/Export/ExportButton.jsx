@@ -17,12 +17,14 @@ const ExportButton = ({ format, label, questionTypes, hasBookmarks }) => {
       return 'bi-markdown-fill'
     case 'txt':
       return 'bi-file-text-fill'
+    case 'viva':
+      return 'bi-file-earmark-spreadsheet-fill'
     default:
       return 'bi-clipboard2-fill'
     }
   }
 
-  const isTextFormat = format === 'md' || format === 'txt'
+  const isTextFormat = format === 'md' || format === 'txt' || format === 'viva'
 
   return (
     <div className='export-button-container'>

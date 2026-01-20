@@ -80,6 +80,6 @@ class BookmarksController < ApplicationController
   end
 
   def filtered_question_ids
-    Question.filter_query(search: params[:search], filter_my_questions: question_filter_my_questions, **question_filter_values).pluck(:id)
+    Question.filter_query(search: params[:search], filter_my_questions: question_filter_my_questions, **question_filter_values).pluck('questions.id')
   end
 end

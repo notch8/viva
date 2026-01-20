@@ -35,9 +35,16 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
 
   const [level, setLevel] = useState(question?.level || '')
   const [subjects, setSubjects] = useState(question?.subject_names || [])
-  const [data, setData] = useState(
-    question?.data || { text: '', subQuestions: [] }
-  )
+  const [data, setData] = useState(() => {
+    if (!question) return { text: '', subQuestions: [] }
+
+    // For Essay and File Upload, keep the HTML as-is for ReactQuill
+    if (question.type === 'Question::Essay' || question.type === 'Question::Upload') {
+      return question.data?.html || ''
+    }
+
+    return question.data || { text: '', subQuestions: [] }
+  })
   const [resetFields, setResetFields] = useState(false)
 
   const handleQuestionTypeSelection = (type) => {

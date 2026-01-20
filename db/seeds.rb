@@ -68,16 +68,30 @@ Question.destroy_all
 #   end
 # end
 
+# Creates a temporary zip file containing the given files, yields it to the block,
+# and ensures cleanup afterward. The zip file is always deleted after the block
+# completes, whether successfully or with an exception.
+#
+# @param output_path [Pathname, String] Path where the temporary zip will be created
+# @param files [Array<Pathname, String>] Files to include in the zip
+# @yield [File] The opened zip file
 def zip_files(output_path, *files)
+  # Remove any existing file at the output path first
+  FileUtils.rm_f(output_path)
+
   Zip::File.open(output_path, Zip::File::CREATE) do |zipfile|
     files.each do |file_path|
       zipfile.add(File.basename(file_path), file_path)
     end
   end
 
-  yield File.open(output_path) if block_given?
+  # Open the file with a block to ensure it gets closed
+  File.open(output_path) do |file|
+    yield file if block_given?
+  end
 ensure
-  File.delete(output_path) if File.exist?(output_path)
+  # Always clean up the temporary zip file
+  FileUtils.rm_f(output_path)
 end
 
 SubjectImporter.import
@@ -85,8 +99,9 @@ subjects = Subject.all
 questions = []
 
 ###### Upload Questions
-upload_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "upload_questions.csv"))
-questions << Question::ImporterCsv.from_file(upload_questions_csv, user_id: user_id1)
+File.open(Rails.root.join("db", "seed_csvs", "upload_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id1)
+end
 
 ###### Multiple Choice Questions
 csv_path = Rails.root.join("db", "seed_csvs", "multiple_choice_questions.csv")
@@ -107,12 +122,14 @@ zip_files(zip_path, csv_path, image_path) do |zip_file|
 end
 
 #### Matching Questions
-matching_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "matching_questions.csv"))
-questions << Question::ImporterCsv.from_file(matching_questions_csv, user_id: user_id1)
+File.open(Rails.root.join("db", "seed_csvs", "matching_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id1)
+end
 
 ###### Essay Questions
-essay_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "essay_questions.csv"))
-questions << Question::ImporterCsv.from_file(essay_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "essay_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
 ###### Drag and Drop Questions
 csv_path = Rails.root.join("db", "seed_csvs", "drag_and_drop_questions.csv")
@@ -124,12 +141,14 @@ zip_files(zip_path, csv_path, image_path) do |zip_file|
 end
 
 ###### Categorization Questions
-categorization_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "categorization_questions.csv"))
-questions << Question::ImporterCsv.from_file(categorization_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "categorization_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
 ###### Bow Tie Questions
-bow_tie_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "bow_tie_questions.csv"))
-questions << Question::ImporterCsv.from_file(bow_tie_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "bow_tie_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
 ###### Stimulus Case Study Questions
 csv_path = Rails.root.join("db", "seed_csvs", "stimulus_case_study_questions.csv")

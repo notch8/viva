@@ -565,7 +565,7 @@ class Question < ApplicationRecord
                                  .where(name: keywords)
                                  .group(:question_id)
       # We sanitize the subquery via Arel.  The above construction is adequate.
-      questions = questions.where(Arel.sql("id IN (#{keywords_subquery.to_sql})"))
+      questions = questions.where(Arel.sql("questions.id IN (#{keywords_subquery.to_sql})"))
     end
 
     if subjects.present?
@@ -574,7 +574,7 @@ class Question < ApplicationRecord
                                  .where(name: subjects)
                                  .group('question_id')
       # We sanitize the subquery via Arel.  The above construction is adequate.
-      questions = questions.where(Arel.sql("id IN (#{subjects_subquery.to_sql})"))
+      questions = questions.where(Arel.sql("questions.id IN (#{subjects_subquery.to_sql})"))
     end
 
     questions = Question.where(id: bookmarked_question_ids) if bookmarked_question_ids.present?

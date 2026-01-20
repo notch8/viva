@@ -1,7 +1,7 @@
 import React, {
   useState, useEffect, useCallback, useMemo, useRef
 } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Tab, Nav } from 'react-bootstrap'
 import { SUBQUESTION_TYPE_NAMES } from '../../../constants/questionTypes'
 import Scenario from './Scenario'
 import Bowtie from './Bowtie'
@@ -29,10 +29,12 @@ const StimulusCaseStudy = ({
       data.subQuestions.length > 0
       ? data.subQuestions.map((sq, idx) => ({
         ...sq,
-        id: sq.id || Date.now() + idx
+        id: sq.id || Date.now() + idx,
+        type: sq.type_name || sq.type || ''
       }))
       : []
   )
+  const [activeTab, setActiveTab] = useState('main')
   const updateTimeout = useRef(null)
 
   const COMPONENT_MAP = useMemo(
@@ -170,56 +172,76 @@ const StimulusCaseStudy = ({
   return (
     <div className='stimulus-case-study-form'>
       <h3>{questionType} Question</h3>
-      <QuestionText
-        questionText={questionText}
-        handleTextChange={handleTextChange}
-      />
 
-      <h4>Subquestions</h4>
-      {subQuestions.map((sq) => {
-        const QuestionComponent = COMPONENT_MAP[sq.type] || null
-        return (
-          <div key={sq.id} className='subquestion'>
-            <QuestionTypeDropdown
-              handleQuestionTypeSelection={(type) =>
-                handleSubQuestionTypeSelection(sq.id, type)
-              }
-              QUESTION_TYPE_NAMES={SUBQUESTION_TYPE_NAMES}
+      <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)}>
+        <Nav variant='tabs' className='mb-3'>
+          <Nav.Item>
+            <Nav.Link eventKey='main'>Main Question</Nav.Link>
+          </Nav.Item>
+          {subQuestions.map((sq, index) => (
+            <Nav.Item key={sq.id}>
+              <Nav.Link eventKey={`subquestion-${sq.id}`}>
+                {sq.type || 'New'} #{index + 1}
+              </Nav.Link>
+            </Nav.Item>
+          ))}
+        </Nav>
+
+        <Tab.Content>
+          <Tab.Pane eventKey='main'>
+            <QuestionText
+              questionText={questionText}
+              handleTextChange={handleTextChange}
             />
-            {QuestionComponent && (
-              <QuestionComponent
-                questionText={sq.text}
-                handleTextChange={(e) =>
-                  handleSubQuestionChange(sq.id, 'text', e.target.value)
-                }
-                onDataChange={(data) =>
-                  handleSubQuestionChange(sq.id, 'data', data)
-                }
-                resetFields={resetFields}
-                data={sq.data}
-              />
-            )}
-            <div>
-              <Button
-                variant='danger'
-                className='mt-2'
-                onClick={() => removeSubQuestion(sq.id)}
-              >
-                Remove Subquestion
-              </Button>
-            </div>
-          </div>
-        )
-      })}
+            <Button
+              type='button'
+              variant='secondary'
+              className='mt-3'
+              onClick={addSubQuestion}
+            >
+              Add Subquestion
+            </Button>
+          </Tab.Pane>
 
-      <Button
-        type='button'
-        variant='secondary'
-        className='mt-3'
-        onClick={addSubQuestion}
-      >
-        Add Subquestion
-      </Button>
+          {subQuestions.map((sq, index) => {
+            const QuestionComponent = COMPONENT_MAP[sq.type] || null
+            return (
+              <Tab.Pane key={sq.id} eventKey={`subquestion-${sq.id}`}>
+                <div className='subquestion'>
+                  <h4>Subquestion #{index + 1}</h4>
+                  <QuestionTypeDropdown
+                    handleQuestionTypeSelection={(type) =>
+                      handleSubQuestionTypeSelection(sq.id, type)
+                    }
+                    QUESTION_TYPE_NAMES={SUBQUESTION_TYPE_NAMES}
+                  />
+                  {QuestionComponent && (
+                    <QuestionComponent
+                      questionText={sq.text}
+                      handleTextChange={(e) =>
+                        handleSubQuestionChange(sq.id, 'text', e.target.value)
+                      }
+                      onDataChange={(data) =>
+                        handleSubQuestionChange(sq.id, 'data', data)
+                      }
+                      resetFields={resetFields}
+                      data={sq.data}
+                    />
+                  )}
+                  <div className='mt-3'>
+                    <Button
+                      variant='danger'
+                      onClick={() => removeSubQuestion(sq.id)}
+                    >
+                      Remove Subquestion
+                    </Button>
+                  </div>
+                </div>
+              </Tab.Pane>
+            )
+          })}
+        </Tab.Content>
+      </Tab.Container>
     </div>
   )
 }

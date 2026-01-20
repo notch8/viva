@@ -43,6 +43,14 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
       return question.data?.html || ''
     }
 
+    // For Stimulus Case Study, wrap the array in subQuestions property
+    if (question.type === 'Question::StimulusCaseStudy') {
+      return {
+        text: question.text || '',
+        subQuestions: Array.isArray(question.data) ? question.data : []
+      }
+    }
+
     return question.data || { text: '', subQuestions: [] }
   })
   const [resetFields, setResetFields] = useState(false)

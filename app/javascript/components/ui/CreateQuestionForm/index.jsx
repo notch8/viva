@@ -70,7 +70,18 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
     setResetFields(true)
   }
 
-  const handleTextChange = (e) => setQuestionText(e.target.value)
+  const handleTextChange = (e) => {
+    const newText = e.target.value
+    setQuestionText(newText)
+
+    // For Stimulus Case Study, also update data.text
+    if (questionType === 'Stimulus Case Study') {
+      setData(prevData => ({
+        ...prevData,
+        text: newText
+      }))
+    }
+  }
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
@@ -213,10 +224,16 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
       switch (type) {
       case 'Essay':
       case 'File Upload': {
-        if (typeof data === 'object' || data === '') {
-          return true
+        // Data can be either a string (standalone) or { html: "..." } (subquestion)
+        if (typeof questionData === 'string') {
+          // Standalone question: data should be a non-empty string
+          return questionData === ''
+        } else if (typeof questionData === 'object' && questionData !== null) {
+          // Subquestion: data should be { html: "..." } with non-empty html
+          return !questionData.html || questionData.html.trim() === ''
         }
-        break
+        // If data is undefined or null, it's invalid
+        return true
       }
       case 'Bow Tie': {
         const { center, left, right } = questionData || {}
@@ -309,8 +326,9 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
     }
 
     if (questionType === 'Stimulus Case Study') {
+      // Check questionText state directly instead of data.text due to debouncing
       if (
-        !data.text?.trim() ||
+        !questionText?.trim() ||
         !Array.isArray(data.subQuestions) ||
         data.subQuestions.length === 0
       ) {

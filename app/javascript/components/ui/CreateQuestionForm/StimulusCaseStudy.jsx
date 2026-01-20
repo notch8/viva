@@ -92,7 +92,7 @@ const StimulusCaseStudy = ({
             data: sq.data
           }))
         })
-      }, 300)
+      }, 50)
     },
     [questionText, onDataChange]
   )
@@ -116,16 +116,14 @@ const StimulusCaseStudy = ({
         const updated = prev.map((sq) => {
           if (sq.id === id) {
             const updatedSq = { ...sq, [key]: value }
+            // For Essay and File Upload, when data is changed (from ReactQuill),
+            // wrap the HTML string back into the { html: "..." } format
             if (
               (sq.type === 'Essay' || sq.type === 'File Upload') &&
-              key === 'text'
+              key === 'data' &&
+              typeof value === 'string'
             ) {
-              updatedSq.data = {
-                html: value
-                  .split('\n')
-                  .map((line, index) => `<p key=${index}>${line}</p>`)
-                  .join('')
-              }
+              updatedSq.data = { html: value }
             }
             return updatedSq
           }
@@ -205,6 +203,11 @@ const StimulusCaseStudy = ({
 
           {subQuestions.map((sq, index) => {
             const QuestionComponent = COMPONENT_MAP[sq.type] || null
+            // For Essay and File Upload, extract HTML string from data object
+            const dataForComponent = (sq.type === 'Essay' || sq.type === 'File Upload') && sq.data?.html
+              ? sq.data.html
+              : sq.data
+
             return (
               <Tab.Pane key={sq.id} eventKey={`subquestion-${sq.id}`}>
                 <div className='subquestion'>
@@ -225,7 +228,8 @@ const StimulusCaseStudy = ({
                         handleSubQuestionChange(sq.id, 'data', data)
                       }
                       resetFields={resetFields}
-                      data={sq.data}
+                      data={dataForComponent}
+                      questionType={sq.type}
                     />
                   )}
                   <div className='mt-3'>

@@ -68,16 +68,30 @@ Question.destroy_all
 #   end
 # end
 
+# Creates a temporary zip file containing the given files, yields it to the block,
+# and ensures cleanup afterward. The zip file is always deleted after the block
+# completes, whether successfully or with an exception.
+#
+# @param output_path [Pathname, String] Path where the temporary zip will be created
+# @param files [Array<Pathname, String>] Files to include in the zip
+# @yield [File] The opened zip file
 def zip_files(output_path, *files)
+  # Remove any existing file at the output path first
+  FileUtils.rm_f(output_path)
+
   Zip::File.open(output_path, Zip::File::CREATE) do |zipfile|
     files.each do |file_path|
       zipfile.add(File.basename(file_path), file_path)
     end
   end
 
-  yield File.open(output_path) if block_given?
+  # Open the file with a block to ensure it gets closed
+  File.open(output_path) do |file|
+    yield file if block_given?
+  end
 ensure
-  File.delete(output_path) if File.exist?(output_path)
+  # Always clean up the temporary zip file
+  FileUtils.rm_f(output_path)
 end
 
 SubjectImporter.import
@@ -85,8 +99,9 @@ subjects = Subject.all
 questions = []
 
 ###### Upload Questions
-upload_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "upload_questions.csv"))
-questions << Question::ImporterCsv.from_file(upload_questions_csv, user_id: user_id1)
+File.open(Rails.root.join("db", "seed_csvs", "upload_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id1)
+end
 
 ###### Multiple Choice Questions
 csv_path = Rails.root.join("db", "seed_csvs", "multiple_choice_questions.csv")
@@ -107,12 +122,14 @@ zip_files(zip_path, csv_path, image_path) do |zip_file|
 end
 
 #### Matching Questions
-matching_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "matching_questions.csv"))
-questions << Question::ImporterCsv.from_file(matching_questions_csv, user_id: user_id1)
+File.open(Rails.root.join("db", "seed_csvs", "matching_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id1)
+end
 
 ###### Essay Questions
-essay_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "essay_questions.csv"))
-questions << Question::ImporterCsv.from_file(essay_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "essay_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
 ###### Drag and Drop Questions
 csv_path = Rails.root.join("db", "seed_csvs", "drag_and_drop_questions.csv")
@@ -124,296 +141,24 @@ zip_files(zip_path, csv_path, image_path) do |zip_file|
 end
 
 ###### Categorization Questions
-categorization_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "categorization_questions.csv"))
-questions << Question::ImporterCsv.from_file(categorization_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "categorization_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
 ###### Bow Tie Questions
-bow_tie_questions_csv = File.open(Rails.root.join("db", "seed_csvs", "bow_tie_questions.csv"))
-questions << Question::ImporterCsv.from_file(bow_tie_questions_csv, user_id: user_id2)
+File.open(Rails.root.join("db", "seed_csvs", "bow_tie_questions.csv")) do |csv_file|
+  questions << Question::ImporterCsv.from_file(csv_file, user_id: user_id2)
+end
 
-# First Stimulus Case Study - Respiratory Distress Case
-stimulus_case_study_question_1 = Question::StimulusCaseStudy.new(
-  text: "Respiratory Distress in a Geriatric Patient",
-  user_id: user_id1
-)
-stimulus_case_study_question_1.subjects << subjects.sample(rand(1..3))
+###### Stimulus Case Study Questions
+csv_path = Rails.root.join("db", "seed_csvs", "stimulus_case_study_questions.csv")
+image_path_1 = Rails.root.join("db", "seed_images", "chest-xray.jpg")
+image_path_2 = Rails.root.join("db", "seed_images", "brain-ct.jpg")
+zip_path = Rails.root.join("tmp", "stimulus_case_study_questions.zip")
 
-# Create a scenario as the first child
-stimulus_case_study_1_scenario = Question::Scenario.new(
-  text: "Mr. Henderson, a 78-year-old male, presents to the emergency department with complaints of progressive shortness of breath over the past 3 days. He reports a productive cough with yellow-green sputum and a fever of 101.2°F (38.4°C) at home this morning. His medical history includes COPD, hypertension, and type 2 diabetes. He uses supplemental oxygen at home (2L/min via nasal cannula). On assessment, vital signs are: BP 148/92 mmHg, HR 110 bpm, RR 28/min, SpO2 88% on room air, and temperature 38.6°C. Lung auscultation reveals diminished breath sounds in the right lower lobe with crackles and wheezing.",
-  parent_question: stimulus_case_study_question_1,
-  user_id: user_id1
-)
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 0, child_question: stimulus_case_study_1_scenario)
-
-# Add a traditional question
-stimulus_case_study_traditional_1 = Question::Traditional.new(
-  text: "Based on Mr. Henderson's presentation, what is the most likely diagnosis?",
-  data: [
-    { "answer" => "Community-acquired pneumonia", "correct" => true },
-    { "answer" => "Pulmonary embolism", "correct" => false },
-    { "answer" => "Acute exacerbation of COPD", "correct" => false },
-    { "answer" => "Congestive heart failure", "correct" => false }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id1
-)
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 1, child_question: stimulus_case_study_traditional_1)
-
-# Add a select all that apply question with an image
-stimulus_case_study_select_all_1 = Question::SelectAllThatApply.new(
-  text: "Review the chest X-ray image. Which findings would you expect to observe in Mr. Henderson's radiograph? Select all that apply.",
-  data: [
-    { "answer" => "Right lower lobe infiltrate", "correct" => true },
-    { "answer" => "Pleural effusion", "correct" => true },
-    { "answer" => "Hyperinflation of lungs", "correct" => true },
-    { "answer" => "Pneumothorax", "correct" => false },
-    { "answer" => "Normal findings", "correct" => false }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id1
-)
-
-image = stimulus_case_study_select_all_1.images.build(alt_text: "Chest X-ray showing right lower lobe infiltrate and pleural effusion")
-image.file.attach(io: File.open("db/seed_images/chest-xray.jpg"), filename: "chest-xray.jpg", content_type: "image/jpeg")
-
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 2, child_question: stimulus_case_study_select_all_1)
-
-# Add another scenario
-stimulus_case_study_1_scenario_2 = Question::Scenario.new(
-  text: "After initial assessment, Mr. Henderson is diagnosed with community-acquired pneumonia with acute hypoxemic respiratory failure. The physician has ordered oxygen therapy, IV antibiotics, and chest physiotherapy.",
-  parent_question: stimulus_case_study_question_1,
-  user_id: user_id1
-)
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 3, child_question: stimulus_case_study_1_scenario_2)
-
-# Add a drag and drop question
-stimulus_case_study_drag_drop_1 = Question::DragAndDrop.new(
-  text: "Drag the appropriate interventions to complete the initial nursing care plan for Mr. Henderson:",
-  data: [
-    { "answer" => "Administer oxygen therapy to maintain SpO2 >92%", "correct" => true },
-    { "answer" => "Monitor vital signs every 2-4 hours", "correct" => true },
-    { "answer" => "Administer IV antibiotics as prescribed", "correct" => true },
-    { "answer" => "Position patient in high Fowler's position to ease breathing", "correct" => true },
-    { "answer" => "Encourage deep breathing and incentive spirometry", "correct" => true },
-    { "answer" => "Restrict fluid intake to prevent pulmonary edema", "correct" => false },
-    { "answer" => "Administer bronchodilators as needed", "correct" => false }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id1
-)
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 4, child_question: stimulus_case_study_drag_drop_1)
-
-# Add a matching question
-stimulus_case_study_matching = Question::Matching.new(
-  text: "Match each medication with its appropriate nursing consideration for Mr. Henderson's care:",
-  data: [
-    {
-      "answer" => "Ceftriaxone (antibiotic)",
-      "correct" => ["Monitor for signs of allergic reaction"]
-    },
-    {
-      "answer" => "Albuterol (bronchodilator)",
-      "correct" => ["Monitor for tachycardia and tremors"]
-    },
-    {
-      "answer" => "Methylprednisolone (corticosteroid)",
-      "correct" => ["Monitor blood glucose levels"]
-    },
-    {
-      "answer" => "Enoxaparin (anticoagulant)",
-      "correct" => ["Monitor for signs of bleeding"]
-    }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id1
-)
-stimulus_case_study_question_1.as_parent_question_aggregations.build(presentation_order: 5, child_question: stimulus_case_study_matching)
-
-questions << stimulus_case_study_question_1
-
-# Second Stimulus Case Study - Neurological Assessment Case
-stimulus_case_study_2 = Question::StimulusCaseStudy.new(
-  text: "Neurological Assessment Following Trauma",
-  user_id: user_id2
-)
-stimulus_case_study_2.subjects << subjects.sample(rand(1..3))
-
-# Create a scenario as the first child
-stimulus_case_study_2_scenario = Question::Scenario.new(
-  text: "Emily Chen, a 24-year-old female, is brought to the emergency department by ambulance following a motor vehicle collision. She was the restrained driver and airbags deployed. On arrival, she is conscious but confused about the events. Initial assessment reveals a large contusion on her forehead, unequal pupils (right 5mm, left 3mm), and weakness in her left arm and leg. Vital signs: BP 160/95 mmHg, HR 100 bpm, RR 22/min, SpO2 97% on room air, GCS 13 (E3, V4, M6).",
-  parent_question: stimulus_case_study_2,
-  user_id: user_id2
-)
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 0, child_question: stimulus_case_study_2_scenario)
-
-# Add a bow tie question
-stimulus_case_study_2_bow_tie = Question::BowTie.new(
-  text: "Based on Emily's presentation, identify the clinical condition, assessment findings, and appropriate nursing interventions:",
-  data: {
-    center: {
-      label: "Clinical Condition",
-      answers: [
-        {
-          answer: "Traumatic Brain Injury",
-          correct: true
-        },
-        {
-          answer: "Stroke",
-          correct: false
-        },
-        {
-          answer: "Seizure Disorder",
-          correct: false
-        },
-        {
-          answer: "Meningitis",
-          correct: false
-        }
-      ]
-    },
-    left: {
-      label: "Assessment Findings",
-      answers: [
-        {
-          answer: "Unequal pupils",
-          correct: true
-        },
-        {
-          answer: "Hemiparesis",
-          correct: true
-        },
-        {
-          answer: "Altered level of consciousness",
-          correct: true
-        },
-        {
-          answer: "Hypertension",
-          correct: true
-        },
-        {
-          answer: "History of trauma",
-          correct: true
-        },
-        {
-          answer: "Fever",
-          correct: false
-        },
-        {
-          answer: "Nuchal rigidity",
-          correct: false
-        }
-      ]
-    },
-    right: {
-      label: "Nursing Interventions",
-      answers: [
-        {
-          answer: "Frequent neurological assessments",
-          correct: true
-        },
-        {
-          answer: "Maintain cervical spine precautions",
-          correct: true
-        },
-        {
-          answer: "Elevate head of bed 30 degrees",
-          correct: true
-        },
-        {
-          answer: "Monitor for increased intracranial pressure",
-          correct: true
-        },
-        {
-          answer: "Administer anticonvulsants prophylactically",
-          correct: false
-        },
-        {
-          answer: "Apply cooling measures",
-          correct: false
-        }
-      ]
-    }
-  },
-  child_of_aggregation: true,
-  user_id: user_id2
-)
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 1, child_question: stimulus_case_study_2_bow_tie)
-
-# Add another scenario
-stimulus_scenario_2 = Question::Scenario.new(
-  text: "A CT scan is performed, revealing a small subdural hematoma with minimal midline shift. Emily is admitted to the ICU for close monitoring. Six hours after admission, the nurse notes that Emily's level of consciousness has decreased, with a GCS now at 10 (E2, V3, M5). Her right pupil is now 6mm and minimally reactive to light.",
-  parent_question: stimulus_case_study_2,
-  user_id: user_id2
-)
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 2, child_question: stimulus_scenario_2)
-
-# Add a traditional question with an image
-stimulus_case_study_2_traditional = Question::Traditional.new(
-  text: "Based on the CT scan image and Emily's deteriorating condition, what is the most likely cause of her declining neurological status?",
-  data: [
-    { "answer" => "Expanding intracranial hemorrhage", "correct" => true },
-    { "answer" => "Cerebral edema", "correct" => false },
-    { "answer" => "Seizure activity", "correct" => false },
-    { "answer" => "Medication side effect", "correct" => false }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id2
-)
-
-image = stimulus_case_study_2_traditional.images.build(alt_text: "CT scan showing subdural hematoma with increasing midline shift")
-image.file.attach(io: File.open("db/seed_images/brain-ct.jpg"), filename: "brain-ct.jpg", content_type: "image/jpeg")
-
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 3, child_question: stimulus_case_study_2_traditional)
-
-# Add a categorization question
-stimulus_case_study_2_categorization = Question::Categorization.new(
-  text: "Categorize each assessment finding based on whether it indicates increased intracranial pressure or not:",
-  data: [
-    {
-      "answer" => "Signs of Increased Intracranial Pressure",
-      "correct" => ["Decreasing level of consciousness", "Pupillary changes (dilated, fixed)", "Cushing's triad (hypertension, bradycardia, irregular respirations)", "Projectile vomiting"]
-    },
-    {
-      "answer" => "Not Specific to Increased Intracranial Pressure",
-      "correct" => ["Fever", "Tachycardia", "Hypotension", "Hypoactive bowel sounds"]
-    }
-  ],
-  child_of_aggregation: true,
-  user_id: user_id2
-)
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 4, child_question: stimulus_case_study_2_categorization)
-
-# Add an essay question
-stimulus_case_study_2_essay = Question::Essay.new(
-  text: "Develop a comprehensive nursing care plan for Emily's first 24 hours in the ICU",
-  data: {
-    "html" => <<~HTML
-      <div class="question-introduction">
-        <p>Emily's condition requires specialized neurological nursing care to monitor for complications and prevent secondary brain injury. Your nursing care plan should address both her immediate neurological concerns and other potential complications associated with traumatic brain injury and immobility.</p>
-      </div>
-
-      <div class="question-prompt">
-        <p><strong>Develop a comprehensive nursing care plan for Emily that includes:</strong></p>
-        <ul>
-          <li>At least three priority nursing diagnoses</li>
-          <li>Specific interventions for neurological monitoring</li>
-          <li>Measures to prevent increased intracranial pressure</li>
-          <li>Interventions to prevent complications of immobility</li>
-          <li>Family education components</li>
-          <li>Expected outcomes for the first 24 hours</li>
-        </ul>
-
-        <p>Support your care plan with evidence-based rationales for each intervention.</p>
-      </div>
-    HTML
-  },
-  child_of_aggregation: true,
-  user_id: user_id2
-)
-stimulus_case_study_2.as_parent_question_aggregations.build(presentation_order: 5, child_question: stimulus_case_study_2_essay)
-
-questions << stimulus_case_study_2
+zip_files(zip_path, csv_path, image_path_1, image_path_2) do |zip_file|
+  questions << Question::ImporterCsv.from_file(zip_file, user_id: user_id2)
+end
 
 questions.shuffle.each(&:save)
 

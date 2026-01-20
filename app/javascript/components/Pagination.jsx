@@ -1,13 +1,43 @@
 import React from 'react'
 import { Link } from '@inertiajs/inertia-react'
 
-export default function Pagination({ metadata }) {
+export default function Pagination({ metadata, filterParams = {} }) {
   if (!metadata || metadata.pages <= 1) return null
 
   const { page, pages, prev, next, count, limit } = metadata
   const itemsPerPage = limit || 10 // Fallback to 10 if limit is not provided
   const startItem = (page - 1) * itemsPerPage + 1
   const endItem = Math.min(page * itemsPerPage, count)
+
+  const buildPageUrl = (pageNum) => {
+    const params = new URLSearchParams()
+    params.set('page', pageNum)
+
+    // Add filter params to URL
+    if (filterParams.search) {
+      params.set('search', filterParams.search)
+    }
+    if (filterParams.selected_keywords?.length) {
+      filterParams.selected_keywords.forEach(k => params.append('selected_keywords[]', k))
+    }
+    if (filterParams.selected_subjects?.length) {
+      filterParams.selected_subjects.forEach(s => params.append('selected_subjects[]', s))
+    }
+    if (filterParams.selected_types?.length) {
+      filterParams.selected_types.forEach(t => params.append('selected_types[]', t))
+    }
+    if (filterParams.selected_levels?.length) {
+      filterParams.selected_levels.forEach(l => params.append('selected_levels[]', l))
+    }
+    if (filterParams.selected_users?.length) {
+      filterParams.selected_users.forEach(u => params.append('selected_users[]', u))
+    }
+    if (filterParams.filter_my_questions) {
+      params.set('filter_my_questions', 'true')
+    }
+
+    return `?${params.toString()}`
+  }
 
   // Generate array of page numbers to display
   const getPageNumbers = () => {
@@ -51,7 +81,7 @@ export default function Pagination({ metadata }) {
         {/* Previous Button */}
         {prev ? (
           <Link
-            href={`?page=${prev}`}
+            href={buildPageUrl(prev)}
             className='px-3 py-2 rounded border border-gray-300 text-decoration-none hover:bg-gray-50'
             preserveScroll
           >
@@ -90,7 +120,7 @@ export default function Pagination({ metadata }) {
           return (
             <Link
               key={pageNum}
-              href={`?page=${pageNum}`}
+              href={buildPageUrl(pageNum)}
               className='px-3 py-2 rounded border border-gray-300 text-decoration-none hover:bg-gray-50'
               preserveScroll
             >
@@ -102,7 +132,7 @@ export default function Pagination({ metadata }) {
         {/* Next Button */}
         {next ? (
           <Link
-            href={`?page=${next}`}
+            href={buildPageUrl(next)}
             className='px-3 py-2 rounded border border-gray-300 text-decoration-none hover:bg-gray-50'
             preserveScroll
           >

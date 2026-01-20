@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
+require 'zip'
 
 RSpec.describe Question::ImporterCsv do
   let(:user) { create(:user) }
@@ -216,6 +217,120 @@ RSpec.describe Question::ImporterCsv do
       expect(question.images.first.alt_text).to eq('Test JPG')
       expect(question.images.last.file.filename).to eq('test_image.png')
       expect(question.images.last.alt_text).to eq('Test PNG')
+    end
+  end
+
+  context 'with CSV containing IMAGE_PATH but no ZIP file' do
+    let(:text) do
+      "IMPORT_ID,TYPE,TEXT,IMAGE_PATH,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n" \
+      "1,Multiple Choice,Which one is true?,image.jpg,1,true,false\n"
+    end
+
+    it 'adds an error and does not persist the question' do
+      expect { subject.save }.not_to change(Question, :count)
+      expect(subject.errors[:rows]).to be_present
+      error_message = subject.errors[:rows].first[:base].first
+      expect(error_message).to include('Images specified in CSV but no ZIP file uploaded')
+    end
+  end
+
+  context 'with ZIP file but missing image' do
+    let(:temp_dir) { Dir.mktmpdir }
+    let(:csv_content) do
+      "IMPORT_ID,TYPE,TEXT,IMAGE_PATH,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n" \
+      "1,Multiple Choice,Which one is true?,missing_image.jpg,1,true,false\n"
+    end
+    let(:zip_path) { File.join(temp_dir, 'test.zip') }
+    let(:csv_path) { File.join(temp_dir, 'test.csv') }
+
+    before do
+      File.write(csv_path, csv_content)
+      Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
+        zip.add('test.csv', csv_path)
+        # Intentionally not adding the image file
+      end
+    end
+
+    after do
+      FileUtils.rm_rf(temp_dir)
+    end
+
+    it 'adds an error with available files listed' do
+      importer = described_class.from_file(File.open(zip_path), user_id: user.id)
+      expect { importer.save }.not_to change(Question, :count)
+      expect(importer.errors[:rows]).to be_present
+      error_message = importer.errors[:rows].first[:base].first
+      expect(error_message).to include('Image file not found in ZIP: missing_image.jpg')
+      expect(error_message).to include('Available files:')
+    end
+  end
+
+  context 'with ZIP file and image path with whitespace' do
+    let(:temp_dir) { Dir.mktmpdir }
+    let(:csv_content) do
+      "IMPORT_ID,TYPE,TEXT,IMAGE_PATH,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n" \
+      "1,Multiple Choice,Which one is true?,\" image.jpg ; image2.png \",1,true,false\n"
+    end
+    let(:zip_path) { File.join(temp_dir, 'test.zip') }
+    let(:csv_path) { File.join(temp_dir, 'test.csv') }
+    let(:image_path) { File.join(temp_dir, 'image.jpg') }
+    let(:image2_path) { File.join(temp_dir, 'image2.png') }
+
+    before do
+      File.write(csv_path, csv_content)
+      # Create dummy image files
+      File.write(image_path, 'fake image data')
+      File.write(image2_path, 'fake image data 2')
+      Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
+        zip.add('test.csv', csv_path)
+        zip.add('image.jpg', image_path)
+        zip.add('image2.png', image2_path)
+      end
+    end
+
+    after do
+      FileUtils.rm_rf(temp_dir)
+    end
+
+    it 'strips whitespace and attaches images correctly' do
+      importer = described_class.from_file(File.open(zip_path), user_id: user.id)
+      expect { importer.save }.to change(Image, :count).by(2).and change(Question, :count).by(1)
+      question = importer.instance_variable_get(:@questions)["1"].question
+      expect(question.images.count).to eq(2)
+      expect(question.images.map(&:file).map(&:filename).map(&:to_s)).to contain_exactly('image.jpg', 'image2.png')
+    end
+  end
+
+  context 'with ZIP file and image in subdirectory' do
+    let(:temp_dir) { Dir.mktmpdir }
+    let(:csv_content) do
+      "IMPORT_ID,TYPE,TEXT,IMAGE_PATH,CORRECT_ANSWERS,ANSWER_1,ANSWER_2\n" \
+      "1,Multiple Choice,Which one is true?,files/image.jpg,1,true,false\n"
+    end
+    let(:zip_path) { File.join(temp_dir, 'test.zip') }
+    let(:csv_path) { File.join(temp_dir, 'test.csv') }
+    let(:files_dir) { File.join(temp_dir, 'files') }
+    let(:image_path) { File.join(files_dir, 'image.jpg') }
+
+    before do
+      FileUtils.mkdir_p(files_dir)
+      File.write(csv_path, csv_content)
+      File.write(image_path, 'fake image data')
+      Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
+        zip.add('test.csv', csv_path)
+        zip.add('files/image.jpg', image_path)
+      end
+    end
+
+    after do
+      FileUtils.rm_rf(temp_dir)
+    end
+
+    it 'finds and attaches image from subdirectory' do
+      importer = described_class.from_file(File.open(zip_path), user_id: user.id)
+      expect { importer.save }.to change(Image, :count).by(1).and change(Question, :count).by(1)
+      question = importer.instance_variable_get(:@questions)["1"].question
+      expect(question.images.first.file.filename).to eq('image.jpg')
     end
   end
 end

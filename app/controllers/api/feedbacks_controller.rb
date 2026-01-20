@@ -2,10 +2,9 @@
 
 class Api::FeedbacksController < ApplicationController
   def create
-    question = Question.find(feedback_params[:question_id])
-    @feedback = question.feedbacks.new(
-      feedback_params.except(:question_id, :user_id).merge(user_id: current_user.id, question_hashid: question.hashid)
-    )
+    question = find_question
+    return unless question
+    @feedback = build_feedback(question)
 
     if @feedback.save
       render json: { message: 'Feedback submitted successfully!' }, status: :created
@@ -15,6 +14,26 @@ class Api::FeedbacksController < ApplicationController
   end
 
   private
+
+  def find_question
+    Question.find(feedback_params[:question_id])
+  rescue ActiveRecord::RecordNotFound
+    render json: { errors: ['Question not found'] }, status: :not_found
+    nil
+  end
+
+  def build_feedback(question)
+    question.feedbacks.build(
+      content: sanitize_content(feedback_params[:content]),
+      user: current_user,
+      question_hashid: question.hashid
+    )
+  end
+
+  def sanitize_content(content)
+    # Strip whitespace to match frontend validation
+    content&.strip
+  end
 
   def feedback_params
     params.require(:feedback).permit(:content, :question_id)

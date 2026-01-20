@@ -23,7 +23,9 @@ const Search = ({
   bookmarkedQuestionIds,
   searchTerm,
   pagination,
-  filterMyQuestions
+  filterMyQuestions,
+  allFilteredBookmarked,
+  lms
 }) => {
   const { props: pageProps } = usePage()
   const currentUser = pageProps.currentUser
@@ -252,18 +254,23 @@ const Search = ({
     const filteredIds = filteredQuestions
       .map((question) => question.id)
       .join(',')
-    Inertia.post(
-      '/bookmarks/create_batch',
-      { filtered_ids: filteredIds },
-      {
-        onSuccess: () => {
-          console.log('Bookmarks added successfully')
-        },
-        onError: () => {
-          console.error('Error adding bookmarks')
-        }
+    Inertia.post('/bookmarks/create_batch', {
+      search: query,
+      selected_keywords: filterState.selectedKeywords,
+      selected_subjects: filterState.selectedSubjects,
+      selected_types: filterState.selectedTypes,
+      selected_levels: filterState.selectedLevels,
+      selected_users: filterState.selectedUsers,
+      filter_my_questions: filterMyQuestionsState,
+      filtered_ids: filteredIds
+    }, {
+      onSuccess: () => {
+        console.log('Bookmarks added successfully')
+      },
+      onError: () => {
+        console.error('Error adding bookmarks')
       }
-    )
+    })
   }
 
   return (
@@ -285,6 +292,7 @@ const Search = ({
         filterMyQuestions={filterMyQuestionsState}
         onFilterMyQuestionsToggle={handleFilterMyQuestionsToggle}
         currentUser={currentUser}
+        lms={lms}
       />
       <SearchFilters
         selectedSubjects={filterState.selectedSubjects}
@@ -295,6 +303,7 @@ const Search = ({
         users={users}
         removeFilterAndSearch={removeFilterAndSearch}
         onBookmarkBatch={handleBookmarkBatch}
+        allFilteredBookmarked={allFilteredBookmarked}
       />
       {pagination && pagination.count !== undefined && (
         <Container className='mt-3 mb-2'>
@@ -309,30 +318,42 @@ const Search = ({
           </Row>
         </Container>
       )}
-      {filteredQuestions.length ? (
-        <>
-          {filteredQuestions.map((question) => {
-            return (
-              <QuestionWrapper
-                key={question.id}
-                question={question}
-                bookmarkedQuestionIds={bookmarkedQuestionIds}
-                subjects={subjects}
+      {filteredQuestions.length ?
+        (
+          <>
+            {filteredQuestions.map((question) => {
+              return (
+                <QuestionWrapper
+                  key={question.id}
+                  question={question}
+                  bookmarkedQuestionIds={bookmarkedQuestionIds}
+                  subjects={subjects}
+                />
+              )
+            })}
+            <Container className='px-0 py-0'>
+              <Pagination
+                metadata={pagination}
+                filterParams={{
+                  search: query,
+                  selected_keywords: filterState.selectedKeywords,
+                  selected_subjects: filterState.selectedSubjects,
+                  selected_types: filterState.selectedTypes,
+                  selected_levels: filterState.selectedLevels,
+                  selected_users: filterState.selectedUsers,
+                  filter_my_questions: filterMyQuestionsState
+                }}
               />
-            )
-          })}
-          <Container className='px-0 py-0'>
-            <Pagination metadata={pagination} />
+            </Container>
+          </>
+        ) : (
+          <Container className='mt-5'>
+            <Row>
+              Your search returned no results. Try removing some filters and searching again.
+            </Row>
           </Container>
-        </>
-      ) : (
-        <Container className='mt-5'>
-          <Row>
-            Your search returned no results. Try removing some filters and
-            searching again.
-          </Row>
-        </Container>
-      )}
+        )
+      }
     </Layout>
   )
 }

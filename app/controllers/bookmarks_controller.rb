@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 class BookmarksController < ApplicationController
+  include QuestionFilterParams
+
   before_action :authenticate_user!
   before_action :set_bookmark, only: [:destroy]
 
@@ -9,7 +11,9 @@ class BookmarksController < ApplicationController
   end
 
   def create_batch
-    result = Bookmark.create_batch(question_ids: params[:filtered_ids], user: current_user)
+    question_ids = filtered_question_ids
+    result = Bookmark.create_batch_from_ids(question_ids:, user: current_user)
+
     if result == :error
       redirect_back(fallback_location: authenticated_root_path, notice: t('.failure'))
     else
@@ -29,7 +33,7 @@ class BookmarksController < ApplicationController
   def export
     @bookmarks = current_user.bookmarks.includes(:question)
 
-    if params[:format].in?(%w[canvas blackboard d2l moodle txt md xml])
+    if params[:format].in?(%w[canvas blackboard d2l moodle txt md xml viva])
       handle_export
     else
       redirect_to authenticated_root_path, alert: t('.unsupported_format')
@@ -73,5 +77,9 @@ class BookmarksController < ApplicationController
         filename: export_result[:filename],
         type: export_result[:type]
     end
+  end
+
+  def filtered_question_ids
+    Question.filter_query(search: params[:search], filter_my_questions: question_filter_my_questions, **question_filter_values).pluck(:id)
   end
 end

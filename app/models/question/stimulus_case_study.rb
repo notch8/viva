@@ -8,6 +8,8 @@ class Question::StimulusCaseStudy < Question
   self.model_exporter = 'stimulus_type'
   self.has_parts = true
 
+  before_destroy :destroy_child_questions
+
   has_many :as_parent_question_aggregations,
            class_name: "QuestionAggregation",
            inverse_of: :parent_question,
@@ -63,5 +65,9 @@ class Question::StimulusCaseStudy < Question
 
     combined_text = (texts + child_data).join(' ').squeeze(' ')
     self.searchable = final_scrub(combined_text)
+  end
+
+  def destroy_child_questions
+    child_questions.each(&:destroy)
   end
 end

@@ -251,9 +251,6 @@ const Search = ({
   }
 
   const handleBookmarkBatch = () => {
-    const filteredIds = filteredQuestions
-      .map((question) => question.id)
-      .join(',')
     Inertia.post('/bookmarks/create_batch', {
       search: query,
       selected_keywords: filterState.selectedKeywords,
@@ -261,8 +258,7 @@ const Search = ({
       selected_types: filterState.selectedTypes,
       selected_levels: filterState.selectedLevels,
       selected_users: filterState.selectedUsers,
-      filter_my_questions: filterMyQuestionsState,
-      filtered_ids: filteredIds
+      filter_my_questions: filterMyQuestionsState
     }, {
       onSuccess: () => {
         console.log('Bookmarks added successfully')

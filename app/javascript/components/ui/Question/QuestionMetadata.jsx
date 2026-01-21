@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { Button, Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-react'
+import QuestionEditModal from './QuestionEditModal'
+// modal for editing questions
 import { ChatText } from '@phosphor-icons/react'
 import FeedbackModal from './FeedbackModal'
 
-const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
+const QuestionMetadata = ({ question, bookmarkedQuestionIds, subjects }) => {
   const { props } = usePage()
   const { currentUser } = props
-  const [isBookmarked, setIsBookmarked] = useState(bookmarkedQuestionIds.includes(question.id))
+  const [isBookmarked, setIsBookmarked] = useState(
+    bookmarkedQuestionIds.includes(question.id)
+  )
+  const [showEditModal, setShowEditModal] = useState(false)
   const [showFeedbackModal, setShowFeedbackModal] = useState(false)
 
   useEffect(() => {
@@ -26,14 +31,18 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
         }
       })
     } else {
-      Inertia.post('/bookmarks', { question_id: question.id }, {
-        onSuccess: () => {
-          setIsBookmarked(true)
-        },
-        onError: () => {
-          console.error('Error adding bookmark')
+      Inertia.post(
+        '/bookmarks',
+        { question_id: question.id },
+        {
+          onSuccess: () => {
+            setIsBookmarked(true)
+          },
+          onError: () => {
+            console.error('Error adding bookmark')
+          }
         }
-      })
+      )
     }
   }
 
@@ -47,23 +56,49 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           console.error('Error deleting question')
         }
       })
-    }}
+    }
+  }
 
   const handleFeedback = () => {
     setShowFeedbackModal(true)
   }
 
+  const handleEdit = () => {
+    setShowEditModal(true)
+  }
+
   return (
-    <div className='bg-light-2 p-2 rounded'>
-      <button className='btn btn-primary mt-1 mb-4' onClick={handleBookmarkToggle}>
-        {isBookmarked ? 'Unbookmark' : 'Bookmark'}
-      </button>
-      { ' ' }
-      { (currentUser.id === question.user_id || currentUser.admin) && (
-        <button className='btn btn-danger mt-1 mb-4' onClick={handleDelete}>
-          Delete
+    <div className='bg-light-2 p-2 rounded '>
+      <div className='d-flex justify-content-between'>
+        <button
+          className='btn btn-primary mt-1 mb-4'
+          onClick={handleBookmarkToggle}
+        >
+          {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </button>
-      )}
+        <div>
+          {/* Edit button: shown for owner/admin, but not for Stimulus Case Study questions */}
+          {(currentUser.id === question.user_id || currentUser.admin) &&
+           question.type_name !== 'Stimulus Case Study' && (
+            <button className='btn btn-secondary mt-1 mb-4 ms-1' onClick={handleEdit}>
+              Edit
+            </button>
+          )}
+          {/* Delete button: shown for owner/admin */}
+          {(currentUser.id === question.user_id || currentUser.admin) && (
+            <button className='btn btn-danger mt-1 mb-4 ms-1' onClick={handleDelete}>
+              Delete
+            </button>
+          )}
+        </div>
+      </div>
+      <QuestionEditModal
+        show={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        question={question}
+        subjects={subjects}
+      />
+      {/* NOTE: Keywords were removed to avoid consistency issues with manually added keywords */}
       {/* {question.keyword_names &&
         <>
           <h6 className='fw-bold'>Keywords</h6>
@@ -77,7 +112,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
           ))}
         </>
       } */}
-      {question.subject_names &&
+      {question.subject_names && (
         <>
           <h6 className='fw-bold pt-3'>Subject</h6>
           {question.subject_names.map((subject, index) => (
@@ -89,7 +124,7 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
             </div>
           ))}
         </>
-      }
+      )}
       <div className='d-flex mx-1 text-center mt-5 mb-2'>
         <Col className='bg-white rounded-start p-2'>
           <h6 className='fw-bold'>Level</h6>
@@ -102,7 +137,10 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds }) => {
       </div>
       <div className='d-flex justify-content-between align-items-center text-muted'>
         <small className='ps-1'>Question ID: {question.hashid}</small>
-        <Button className='me-2 d-flex align-items-center btn btn-secondary btn-sm' onClick={handleFeedback}>
+        <Button
+          className='me-2 d-flex align-items-center btn btn-secondary btn-sm'
+          onClick={handleFeedback}
+        >
           <ChatText size={24} weight='bold' className='me-1' />
           <span>Provide Feedback</span>
         </Button>

@@ -2,8 +2,19 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import QuestionText from './QuestionText'
 
-const Categorization = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
-  const [categories, setCategories] = useState([{ answer: '', correct: [''] }])
+const Categorization = ({
+  handleTextChange,
+  onDataChange,
+  questionText,
+  questionType,
+  resetFields,
+  data
+}) => {
+  const [categories, setCategories] = useState(
+    data && Array.isArray(data) && data.length > 0
+      ? data
+      : [{ answer: '', correct: [''] }]
+  )
 
   useEffect(() => {
     if (resetFields) {
@@ -19,7 +30,9 @@ const Categorization = ({ handleTextChange, onDataChange, questionText, question
   }
 
   const removeCategory = (indexToRemove) => {
-    const updatedCategories = categories.filter((_, index) => index !== indexToRemove)
+    const updatedCategories = categories.filter(
+      (_, index) => index !== indexToRemove
+    )
     setCategories(updatedCategories)
     onDataChange(updatedCategories)
   }
@@ -45,7 +58,10 @@ const Categorization = ({ handleTextChange, onDataChange, questionText, question
     const updatedCategories = categories.map((category, i) => {
       if (i === index) {
         const updatedCorrect = category.correct.filter((_, j) => j !== subIndex)
-        return { ...category, correct: updatedCorrect.length > 0 ? updatedCorrect : [''] }
+        return {
+          ...category,
+          correct: updatedCorrect.length > 0 ? updatedCorrect : ['']
+        }
       }
       return category
     })
@@ -56,7 +72,9 @@ const Categorization = ({ handleTextChange, onDataChange, questionText, question
 
   const addCorrectValue = (index) => {
     const updatedCategories = categories.map((category, i) =>
-      i === index ? { ...category, correct: [...category.correct, ''] } : category
+      i === index
+        ? { ...category, correct: [...category.correct, ''] }
+        : category
     )
     setCategories(updatedCategories)
     onDataChange(updatedCategories)
@@ -65,7 +83,10 @@ const Categorization = ({ handleTextChange, onDataChange, questionText, question
   return (
     <>
       <h3>{questionType} Question</h3>
-      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
+      <QuestionText
+        questionText={questionText}
+        handleTextChange={handleTextChange}
+      />
       <h6>Categorization</h6>
       {categories.map((category, index) => (
         <div key={index} className='mb-3'>

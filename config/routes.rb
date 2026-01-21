@@ -41,7 +41,7 @@ Rails.application.routes.draw do
       get '/analytics', to: 'analytics#index', as: 'analytics'
       post '/analytics/export', to: 'analytics#export', as: 'analytics_export'
       namespace :api do
-        resources :questions, only: [:create, :destroy]
+        resources :questions, only: [:create, :update, :destroy]
         resources :feedbacks, only: [:create]
       end
     end

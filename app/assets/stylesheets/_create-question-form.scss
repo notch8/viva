@@ -3,6 +3,16 @@
 @import '../../../node_modules/bootstrap/scss/mixins';
 
 .create-question-form {
+  .question-form-main {
+    max-width: 70%;
+    min-width: 0;
+  }
+
+  .question-form-sidebar {
+    min-width: 250px;
+    width: 30%;
+  }
+
   @include media-breakpoint-down(md) {
     .question-body {
       margin-top: .5rem !important;
@@ -13,6 +23,12 @@
     }
     .tag-section {
       margin: 0 !important;
+    }
+    .question-form-main {
+      max-width: 100%;
+    }
+    .question-form-sidebar {
+      width: 100%;
     }
   }
 }

@@ -8,11 +8,24 @@ const ImageUploader = ({ images, setImages }) => {
 
   const handleRemoveImage = (index) => {
     setImages((prevImages) => {
-      URL.revokeObjectURL(prevImages[index].preview)
+      const image = prevImages[index]
+
+      // If it's an existing image from the server, mark for deletion
+      if (image.isExisting) {
+        return prevImages.map((img, i) =>
+          i === index
+            ? { ...img, markedForDeletion: true }
+            : img
+        )
+      }
+
+      // If it's a new upload, remove it completely
+      URL.revokeObjectURL(image.preview)
       return prevImages.filter((_, i) => i !== index)
     })
+
     if (images.length === 1 && fileInputRef.current) {
-      fileInputRef.current.value = '' // Reset file input if last image is removed
+      fileInputRef.current.value = ''
     }
   }
 
@@ -86,46 +99,60 @@ const ImageUploader = ({ images, setImages }) => {
         </Form.Group>
       </InputGroup>
 
-      {errors.image && <Alert variant='danger' dismissible>{errors.image}</Alert>}
-      {errors.altText && <Alert variant='danger' dismissible>{errors.altText}</Alert>}
+      {errors.image && (
+        <Alert variant='danger' dismissible>
+          {errors.image}
+        </Alert>
+      )}
+      {errors.altText && (
+        <Alert variant='danger' dismissible>
+          {errors.altText}
+        </Alert>
+      )}
 
-      {images.map((image, index) => (
-        <div key={index} className='image-preview-container mb-3'>
-          <div className='d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100'>
-            <div className='d-flex align-items-center gap-2 mb-2 mb-md-0'>
-              <img
-                src={image.preview}
-                alt='Preview'
-                className='preview-image'
-                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
-              />
-              <span className={`filename ${!image.isValid ? 'text-danger' : ''}`}>
-                {image.file.name} {!image.isValid && '(Invalid)'}
-              </span>
-            </div>
+      {images
+        .map((image, arrayIndex) => ({ image, arrayIndex }))
+        .filter(({ image }) => !image.markedForDeletion)
+        .map(({ image, arrayIndex }) => (
+          <div key={arrayIndex} className='image-preview-container mb-3'>
+            <div className='d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100'>
+              <div className='d-flex align-items-center gap-2 mb-2 mb-md-0'>
+                <img
+                  src={image.preview}
+                  alt='Preview'
+                  className='preview-image'
+                  style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+                />
+                <span
+                  className={`filename ${!image.isValid ? 'text-danger' : ''}`}
+                >
+                  {image.file ? image.file.name : image.filename}{' '}
+                  {!image.isValid && '(Invalid)'}
+                </span>
+              </div>
 
-            <div className='d-flex flex-grow-1 gap-2 w-100'>
-              <Form.Control
-                type='text'
-                placeholder='Enter alt text (required)'
-                name={'question[alt_text][]'}
-                value={image.altText}
-                onChange={(e) => handleAltTextChange(index, e.target.value)}
-                className='flex-grow-1'
-                required
-                onBlur={() => validateAltText(index)}
-              />
-              <button
-                type='button'
-                className='btn btn-danger btn-sm'
-                onClick={() => handleRemoveImage(index)}
-              >
-                Remove
-              </button>
+              <div className='d-flex flex-grow-1 gap-2 w-100'>
+                <Form.Control
+                  type='text'
+                  placeholder='Enter alt text (required)'
+                  name={'question[alt_text][]'}
+                  value={image.altText}
+                  onChange={(e) => handleAltTextChange(arrayIndex, e.target.value)}
+                  className='flex-grow-1'
+                  required
+                  onBlur={() => validateAltText(arrayIndex)}
+                />
+                <button
+                  type='button'
+                  className='btn btn-danger btn-sm'
+                  onClick={() => handleRemoveImage(arrayIndex)}
+                >
+                  Remove
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
     </div>
   )
 }

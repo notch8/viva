@@ -2,13 +2,29 @@ import React, { useState, useEffect } from 'react'
 import { Form, Button } from 'react-bootstrap'
 import QuestionText from './QuestionText'
 
-const Matching = ({ handleTextChange, onDataChange,questionText, questionType, resetFields }) => {
-  const [pairs, setPairs] = useState([
-    { answer: '', correct: '' },
-    { answer: '', correct: '' },
-    { answer: '', correct: '' },
-    { answer: '', correct: '' },
-  ])
+const Matching = ({
+  handleTextChange,
+  onDataChange,
+  questionText,
+  questionType,
+  resetFields,
+  data
+}) => {
+  const [pairs, setPairs] = useState(
+    data && Array.isArray(data) && data.length > 0
+      ? data.map((pair) => ({
+        answer: pair.answer || '',
+        correct: Array.isArray(pair.correct)
+          ? pair.correct[0] || ''
+          : pair.correct || ''
+      }))
+      : [
+        { answer: '', correct: '' },
+        { answer: '', correct: '' },
+        { answer: '', correct: '' },
+        { answer: '', correct: '' }
+      ]
+  )
 
   useEffect(() => {
     if (resetFields) {
@@ -16,23 +32,31 @@ const Matching = ({ handleTextChange, onDataChange,questionText, questionType, r
         { answer: '', correct: '' },
         { answer: '', correct: '' },
         { answer: '', correct: '' },
-        { answer: '', correct: '' },
+        { answer: '', correct: '' }
       ]
       setPairs(initialPairs)
       onDataChange(initialPairs)
     }
   }, [resetFields])
 
+  // Transform pairs to backend format (correct as array)
+  const toBackendFormat = (pairs) => {
+    return pairs.map(pair => ({
+      answer: pair.answer,
+      correct: [pair.correct] // Backend expects correct as an array
+    }))
+  }
+
   const addPair = () => {
     const updatedPairs = [...pairs, { answer: '', correct: '' }]
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   const removePair = (indexToRemove) => {
     const updatedPairs = pairs.filter((_, index) => index !== indexToRemove)
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   const updatePair = (index, field, value) => {
@@ -40,13 +64,16 @@ const Matching = ({ handleTextChange, onDataChange,questionText, questionType, r
       i === index ? { ...pair, [field]: value } : pair
     )
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   return (
     <>
       <h3>{questionType} Question</h3>
-      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
+      <QuestionText
+        questionText={questionText}
+        handleTextChange={handleTextChange}
+      />
       <h6>Matching Pairs</h6>
       {pairs.map((pair, index) => (
         <div key={index} className='mb-3'>

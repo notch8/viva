@@ -2,18 +2,28 @@ import React, { useCallback, useRef } from 'react'
 import QuestionText from './QuestionText'
 import AnswerSet from './AnswerSet'
 
-const DragAndDrop = ({ handleTextChange, onDataChange, questionText, questionType, resetFields }) => {
+const DragAndDrop = ({
+  handleTextChange,
+  onDataChange,
+  questionText,
+  questionType,
+  resetFields,
+  data
+}) => {
   const updateTimeout = useRef(null)
 
-  const updateParent = useCallback((updatedAnswers) => {
-    if (updateTimeout.current) {
-      clearTimeout(updateTimeout.current)
-    }
+  const updateParent = useCallback(
+    (updatedAnswers) => {
+      if (updateTimeout.current) {
+        clearTimeout(updateTimeout.current)
+      }
 
-    updateTimeout.current = setTimeout(() => {
-      onDataChange(updatedAnswers)
-    }, 300)
-  }, [onDataChange])
+      updateTimeout.current = setTimeout(() => {
+        onDataChange(updatedAnswers)
+      }, 300)
+    },
+    [onDataChange]
+  )
 
   // Cleanup timeout on unmount
   React.useEffect(() => {
@@ -27,13 +37,17 @@ const DragAndDrop = ({ handleTextChange, onDataChange, questionText, questionTyp
   return (
     <>
       <h3>{questionType} Question</h3>
-      <QuestionText questionText={questionText} handleTextChange={handleTextChange} />
+      <QuestionText
+        questionText={questionText}
+        handleTextChange={handleTextChange}
+      />
       <AnswerSet
         resetFields={resetFields}
         getAnswerSet={updateParent}
         title='Answers'
         multipleCorrectAnswers={true}
         numberOfDisplayedAnswers={1}
+        initialData={data}
       />
     </>
   )

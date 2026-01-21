@@ -110,12 +110,11 @@ const ImageUploader = ({ images, setImages }) => {
         </Alert>
       )}
 
-      {images.map((image, originalIndex) => {
-        // Skip rendering images marked for deletion
-        if (image.markedForDeletion) return null
-
-        return (
-          <div key={originalIndex} className='image-preview-container mb-3'>
+      {images
+        .map((image, arrayIndex) => ({ image, arrayIndex }))
+        .filter(({ image }) => !image.markedForDeletion)
+        .map(({ image, arrayIndex }) => (
+          <div key={arrayIndex} className='image-preview-container mb-3'>
             <div className='d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 w-100'>
               <div className='d-flex align-items-center gap-2 mb-2 mb-md-0'>
                 <img
@@ -138,23 +137,22 @@ const ImageUploader = ({ images, setImages }) => {
                   placeholder='Enter alt text (required)'
                   name={'question[alt_text][]'}
                   value={image.altText}
-                  onChange={(e) => handleAltTextChange(originalIndex, e.target.value)}
+                  onChange={(e) => handleAltTextChange(arrayIndex, e.target.value)}
                   className='flex-grow-1'
                   required
-                  onBlur={() => validateAltText(originalIndex)}
+                  onBlur={() => validateAltText(arrayIndex)}
                 />
                 <button
                   type='button'
                   className='btn btn-danger btn-sm'
-                  onClick={() => handleRemoveImage(originalIndex)}
+                  onClick={() => handleRemoveImage(arrayIndex)}
                 >
                   Remove
                 </button>
               </div>
             </div>
           </div>
-        )
-      })}
+        ))}
     </div>
   )
 }

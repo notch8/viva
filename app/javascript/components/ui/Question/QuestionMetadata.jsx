@@ -77,11 +77,14 @@ const QuestionMetadata = ({ question, bookmarkedQuestionIds, subjects }) => {
           {isBookmarked ? 'Unbookmark' : 'Bookmark'}
         </button>
         <div>
-          {((currentUser.id === question.user_id || currentUser.admin) && question.type_name !== 'Stimulus Case Study') && (
+          {/* Edit button: shown for owner/admin, but not for Stimulus Case Study questions */}
+          {(currentUser.id === question.user_id || currentUser.admin) && 
+           question.type_name !== 'Stimulus Case Study' && (
             <button className='btn btn-secondary mt-1 mb-4 ms-1' onClick={handleEdit}>
               Edit
             </button>
           )}
+          {/* Delete button: shown for owner/admin */}
           {(currentUser.id === question.user_id || currentUser.admin) && (
             <button className='btn btn-danger mt-1 mb-4 ms-1' onClick={handleDelete}>
               Delete

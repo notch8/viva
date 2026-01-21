@@ -39,16 +39,24 @@ const Matching = ({
     }
   }, [resetFields])
 
+  // Transform pairs to backend format (correct as array)
+  const toBackendFormat = (pairs) => {
+    return pairs.map(pair => ({
+      answer: pair.answer,
+      correct: [pair.correct] // Backend expects correct as an array
+    }))
+  }
+
   const addPair = () => {
     const updatedPairs = [...pairs, { answer: '', correct: '' }]
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   const removePair = (indexToRemove) => {
     const updatedPairs = pairs.filter((_, index) => index !== indexToRemove)
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   const updatePair = (index, field, value) => {
@@ -56,7 +64,7 @@ const Matching = ({
       i === index ? { ...pair, [field]: value } : pair
     )
     setPairs(updatedPairs)
-    onDataChange(updatedPairs)
+    onDataChange(toBackendFormat(updatedPairs))
   }
 
   return (

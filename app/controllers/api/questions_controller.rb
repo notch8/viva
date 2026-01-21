@@ -43,7 +43,6 @@ class Api::QuestionsController < ApplicationController
     render json: { errors: [e.message] }, status: :unprocessable_entity
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update
     question = Question.find_by(id: params[:id])
 
@@ -55,25 +54,36 @@ class Api::QuestionsController < ApplicationController
     return unless validate_permissions(question)
 
     processed_params = process_question_params(question_params)
-
-    # Clear existing associations before updating
-    question.keywords.clear
-    question.subjects.clear
-
-    # Update question attributes
-    question.assign_attributes(processed_params.except(:keywords, :subjects, :images, :alt_text, :deleted_image_ids, :existing_images))
-    question.level = nil if question.level.blank?
-
-    # Handle associations
-    handle_question_associations(question)
-    if question.save
-      handle_image_changes!
-      render json: { message: 'Question updated successfully!', id: question.id }, status: :ok
-    else
-      render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
-    end
+    update_question_in_transaction(question, processed_params)
   rescue ArgumentError => e
     render json: { errors: [e.message] }, status: :unprocessable_entity
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def update_question_in_transaction(question, processed_params)
+    # Wrap all updates in a transaction for atomicity
+    Question.transaction do
+      # Clear existing associations before updating
+      question.keywords.clear
+      question.subjects.clear
+
+      # Update question attributes
+      question.assign_attributes(processed_params.except(:keywords, :subjects, :images, :alt_text, :deleted_image_ids, :existing_images))
+      question.level = nil if question.level.blank?
+
+      # Handle associations
+      handle_question_associations(question)
+
+      unless question.save
+        render json: { errors: question.errors.full_messages }, status: :unprocessable_entity
+        raise ActiveRecord::Rollback
+      end
+
+      handle_image_changes!
+    end
+
+    # Only render success if we got here without rolling back
+    render json: { message: 'Question updated successfully!', id: question.id }, status: :ok if question.persisted? && question.errors.empty?
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -102,7 +112,7 @@ class Api::QuestionsController < ApplicationController
 
   def validate_permissions(question)
     unless question.user_id == current_user.id || current_user.admin?
-      render json: { errors: ['You do not have permission to delete this question.'] }, status: :forbidden
+      render json: { errors: ['You do not have permission to perform this action on this question.'] }, status: :forbidden
       return false
     end
     true
@@ -137,13 +147,18 @@ class Api::QuestionsController < ApplicationController
 
     return if deleted_image_ids.blank? && existing_images.blank?
 
-    deleted_image_ids&.each do |id|
-      Image.find(id).destroy
-    end
+    # Batch delete images to avoid N+1 queries
+    Image.where(id: deleted_image_ids).destroy_all if deleted_image_ids.present?
 
-    existing_images&.each do |existing_image|
-      image = Image.find(existing_image['id'])
-      image.update(alt_text: existing_image['alt_text'])
+    # Batch fetch and update existing images to avoid N+1 queries
+    return if existing_images.blank?
+
+    image_ids = existing_images.pluck('id').compact
+    images_by_id = Image.where(id: image_ids).index_by(&:id)
+
+    existing_images.each do |existing_image|
+      image = images_by_id[existing_image['id'].to_i]
+      image&.update(alt_text: existing_image['alt_text'])
     end
   end
 

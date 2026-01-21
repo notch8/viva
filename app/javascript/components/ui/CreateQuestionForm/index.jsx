@@ -1,4 +1,3 @@
-// index.jsx
 import React, { useState } from 'react'
 import QuestionFormUI from './QuestionFormUI'
 
@@ -205,7 +204,7 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
       switch (type) {
       case 'Essay':
       case 'File Upload': {
-        if (typeof data === 'object' || data === '') {
+        if (typeof questionData !== 'string' || questionData.trim() === '') {
           return true
         }
         break

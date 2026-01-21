@@ -3,7 +3,7 @@ import { Button, Col } from 'react-bootstrap'
 import { Inertia } from '@inertiajs/inertia'
 import { usePage } from '@inertiajs/inertia-react'
 import QuestionEditModal from './QuestionEditModal'
-//  modal for editing questions
+// modal for editing questions
 import { ChatText } from '@phosphor-icons/react'
 import FeedbackModal from './FeedbackModal'
 

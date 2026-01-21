@@ -14,7 +14,7 @@ const ImageUploader = ({ images, setImages }) => {
       if (image.isExisting) {
         return prevImages.map((img, i) =>
           i === index
-            ? { ...img, markedForDeletion: !img.markedForDeletion }
+            ? { ...img, markedForDeletion: true }
             : img
         )
       }

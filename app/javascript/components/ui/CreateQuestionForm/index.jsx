@@ -42,6 +42,14 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
       return question.data?.html || ''
     }
 
+    // For Stimulus Case Study, wrap the array in subQuestions property
+    if (question.type === 'Question::StimulusCaseStudy') {
+      return {
+        text: question.text || '',
+        subQuestions: Array.isArray(question.data) ? question.data : []
+      }
+    }
+
     return question.data || { text: '', subQuestions: [] }
   })
   const [resetFields, setResetFields] = useState(false)
@@ -61,7 +69,18 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
     setResetFields(true)
   }
 
-  const handleTextChange = (e) => setQuestionText(e.target.value)
+  const handleTextChange = (e) => {
+    const newText = e.target.value
+    setQuestionText(newText)
+
+    // For Stimulus Case Study, also update data.text
+    if (questionType === 'Stimulus Case Study') {
+      setData(prevData => ({
+        ...prevData,
+        text: newText
+      }))
+    }
+  }
 
   const handleLevelSelection = (levelData) => setLevel(levelData)
 
@@ -89,25 +108,13 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
     const handlers = {
       Matching: () => appendData(data),
       Categorization: () => appendData(data),
-      Essay: () =>
-        appendData({
-          html: data
-            .split('\n')
-            .map((line, index) => `<p key=${index}>${line}</p>`)
-            .join('')
-        }),
+      Essay: () => appendData({ html: data }),
       'Drag and Drop': () => appendData(filterValidData(data)),
       'Bow Tie': () => data && appendData(data),
       'Multiple Choice': () => appendData(filterValidData(data)),
       'Select All That Apply': () => appendData(filterValidData(data)),
       'Stimulus Case Study': () => appendData(data),
-      'File Upload': () =>
-        appendData({
-          html: data
-            .split('\n')
-            .map((line, index) => `<p key=${index}>${line}</p>`)
-            .join('')
-        })
+      'File Upload': () => appendData({ html: data })
     }
 
     if (handlers[questionType]) {
@@ -300,8 +307,9 @@ const CreateQuestionForm = ({ subjectOptions, question, onSuccess, onCancel }) =
     }
 
     if (questionType === 'Stimulus Case Study') {
+      // Check questionText state directly instead of data.text due to debouncing
       if (
-        !data.text?.trim() ||
+        !questionText?.trim() ||
         !Array.isArray(data.subQuestions) ||
         data.subQuestions.length === 0
       ) {

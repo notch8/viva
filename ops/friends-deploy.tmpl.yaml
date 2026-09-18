@@ -38,10 +38,12 @@ ingress:
   ingressClassName: "nginx-ingress"
   hosts:
     - viva-friends.notch8.cloud
-  annotations: {
-    nginx.org/client-max-body-size: "0",
-    cert-manager.io/cluster-issuer: "letsencrypt-prod"
-  }
+  annotations:
+    nginx.org/client-max-body-size: "0"
+    # DNS01 instead of letsencrypt-prod because r2-friends cert-manager CRDs are at
+    # v1.8.0 while the controller is v1.17.1 — ingressClassName is not in the schema,
+    # so HTTP01 via nginx-ingress fails. Switch to letsencrypt-prod once the CRDs are upgraded.
+    cert-manager.io/cluster-issuer: "letsencrypt-production-dns"
   tlsSecretName: viva-friends-tls
 
 env:

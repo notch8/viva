@@ -56,7 +56,8 @@ env:
     RAILS_ENV: production
     APP_HOST: viva-production.notch8.cloud
     APP_PROTOCOL: https
-    # TODO(#551): add SMTP_ADDRESS and SMTP_USERNAME once the mail provider is chosen.
+    SMTP_ADDRESS: smtp.sendgrid.net
+    SMTP_USERNAME: apikey
     SMTP_PASSWORD: $SMTP_PASSWORD
     RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_TO_STDOUT: true

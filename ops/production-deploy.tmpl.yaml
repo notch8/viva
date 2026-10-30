@@ -1,0 +1,63 @@
+# Default values for chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+# Customize the following values as needed
+postgresql:
+  enabled: false
+
+externalPostgresql:
+  host: postgres-18.postgres.svc.cluster.local
+  username: postgres
+  password: $DATABASE_PASSWORD
+
+web:
+  replicaCount: 2
+  resources:
+    limits:
+      memory: 4Gi
+      cpu: 1
+    requests:
+      memory: 2Gi
+      cpu: 100m
+
+rails:
+  image:
+    repository: ghcr.io/notch8/viva
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  imagepullPolicy: IfNotPresent
+  imagePullSecrets:
+    - name: github
+  shared:
+    storage:
+      size: 10Gi
+      className: aws-efs
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  hosts:
+    - viva-production.notch8.cloud
+  annotations:
+    nginx.org/client-max-body-size: "0"
+    cert-manager.io/cluster-issuer: "letsencrypt-production-dns"
+  tlsSecretName: viva-production-tls
+
+env:
+  configmap:
+    NAME: viva-production
+    DATABASE_ADAPTER: postgresql
+    # Direct to the primary, not postgres-18-pooler: pgbouncer transaction mode breaks
+    # prepared statements and migration advisory locks, which database.yml leaves on.
+    DATABASE_HOST: postgres-18.postgres.svc.cluster.local
+    DATABASE_NAME: viva_production
+    DATABASE_PASSWORD: $DATABASE_PASSWORD
+    DATABASE_USER: postgres
+    RAILS_ENV: production
+    APP_HOST: viva-production.notch8.cloud
+    APP_PROTOCOL: https
+    # TODO(#551): add SMTP_ADDRESS and SMTP_USERNAME once the mail provider is chosen.
+    SMTP_PASSWORD: $SMTP_PASSWORD
+    RAILS_SERVE_STATIC_FILES: true
+    RAILS_LOG_TO_STDOUT: true
+    SECRET_KEY_BASE: $SECRET_KEY_BASE

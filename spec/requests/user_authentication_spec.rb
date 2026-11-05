@@ -64,6 +64,17 @@ RSpec.describe 'User Authentication', type: :request do
     end
   end
 
+  describe 'DELETE /' do
+    let(:user) { create(:user) }
+
+    before { sign_in user }
+
+    it 'does not delete the signed-in account' do
+      expect { delete user_registration_path }.to raise_error(ActionController::RoutingError)
+      expect(User.exists?(user.id)).to be(true)
+    end
+  end
+
   describe 'GET /password/new' do
     it 'should be accessible (password reset enabled)' do
       get new_user_password_path

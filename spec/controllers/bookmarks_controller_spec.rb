@@ -172,10 +172,12 @@ RSpec.describe BookmarksController do
       end
     end
 
-    it 'redirects to the root path if the format is not supported' do
-      get :export, params: { format: 'csv' }
+    %w[csv xml].each do |format|
+      it "redirects to the root path for the unsupported #{format} format" do
+        get :export, params: { format: }
 
-      expect(response).to redirect_to(authenticated_root_path)
+        expect(response).to redirect_to(authenticated_root_path)
+      end
     end
 
     it 'creates a export log' do

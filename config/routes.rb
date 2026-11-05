@@ -23,7 +23,10 @@ Rails.application.routes.draw do
     authenticated :user do
       # search page routes
       root 'search#index', as: :authenticated_root
+    end
 
+    # authenticate (not authenticated) so logged-out visitors are sent to login instead of a 404
+    authenticate :user do
       # settings page routes
       get '/settings', to: 'settings#index', as: 'settings'
       patch '/settings/update', to: 'settings#update'

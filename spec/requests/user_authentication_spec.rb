@@ -64,6 +64,22 @@ RSpec.describe 'User Authentication', type: :request do
     end
   end
 
+  describe 'app pages while logged out' do
+    %w[/settings /uploads /analytics].each do |path|
+      it "redirects #{path} to the login page" do
+        get path
+        expect(response).to redirect_to(new_user_session_path)
+      end
+    end
+
+    it 'returns to the requested page after signing in' do
+      user = create(:user, password: 'password123', active: true)
+      get '/settings'
+      post user_session_path, params: { user: { email: user.email, password: 'password123' } }
+      expect(response).to redirect_to('/settings')
+    end
+  end
+
   describe 'GET /password/new' do
     it 'should be accessible (password reset enabled)' do
       get new_user_password_path

@@ -59,6 +59,7 @@ spec:
             - >
                 (bundle check || bundle install) &&
                 bundle exec rake db:migrate assets:precompile &&
+                bundle exec rails runner 'SubjectImporter.import' &&
                 echo SETUP COMPLETE
           envFrom:
             - configMapRef:

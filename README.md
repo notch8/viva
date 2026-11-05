@@ -332,7 +332,7 @@ To set a password directly, use `save!` and check `valid_password?`. `accept_inv
 
 ### Loading Subjects
 
-Uploads require subjects that exist in `config/subjects.yaml`. `db:seed` loads them but refuses to run in production, so load them once in a new production environment (idempotent):
+Uploads require subjects that exist in `config/subjects.yaml`. Deployed environments load them on every deploy (the Helm setup Job runs `SubjectImporter.import` after migrations; it only adds missing ones). Locally, `db:seed` loads them, or run:
 
 ```ruby
 SubjectImporter.import

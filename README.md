@@ -322,10 +322,20 @@ As a proof of concept and prototype, there are administrative functions that are
 
 ### Creating New Users
 
-In the `Rails` console run the following:
+Self sign-up is disabled. An admin invites people from **Admin → Users → New user**, which emails an invitation to set a password. With no admin yet (a new environment), invite the first one from the `Rails` console:
 
 ```ruby
-User.create!(email: "<EMAIL>", password: "<PASSWORD>")
+User.invite!(email: "<EMAIL>", admin: true)
+```
+
+To set a password directly, use `save!` and check `valid_password?`. `accept_invitation!` silently skips saving if the invitation was already accepted.
+
+### Loading Subjects
+
+Uploads require subjects that exist in `config/subjects.yaml`. `db:seed` loads them but refuses to run in production, so load them once in a new production environment (idempotent):
+
+```ruby
+SubjectImporter.import
 ```
 
 ### Resetting Questions and Data

@@ -21,16 +21,16 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     nodejs \
     postgresql-client \
     vim-tiny \
-    # Cypress dependencies
+    # Cypress dependencies (t64 suffix: Debian trixie's 64-bit time_t package rename;
+    # libgconf-2-4 is obsolete and no longer needed/packaged)
     xvfb \
-    libgtk2.0-0 \
-    libgtk-3-0 \
+    libgtk2.0-0t64 \
+    libgtk-3-0t64 \
     libgbm-dev \
     libnotify-dev \
-    libgconf-2-4 \
     libnss3 \
     libxss1 \
-    libasound2 \
+    libasound2t64 \
     libxtst6 \
     xauth && \
     npm install -g yarn

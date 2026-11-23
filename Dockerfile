@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ruby:3.3.6 AS viva-base
+FROM ruby:3.3.14 AS viva-base
 
 # Install dependencies for the NodeSource repo and Node.js
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
